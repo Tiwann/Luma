@@ -1,0 +1,31 @@
+﻿#pragma once
+
+#if defined(LUMA_BUILD_DLL)
+  #if defined(_WIN32)
+    #define LUMA_@MODULE_NAME@_IMPORT  __declspec(dllimport)
+    #define LUMA_@MODULE_NAME@_EXPORT  __declspec(dllexport)
+    #define LUMA_@MODULE_NAME@_PRIVATE static
+  #else
+    #if defined(__GNUC__) && __GNUC__ >= 4
+      #define LUMA_@MODULE_NAME@_IMPORT  __attribute__((visibility("default")))
+      #define LUMA_@MODULE_NAME@_EXPORT  __attribute__((visibility("default")))
+      #define LUMA_@MODULE_NAME@_PRIVATE __attribute__((visibility("hidden")))
+    #else
+      #define LUMA_@MODULE_NAME@_IMPORT
+      #define LUMA_@MODULE_NAME@_EXPORT
+      #define LUMA_@MODULE_NAME@_PRIVATE static
+    #endif
+  #endif
+#endif
+
+#if !defined(LUMA_@MODULE_NAME@_API)
+  #if defined(LUMA_BUILD_DLL)
+    #if defined(LUMA_@MODULE_NAME@)
+      #define LUMA_@MODULE_NAME@_API LUMA_@MODULE_NAME@_EXPORT
+    #else
+      #define LUMA_@MODULE_NAME@_API LUMA_@MODULE_NAME@_IMPORT
+    #endif
+  #else
+    #define LUMA_@MODULE_NAME@_API
+  #endif
+#endif
