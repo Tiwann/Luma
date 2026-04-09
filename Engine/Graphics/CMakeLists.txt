@@ -1,8 +1,8 @@
 ﻿
 
 set(LUMA_GRAPHICS_SRC
-        Source/RHI/RenderDevice.cpp
-        Source/RHI/CommandBuffer.cpp
+        Source/Rendering/RenderDevice.cpp
+        Source/Rendering/CommandBuffer.cpp
 )
 
 
@@ -12,6 +12,7 @@ set(LUMA_WEBGPU_SRC
 )
 
 add_library(luma-graphics SHARED ${LUMA_GRAPHICS_SRC})
+target_link_libraries(luma-graphics PRIVATE luma-math)
 target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS INTERFACE LUMA_CLIENT)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26)

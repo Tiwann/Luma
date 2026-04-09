@@ -1,7 +1,7 @@
 ﻿#include "Luma/Audio/AudioDevice.h"
 #include <miniaudio.h>
 
-namespace Luma
+namespace luma
 {
     bool FAudioDevice::initialize(const FAudioDeviceDesc& desc)
     {

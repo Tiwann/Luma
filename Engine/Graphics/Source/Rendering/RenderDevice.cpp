@@ -1,7 +1,10 @@
-﻿#include "Luma/RHI/RenderDevice.h"
-#include "WebGPU/RenderDevice.h"
+﻿#include "Luma/Rendering/RenderDevice.h"
 
-namespace Luma
+#ifdef LUMA_BUILD_WEBGPU
+#include "WebGPU/RenderDevice.h"
+#endif
+
+namespace luma
 {
     IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc)
     {
@@ -9,18 +12,20 @@ namespace Luma
         switch (deviceDesc.deviceType)
         {
         case ERenderDeviceType::None:
-            break;
+            return nullptr;
+#ifdef LUMA_BUILD_WEBGPU
         case ERenderDeviceType::WebGPU:
             device = new WebGPU::FRenderDevice();
             break;
+#endif
+        default: return nullptr;
         }
 
-        if (device && device->initialize(deviceDesc))
+        if (device->initialize(deviceDesc))
         {
             delete device;
             return nullptr;
         }
-
         return device;
     }
 }

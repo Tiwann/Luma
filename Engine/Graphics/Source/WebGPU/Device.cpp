@@ -1,7 +1,7 @@
 ﻿#include "RenderDevice.h"
 #include <webgpu/webgpu.h>
 
-namespace Luma::WebGPU
+namespace luma::wgpu
 {
     ERenderDeviceType FRenderDevice::getDeviceType()
     {
@@ -62,6 +62,8 @@ namespace Luma::WebGPU
         wgpuInstanceProcessEvents(m_Instance);
         if (!selectedDevice) return false;
         m_Device = selectedDevice;
+
+
         return true;
     }
 

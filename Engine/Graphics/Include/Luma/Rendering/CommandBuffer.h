@@ -3,7 +3,7 @@
 #include <cstdint>
 
 
-namespace Luma
+namespace luma
 {
     struct IRenderDevice;
     struct IBuffer;

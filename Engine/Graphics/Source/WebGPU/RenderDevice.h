@@ -1,12 +1,12 @@
 ﻿#pragma once
-#include "Luma/RHI/RenderDevice.h"
+#include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Graphics/Export.h"
 
 typedef struct WGPUInstanceImpl* WGPUInstance;
 typedef struct WGPUDeviceImpl* WGPUDevice;
 typedef struct WGPUAdapterImpl* WGPUAdapter;
 
-namespace Luma::WebGPU
+namespace luma::wgpu
 {
     class LUMA_GRAPHICS_API FRenderDevice : public IRenderDevice
     {

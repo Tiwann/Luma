@@ -2,7 +2,7 @@
 #include "Luma/Graphics/Export.h"
 #include "Interface.h"
 
-namespace Luma
+namespace luma
 {
     struct FBufferDesc;
     struct FTextureDesc;

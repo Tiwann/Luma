@@ -2,7 +2,7 @@
 #include "Luma/Core/Export.h"
 #include <string_view>
 
-namespace Luma
+namespace luma
 {
     enum class EModuleType
     {

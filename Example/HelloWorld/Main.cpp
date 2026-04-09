@@ -1,16 +1,11 @@
 ﻿#include <Luma/Audio.h>
-#include <Luma/Graphics.h>
-#include <cstdlib>
+#include <Luma/Math.h>
+using namespace luma;
 
 int main()
 {
-    const Luma::FAudioDevice* audioDevice = Luma::createAudioDevice(Luma::FAudioDeviceDesc());
-    if (!audioDevice) return EXIT_FAILURE;
-
-    constexpr auto renderDeviceDesc = Luma::FRenderDeviceDesc(Luma::ERenderDeviceType::WebGPU);
-    const Luma::IRenderDevice* renderDevice = Luma::createRenderDevice(renderDeviceDesc);
-    if (renderDevice) return EXIT_FAILURE;
-
+    FVector2D  vector(0, 0);
+    FRect2D rect(0, 0, 0, 0);
 
     return 0;
 }

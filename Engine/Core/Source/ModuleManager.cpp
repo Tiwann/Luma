@@ -1,6 +1,6 @@
 ﻿#include "Modules/ModuleManager.h"
 
-namespace Luma
+namespace luma
 {
     IModule* FModuleManager::GetModule(const std::wstring& name)
     {
