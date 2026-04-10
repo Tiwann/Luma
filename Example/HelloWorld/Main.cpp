@@ -1,5 +1,4 @@
-﻿#include <Luma/Audio.h>
-#include <Luma/Math.h>
+﻿#include <Luma/LumaMath.h>
 using namespace luma;
 
 int main()

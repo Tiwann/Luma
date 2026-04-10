@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Luma/Graphics/Export.h"
-#include "Interface.h"
 
 namespace luma
 {
@@ -33,11 +32,14 @@ namespace luma
 #ifdef LUMA_BUILD_WEBGPU
         WebGPU,
 #endif
-#if defined(LUMA_PLATFORM_SWITCH) || defined(LUMA_BUILD_NVN)
+#ifdef LUMA_BUILD_NVN
         NVN,
 #endif
-#if defined(LUMA_PLATFORM_SWITCH) || defined(LUMA_BUILD_DEKO3D)
+#ifdef LUMA_BUILD_DEKO3D
         Deko3D,
+#endif
+#ifdef LUMA_BUILD_GNM
+        GNM,
 #endif
     };
 
@@ -46,10 +48,12 @@ namespace luma
         ERenderDeviceType deviceType;
     };
 
-    struct LUMA_GRAPHICS_API IRenderDevice : TBase<FRenderDeviceDesc>
+    struct LUMA_GRAPHICS_API IRenderDevice
     {
-        ~IRenderDevice() override = default;
+        virtual ~IRenderDevice() = default;
         virtual ERenderDeviceType getDeviceType() = 0;
+        virtual bool initialize(const FRenderDeviceDesc& deviceDesc) = 0;
+        virtual void destroy();
 
         virtual IBuffer* createBuffer(const FBufferDesc& bufferDesc) = 0;
         virtual ITexture* createTexture(const FTextureDesc& textureDesc) = 0;

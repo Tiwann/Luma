@@ -1,6 +1,7 @@
 ﻿
 
 set(LUMA_GRAPHICS_SRC
+        Source/Rendering/Camera.cpp
         Source/Rendering/RenderDevice.cpp
         Source/Rendering/CommandBuffer.cpp
 )
@@ -12,7 +13,7 @@ set(LUMA_WEBGPU_SRC
 )
 
 add_library(luma-graphics SHARED ${LUMA_GRAPHICS_SRC})
-target_link_libraries(luma-graphics PRIVATE luma-math)
+target_link_libraries(luma-graphics PRIVATE luma-core luma-math)
 target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS INTERFACE LUMA_CLIENT)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26)
@@ -23,6 +24,11 @@ if(BUILD_SHARED_LIBS)
 endif ()
 
 if(LUMA_ENGINE_BUILD_WEBGPU)
+    target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY)
+endif ()
+
+if(LUMA_ENGINE_BUILD_VULKAN)
     target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
     target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY)
 endif ()

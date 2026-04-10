@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Luma/Core/Export.h"
+#include "Luma/Runtime/Export.h"
 #include <string_view>
 
 namespace luma

@@ -1,13 +1,21 @@
 ﻿
 
 set(LUMA_CORE_SRC
-        Source/Module.cpp
-        Source/ModuleManager.cpp
-        Source/RTTI.cpp
+        Source/Math/AABB.cpp
+        Source/Math/AxisAngle.cpp
+        Source/Math/Matrix.cpp
+        Source/Math/Quaternion.cpp
+        Source/Math/Ray.cpp
+        Source/Math/Rect.cpp
+        Source/Math/Transform.cpp
+        Source/Math/Vector.cpp
+        Source/Math/MatrixTransform.cpp
+        Source/Modules/ModuleManager.cpp
+        Source/Runtime/RTTI.cpp
 )
 
 add_library(luma-core ${LUMA_CORE_SRC})
-target_include_directories(luma-core PRIVATE Source Include/Luma PUBLIC Include)
+target_include_directories(luma-core PRIVATE Source PUBLIC Include)
 target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT)
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26)
 luma_generate_export_header(TARGET luma-core MODULE_NAME CORE)

@@ -1,0 +1,27 @@
+﻿#pragma once
+
+namespace luma
+{
+    enum class EBlendFactor
+    {
+        Zero,
+        One,
+        SourceColor,
+        OneMinusSourceColor,
+        DestColor,
+        OneMinusDestColor,
+        SourceAlpha,
+        OneMinusSourceAlpha,
+        DestAlpha,
+        OneMinusDestAlpha,
+        ConstantColor,
+        OneMinusConstantColor,
+        ConstantAlpha,
+        OneMinusConstantAlpha,
+        SourceAlphaSaturated,
+        Source1Color,
+        OneMinusSource1Color,
+        Source1Alpha,
+        OneMinusSource1Alpha,
+    };
+}

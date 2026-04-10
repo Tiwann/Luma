@@ -1,7 +1,7 @@
 ﻿
 
 set(LUMA_AUDIO_SRC
-"Source/miniaudio.c"
+"External/miniaudio.c"
 "Source/AudioDevice.cpp")
 
 add_library(luma-audio ${LUMA_AUDIO_SRC})

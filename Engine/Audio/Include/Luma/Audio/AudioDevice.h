@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include "Luma/Audio/Export.h"
-#include "Luma/Core/RTTI.h"
 #include <cstdint>
 
 namespace luma
@@ -19,19 +18,21 @@ namespace luma
         virtual void destroy() = 0;
     };
 
-    class LUMA_AUDIO_API FAudioDevice : public IAudioDevice
+    class LUMA_AUDIO_API FAudioDevice final : public IAudioDevice
     {
     public:
+        FAudioDevice();
+        ~FAudioDevice() override;
         bool initialize(const FAudioDeviceDesc& desc) override;
         void destroy() override;
 
-        static constexpr const rtti::FClass* staticClass()
-        {
-            static constexpr rtti::FClass instance("AudioDevice", nullptr);
-            return &instance;
-        }
+        uint32_t getNumListeners() const;
+        uint32_t getNumChannels() const;
+        uint32_t getSampleRate() const;
+
     private:
-        void* m_Handle = nullptr;
+        struct Impl;
+        Impl* m_Pimpl = nullptr;
     };
 
     LUMA_AUDIO_API FAudioDevice* createAudioDevice(const FAudioDeviceDesc& desc = FAudioDeviceDesc());
