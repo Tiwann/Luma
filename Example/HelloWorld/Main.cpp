@@ -21,6 +21,8 @@ int main()
     while (!window.shouldClose())
         window.pollEvents();
 
+
+
     window.destroy();
     return 0;
 }

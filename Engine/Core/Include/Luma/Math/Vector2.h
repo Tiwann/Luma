@@ -14,6 +14,7 @@ namespace luma
             T data[2];
         };
 
+        constexpr TVector() = default;
         constexpr TVector(T x, T y) : x(x), y(y) {}
         constexpr TVector(T n) : x(n), y(n) {}
         constexpr explicit TVector(const TVector<T, 3>& other) : x(other.x), y(other.y) {}

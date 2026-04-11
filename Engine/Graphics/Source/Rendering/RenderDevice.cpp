@@ -4,6 +4,10 @@
 #include "WebGPU/RenderDevice.h"
 #endif
 
+#ifdef LUMA_BUILD_VULKAN
+#include "Vulkan/RenderDeviceImpl.h"
+#endif
+
 namespace luma
 {
     IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc)
@@ -13,9 +17,9 @@ namespace luma
         {
         case ERenderDeviceType::None:
             return nullptr;
-#ifdef LUMA_BUILD_WEBGPU
-        case ERenderDeviceType::WebGPU:
-            device = new WebGPU::FRenderDevice();
+#ifdef LUMA_BUILD_VULKAN
+        case ERenderDeviceType::Vulkan:
+            device = new vulkan::FRenderDeviceImpl();
             break;
 #endif
         default: return nullptr;

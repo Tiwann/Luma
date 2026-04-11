@@ -6,6 +6,9 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/CommandBuffer.cpp
 )
 
+set(LUMA_VULKAN_SRC
+        Source/Vulkan/RenderDeviceImpl.cpp
+)
 
 set(LUMA_WEBGPU_SRC
         External/webgpu/webgpu.c
@@ -29,6 +32,7 @@ if(LUMA_ENGINE_BUILD_WEBGPU)
 endif ()
 
 if(LUMA_ENGINE_BUILD_VULKAN)
-    target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
-    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY)
+    target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_VULKAN)
+    target_link_libraries(luma-graphics PRIVATE Vulkan::Vulkan Vulkan::volk)
 endif ()
