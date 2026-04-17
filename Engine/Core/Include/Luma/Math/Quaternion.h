@@ -6,7 +6,7 @@
 #include "Matrix.h"
 #include <cmath>
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TQuat

@@ -1,13 +1,16 @@
 ﻿#pragma once
 #include "Luma/Graphics/Export.h"
+#include "SwpchainBuffering.h"
+#include "RenderDeviceType.h"
+#include "Luma/Memory/RefCounted.h"
 #include <cstdint>
-#include <unordered_map>
 
 
-namespace luma
+namespace Luma
 {
     struct FBufferDesc;
     struct FTextureDesc;
+    struct FTextureViewDesc;
     struct FShaderDesc;
     struct FCommandBufferDesc;
     struct FFenceDesc;
@@ -19,6 +22,7 @@ namespace luma
     struct IWindow;
     struct IBuffer;
     struct ITexture;
+    struct ITextureView;
     struct IShader;
     struct ICommandBuffer;
     struct IRenderCommandBuffer;
@@ -28,47 +32,27 @@ namespace luma
     struct ISampler;
     struct IGraphicsPipeline;
     struct IComputePipeline;
+    struct ISwapchain;
+    struct IQueue;
 
-    enum class ERenderDeviceType
-    {
-        None,
-#ifdef LUMA_BUILD_VULKAN
-        Vulkan,
-#endif
-#ifdef LUMA_BUILD_D3D12
-        D3D12,
-#endif
-#ifdef LUMA_BUILD_OPENGL
-        OpenGL,
-#endif
-#ifdef LUMA_BUILD_WEBGPU
-        WebGPU,
-#endif
-#ifdef LUMA_BUILD_NVN
-        NVN,
-#endif
-#ifdef LUMA_BUILD_DEKO3D
-        Deko3D,
-#endif
-#ifdef LUMA_BUILD_GNM
-        GNM,
-#endif
-    };
 
     struct FRenderDeviceDesc
     {
         IWindow* window = nullptr;
         ERenderDeviceType deviceType = ERenderDeviceType::None;
+        ESwapchainBuffering buffering = ESwapchainBuffering::None;
+        bool vSync = false;
+        char padding[3];
     };
 
-    struct LUMA_GRAPHICS_API IRenderDevice
+    struct LUMA_GRAPHICS_API IRenderDevice : IRefCounted<IRenderDevice>
     {
-        virtual ~IRenderDevice() = default;
+        ~IRenderDevice() override = default;
         virtual ERenderDeviceType getDeviceType() = 0;
         virtual bool initialize(const FRenderDeviceDesc& deviceDesc) = 0;
         virtual void destroy() = 0;
 
-        virtual void beginFrame() = 0;
+        virtual bool beginFrame() = 0;
         virtual void endFrame() = 0;
         virtual void present() = 0;
         virtual void waitIdle() = 0;
@@ -76,20 +60,24 @@ namespace luma
         virtual uint32_t getCurrentFrameIndex() = 0;
         virtual bool hasVSync() { return false; }
 
-        virtual IBuffer* createBuffer(const FBufferDesc& bufferDesc) = 0;
-        virtual ITexture* createTexture(const FTextureDesc& textureDesc) = 0;
-        virtual IShader* createShader(const FShaderDesc& shaderDesc) = 0;
-        virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
-        virtual IRenderCommandBuffer* createRenderCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
-        virtual IComputeCommandBuffer* createComputeCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
-        virtual ICopyCommandBuffer* createCopyCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
-        virtual ISampler* createSampler(const FSamplerDesc& samplerDesc) = 0;
-        virtual IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) = 0;
-        virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) = 0;
-        virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
+        virtual ISwapchain* getSwapchain() { return nullptr; }
+        virtual IQueue* getRenderQueue() { return nullptr; }
+        virtual IQueue* getComputeQueue() { return nullptr; }
+        virtual IQueue* getCopyQueue() { return nullptr; }
 
-        //using FSamplerMap = std::unordered_map<FSamplerDesc, ISampler*>;
-        //FSamplerMap m_SamplerMap;
+        virtual IBuffer* createBuffer(const FBufferDesc& bufferDesc) const = 0;
+        virtual ITexture* createTexture(const FTextureDesc& textureDesc) const = 0;
+        virtual ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) const = 0;
+        virtual IShader* createShader(const FShaderDesc& shaderDesc) const = 0;
+        virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) const = 0;
+        ICommandBuffer* createRenderCommandBuffer();
+        ICommandBuffer* createComputeCommandBuffer();
+        ICommandBuffer* createCopyCommandBuffer();
+        virtual ISampler* createSampler(const FSamplerDesc& samplerDesc) const = 0;
+        virtual ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc) = 0;
+        virtual IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) const = 0;
+        virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) const = 0;
+        virtual IFence* createFence(const FFenceDesc& fenceDesc) const = 0;
     };
 
     LUMA_GRAPHICS_API IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc);

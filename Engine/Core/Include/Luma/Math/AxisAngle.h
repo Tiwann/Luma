@@ -2,7 +2,7 @@
 #include "Concepts.h"
 #include "Vector3.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TAxisAngle

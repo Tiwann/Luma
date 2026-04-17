@@ -3,10 +3,10 @@
 #include "Vector3.h"
 #include "Matrix4.h"
 #include "Quaternion.h"
-#include "MatrixTransform.h"
+#include "MatrixTransform.hxx"
 #include "Luma/Containers/Lazy.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TTransform
@@ -72,9 +72,9 @@ namespace luma
             const auto computeMatrix = [&]() -> Matrix
             {
                 Matrix matrix;
-                matrix = luma::scale(matrix, m_Scale);
-                matrix = luma::rotate(matrix, m_Rotation);
-                matrix = luma::translate(matrix, m_Position);
+                matrix = Luma::scale(matrix, m_Scale);
+                matrix = Luma::rotate(matrix, m_Rotation);
+                matrix = Luma::translate(matrix, m_Position);
                 return matrix;
             };
             return m_Matrix.get(computeMatrix);

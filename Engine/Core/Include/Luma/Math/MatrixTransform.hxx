@@ -1,4 +1,5 @@
-﻿#include "Luma/Math/MatrixTransform.h"
+﻿#pragma once
+#include "Luma/Math/MatrixTransform.h"
 #include "Luma/Math/MathMacros.h"
 #include "Luma/Math/Vector2.h"
 #include "Luma/Math/Vector3.h"
@@ -9,7 +10,7 @@
 #include "Luma/Math/Quaternion.h"
 #include <cmath>
 
-namespace luma
+namespace Luma
 {
     template <NumberType T>
     TMatrix<T, 2, 2> rotate(const TMatrix<T, 2, 2>& m, T angle)

@@ -2,35 +2,20 @@
 #include "Luma/Math/Vector2.h"
 #include <rgfw/rgfw.h>
 
-namespace luma
+namespace Luma
 {
-    struct IWindow::Impl
+    bool FDesktopWindow::initialize(const FWindowDesc& windowDesc)
     {
-        RGFW_window* window = nullptr;
-    };
-
-    FDesktopWindow::FDesktopWindow()
-    {
-        m_Pimpl = new Impl();
-    }
-
-    FDesktopWindow::~FDesktopWindow()
-    {
-        delete m_Pimpl;
-    }
-
-    bool FDesktopWindow::initialize(const FWindowCreateInfo& createInfo)
-    {
-        if (m_Pimpl->window) RGFW_window_close(m_Pimpl->window);
-        m_Pimpl->window = RGFW_createWindow(createInfo.title.data(), 0, 0, createInfo.width, createInfo.height, RGFW_windowCenter);
-        if (!m_Pimpl->window) return false;
-        RGFW_window_show(m_Pimpl->window);
+        if (m_Handle) RGFW_window_close(m_Handle);
+        m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, RGFW_windowCenter);
+        if (!m_Handle) return false;
+        RGFW_window_show(m_Handle);
         return true;
     }
 
     void FDesktopWindow::destroy()
     {
-        RGFW_window_close(m_Pimpl->window);
+        RGFW_window_close(m_Handle);
     }
 
     void FDesktopWindow::pollEvents()
@@ -41,21 +26,21 @@ namespace luma
     uint32_t FDesktopWindow::getWidth() const
     {
         int32_t width = 0;
-        RGFW_window_getSize(m_Pimpl->window, &width, nullptr);
+        RGFW_window_getSize(m_Handle, &width, nullptr);
         return static_cast<uint32_t>(width);
     }
 
     uint32_t FDesktopWindow::getHeight() const
     {
         int32_t height = 0;
-        RGFW_window_getSize(m_Pimpl->window, nullptr, &height);
+        RGFW_window_getSize(m_Handle, nullptr, &height);
         return static_cast<uint32_t>(height);
     }
 
     FVector2u FDesktopWindow::getPosition() const
     {
         FVector2i result;
-        RGFW_window_getPosition(m_Pimpl->window, &result.x, &result.y);
+        RGFW_window_getPosition(m_Handle, &result.x, &result.y);
         return result.as<uint32_t>();
     }
 
@@ -66,26 +51,41 @@ namespace luma
 
     bool FDesktopWindow::hasFocus() const
     {
-        return RGFW_window_isInFocus(m_Pimpl->window);
+        return RGFW_window_isInFocus(m_Handle);
     }
 
     bool FDesktopWindow::isMaximized() const
     {
-        return RGFW_window_isMaximized(m_Pimpl->window);
+        return RGFW_window_isMaximized(m_Handle);
     }
 
     bool FDesktopWindow::isMinimized() const
     {
-        return RGFW_window_isMinimized(m_Pimpl->window);
+        return RGFW_window_isMinimized(m_Handle);
     }
 
     void FDesktopWindow::setFullscreen(bool fullscreen)
     {
-        RGFW_window_setFullscreen(m_Pimpl->window, fullscreen);
+        RGFW_window_setFullscreen(m_Handle, fullscreen);
     }
 
     bool FDesktopWindow::shouldClose() const
     {
-        return RGFW_window_shouldClose(m_Pimpl->window);
+        return RGFW_window_shouldClose(m_Handle);
+    }
+
+    RGFW_window* FDesktopWindow::getHandle() const
+    {
+        return m_Handle;
+    }
+
+    std::string FDesktopWindow::getTitle() const
+    {
+        return {};
+    }
+
+    void FDesktopWindow::setTitle(const std::string& title)
+    {
+        RGFW_window_setName(m_Handle, title.data());
     }
 }

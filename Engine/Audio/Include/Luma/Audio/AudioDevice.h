@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include "Luma/Audio/Export.h"
+#include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
-namespace luma
+namespace Luma
 {
     struct FAudioDeviceDesc
     {
@@ -11,9 +12,9 @@ namespace luma
         uint32_t maxListeners = 4;
     };
 
-    struct LUMA_AUDIO_API IAudioDevice
+    struct LUMA_AUDIO_API IAudioDevice : IRefCounted<IAudioDevice>
     {
-        virtual ~IAudioDevice() = default;
+        ~IAudioDevice() override = default;
         virtual bool initialize(const FAudioDeviceDesc& desc = FAudioDeviceDesc()) = 0;
         virtual void destroy() = 0;
     };

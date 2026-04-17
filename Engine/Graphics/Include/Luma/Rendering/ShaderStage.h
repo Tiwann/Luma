@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Runtime/Flags.h"
+#include "Luma/Runtime/Flags.h"
 
-namespace luma
+namespace Luma
 {
-    enum class EShaderStageFlagBits
+    enum class EShaderStageBits
     {
         None = 0,
         Vertex = BIT(0),
@@ -16,5 +16,5 @@ namespace luma
         Mesh = BIT(7),
     };
 
-    typedef Flags<ShaderStageFlagBits> ShaderStageFlags;
+    typedef Flags<EShaderStageBits> FShaderStageFlags;
 }

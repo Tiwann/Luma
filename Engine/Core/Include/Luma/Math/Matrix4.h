@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Vector.h"
+#include "Vector4.h"
 #include "Matrix.h"
 #include <cmath>
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TQuat;

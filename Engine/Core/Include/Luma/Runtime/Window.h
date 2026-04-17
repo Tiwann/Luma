@@ -2,9 +2,9 @@
 #include <cstdint>
 #include <string>
 
-namespace luma
+namespace Luma
 {
-    struct FWindowCreateInfo
+    struct FWindowDesc
     {
         std::string title;
         uint32_t width;
@@ -12,16 +12,13 @@ namespace luma
         uint32_t flags;
     };
 
-
     struct IWindow
     {
         virtual ~IWindow() = default;
-        virtual bool initialize(const FWindowCreateInfo& createInfo) = 0;
+        virtual bool initialize(const FWindowDesc& windowDesc) = 0;
         virtual void destroy() = 0;
         virtual void pollEvents() = 0;
         virtual uint32_t getWidth() const = 0;
         virtual uint32_t getHeight() const = 0;
-
-        struct Impl;
     };
 }

@@ -2,7 +2,7 @@
 #include "Rect.h"
 #include "Vector.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TRect<T, 2>

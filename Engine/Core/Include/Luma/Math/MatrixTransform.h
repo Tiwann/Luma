@@ -2,7 +2,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TQuat;

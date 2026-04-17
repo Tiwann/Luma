@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Runtime/Flags.h"
+#include "Luma/Runtime/Flags.h"
 
-namespace luma
+namespace Luma
 {
-    enum class EColorChannelFlagBits
+    enum class EColorChannelBits
     {
         None = 0,
         Red = BIT(0),
@@ -12,5 +12,5 @@ namespace luma
         Alpha = BIT(3),
     };
 
-    typedef Flags<ColorChannelFlagBits> ColorChannelFlags;
+    typedef Flags<EColorChannelBits> FColorChannelFlags;
 }

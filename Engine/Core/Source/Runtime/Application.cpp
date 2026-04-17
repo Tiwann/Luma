@@ -1,0 +1,417 @@
+﻿#include "Application.h"
+#include "Path.h"
+#include "Scene.h"
+#include "Time.h"
+#include "Window.h"
+#include "Audio/AudioDevice.h"
+#include "Components/Camera.h"
+#include "Editor/HierarchyWindow.h"
+#include "Editor/InspectorWindow.h"
+#include "Rendering/DebugRenderer.h"
+#include "Rendering/Shader.h"
+#include "Rendering/CommandBuffer.h"
+#include "Rendering/Swapchain.h"
+#include "TextureAsset.h"
+#include "Rendering/RenderPass.h"
+#include <imgui.h>
+#include <slang/slang.h>
+
+#include "Font.h"
+#include "Containers/StringConversion.h"
+
+
+namespace Nova
+{
+    static Ref<Shader> LoadShaderBasic(AssetDatabase& database,
+        Ref<RenderDevice> device,
+        const String& moduleName,
+        const String& shaderPath,
+        const Array<String>& includes =  {},
+        const Array<Pair<String, String>>& defines = {})
+    {
+        const ShaderEntryPoint entryPoints[]
+        {
+            {"vert", ShaderStageFlagBits::Vertex},
+            {"frag", ShaderStageFlagBits::Fragment}
+        };
+
+        ShaderCreateInfo shaderCreateInfo;
+        shaderCreateInfo.entryPoints.AddRange<2>(entryPoints);
+        shaderCreateInfo.moduleInfo = { moduleName, Path::GetEngineAssetPath(shaderPath) };
+        shaderCreateInfo.defines = defines;
+        shaderCreateInfo.includes = includes;
+
+        Ref<Shader> shader = device->CreateShader(shaderCreateInfo);
+        if (!shader) return nullptr;
+
+        const String shaderName = StringFormat("{}Shader", moduleName);
+        shader->SetObjectName(shaderName);
+        database.AddAsset(shader, shaderName);
+        return shader;
+    }
+
+
+    static Ref<TextureAsset> LoadTextureBasic(AssetDatabase& database, StringView filepath, const String& assetName)
+    {
+        Ref<TextureAsset> texture = database.CreateAsset<TextureAsset>(assetName);
+        if (!texture->LoadFromFile(Path::GetEngineAssetPath(filepath)))
+        {
+            database.UnloadAsset(texture);
+            return nullptr;
+        }
+        return texture;
+    };
+
+    void Application::Run()
+    {
+        const ApplicationConfiguration configuration = GetConfiguration();
+        const RenderDeviceType deviceType = GetRenderDeviceType();
+
+        // Creating window
+        WindowCreateInfo windowCreateInfo;
+        windowCreateInfo.title = configuration.applicationName;
+        windowCreateInfo.width = configuration.windowWidth;
+        windowCreateInfo.height = configuration.windowHeight;
+        windowCreateInfo.flags = configuration.windowFlags;
+        windowCreateInfo.deviceType = deviceType;
+        m_Window = CreateWindow(windowCreateInfo);
+        if (!m_Window)
+        {
+            Destroy();
+            return;
+        }
+
+        m_Window->CloseEvent.BindMember(this, &Application::Exit);
+
+        // Creating render device;
+        RenderDeviceCreateInfo rdCreateInfo;
+        rdCreateInfo.appName = configuration.applicationName;
+        rdCreateInfo.window = m_Window;
+        rdCreateInfo.buffering = SwapchainBuffering::DoubleBuffering;
+        rdCreateInfo.vSync = configuration.vsync;
+        m_Device = CreateRenderDevice(deviceType, rdCreateInfo);
+        if (!m_Device)
+        {
+            Destroy();
+            return;
+        }
+
+        // Creating render target
+        RenderTargetCreateInfo rtCreateInfo;
+        rtCreateInfo.device = m_Device;
+        rtCreateInfo.width = m_Window->GetWidth();
+        rtCreateInfo.height = m_Window->GetHeight();
+        rtCreateInfo.colorFormat = Format::R8G8B8A8_SRGB;
+        rtCreateInfo.depthFormat = Format::D32_FLOAT_S8_UINT;
+        rtCreateInfo.sampleCount = configuration.msaaSamples;
+        m_RenderTarget = m_Device->CreateRenderTarget(rtCreateInfo);
+        if (!m_RenderTarget)
+        {
+            Destroy();
+            return;
+        }
+        if (Swapchain* swapchain = m_Device->GetSwapchain())
+        {
+            swapchain->ResizedEvent.BindMember(m_RenderTarget.Get(), &RenderTarget::Resize);
+        }
+
+        // Creating imgui renderer
+        m_ImGuiRenderer = CreateImGuiRenderer(m_Window, m_Device, configuration.msaaSamples);
+        if (!m_ImGuiRenderer)
+        {
+            Destroy();
+            return;
+        }
+
+        m_Window->MaximizeEvent.Bind([this]
+        {
+            if (Swapchain* swapchain = m_Device->GetSwapchain())
+                swapchain->Invalidate();
+        });
+
+        m_Window->ResizeEvent.Bind([this](const int32_t, const int32_t)
+        {
+            if (Swapchain* swapchain = m_Device->GetSwapchain())
+                swapchain->Invalidate();
+        });
+
+        if (SLANG_FAILED(slang::createGlobalSession(&m_SlangSession)))
+        {
+            Destroy();
+            return;
+        }
+
+        AudioDeviceCreateInfo audioSystemCreateInfo;
+        audioSystemCreateInfo.channels = 2;
+        audioSystemCreateInfo.sampleRate = 44100;
+        audioSystemCreateInfo.listenerCount = 1;
+        m_AudioDevice = CreateAudioDevice(audioSystemCreateInfo);
+        if (!m_AudioDevice)
+        {
+            Destroy();
+            return;
+        }
+
+        // Load engine shaders
+        LoadShaderBasic(m_AssetDatabase, m_Device, "Sprite", "Shaders/Sprite.slang");
+        //LoadShaderBasic(m_AssetDatabase, m_Device, "BlinnPhongOpaque", "Shaders/BlinnPhong.slang");
+        //LoadShaderBasic(m_AssetDatabase, m_Device, "BlinnPhongTransparent", "Shaders/BlinnPhong.slang", {}, {{"NOVA_MATERIAL_TRANSPARENT"}});
+        //LoadShaderBasic(m_AssetDatabase, m_Device, "BlinnPhongCutout", "Shaders/BlinnPhong.slang", {}, {{"NOVA_MATERIAL_CUTOUT"}});
+        LoadShaderBasic(m_AssetDatabase, m_Device, "PBRShading", "Shaders/PBRShading.slang");
+        LoadShaderBasic(m_AssetDatabase, m_Device, "PBRShadingTransparent", "Shaders/PBRShading.slang", {}, {{"NOVA_MATERIAL_TRANSPARENT"}});
+        LoadShaderBasic(m_AssetDatabase, m_Device, "PBRShadingCutout", "Shaders/PBRShading.slang", {}, {{"NOVA_MATERIAL_CUTOUT"}});
+        LoadShaderBasic(m_AssetDatabase, m_Device, "Fullscreen", "Shaders/Fullscreen.slang");
+        Ref<Shader> debugShader = LoadShaderBasic(m_AssetDatabase, m_Device, "Debug", "Shaders/Debug.slang");
+
+        LoadTextureBasic(m_AssetDatabase, "Textures/BlackTexPlaceholder.png", "BlackTexPlaceholder");
+        LoadTextureBasic(m_AssetDatabase, "Textures/WhiteTexPlaceholder.png", "WhiteTexPlaceholder");
+        LoadTextureBasic(m_AssetDatabase, "Textures/GreyTexPlaceholder.png", "GreyTexPlaceholder");
+        LoadTextureBasic(m_AssetDatabase, "Textures/CheckerTexPlaceholder.png", "CheckerTexPlaceholder");
+        LoadTextureBasic(m_AssetDatabase, "Textures/NormalTexPlaceholder.png", "NormalTexPlaceholder");
+
+        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Regular.ttf"));
+        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Italic.ttf"));
+        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Bold.ttf"));
+        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Light.ttf"));
+
+        DebugRendererCreateInfo debugRendererCreateInfo;
+        debugRendererCreateInfo.device = m_Device;
+        debugRendererCreateInfo.shader = debugShader;
+        debugRendererCreateInfo.maxVertices = 64;
+        if (!DebugRenderer::Initialize(debugRendererCreateInfo))
+        {
+            Destroy();
+            return;
+        }
+
+
+        m_EditorWindows.Add(EditorWindow::CreateWindow<HierarchyWindow>());
+        m_EditorWindows.Add(EditorWindow::CreateWindow<InspectorWindow>());
+
+        OnInit();
+        Update();
+        Destroy();
+    }
+
+    void Application::Exit()
+    {
+        m_IsRunning = false;
+    }
+
+    Application& Application::GetInstance()
+    {
+        return *s_Instance;
+    }
+
+    Ref<Font> Application::LoadFontBasic(const StringView filepath)
+    {
+        FontParams fontParams;
+        fontParams.atlasType = FontAtlasType::MSDF;
+        fontParams.characterSetRanges = CharacterSetRange::Latin().GetView();
+
+        const String filename = StringFromView(Path::GetFilenameWithoutExtension(filepath));
+        Ref<Font> font = m_AssetDatabase.CreateAsset<Font>(filename);
+        if (!font->LoadFromFile(filepath, fontParams))
+            m_AssetDatabase.UnloadAsset(font);
+        return font;
+    }
+
+    void Application::Update()
+    {
+        while (m_IsRunning)
+        {
+            const double currentTime = Time::Get();
+            m_DeltaTime = currentTime - m_LastTime;
+            m_LastTime = currentTime;
+            m_Window->PollEvents();
+
+            for (Ref<EditorWindow>& window : m_EditorWindows)
+                window->OnUpdate(static_cast<float>(m_DeltaTime));
+
+            m_SceneManager.OnUpdate(static_cast<float>(m_DeltaTime));
+            OnUpdate(static_cast<float>(m_DeltaTime));
+
+            m_ImGuiRenderer->BeginFrame();
+            ImGui::DockSpaceOverViewport(ImGui::GetID("Dockspace"), ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+            for (Ref<EditorWindow>& window : m_EditorWindows)
+                window->OnGui();
+            OnGUI();
+            m_ImGuiRenderer->EndFrame();
+
+            Render();
+        }
+    }
+
+    void Application::Render()
+    {
+        if (m_Device->BeginFrame())
+        {
+            CommandBuffer* cmdBuffer = m_Device->GetCurrentCommandBuffer();
+            if (!cmdBuffer)
+            {
+                m_Device->EndFrame();
+                m_Device->Present();
+                return;
+            }
+
+            m_SceneManager.OnPreRender(*cmdBuffer);
+            OnPreRender(*cmdBuffer);
+
+            if (Scene* scene = m_SceneManager.GetActiveScene())
+            {
+                if (Camera* camera = scene->GetFirstComponent<Camera>())
+                {
+                    DebugRenderer::Begin(camera->GetViewProjectionMatrix());
+                    m_SceneManager.OnDrawDebug();
+                    OnDrawDebug();
+                    DebugRenderer::End(*cmdBuffer);
+                }
+            }
+
+
+            Swapchain* swapchain = m_Device->GetSwapchain();
+
+            RenderPassAttachmentInfo colorAttachment;
+            colorAttachment.type = RenderPassAttachmentType::Color;
+            colorAttachment.loadOp = LoadOperation::Clear;
+            colorAttachment.storeOp = StoreOperation::Store;
+            colorAttachment.clearValue.color = Color::Black;
+            colorAttachment.resolveMode = ResolveMode::Average;
+            colorAttachment.textureView = m_RenderTarget->GetColorTextureView();
+            colorAttachment.resolveTextureView = swapchain->GetTextureView();
+
+            RenderPassAttachmentInfo depthAttachment;
+            depthAttachment.type = RenderPassAttachmentType::Depth;
+            depthAttachment.loadOp = LoadOperation::Clear;
+            depthAttachment.storeOp = StoreOperation::Store;
+            depthAttachment.clearValue.depth = 1.0f;
+            depthAttachment.clearValue.stencil = 0;
+            depthAttachment.resolveMode = ResolveMode::Average;
+            depthAttachment.textureView = m_RenderTarget->GetDepthTextureView();
+
+            RenderPassBeginInfo renderPassBeginInfo;
+            renderPassBeginInfo.renderArea = {0, 0, GetWindowWidth(), GetWindowHeight()};
+            renderPassBeginInfo.colorAttachmentCount = 1;
+            renderPassBeginInfo.colorAttachments = &colorAttachment;
+            renderPassBeginInfo.depthAttachment = &depthAttachment;
+
+            cmdBuffer->BeginRenderPass(renderPassBeginInfo);
+            m_SceneManager.OnRender(*cmdBuffer);
+            OnRender(*cmdBuffer);
+            DebugRenderer::Render(*cmdBuffer);
+            cmdBuffer->EndRenderPass();
+
+
+            RenderPassAttachmentInfo imguiColorAttachment;
+            imguiColorAttachment.type = RenderPassAttachmentType::Color;
+            imguiColorAttachment.loadOp = LoadOperation::Load;
+            imguiColorAttachment.storeOp = StoreOperation::Store;
+            imguiColorAttachment.textureView = m_RenderTarget->GetColorTextureView();
+            imguiColorAttachment.resolveMode = ResolveMode::Average;
+            imguiColorAttachment.resolveTextureView = swapchain->GetTextureView();
+
+            RenderPassBeginInfo imguiRenderPassBeginInfo;
+            imguiRenderPassBeginInfo.renderArea = {0, 0, GetWindowWidth(), GetWindowHeight()};
+            imguiRenderPassBeginInfo.colorAttachmentCount = 1;
+            imguiRenderPassBeginInfo.colorAttachments = &imguiColorAttachment;
+            imguiRenderPassBeginInfo.depthAttachment = nullptr;
+
+            cmdBuffer->BeginRenderPass(imguiRenderPassBeginInfo);
+            m_ImGuiRenderer->Render(*cmdBuffer);
+            cmdBuffer->EndRenderPass();
+
+            m_Device->EndFrame();
+            m_Device->Present();
+        }
+    }
+
+    void Application::Destroy()
+    {
+        if (m_Device) m_Device->WaitIdle();
+        m_SceneManager.Destroy();
+        OnDestroy();
+        DebugRenderer::Destroy();
+        m_AssetDatabase.UnloadAll();
+        if (m_SlangSession) m_SlangSession->release();
+        slang::shutdown();
+        if (m_RenderTarget) m_RenderTarget->Destroy();
+        if (m_ImGuiRenderer) m_ImGuiRenderer->Destroy();
+        if (m_Device) m_Device->Destroy();
+        if (m_Window) m_Window->Destroy();
+    }
+
+    float Application::GetDeltaTime() const
+    {
+        return static_cast<float>(m_DeltaTime);
+    }
+
+    const Ref<Window>& Application::GetWindow() const
+    {
+        return m_Window;
+    }
+
+    Ref<Window>& Application::GetWindow()
+    {
+        return m_Window;
+    }
+
+    const Ref<RenderDevice>& Application::GetRenderDevice() const
+    {
+        return m_Device;
+    }
+
+    Ref<RenderDevice>& Application::GetRenderDevice()
+    {
+        return m_Device;
+    }
+
+    Ref<ImGuiRenderer>& Application::GetImGuiRenderer()
+    {
+        return m_ImGuiRenderer;
+    }
+
+    const Ref<ImGuiRenderer>& Application::GetImGuiRenderer() const
+    {
+        return m_ImGuiRenderer;
+    }
+
+    SceneManager* Application::GetSceneManager()
+    {
+        return &m_SceneManager;
+    }
+
+    const Ref<RenderTarget>& Application::GetRenderTarget() const
+    {
+        return m_RenderTarget;
+    }
+
+    Ref<RenderTarget>& Application::GetRenderTarget()
+    {
+        return m_RenderTarget;
+    }
+
+    const AssetDatabase& Application::GetAssetDatabase() const
+    {
+        return m_AssetDatabase;
+    }
+
+    AssetDatabase& Application::GetAssetDatabase()
+    {
+        return m_AssetDatabase;
+    }
+
+    slang::IGlobalSession* Application::GetSlangSession() const
+    {
+        return m_SlangSession;
+    }
+
+    uint32_t Application::GetWindowWidth() const
+    {
+        return m_Window->GetWidth();
+    }
+
+    uint32_t Application::GetWindowHeight() const
+    {
+        return m_Window->GetHeight();
+    }
+}

@@ -2,7 +2,7 @@
 #include "Concepts.h"
 #include "Vector.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T, uint32_t N, typename Vector = TVector<T, N>>
     struct TRay

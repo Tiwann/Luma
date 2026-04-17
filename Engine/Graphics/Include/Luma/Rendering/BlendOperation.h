@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
-    enum class EBlendOperation
+    enum class EBlendOp
     {
         Add,
         Min,

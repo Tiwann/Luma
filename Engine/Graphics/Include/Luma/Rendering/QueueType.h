@@ -1,12 +1,12 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
     enum class EQueueType
     {
         None,
-        Graphics,
+        Render,
         Compute,
-        Transfer
+        Copy
     };
 }

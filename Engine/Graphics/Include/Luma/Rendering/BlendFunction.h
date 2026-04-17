@@ -2,26 +2,26 @@
 #include "BlendFactor.h"
 #include "BlendOperation.h"
 
-namespace luma
+namespace Luma
 {
     struct FBlendFunction
     {
         EBlendFactor colorSource;
         EBlendFactor colorDest;
-        EBlendOperation colorOp;
+        EBlendOp colorOp;
         EBlendFactor alphaSource;
         EBlendFactor alphaDest;
-        EBlendOperation alphaOp;
+        EBlendOp alphaOp;
 
         static constexpr const FBlendFunction& AlphaBlend()
         {
             static FBlendFunction alphaBlend = {
                 EBlendFactor::SourceAlpha,
                 EBlendFactor::OneMinusSourceAlpha,
-                EBlendOperation::Add,
+                EBlendOp::Add,
                 EBlendFactor::One,
                 EBlendFactor::Zero,
-                EBlendOperation::Add
+                EBlendOp::Add
             };
             return alphaBlend;
         }
@@ -31,16 +31,16 @@ namespace luma
             static FBlendFunction additiveBlend = {
                 EBlendFactor::SourceAlpha,
                 EBlendFactor::OneMinusSourceAlpha,
-                EBlendOperation::Add,
+                EBlendOp::Add,
                 EBlendFactor::One,
                 EBlendFactor::Zero,
-                EBlendOperation::Add
+                EBlendOp::Add
             };
             return additiveBlend;
         }
     };
 
-    constexpr FBlendFunction MakeBlendFunction(EBlendFactor src, EBlendFactor dest, EBlendOperation op)
+    constexpr FBlendFunction MakeBlendFunction(EBlendFactor src, EBlendFactor dest, EBlendOp op)
     {
         return { src, dest, op, src, dest, op };
     }

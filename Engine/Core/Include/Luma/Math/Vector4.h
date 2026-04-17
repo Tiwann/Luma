@@ -3,7 +3,7 @@
 #include <limits>
 #include <cmath>
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TVector<T, 4>

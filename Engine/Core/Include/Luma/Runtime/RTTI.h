@@ -21,7 +21,7 @@ return &m_StaticClass_Generated; \
 private: \
 static constexpr Nova::RTTI::Class m_StaticClass_Generated{#className, parentClass::staticClass()}; \
 
-namespace luma::rtti
+namespace Luma::rtti
 {
     class LUMA_CORE_API FClass final
     {

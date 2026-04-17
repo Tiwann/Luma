@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <functional>
 
-namespace luma
+namespace Luma
 {
     template<typename T>
     class TLazy

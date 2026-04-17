@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Runtime/Format.h"
 
-namespace luma
+namespace Luma
 {
     enum class EShaderDataType
     {

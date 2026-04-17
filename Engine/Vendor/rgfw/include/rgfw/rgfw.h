@@ -1,4 +1,4 @@
-﻿/*
+/*
 *
 *	RGFW 2.0.0-dev
 
@@ -313,34 +313,7 @@ int main() {
 	#define RGFW_NO_PASSTHROUGH
 #endif
 
-#if defined(RGFW_EXPORT) ||  defined(RGFW_IMPORT)
-	#if defined(_WIN32)
-		#if defined(__TINYC__) && (defined(RGFW_EXPORT) ||  defined(RGFW_IMPORT))
-			#define __declspec(x) __attribute__((x))
-		#endif
-
-		#if defined(RGFW_EXPORT)
-			#define RGFWDEF __declspec(dllexport)
-		#else
-			#define RGFWDEF __declspec(dllimport)
-		#endif
-	#else
-		#if defined(RGFW_EXPORT)
-			#define RGFWDEF __attribute__((visibility("default")))
-		#endif
-	#endif
-    #ifndef RGFWDEF
-        #define RGFWDEF
-    #endif
-#endif
-
-#ifndef RGFWDEF
-	#ifdef RGFW_C89
-		#define RGFWDEF __inline
-	#else
-		#define RGFWDEF inline
-	#endif
-#endif
+#define RGFWDEF
 
 #if defined(__cplusplus) && !defined(__EMSCRIPTEN__)
 	extern "C" {
@@ -1572,7 +1545,7 @@ RGFWDEF void RGFW_window_blitSurface(RGFW_window* win, RGFW_surface* surface);
  * @param y [OUTPUT] the y position of the window
  * @return a bool if the function was successful
 */
-RGFWDEF RGFW_bool RGFW_window_getPosition(RGFW_window* win, i32* x, i32* y); /*!<  */
+RGFWDEF RGFW_bool RGFW_window_getPosition(RGFW_window* win, i32* x, i32* y);
 
 /**!
  * @brief gets the size of the window | with RGFW_window.w and window.h
@@ -2572,7 +2545,12 @@ RGFWDEF RGFW_bool RGFW_extensionSupportedPlatform_EGL(const char* extension, siz
 #endif
 
 #ifdef RGFW_VULKAN
+#ifndef RGFW_USE_VOLK
+#define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
+#else
+#include <Volk/volk.h>
+#endif
 
 /* if you don't want to use the above macros */
 

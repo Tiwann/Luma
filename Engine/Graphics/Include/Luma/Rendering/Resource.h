@@ -1,15 +1,13 @@
 ﻿#pragma once
-#include "Interface.h"
 #include "ResourceState.h"
 #include "ResourceType.h"
 
-namespace luma
+namespace Luma
 {
-    struct IResource : IBase
+    struct IResource
     {
-        ~IResource() override = default;
+        virtual ~IResource() = default;
         virtual EResourceType getResourceType() = 0;
-        virtual void setResourceState(EResourceState state) = 0;
         virtual EResourceState getResourceState() = 0;
     };
 }

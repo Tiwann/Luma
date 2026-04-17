@@ -1,11 +1,12 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
     enum class EShadingLanguage
     {
         Slang,
         GLSL,
         HLSL,
+        PSSL,
     };
 }

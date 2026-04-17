@@ -1,58 +1,67 @@
 ﻿#pragma once
-#include "Luma/Math/Matrix.h"
 #include "Luma/Containers/Lazy.h"
 #include "Luma/Math/Vector3.h"
-#include "../../../../Core/Include/Luma/Math/Quaternion.h"
-#include "../../../../Core/Include/Luma/Math/AxisAngle.h"
+#include "Luma/Math/Quaternion.h"
+#include "Luma/Math/AxisAngle.h"
+#include "Luma/Math/Matrix4.h"
 #include <cstdint>
 
-namespace luma
+namespace Luma
 {
-    enum class CameraProjectionMode
+    enum class ECameraProjectionMode
     {
         Orthographic,
         Perspective
     };
 
-    struct FCamera
+    template<FloatType F>
+    struct TCamera
     {
-        explicit FCamera() = default;
+        using Matrix = FMatrix4<F>;
+        using Vector = FVector3<F>;
+        using Quat = TQuat<F>;
+        using AxisAngle = TAxisAngle<F>;
 
-        const FMatrix4f& getViewMatrix();
-        const FMatrix4f& getProjectionMatrix();
-        const FMatrix4f& getViewProjectionMatrix();
+        explicit TCamera() = default;
+
+        const Matrix& getViewMatrix();
+        const Matrix& getProjectionMatrix();
+        const Matrix& getViewProjectionMatrix();
 
         void setDimensions(uint32_t width, uint32_t height);
-        void setProjectionMode(CameraProjectionMode mode);
-        void setFieldOfView(float fov);
-        void setClipPlanes(float near, float far);
-        void setOrthographicSize(float orthoSize);
+        void setProjectionMode(ECameraProjectionMode mode);
+        void setFieldOfView(F fov);
+        void setClipPlanes(F near, F far);
+        void setOrthographicSize(F orthoSize);
 
         uint32_t getWidth() const;
         uint32_t getHeight() const;
-        float getNearClipPlane() const;
-        float getFarClipPlane() const;
-        CameraProjectionMode getProjectionMode() const;
-        float getOrthographicSize() const;
-        float getFieldOfView() const;
+        F getNearClipPlane() const;
+        F getFarClipPlane() const;
+        ECameraProjectionMode getProjectionMode() const;
+        F getOrthographicSize() const;
+        F getFieldOfView() const;
 
-        void setPosition(const FVector3f& position);
-        void setRotation(const FQuatf& rotation);
-        void setRotation(const FAxisAngle2f& axisAngle);
+        void setPosition(const Vector& position);
+        void setRotation(const Quat& rotation);
+        void setRotation(const AxisAngle& axisAngle);
     private:
         uint32_t m_Width = 0, m_Height = 0;
-        CameraProjectionMode m_ProjectionMode = CameraProjectionMode::Perspective;
-        float m_FieldOfView = 45.0f;
-        float m_Near = 0.01f;
-        float m_Far = 10000.0f;
-        float m_OrthoSize = 1.0f;
+        ECameraProjectionMode m_ProjectionMode = ECameraProjectionMode::Perspective;
+        F m_FieldOfView = F(45.0);
+        F m_Near = F(0.01);
+        F m_Far = F(10000.0);
+        F m_OrthoSize = F(1.0);
 
-        FVector3f m_Position = FVector3f::Zero;
-        FQuatf m_Rotation = FQuatf::Identity;
+        Vector m_Position = Vector::Zero;
+        Quat m_Rotation = Quat::Identity;
 
-        TLazy<FMatrix4f> m_ViewMatrix;
-        TLazy<FMatrix4f> m_ProjectionMatrix;
-        TLazy<FMatrix4f> m_ViewProjectionMatrix;
+        TLazy<Matrix> m_ViewMatrix;
+        TLazy<Matrix> m_ProjectionMatrix;
+        TLazy<Matrix> m_ViewProjectionMatrix;
     };
+
+    using FCameraf = TCamera<float>;
+    using FCamerad = TCamera<double>;
 }
 

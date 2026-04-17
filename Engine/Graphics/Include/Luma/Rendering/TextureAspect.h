@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Runtime/Flags.h"
+#include "Luma/Runtime/Flags.h"
 
-namespace luma
+namespace Luma
 {
-    enum class ETextureAspectFlagBits
+    enum class ETextureAspectBits
     {
         None = 0,
         Color = BIT(0),
@@ -11,5 +11,5 @@ namespace luma
         Stencil = BIT(2),
     };
 
-    using TextureAspectFlags = Flags<TextureAspectFlagBits>;
+    using FTextureAspectFlags = Flags<ETextureAspectBits>;
 }

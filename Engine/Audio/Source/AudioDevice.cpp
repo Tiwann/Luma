@@ -7,7 +7,7 @@
 #define MA_RETURN_ON_FAIL(result) if(MA_FAILED((result))) return false
 #define MA_RETURN_ON_FAIL_DATA(result, data) if(MA_FAILED((result))) return (data)
 
-namespace luma
+namespace Luma
 {
     struct FAudioDevice::Impl
     {

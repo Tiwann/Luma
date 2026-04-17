@@ -1,11 +1,14 @@
 ﻿#pragma once
-#include "../../../../Core/Include/Luma/Math/Vector3.h"
-#include "../../../../Core/Include/Luma/Math/Rect2.h"
+#include "Luma/Graphics/Export.h"
+#include "Luma/Math/Color.h"
+#include "Luma/Math/Vector3.h"
+#include "Luma/Math/Rect2.h"
 #include "IndexFormat.h"
+#include "QueueType.h"
 #include <cstdint>
 #include <string>
 
-namespace luma
+namespace Luma
 {
     struct IRenderDevice;
     struct IBuffer;
@@ -13,17 +16,11 @@ namespace luma
     struct IComputePipeline;
     struct ITexture;
 
-    enum class ECommandBufferType : uint32_t
-    {
-        Render,
-        Compute,
-        Copy
-    };
 
     struct FCommandBufferDesc
     {
         IRenderDevice* device = nullptr;
-        ECommandBufferType cmdBufferType = ECommandBufferType::Render;
+        EQueueType queueType = EQueueType::Render;
     };
 
     struct FDrawCommand
@@ -47,19 +44,19 @@ namespace luma
     {
         ICommandBuffer() = default;
         virtual ~ICommandBuffer() = default;
-        virtual ECommandBufferType getCommandBufferType() = 0;
-        virtual void begin() = 0;
+        virtual EQueueType getCommandBufferType() = 0;
+        virtual bool initialize(const FCommandBufferDesc& cmdBufferDesc) = 0;
+        virtual void destroy() = 0;
+        virtual void reset() = 0;
+        virtual bool begin() = 0;
         virtual void end() = 0;
 
-        virtual void beginDebugGroup(std::string_view name){}
+        virtual void beginDebugGroup(std::string_view name, const FColor& color){}
         virtual void endDebugGroup(){}
-    };
 
-    class IRenderCommandBuffer : ICommandBuffer
-    {
-    public:
-        IRenderCommandBuffer() = default;
-        ECommandBufferType getCommandBufferType() override { return ECommandBufferType::Render; }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        /// RENDER CMDS
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
@@ -71,25 +68,40 @@ namespace luma
         void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance);
         virtual void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
-    };
 
-    class IComputeCommandBuffer : ICommandBuffer
-    {
-    public:
-        IComputeCommandBuffer() = default;
-        ECommandBufferType getCommandBufferType() override { return ECommandBufferType::Compute; }
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        /// COMPUTE CMDS
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         virtual void bindComputePipeline(const IComputePipeline* pipeline) = 0;
         virtual void dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) = 0;
-        virtual void dispatchIndirect(IBuffer* buffer, int64_t offset) = 0;
         void dispatch(const FVector3u& groupCounts) { dispatch(groupCounts.x, groupCounts.y, groupCounts.z); }
-    };
+        virtual void dispatchIndirect(IBuffer* buffer, int64_t offset) = 0;
 
-    class ICopyCommandBuffer : ICommandBuffer
-    {
-        public:
-        ICopyCommandBuffer() = default;
-        ECommandBufferType getCommandBufferType() override { return ECommandBufferType::Copy; }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        /// COPY CMDS
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         virtual void copyBuffer(IBuffer* srcBuffer, int64_t srcOffset, uint64_t srcSize, IBuffer* dstBuffer, int64_t dstOffset, uint64_t dstSize) = 0;
         virtual void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice, uint32_t mipLevel) = 0;
+    };
+
+    class LUMA_GRAPHICS_API FRenderCommandBuffer
+    {
+    public:
+        FRenderCommandBuffer() = delete;
+        FRenderCommandBuffer(ICommandBuffer* cmdBuffer) : m_CmdBuffer(cmdBuffer){}
+        virtual ~FRenderCommandBuffer() = default;
+
+        void bindVertexBuffer(const IBuffer* buffer, int64_t offset);
+        void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format);
+        void bindGraphicsPipeline(const IGraphicsPipeline* pipeline);
+        void setScissor(const FRect2u& scissor);
+        void setViewport(const FRect2f& viewport, float minDepth = 0.0f, float maxDepth = 1.0f);
+        void draw(const FDrawCommand& drawCmd);
+        void drawIndexed(const FDrawIndexedCommand& drawIndexedCmd);
+        void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount);
+        void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount);
+    private:
+        ICommandBuffer* m_CmdBuffer = nullptr;
     };
 }

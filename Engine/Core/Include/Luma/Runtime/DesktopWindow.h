@@ -3,15 +3,17 @@
 #include "Luma/Core/Export.h"
 #include "Luma/Math/Vector.h"
 
-namespace luma
+struct RGFW_window;
+
+namespace Luma
 {
     class LUMA_CORE_API FDesktopWindow : public IWindow
     {
     public:
-        FDesktopWindow();
-        ~FDesktopWindow() override;
+        FDesktopWindow() = default;
+        ~FDesktopWindow() override = default;
 
-        bool initialize(const FWindowCreateInfo& createInfo) override;
+        bool initialize(const FWindowDesc& windowDesc) override;
         void destroy() override;
         void pollEvents() override;
         uint32_t getWidth() const override;
@@ -23,7 +25,12 @@ namespace luma
         bool isMinimized() const;
         void setFullscreen(bool fullscreen);
         bool shouldClose() const;
+
+        RGFW_window* getHandle() const;
+
+        std::string getTitle() const;
+        void setTitle(const std::string& title);
     private:
-        Impl* m_Pimpl = nullptr;
+        RGFW_window* m_Handle = nullptr;
     };
 }
