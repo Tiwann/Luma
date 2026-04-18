@@ -3,6 +3,8 @@
 #include <Luma/Rendering/RenderDevice.h>
 #include <Luma/Memory/SharedRef.h>
 
+#include "Luma/Runtime/Assertion.h"
+
 using namespace Luma;
 
 int main()
@@ -27,6 +29,8 @@ int main()
     deviceDesc.vSync = false;
 
     TSharedRef<IRenderDevice> renderDevice = TSharedRef(createRenderDevice(deviceDesc));
+    assert(renderDevice, "Render device failed to create! Exiting application.")
+
     while (!window.shouldClose())
     {
         window.pollEvents();
