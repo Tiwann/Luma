@@ -6,6 +6,7 @@
 #include "FenceImpl.h"
 #include "CommandBufferImpl.h"
 #include "ImmediateExecutorImpl.h"
+#include "DescriptorAllocatorImpl.h"
 #include "VulkanFwd.h"
 
 #define VK_FAILED(res) (res != VK_SUCCESS)
@@ -57,6 +58,7 @@ namespace Luma::Vulkan
         static VkInstance getInstance() { return s_Instance; }
         VkDevice getHandle() const { return m_Handle; }
         VkSurfaceKHR getSurface() const { return m_Surface; }
+        VkPhysicalDevice getPhysicalDevice() const { return m_PhysicalDevice; }
         VmaAllocator getAllocator() const { return m_Allocator; }
         VkCommandPool getRenderPool() const { return m_RenderPool; }
         VkCommandPool getComputePool() const { return m_ComputePool; }
@@ -64,11 +66,12 @@ namespace Luma::Vulkan
         VkCommandPool getCommandPool(EQueueType queueType) const;
 
         FImmediateExecutorImpl& getExecutor();
+        FDescriptorAllocatorImpl& getDescriptorAllocator();
 
     private:
         static inline VkInstance s_Instance = nullptr;
         static inline uint32_t s_DeviceCount = 0;
-#if defined(LUMA_DEBUG)
+#ifdef LUMA_DEBUG
         static inline VkDebugUtilsMessengerEXT s_DebugMessenger = nullptr;
 #endif
         VkPhysicalDevice m_PhysicalDevice = nullptr;
@@ -85,6 +88,7 @@ namespace Luma::Vulkan
         FQueueImpl m_ComputeQueue;
         FQueueImpl m_CopyQueue;
         FImmediateExecutorImpl m_ImmediateExecutor;
+        FDescriptorAllocatorImpl m_DescriptorAllocator;
         FFrame m_Frames[3]{};
 
         uint32_t m_CurrentFrameIndex = 0;

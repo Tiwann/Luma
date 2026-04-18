@@ -10,6 +10,7 @@ namespace Luma
         UniformBuffer,
         StorageBuffer,
         StagingBuffer,
-        IndirectBuffer
+        IndirectBuffer,
+        DescriptorHeap
     };
 }

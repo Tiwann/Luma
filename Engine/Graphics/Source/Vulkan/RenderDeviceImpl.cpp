@@ -31,13 +31,13 @@ namespace Luma::Vulkan
 
         if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {
-            std::cout << "[VULKAN ERROR]: " << pCallbackData->pMessage << "\n";
+            std::cerr << "[VULKAN ERROR]: " << pCallbackData->pMessage << std::endl;
             return true;
         }
 
         if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
         {
-            std::cout << "[VULKAN WARNING]: " << pCallbackData->pMessage << "\n";
+            std::cerr << "[VULKAN WARNING]: " << pCallbackData->pMessage << std::endl;
             return true;
         }
         return false;
@@ -87,7 +87,7 @@ namespace Luma::Vulkan
             const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(reinterpret_cast<size_t*>(&rgfwExtensionCount));
             extensions.addRange(rgfwExtensions, rgfwExtensionCount);
 
-#if defined(LUMA_DEBUG) || defined(LUMA_DEV)
+#ifdef LUMA_DEBUG
             extensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
 
@@ -106,7 +106,7 @@ namespace Luma::Vulkan
 
             volkLoadInstance(s_Instance);
 
-#if defined(LUMA_DEBUG) || defined(LUMA_DEV)
+#ifdef LUMA_DEBUG
             if (!s_DebugMessenger)
             {
                 VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = { VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT };
@@ -153,6 +153,26 @@ namespace Luma::Vulkan
                 return false;
         }
 
+        VkPhysicalDeviceDescriptorHeapPropertiesEXT heapProps = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_PROPERTIES_EXT
+        };
+
+        ////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        VkPhysicalDeviceProperties2 props2 = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2 };
+        props2.pNext = &heapProps;
+        vkGetPhysicalDeviceProperties2(m_PhysicalDevice, &props2);
+
+        VkDeviceSize bufferDescSize  = heapProps.bufferDescriptorSize;
+        VkDeviceSize imageDescSize   = heapProps.imageDescriptorSize;
+        VkDeviceSize samplerDescSize = heapProps.samplerDescriptorSize;
+        VkDeviceSize reservedResource = heapProps.minResourceHeapReservedRange;
+        VkDeviceSize reservedSampler  = heapProps.minSamplerHeapReservedRange;
+        ////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////
+
         if (FDesktopWindow* window = dynamic_cast<FDesktopWindow*>(deviceDesc.window))
         {
             if (VK_FAILED(RGFW_window_createSurface_Vulkan(window->getHandle(), s_Instance, &m_Surface)))
@@ -173,20 +193,29 @@ namespace Luma::Vulkan
         {
             if (queueFamilyProperties[i].queueFamilyProperties.queueFlags & (VK_QUEUE_GRAPHICS_BIT))
             {
-                m_RenderQueue.setIndex(i);
-                m_RenderQueue.setQueueType(EQueueType::Render);
+                if (m_RenderQueue.getQueueType() == EQueueType::None)
+                {
+                    m_RenderQueue.setIndex(i);
+                    m_RenderQueue.setQueueType(EQueueType::Render);
+                }
             }
 
             if (queueFamilyProperties[i].queueFamilyProperties.queueFlags & (VK_QUEUE_COMPUTE_BIT))
             {
-                m_ComputeQueue.setIndex(i);
-                m_ComputeQueue.setQueueType(EQueueType::Compute);
+                if (m_ComputeQueue.getQueueType() == EQueueType::None)
+                {
+                    m_ComputeQueue.setIndex(i);
+                    m_ComputeQueue.setQueueType(EQueueType::Compute);
+                }
             }
 
             if (queueFamilyProperties[i].queueFamilyProperties.queueFlags & (VK_QUEUE_TRANSFER_BIT))
             {
-                m_CopyQueue.setIndex(i);
-                m_CopyQueue.setQueueType(EQueueType::Copy);
+                if (m_CopyQueue.getQueueType() == EQueueType::None)
+                {
+                    m_CopyQueue.setIndex(i);
+                    m_CopyQueue.setQueueType(EQueueType::Copy);
+                }
             }
         }
 
@@ -216,9 +245,14 @@ namespace Luma::Vulkan
         Array<const char*> deviceExtensions;
         deviceExtensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+        deviceExtensions.add(VK_EXT_DESCRIPTOR_HEAP_EXTENSION_NAME);
+
+        VkPhysicalDeviceDescriptorHeapFeaturesEXT descriptorHeapFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_HEAP_FEATURES_EXT };
+        descriptorHeapFeatures.descriptorHeap = true;
 
         VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawParametersFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES };
         shaderDrawParametersFeatures.shaderDrawParameters = true;
+        shaderDrawParametersFeatures.pNext = &descriptorHeapFeatures;
 
         VkPhysicalDeviceSynchronization2Features synchronization2Features = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES };
         synchronization2Features.synchronization2 = true;
@@ -310,7 +344,6 @@ namespace Luma::Vulkan
             return false;
         }
 
-        //TODO: CREATE COMMANDS POOLS
         VkCommandPoolCreateInfo commandPoolCreateInfo = { VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO };
         commandPoolCreateInfo.queueFamilyIndex = m_RenderQueue.getIndex();
         commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
@@ -334,6 +367,7 @@ namespace Luma::Vulkan
             return false;
         }
 
+        m_ImmediateExecutor.initialize({this, &m_RenderQueue});
 
         const auto GetPresentMode = [&](const bool vSync) -> EPresentMode
         {
@@ -389,9 +423,12 @@ namespace Luma::Vulkan
         }
 
         //TODO: DESCRIPTOR POOLS
+        FDescriptorAllocatorDesc descriptorAllocatorDesc;
+        descriptorAllocatorDesc.device = this;
+        if (!m_DescriptorAllocator.initialize(descriptorAllocatorDesc))
+            return false;
 
 
-        m_ImmediateExecutor.initialize({this, &m_RenderQueue});
         m_Window = deviceDesc.window;
         s_DeviceCount++;
         return true;
@@ -424,11 +461,13 @@ namespace Luma::Vulkan
         s_DeviceCount--;
         if (s_DeviceCount <= 0)
         {
-#if defined(LUMA_DEBUG) || defined(LUMA_DEV)
+#ifdef LUMA_DEBUG
             vkDestroyDebugUtilsMessengerEXT(s_Instance, s_DebugMessenger, nullptr);
 #endif
             vkDestroyInstance(s_Instance, nullptr);
         }
+
+        delete m_VkProcs;
     }
 
     bool FRenderDeviceImpl::beginFrame()
@@ -439,7 +478,7 @@ namespace Luma::Vulkan
 
         if (!m_Swapchain.isValid())
         {
-            vkDeviceWaitIdle(m_Handle);
+            waitIdle();
             m_Swapchain.resize(window->getWidth(), window->getHeight());
             m_CurrentFrameIndex = 0;
             return false;
@@ -449,7 +488,7 @@ namespace Luma::Vulkan
         fence.wait(FENCE_WAIT_INFINITE);
         fence.reset();
 
-        const VkSemaphore& presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
+        const VkSemaphore presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
         if (!m_Swapchain.acquireNextImage(presentSemaphore, nullptr, m_CurrentFrameIndex))
         {
             m_Swapchain.invalidate();
@@ -512,7 +551,7 @@ namespace Luma::Vulkan
         inDependency.pImageMemoryBarriers = &barrier;
         vkCmdPipelineBarrier2(cmdBuffer.getHandle(), &inDependency);
 
-        FFenceImpl& fence = m_Frames[m_LastFrameIndex].fence;
+        FFenceImpl& fence = m_Frames[m_CurrentFrameIndex].fence;
         const VkSemaphore submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
         const VkSemaphore presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
         cmdBuffer.end();
@@ -688,5 +727,10 @@ namespace Luma::Vulkan
     FImmediateExecutorImpl& FRenderDeviceImpl::getExecutor()
     {
         return m_ImmediateExecutor;
+    }
+
+    FDescriptorAllocatorImpl& FRenderDeviceImpl::getDescriptorAllocator()
+    {
+        return m_DescriptorAllocator;
     }
 }

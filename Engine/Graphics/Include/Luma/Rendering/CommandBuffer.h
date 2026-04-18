@@ -60,6 +60,7 @@ namespace Luma
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
+        //virtual void bindResourceHeap(const IBuffer* buffer)
         virtual void setScissor(const FRect2u& scissor) = 0;
         virtual void setViewport(const FRect2f& viewport, float minDepth = 0.0f, float maxDepth = 1.0f) = 0;
         virtual void draw(const FDrawCommand& drawCmd) = 0;

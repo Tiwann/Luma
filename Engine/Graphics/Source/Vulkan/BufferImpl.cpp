@@ -16,6 +16,9 @@ namespace Luma::Vulkan
         case EBufferUsage::StorageBuffer: return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         case EBufferUsage::StagingBuffer: return VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         case EBufferUsage::IndirectBuffer: return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+#ifdef VK_EXT_descriptor_heap
+        case EBufferUsage::DescriptorHeap: return VK_BUFFER_USAGE_DESCRIPTOR_HEAP_BIT_EXT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+#endif
         default: return 0;
         }
     }
@@ -37,6 +40,9 @@ namespace Luma::Vulkan
         case EBufferUsage::UniformBuffer:
         case EBufferUsage::StorageBuffer:
         case EBufferUsage::IndirectBuffer:
+#ifdef VK_EXT_descriptor_heap
+        case EBufferUsage::DescriptorHeap:
+#endif
             {
                 bufferAllocationCreateInfo.priority = 1.0f;
                 bufferAllocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
