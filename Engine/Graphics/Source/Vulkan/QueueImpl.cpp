@@ -4,6 +4,9 @@
 #include "FenceImpl.h"
 #include <Volk/volk.h>
 
+#include "RenderDeviceImpl.h"
+#include "Luma/Runtime/Assertion.h"
+
 
 namespace Luma::Vulkan
 {
@@ -37,14 +40,15 @@ namespace Luma::Vulkan
 
         if (waitSemaphore)
         {
-            const VkSemaphore waitSemaphores[] { waitSemaphore };
             presentInfo.waitSemaphoreCount = 1;
-            presentInfo.pWaitSemaphores = waitSemaphores;
+            presentInfo.pWaitSemaphores = &waitSemaphore;
         }
 
-        if (vkQueuePresentKHR(m_Handle, &presentInfo) != VK_SUCCESS)
+        if (VK_FAILED(vkQueuePresentKHR(m_Handle, &presentInfo)))
+        {
+            assert(false, "Something went wrong!")
             return false;
-
+        }
         return true;
     }
 

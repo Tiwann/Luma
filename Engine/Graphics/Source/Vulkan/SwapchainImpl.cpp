@@ -3,8 +3,6 @@
 #include "CommandBufferImpl.h"
 #include "Conversions.h"
 #include <Volk/volk.h>
-
-#include "FenceImpl.h"
 #include "ImmediateExecutorImpl.h"
 #include "Luma/Containers/Array.h"
 
@@ -122,9 +120,7 @@ namespace Luma::Vulkan
         const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
         const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, semaphore, fence, &frameIndex);
-        if (result != VK_SUCCESS)
-            return false;
-
+        if (VK_FAILED(result)) return false;
         return true;
     }
     
