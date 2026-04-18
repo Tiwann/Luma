@@ -26,6 +26,7 @@ namespace Luma
 
         virtual void* map() = 0;
         virtual void unmap(const void* ptr) = 0;
+        virtual uint64_t getDeviceAddress() const = 0;
 
         EResourceType getResourceType() final { return EResourceType::Buffer; }
         EResourceState getResourceState() final { return m_State; }
@@ -33,6 +34,8 @@ namespace Luma
         EBufferUsage getUsage() const { return m_Usage; }
         uint64_t getSize() const { return m_Size; }
         bool isAlwaysMapped() const { return m_AlwaysMapped; }
+
+
     protected:
         uint64_t m_Size = 0;
         EBufferUsage m_Usage = EBufferUsage::None;
