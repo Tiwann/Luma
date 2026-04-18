@@ -18,6 +18,7 @@ namespace Luma::Vulkan
 
         void* map() override;
         void unmap(const void* ptr) override;
+        uint64_t getDeviceAddress() const override;
 
         VkBuffer getHandle() const;
         const VkBuffer* getHandlePtr() const;

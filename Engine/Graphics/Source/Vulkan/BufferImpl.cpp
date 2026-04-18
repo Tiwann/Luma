@@ -101,6 +101,17 @@ namespace Luma::Vulkan
         vmaUnmapMemory(allocatorHandle, m_Allocation);
     }
 
+    uint64_t FBufferImpl::getDeviceAddress() const
+    {
+        if (!m_Device) return 0;
+        if (!m_Handle) return 0;
+        const VkDevice deviceHandle = m_Device->getHandle();
+
+        VkBufferDeviceAddressInfo addressInfo = { VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
+        addressInfo.buffer = m_Handle;
+        return vkGetBufferDeviceAddress(deviceHandle, &addressInfo);
+    }
+
     VkBuffer FBufferImpl::getHandle() const
     {
         return m_Handle;
