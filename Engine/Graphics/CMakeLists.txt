@@ -21,6 +21,8 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/TextureImpl.cpp
         Source/Vulkan/TextureViewImpl.cpp
         Source/Vulkan/ImmediateExecutorImpl.cpp
+        Source/Vulkan/BindingSetLayoutImpl.cpp
+        Source/Vulkan/BindingSetImpl.cpp
 )
 
 set(LUMA_WEBGPU_SRC

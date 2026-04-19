@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Window.h"
+#include "Luma/Containers/String.h"
 #include "Luma/Core/Export.h"
 #include "Luma/Math/Vector.h"
 
@@ -28,8 +29,8 @@ namespace Luma
 
         RGFW_window* getHandle() const;
 
-        std::string getTitle() const;
-        void setTitle(const std::string& title);
+        FString getTitle() const;
+        void setTitle(const FString& title);
     private:
         RGFW_window* m_Handle = nullptr;
     };

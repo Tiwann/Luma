@@ -20,7 +20,7 @@
 #include "Containers/StringConversion.h"
 
 
-namespace Nova
+namespace Luma
 {
     static Ref<Shader> LoadShaderBasic(AssetDatabase& database,
         Ref<RenderDevice> device,
@@ -37,7 +37,7 @@ namespace Nova
 
         ShaderCreateInfo shaderCreateInfo;
         shaderCreateInfo.entryPoints.AddRange<2>(entryPoints);
-        shaderCreateInfo.moduleInfo = { moduleName, Path::GetEngineAssetPath(shaderPath) };
+        shaderCreateInfo.moduleInfo = { moduleName, FPath::GetEngineAssetPath(shaderPath) };
         shaderCreateInfo.defines = defines;
         shaderCreateInfo.includes = includes;
 
@@ -54,7 +54,7 @@ namespace Nova
     static Ref<TextureAsset> LoadTextureBasic(AssetDatabase& database, StringView filepath, const String& assetName)
     {
         Ref<TextureAsset> texture = database.CreateAsset<TextureAsset>(assetName);
-        if (!texture->LoadFromFile(Path::GetEngineAssetPath(filepath)))
+        if (!texture->LoadFromFile(FPath::GetEngineAssetPath(filepath)))
         {
             database.UnloadAsset(texture);
             return nullptr;
@@ -169,10 +169,10 @@ namespace Nova
         LoadTextureBasic(m_AssetDatabase, "Textures/CheckerTexPlaceholder.png", "CheckerTexPlaceholder");
         LoadTextureBasic(m_AssetDatabase, "Textures/NormalTexPlaceholder.png", "NormalTexPlaceholder");
 
-        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Regular.ttf"));
-        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Italic.ttf"));
-        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Bold.ttf"));
-        LoadFontBasic(Path::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Light.ttf"));
+        LoadFontBasic(FPath::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Regular.ttf"));
+        LoadFontBasic(FPath::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Italic.ttf"));
+        LoadFontBasic(FPath::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Bold.ttf"));
+        LoadFontBasic(FPath::GetEngineAssetPath("Fonts/JetbrainsMono/JetBrainsMono-Light.ttf"));
 
         DebugRendererCreateInfo debugRendererCreateInfo;
         debugRendererCreateInfo.device = m_Device;
@@ -209,7 +209,7 @@ namespace Nova
         fontParams.atlasType = FontAtlasType::MSDF;
         fontParams.characterSetRanges = CharacterSetRange::Latin().GetView();
 
-        const String filename = StringFromView(Path::GetFilenameWithoutExtension(filepath));
+        const String filename = StringFromView(FPath::GetFilenameWithoutExtension(filepath));
         Ref<Font> font = m_AssetDatabase.CreateAsset<Font>(filename);
         if (!font->LoadFromFile(filepath, fontParams))
             m_AssetDatabase.UnloadAsset(font);

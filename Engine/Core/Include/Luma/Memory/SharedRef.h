@@ -191,5 +191,11 @@ namespace Luma
     }
 
     template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
+    TSharedRef<T> makeShared(T* object)
+    {
+        return TSharedRef<T>(object);
+    }
+
+    template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
     TWeakRef<T> createWeakRef(const TSharedRef<T>& ref) { return TWeakRef<T>(ref); }
 }

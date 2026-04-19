@@ -50,7 +50,7 @@ namespace Luma::Vulkan
         if (vkGetSwapchainImagesKHR(deviceHandle, m_Handle, (uint32_t*)&m_Buffering, m_Images) != VK_SUCCESS)
             return false;
 
-        Array<VkImageMemoryBarrier2> barriers;
+        TArray<VkImageMemoryBarrier2> barriers;
         for (size_t i = 0; i < getImageCount(); i++)
         {
             vkDestroyImageView(deviceHandle, m_ImageViews[i], nullptr);

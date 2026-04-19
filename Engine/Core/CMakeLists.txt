@@ -1,6 +1,14 @@
 ﻿
 
 set(LUMA_CORE_SRC
+        Include/Luma/Containers/Array.h
+        Include/Luma/Containers/Character.h
+        Include/Luma/Containers/Lazy.h
+        Include/Luma/Containers/String.h
+        Include/Luma/Containers/StringConversion.h
+        Include/Luma/Containers/StringFormat.h
+        Include/Luma/Containers/StringView.h
+
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
         Source/Math/Matrix.cpp
@@ -13,33 +21,32 @@ set(LUMA_CORE_SRC
         Include/Luma/Math/MatrixProjection.hxx
         Source/Modules/ModuleManager.cpp
         Source/Runtime/RTTI.cpp
+        Source/Runtime/Path.cpp
+        Source/Runtime/DialogFilters.cpp
+        Source/Containers/StringFormat.cpp
         ##Source/Runtime/Application.cpp
         Source/Memory/Memory.cpp
         Source/Memory/Allocator.cpp
-        Include/Luma/Containers/Array.h
+
 )
 
-set(LUMA_DESKTOP_SRC
+set(LUMA_CORE_WINDOWS_SRC
         Source/Runtime/DesktopWindow.cpp
+        Source/Platform/Windows/StringConversion.cpp
+        Source/Platform/Windows/FileDialog.cpp
+        Source/Platform/Windows/FileSystem.cpp
 )
-
 
 
 add_library(luma-core ${LUMA_CORE_SRC})
 target_include_directories(luma-core PRIVATE Source PUBLIC Include External)
-target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT)
+target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT PUBLIC LUMA_ENGINE_ROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26)
 luma_generate_export_header(TARGET luma-core MODULE_NAME CORE)
 
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(luma-core PRIVATE LUMA_BUILD_DLL)
 endif ()
-
-if(WIN32 OR APPLE OR LINUX)
-target_sources(luma-core PRIVATE ${LUMA_DESKTOP_SRC})
-target_link_libraries(luma-core PRIVATE RGFW::RGFW)
-endif ()
-
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     target_compile_definitions(luma-core PUBLIC LUMA_DEBUG)
@@ -51,10 +58,14 @@ endif ()
 
 if (WIN32)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_WINDOWS UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
+    target_sources(luma-core PRIVATE ${LUMA_CORE_WINDOWS_SRC})
+    target_link_libraries(luma-core PRIVATE RGFW::RGFW)
 elseif (LINUX)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_LINUX)
+    target_link_libraries(luma-core PRIVATE RGFW::RGFW)
 elseif (MACOS)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_MACOS)
+    target_link_libraries(luma-core PRIVATE RGFW::RGFW)
 elseif(SWITCH)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_SWITCH)
     target_link_libraries(luma-core PUBLIC libnx)

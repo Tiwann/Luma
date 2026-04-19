@@ -1,6 +1,6 @@
 ﻿#include "ResourceBarrier.h"
 
-namespace Nova
+namespace Luma
 {
     ResourceAccessFlags GetSourceAccessFlags(const ResourceState resourceState)
     {

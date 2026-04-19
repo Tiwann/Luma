@@ -3,10 +3,10 @@
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
 #include "Luma/Math/Rect2.h"
+#include "Luma/Containers/StringView.h"
 #include "IndexFormat.h"
 #include "QueueType.h"
 #include <cstdint>
-#include <string>
 
 namespace Luma
 {
@@ -51,7 +51,7 @@ namespace Luma
         virtual bool begin() = 0;
         virtual void end() = 0;
 
-        virtual void beginDebugGroup(std::string_view name, const FColor& color){}
+        virtual void beginDebugGroup(FStringView name, const FColor& color){}
         virtual void endDebugGroup(){}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////

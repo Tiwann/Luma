@@ -77,10 +77,10 @@ namespace Luma::Vulkan
             applicationInfo.pApplicationName = "Luma Engine";
             applicationInfo.applicationVersion = 0;
 
-            Array<const char*> layers;
+            TArray<const char*> layers;
             layers.add(VK_LAYER_KHRONOS_VALIDATION_NAME);
 
-            Array<const char*> extensions;
+            TArray<const char*> extensions;
             extensions.add(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
 
             uint32_t rgfwExtensionCount = 0;
@@ -164,7 +164,7 @@ namespace Luma::Vulkan
 
         uint32_t queueFamilyPropertiesCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties2(m_PhysicalDevice, &queueFamilyPropertiesCount, nullptr);
-        Array<VkQueueFamilyProperties2> queueFamilyProperties(queueFamilyPropertiesCount);
+        TArray<VkQueueFamilyProperties2> queueFamilyProperties(queueFamilyPropertiesCount);
         for (VkQueueFamilyProperties2& properties : queueFamilyProperties)
             properties.sType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
         vkGetPhysicalDeviceQueueFamilyProperties2(m_PhysicalDevice, &queueFamilyPropertiesCount, queueFamilyProperties.data());
@@ -191,7 +191,7 @@ namespace Luma::Vulkan
         }
 
 
-        Array<VkDeviceQueueCreateInfo> queueCreateInfos;
+        TArray<VkDeviceQueueCreateInfo> queueCreateInfos;
         static constexpr float queuePriorities[] = { 1.0f };
 
         VkDeviceQueueCreateInfo renderQueueCreateInfo = { VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO };
@@ -213,7 +213,7 @@ namespace Luma::Vulkan
         queueCreateInfos.add(transferQueueCreateInfo);
 
 
-        Array<const char*> deviceExtensions;
+        TArray<const char*> deviceExtensions;
         deviceExtensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
 
@@ -345,7 +345,7 @@ namespace Luma::Vulkan
 
                 uint32_t presentModeCount;
                 vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice, m_Surface, &presentModeCount, nullptr);
-                Array<VkPresentModeKHR> presentModes(presentModeCount);
+                TArray<VkPresentModeKHR> presentModes(presentModeCount);
                 vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice, m_Surface, &presentModeCount, presentModes.data());
 
                 if (presentModes.contains(VK_PRESENT_MODE_MAILBOX_KHR))

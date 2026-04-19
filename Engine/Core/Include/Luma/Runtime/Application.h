@@ -12,7 +12,7 @@ namespace Luma
 
     struct FApplicationConfiguration
     {
-        std::string applicationName = "Nova Application";
+        FString applicationName = "Luma Application";
         uint32_t windowWidth = 600;
         uint32_t windowHeight = 400;
         bool vsync = false;

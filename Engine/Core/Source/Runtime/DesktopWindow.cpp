@@ -79,13 +79,13 @@ namespace Luma
         return m_Handle;
     }
 
-    std::string FDesktopWindow::getTitle() const
+    FString FDesktopWindow::getTitle() const
     {
         return {};
     }
 
-    void FDesktopWindow::setTitle(const std::string& title)
+    void FDesktopWindow::setTitle(const FString& title)
     {
-        RGFW_window_setName(m_Handle, title.data());
+        RGFW_window_setName(m_Handle, *title);
     }
 }

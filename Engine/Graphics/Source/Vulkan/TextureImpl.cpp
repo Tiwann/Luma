@@ -146,7 +146,7 @@ namespace Luma::Vulkan
         return m_State;
     }
 
-    const ITextureView* FTextureImpl::getTextureView()
+    const ITextureView* FTextureImpl::getTextureView() const
     {
         return &m_View;
     }

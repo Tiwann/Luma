@@ -62,7 +62,7 @@ namespace Luma::Vulkan
         VkCommandPool getComputePool() const { return m_ComputePool; }
         VkCommandPool getCopyPool() const { return m_CopyPool; }
         VkCommandPool getCommandPool(EQueueType queueType) const;
-
+        VkDescriptorPool getDescriptorPool() const { return m_DescriptorPool; }
         FImmediateExecutorImpl& getExecutor();
 
     private:
@@ -78,6 +78,7 @@ namespace Luma::Vulkan
         VkCommandPool m_RenderPool = nullptr;
         VkCommandPool m_ComputePool = nullptr;
         VkCommandPool m_CopyPool = nullptr;
+        VkDescriptorPool m_DescriptorPool = nullptr;
         VmaVulkanFunctions* m_VkProcs = nullptr;
 
         FSwapchainImpl m_Swapchain;

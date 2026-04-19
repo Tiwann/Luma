@@ -22,7 +22,7 @@ namespace Luma::Vulkan
         VkImage getImage() const;
         VmaAllocation getAllocation() const;
         EResourceState getResourceState() override;
-        const ITextureView* getTextureView() override;
+        const ITextureView* getTextureView() const override;
     private:
         friend FSwapchainImpl;
         FRenderDeviceImpl* m_Device = nullptr;

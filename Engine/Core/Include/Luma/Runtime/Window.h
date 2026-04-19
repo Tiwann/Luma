@@ -1,12 +1,12 @@
 ﻿#pragma once
+#include "Luma/Containers/String.h"
 #include <cstdint>
-#include <string>
 
 namespace Luma
 {
     struct FWindowDesc
     {
-        std::string title;
+        FString title;
         uint32_t width;
         uint32_t height;
         uint32_t flags;

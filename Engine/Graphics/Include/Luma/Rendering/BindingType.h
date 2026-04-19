@@ -4,6 +4,7 @@ namespace Luma
 {
     enum class EBindingType
     {
+        None,
         Sampler,
         CombinedTextureSampler,
         SampledTexture,

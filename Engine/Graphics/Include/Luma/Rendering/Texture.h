@@ -91,7 +91,7 @@ namespace Luma
         FTextureUsageFlags getUsageFlags() const { return m_UsageFlags; }
         ETextureDimension getDimension() const { return m_Dimension; }
 
-        virtual const ITextureView* getTextureView() = 0;
+        virtual const ITextureView* getTextureView() const = 0;
     protected:
         EFormat m_Format = EFormat::None;
         uint32_t m_Width = 0;

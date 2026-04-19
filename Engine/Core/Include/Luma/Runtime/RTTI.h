@@ -1,33 +1,33 @@
 ﻿#pragma once
 #include "Luma/Core/Export.h"
-#include <string>
+#include "Luma/Containers/StringView.h"
 
 #define NOVA_DECLARE_CLASS(className) \
 public: \
-static inline constexpr const Nova::RTTI::Class* staticClass() \
+static inline constexpr const Luma::RTTI::Class* staticClass() \
 { \
 return &m_StaticClass_Generated; \
 } \
 private: \
-static constexpr Nova::RTTI::Class m_StaticClass_Generated{#className, nullptr}; \
+static constexpr Luma::RTTI::Class m_StaticClass_Generated{#className, nullptr}; \
 
 
 #define NOVA_DECLARE_CLASS_WITH_PARENT(className, parentClass) \
 public: \
-static inline constexpr const Nova::RTTI::Class* staticClass() \
+static inline constexpr const Luma::RTTI::Class* staticClass() \
 { \
 return &m_StaticClass_Generated; \
 } \
 private: \
-static constexpr Nova::RTTI::Class m_StaticClass_Generated{#className, parentClass::staticClass()}; \
+static constexpr Luma::RTTI::Class m_StaticClass_Generated{#className, parentClass::staticClass()}; \
 
-namespace Luma::rtti
+namespace Luma::RTTI
 {
     class LUMA_CORE_API FClass final
     {
     public:
         FClass() = delete;
-        constexpr FClass(std::string_view className, const FClass* parentClass)
+        constexpr FClass(FStringView className, const FClass* parentClass)
             : m_ClassName(className), m_ParentClass(parentClass){}
 
         FClass(const FClass&) = delete;
@@ -70,12 +70,12 @@ namespace Luma::rtti
             return cast(T::staticClass());
         }
 
-        constexpr std::string_view getName() const { return m_ClassName; }
+        constexpr FStringView getName() const { return m_ClassName; }
         constexpr const FClass* getParent() const { return m_ParentClass; }
 
 
     private:
-        std::string_view m_ClassName;
+        FStringView m_ClassName;
         const FClass* m_ParentClass;
     };
 }
