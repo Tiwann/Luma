@@ -155,4 +155,13 @@ namespace Luma::Vulkan
     void FCommandBufferImpl::copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture,uint32_t arraySlice, uint32_t mipLevel)
     {
     }
+
+    void FCommandBufferImpl::setName(FStringView name)
+    {
+        VkDebugUtilsObjectNameInfoEXT nameInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT };
+        nameInfo.objectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
+        nameInfo.objectHandle = reinterpret_cast<uint64_t>(m_Handle);
+        nameInfo.pObjectName = *name;
+        vkSetDebugUtilsObjectNameEXT(m_Device->getHandle(), &nameInfo);
+    }
 }

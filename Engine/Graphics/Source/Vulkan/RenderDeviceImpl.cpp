@@ -15,6 +15,8 @@
 #include <rgfw/rgfw.h>
 #include <vma/vk_mem_alloc.h>
 
+#include "Luma/Containers/StringFormat.h"
+#include "Luma/Rendering/ResourceBarrier.h"
 
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
@@ -33,15 +35,16 @@ namespace Luma::Vulkan
 
         if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
         {
-            std::cout << "[VULKAN ERROR]: " << pCallbackData->pMessage << "\n";
-            return true;
+            std::cout << "[VULKAN ERROR]: " << pCallbackData->pMessage << std::endl;
+            return false;
         }
 
         if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
         {
-            std::cout << "[VULKAN WARNING]: " << pCallbackData->pMessage << "\n";
-            return true;
+            std::cout << "[VULKAN WARNING]: " << pCallbackData->pMessage << std::endl;
+            return false;
         }
+
         return false;
     };
 
@@ -54,19 +57,19 @@ namespace Luma::Vulkan
     {
         if (!deviceDesc.window)
         {
-            std::wcerr << L"Failed to initialize render device: Invalid window!\n";
+            std::wcerr << L"Failed to initialize render device: Invalid window!" << std::endl;
             return false;
         }
 
         if (deviceDesc.buffering == ESwapchainBuffering::None)
         {
-            std::wcerr << L"Failed to initialize render device: Invalid buffering!\n";
+            std::wcerr << L"Failed to initialize render device: Invalid buffering!" << std::endl;
             return false;
         }
 
         if (VK_FAILED(volkInitialize()))
         {
-            std::wcerr << L"Failed to initialize Volk!\n";
+            std::wcerr << L"Failed to initialize Volk!" << std::endl;
             return false;
         }
 
@@ -88,10 +91,7 @@ namespace Luma::Vulkan
             uint32_t rgfwExtensionCount = 0;
             const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(reinterpret_cast<size_t*>(&rgfwExtensionCount));
             extensions.addRange(rgfwExtensions, rgfwExtensionCount);
-
-#if defined(LUMA_DEBUG) || defined(LUMA_DEV)
             extensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
 
             VkInstanceCreateInfo instanceCreateInfo = { VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO };
             instanceCreateInfo.pApplicationInfo = &applicationInfo;
@@ -108,7 +108,7 @@ namespace Luma::Vulkan
 
             volkLoadInstance(s_Instance);
 
-#if defined(LUMA_DEBUG) || defined(LUMA_DEV)
+#if defined(LUMA_DEBUG)
             if (!s_DebugMessenger)
             {
                 VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = { VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT };
@@ -292,20 +292,20 @@ namespace Luma::Vulkan
             return false;
         }
 
-        if (!m_VkProcs) m_VkProcs = new VmaVulkanFunctions();
+        if (!m_VulkanFunctions) m_VulkanFunctions = new VmaVulkanFunctions();
 
         VmaAllocatorCreateInfo allocatorCreateInfo = { 0 };
         allocatorCreateInfo.device = m_Handle;
         allocatorCreateInfo.instance = s_Instance;
         allocatorCreateInfo.physicalDevice = m_PhysicalDevice;
         allocatorCreateInfo.vulkanApiVersion = VK_API_VERSION_1_4;
-        if (VK_FAILED(vmaImportVulkanFunctionsFromVolk(&allocatorCreateInfo, m_VkProcs)))
+        if (VK_FAILED(vmaImportVulkanFunctionsFromVolk(&allocatorCreateInfo, m_VulkanFunctions)))
         {
             std::wcerr << L"Failed to import vulkan functions pointers to vma!\n";
             return false;
         }
 
-        allocatorCreateInfo.pVulkanFunctions = m_VkProcs;
+        allocatorCreateInfo.pVulkanFunctions = m_VulkanFunctions;
         if (VK_FAILED(vmaCreateAllocator(&allocatorCreateInfo, &m_Allocator)))
         {
             std::wcerr << L"Failed to create Vulkan allocator!\n";
@@ -382,10 +382,17 @@ namespace Luma::Vulkan
 
         for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
         {
-            m_Frames[imageIndex].presentSemaphore.initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
-            m_Frames[imageIndex].submitSemaphore.initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
-            m_Frames[imageIndex].fence.initialize(FFenceDesc(this));
-            m_Frames[imageIndex].cmdBuffer.initialize(FCommandBufferDesc(this, EQueueType::Render));
+            m_PresentSemaphores[imageIndex].initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
+            m_PresentSemaphores[imageIndex].setName(strfmt("Present semaphore (frame {})", imageIndex));
+
+            m_SubmitSemaphores[imageIndex].initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
+            m_SubmitSemaphores[imageIndex].setName(strfmt("Submit semaphore (frame {})", imageIndex));
+
+            m_Fences[imageIndex].initialize(FFenceDesc(this, false));
+            m_Fences[imageIndex].setName(strfmt("Fence (frame {})", imageIndex));
+
+            m_CmdBuffers[imageIndex].initialize(FCommandBufferDesc(this, EQueueType::Render));
+            m_CmdBuffers[imageIndex].setName(strfmt("Command buffer (frame {})", imageIndex));
         }
 
         //TODO: DESCRIPTOR POOLS
@@ -403,10 +410,10 @@ namespace Luma::Vulkan
         m_ImmediateExecutor.destroy();
         for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
         {
-            m_Frames[imageIndex].submitSemaphore.destroy();
-            m_Frames[imageIndex].presentSemaphore.destroy();
-            m_Frames[imageIndex].fence.destroy();
-            m_Frames[imageIndex].cmdBuffer.destroy();
+            m_PresentSemaphores[imageIndex].destroy();
+            m_SubmitSemaphores[imageIndex].destroy();
+            m_Fences[imageIndex].destroy();
+            m_CmdBuffers[imageIndex].destroy();
         }
 
         vkDestroyCommandPool(m_Handle, m_CopyPool, nullptr);
@@ -422,7 +429,7 @@ namespace Luma::Vulkan
         s_DeviceCount--;
         if (s_DeviceCount <= 0)
         {
-#if defined(LUMA_DEBUG) || defined(LUMA_DEV)
+#if defined(LUMA_DEBUG)
             vkDestroyDebugUtilsMessengerEXT(s_Instance, s_DebugMessenger, nullptr);
 #endif
             vkDestroyInstance(s_Instance, nullptr);
@@ -437,43 +444,45 @@ namespace Luma::Vulkan
 
         if (!m_Swapchain.isValid())
         {
-            vkDeviceWaitIdle(m_Handle);
+            waitIdle();
             m_Swapchain.resize(window->getWidth(), window->getHeight());
             m_CurrentFrameIndex = 0;
             return false;
         }
 
-        FFenceImpl& fence = m_Frames[m_LastFrameIndex].fence;
+        FFenceImpl& fence = m_Fences[m_CurrentFrameIndex];
         fence.wait(FENCE_WAIT_INFINITE);
-        fence.reset();
 
-        FSemaphoreImpl& presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
-        if (!m_Swapchain.acquireNextImage(&presentSemaphore, nullptr, m_CurrentFrameIndex))
+        FSemaphoreImpl& presentSemaphore = m_PresentSemaphores[m_CurrentFrameIndex];
+        if (!m_Swapchain.acquireNextImage(&presentSemaphore, nullptr, m_SwapchainImageIndex))
         {
             m_Swapchain.invalidate();
             return false;
         }
 
-        FCommandBufferImpl& commandBuffer = m_Frames[m_CurrentFrameIndex].cmdBuffer;
-        if (!commandBuffer.begin())
-            return false;
+        fence.reset();
+
+
+        FCommandBufferImpl& commandBuffer = m_CmdBuffers[m_CurrentFrameIndex];
+        if (!commandBuffer.begin()) return false;
+
 
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
+        barrier.image = m_Swapchain.getImage(m_SwapchainImageIndex);
         barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
-        barrier.srcAccessMask = VK_ACCESS_2_NONE;
-        barrier.dstAccessMask = VK_ACCESS_2_NONE;
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.image = m_Swapchain.getImage(m_CurrentFrameIndex);
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseMipLevel = 0;
         barrier.subresourceRange.levelCount = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount = 1;
-        barrier.srcStageMask = 0;
-        barrier.dstStageMask = 0;
+        barrier.srcStageMask = VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT;
+        barrier.dstStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
+        barrier.srcAccessMask = VK_ACCESS_2_NONE;
+        barrier.dstAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 
         VkDependencyInfo dependency = { VK_STRUCTURE_TYPE_DEPENDENCY_INFO };
         dependency.dependencyFlags = 0;
@@ -485,24 +494,24 @@ namespace Luma::Vulkan
 
     void FRenderDeviceImpl::endFrame()
     {
-        FCommandBufferImpl& cmdBuffer = m_Frames[m_CurrentFrameIndex].cmdBuffer;
+        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_CurrentFrameIndex];
 
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
+        barrier.image = m_Swapchain.getImage(m_SwapchainImageIndex);
         barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-        barrier.srcAccessMask = VK_ACCESS_2_NONE;
-        barrier.dstAccessMask = VK_ACCESS_2_NONE;
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.image = m_Swapchain.getImage(m_CurrentFrameIndex);
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseMipLevel = 0;
         barrier.subresourceRange.levelCount = 1;
         barrier.subresourceRange.baseArrayLayer = 0;
         barrier.subresourceRange.layerCount = 1;
-        barrier.srcStageMask = 0;
-        barrier.dstStageMask = 0;
+        barrier.srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
+        barrier.dstStageMask = VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT;
+        barrier.srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
+        barrier.dstAccessMask = VK_ACCESS_2_NONE;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 
         VkDependencyInfo inDependency = { VK_STRUCTURE_TYPE_DEPENDENCY_INFO };
         inDependency.dependencyFlags = 0;
@@ -510,9 +519,9 @@ namespace Luma::Vulkan
         inDependency.pImageMemoryBarriers = &barrier;
         vkCmdPipelineBarrier2(cmdBuffer.getHandle(), &inDependency);
 
-        FFenceImpl& fence = m_Frames[m_LastFrameIndex].fence;
-        const FSemaphoreImpl& presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
-        const FSemaphoreImpl& submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
+        FFenceImpl& fence = m_Fences[m_CurrentFrameIndex];
+        const FSemaphoreImpl& presentSemaphore = m_PresentSemaphores[m_CurrentFrameIndex];
+        const FSemaphoreImpl& submitSemaphore = m_SubmitSemaphores[m_CurrentFrameIndex];
         cmdBuffer.end();
 
         m_RenderQueue.waitForSemaphore(&presentSemaphore);
@@ -522,10 +531,10 @@ namespace Luma::Vulkan
 
     void FRenderDeviceImpl::present()
     {
-        FSemaphoreImpl& submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
+        FSemaphoreImpl& submitSemaphore = m_SubmitSemaphores[m_CurrentFrameIndex];
         if (!m_RenderQueue.present(&m_Swapchain, &submitSemaphore, m_CurrentFrameIndex))
             m_Swapchain.invalidate();
-        m_LastFrameIndex = m_CurrentFrameIndex;
+        m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % m_Swapchain.getImageCount();
     }
 
     void FRenderDeviceImpl::waitIdle()
@@ -685,6 +694,11 @@ namespace Luma::Vulkan
             return nullptr;
         }
         return semaphore;
+    }
+
+    VkInstance FRenderDeviceImpl::getInstance()
+    {
+        return s_Instance;
     }
 
     VkCommandPool FRenderDeviceImpl::getCommandPool(const EQueueType queueType) const

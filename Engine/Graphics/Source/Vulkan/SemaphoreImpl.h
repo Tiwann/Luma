@@ -16,7 +16,9 @@ namespace Luma::Vulkan
         uint64_t getValue() const override;
         void signal(uint64_t value) override;
         void wait(uint64_t value, uint64_t timeout) override;
+        void setName(FStringView name) override;
         VkSemaphore getHandle() const { return m_Handle; }
+
     private:
         FRenderDeviceImpl* m_Device = nullptr;
         VkSemaphore m_Handle = nullptr;

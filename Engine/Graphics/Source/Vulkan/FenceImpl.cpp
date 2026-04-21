@@ -10,7 +10,7 @@ namespace Luma::Vulkan
         const VkDevice deviceHandle = device->getHandle();
 
         VkFenceCreateInfo fenceCreateInfo = { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO };
-        fenceCreateInfo.flags = 0;
+        fenceCreateInfo.flags = fenceDesc.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
         vkDestroyFence(deviceHandle, m_Handle, nullptr);
 
         const VkResult result = vkCreateFence(deviceHandle, &fenceCreateInfo, nullptr, &m_Handle);
@@ -39,5 +39,14 @@ namespace Luma::Vulkan
     {
         const VkDevice deviceHandle = m_Device->getHandle();
         vkResetFences(deviceHandle, 1, &m_Handle);
+    }
+
+    void FFenceImpl::setName(FStringView name)
+    {
+        VkDebugUtilsObjectNameInfoEXT nameInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT };
+        nameInfo.objectType = VK_OBJECT_TYPE_FENCE;
+        nameInfo.objectHandle = reinterpret_cast<uint64_t>(m_Handle);
+        nameInfo.pObjectName = *name;
+        vkSetDebugUtilsObjectNameEXT(m_Device->getHandle(), &nameInfo);
     }
 }

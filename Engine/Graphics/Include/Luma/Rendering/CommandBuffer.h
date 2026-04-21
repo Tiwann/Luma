@@ -55,6 +55,7 @@ namespace Luma
 
         virtual void beginDebugGroup(FStringView name, const FColor& color){}
         virtual void endDebugGroup(){}
+        virtual void setName(FStringView name) {}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// RENDER CMDS

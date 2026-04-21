@@ -112,18 +112,21 @@ namespace Luma::Vulkan
         m_Handle = nullptr;
     }
     
-    bool FSwapchainImpl::acquireNextImage(ISemaphore* semaphore, IFence* fence, uint32_t& frameIndex) const
+    bool FSwapchainImpl::acquireNextImage(FSemaphoreImpl* semaphore, IFence* fence, uint32_t& frameIndex)
     {
         if (!semaphore) return false;
 
-        const VkFence vkFence = fence ? static_cast<FFenceImpl*>(fence)->getHandle() : nullptr;
-        const VkSemaphore vkSem = semaphore ? static_cast<FSemaphoreImpl*>(semaphore)->getHandle() : nullptr;
-
+        const VkFence fenceHandle = fence ? static_cast<FFenceImpl*>(fence)->getHandle() : nullptr;
         const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
-        const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, vkSem, vkFence, &frameIndex);
-        if (VK_FAILED(result)) return false;
-        return true;
+        const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, semaphore->getHandle(), fenceHandle, &frameIndex);
+        if (result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
+        {
+            if (result == VK_SUBOPTIMAL_KHR)
+                m_Valid = false;
+            return true;
+        }
+        return false;
     }
     
     VkSwapchainKHR FSwapchainImpl::getHandle() const
@@ -148,17 +151,16 @@ namespace Luma::Vulkan
 
     bool FSwapchainImpl::isValid() const
     {
-        return ISwapchain::isValid();
+        return m_Valid;
     }
 
-    const ITexture* FSwapchainImpl::getTexture()
+    ITexture* FSwapchainImpl::getTexture(uint32_t index)
     {
         if (!m_Device) return nullptr;
-
-        const uint32_t frameIndex = m_Device->getCurrentFrameIndex();
-        FTextureImpl& texture = m_Textures[frameIndex];
+        assert(index <= 3, "Index out of swapchain's image count range!");
+        FTextureImpl& texture = m_Textures[index];
         texture.m_Device = static_cast<FRenderDeviceImpl*>(m_Device);
-        texture.m_Image = m_Images[frameIndex];
+        texture.m_Image = m_Images[index];
         texture.m_Format = m_ImageFormat;
         texture.m_Width = m_ImageWidth;
         texture.m_Height = m_ImageHeight;
@@ -172,10 +174,12 @@ namespace Luma::Vulkan
         return &texture;
     }
 
-    const ITextureView* FSwapchainImpl::getTextureView()
+    ITextureView* FSwapchainImpl::getTextureView(uint32_t index)
     {
         if (!m_Device) return nullptr;
-        const ITexture* texture = getTexture();
+        assert(index <= 3, "Index out of swapchain's image count range!");
+
+        const ITexture* texture = getTexture(index);
         if (!texture) return nullptr;
 
         const uint32_t frameIndex = m_Device->getCurrentFrameIndex();

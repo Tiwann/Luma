@@ -16,6 +16,7 @@ namespace Luma::Vulkan
         void reset() override;
         bool begin() override;
         void end() override;
+
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset) override;
         void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) override;
         void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) override;
@@ -31,6 +32,7 @@ namespace Luma::Vulkan
         void copyBuffer(IBuffer* srcBuffer, int64_t srcOffset, uint64_t srcSize, IBuffer* dstBuffer, int64_t dstOffset,uint64_t dstSize) override;
         void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice,uint32_t mipLevel) override;
 
+        void setName(FStringView name) override;
         VkCommandBuffer getHandle() const { return m_Handle; }
     private:
         FRenderDeviceImpl* m_Device = nullptr;

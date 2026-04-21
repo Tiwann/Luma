@@ -79,4 +79,13 @@ namespace Luma::Vulkan
         if (VK_FAILED(vkWaitSemaphores(deviceHandle, &waitInfo, timeout)))
             assert(false, "[VULKAN] Failed to wait semaphore!")
     }
+
+    void FSemaphoreImpl::setName(FStringView name)
+    {
+        VkDebugUtilsObjectNameInfoEXT nameInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT };
+        nameInfo.objectType = VK_OBJECT_TYPE_SEMAPHORE;
+        nameInfo.objectHandle = reinterpret_cast<uint64_t>(m_Handle);
+        nameInfo.pObjectName = *name;
+        vkSetDebugUtilsObjectNameEXT(m_Device->getHandle(), &nameInfo);
+    }
 }

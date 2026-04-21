@@ -41,8 +41,8 @@ namespace Luma
         virtual bool isValid() const;
         bool hasVSync() const;
 
-        virtual const ITexture* getTexture() { return nullptr; }
-        virtual const ITextureView* getTextureView() { return nullptr; }
+        virtual ITexture* getTexture(uint32_t index) { return nullptr; }
+        virtual ITextureView* getTextureView(uint32_t index) { return nullptr; }
     protected:
         IRenderDevice* m_Device = nullptr;
         EFormat m_ImageFormat = EFormat::None;

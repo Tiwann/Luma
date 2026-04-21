@@ -13,14 +13,6 @@
 
 namespace Luma::Vulkan
 {
-    struct FFrame
-    {
-        FSemaphoreImpl submitSemaphore;
-        FSemaphoreImpl presentSemaphore;
-        FFenceImpl fence;
-        FCommandBufferImpl cmdBuffer;
-    };
-
     class LUMA_GRAPHICS_API FRenderDeviceImpl final : public IRenderDevice
     {
     public:
@@ -54,9 +46,9 @@ namespace Luma::Vulkan
         IFence* createFence(const FFenceDesc& fenceDesc) override;
         ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) override;
 
-        ICommandBuffer* getCurrentCommandBuffer() { return &m_Frames[m_CurrentFrameIndex].cmdBuffer; }
+        ICommandBuffer* getCurrentCommandBuffer() { return &m_CmdBuffers[m_CurrentFrameIndex]; }
 
-        static VkInstance getInstance() { return s_Instance; }
+        static VkInstance getInstance();
         VkDevice getHandle() const { return m_Handle; }
         VkSurfaceKHR getSurface() const { return m_Surface; }
         VmaAllocator getAllocator() const { return m_Allocator; }
@@ -82,18 +74,20 @@ namespace Luma::Vulkan
         VkCommandPool m_ComputePool = nullptr;
         VkCommandPool m_CopyPool = nullptr;
         VkDescriptorPool m_DescriptorPool = nullptr;
-        VmaVulkanFunctions* m_VkProcs = nullptr;
+        VmaVulkanFunctions* m_VulkanFunctions = nullptr;
 
         FSwapchainImpl m_Swapchain;
         FQueueImpl m_RenderQueue;
         FQueueImpl m_ComputeQueue;
         FQueueImpl m_CopyQueue;
         FImmediateExecutorImpl m_ImmediateExecutor;
-        FFrame m_Frames[3]{};
+        FSemaphoreImpl m_SubmitSemaphores[3];
+        FSemaphoreImpl m_PresentSemaphores[3];
+        FFenceImpl m_Fences[3];
+        FCommandBufferImpl m_CmdBuffers[3];
 
         uint32_t m_CurrentFrameIndex = 0;
-        uint32_t m_LastFrameIndex = 0;
-
+        uint32_t m_SwapchainImageIndex = 0;
         IWindow* m_Window = nullptr;
     };
 }

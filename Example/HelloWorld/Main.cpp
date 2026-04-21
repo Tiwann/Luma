@@ -35,7 +35,6 @@ int main()
             renderDevice->present();
         }
     }
-
-    window->destroy();
+    
     return 0;
 }

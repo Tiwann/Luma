@@ -16,6 +16,8 @@ namespace Luma::Vulkan
         void reset() override;
 
         VkFence getHandle() const { return m_Handle; }
+        void setName(FStringView name) override;
+
     private:
         FRenderDeviceImpl* m_Device = nullptr;
         VkFence m_Handle = nullptr;

@@ -10,13 +10,14 @@
 namespace Luma::Vulkan
 {
     class FRenderDeviceImpl;
+    class FSemaphoreImpl;
 
     class LUMA_GRAPHICS_API FSwapchainImpl final : public ISwapchain
     {
     public:
         bool initialize(const FSwapchainDesc& swapchainDesc) override;
         void destroy() override;
-        bool acquireNextImage(ISemaphore* semaphore, IFence* fence, uint32_t& frameIndex) const;
+        bool acquireNextImage(FSemaphoreImpl* semaphore, IFence* fence, uint32_t& frameIndex);
 
         VkSwapchainKHR getHandle() const;
         const VkSwapchainKHR* getHandlePtr() const;
@@ -24,8 +25,8 @@ namespace Luma::Vulkan
         VkImageView getImageView(uint32_t index) const;
 
         bool isValid() const override;
-        const ITexture* getTexture() override;
-        const ITextureView* getTextureView() override;
+        ITexture* getTexture(uint32_t index) override;
+        ITextureView* getTextureView(uint32_t index) override;
     private:
         VkSwapchainKHR m_Handle = nullptr;
         VkImage m_Images[3] = { nullptr, nullptr, nullptr };

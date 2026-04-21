@@ -1,4 +1,5 @@
 #pragma once
+#include "Luma/Containers/StringView.h"
 #include "Luma/Memory/RefCounted.h"
 
 namespace Luma
@@ -26,6 +27,7 @@ namespace Luma
         virtual uint64_t getValue() const = 0;
         virtual void signal(uint64_t value) = 0;
         virtual void wait(uint64_t value, uint64_t timeout) = 0;
+        virtual void setName(FStringView name) = 0;
     protected:
         ESemaphoreType m_SemaphoreType = ESemaphoreType::Binary;
     };

@@ -15,7 +15,9 @@ namespace Luma
 
     void FDesktopWindow::destroy()
     {
+        if (!m_Handle) return;
         RGFW_window_close(m_Handle);
+        m_Handle = nullptr;
     }
 
     void FDesktopWindow::pollEvents()
