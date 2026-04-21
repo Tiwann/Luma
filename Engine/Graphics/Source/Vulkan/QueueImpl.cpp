@@ -7,7 +7,7 @@
 
 namespace Luma::Vulkan
 {
-    bool FQueueImpl::executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence, FPipelineStageFlags stageMask) const
+    bool FQueueImpl::executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence, FPipelineStageFlags stageMask)
     {
         if (!cmdBuffer) return false;
 
@@ -28,6 +28,9 @@ namespace Luma::Vulkan
 
         if (VK_FAILED(vkQueueSubmit(m_Handle, 1, &submitInfo, signalFence ? static_cast<FFenceImpl*>(signalFence)->getHandle() : nullptr)))
             return false;
+
+        m_WaitSemaphores.clear();
+        m_SignalSemaphores.clear();
         return true;
     }
 

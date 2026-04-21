@@ -13,7 +13,7 @@ namespace Luma
     {
         IQueue() = default;
         virtual ~IQueue() = default;
-        virtual bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence = nullptr, FPipelineStageFlags stageMask = EPipelineStageBits::None) const = 0;
+        virtual bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence = nullptr, FPipelineStageFlags stageMask = EPipelineStageBits::None) = 0;
         virtual bool present(ISwapchain* swapchain, ISemaphore* waitSemaphore, uint32_t imageIndex) = 0;
         virtual void waitForSemaphore(const ISemaphore* semaphore) = 0;
         virtual void signalSemaphore(const ISemaphore* semaphore) = 0;

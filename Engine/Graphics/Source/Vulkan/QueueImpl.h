@@ -17,7 +17,7 @@ namespace Luma::Vulkan
     class LUMA_GRAPHICS_API FQueueImpl final : public IQueue
     {
     public:
-        bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence = nullptr, FPipelineStageFlags stageMask = EPipelineStageBits::None) const override;
+        bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence = nullptr, FPipelineStageFlags stageMask = EPipelineStageBits::None) override;
         bool present(ISwapchain* swapchain, ISemaphore* waitSemaphore, uint32_t imageIndex) override;
         void waitForSemaphore(const ISemaphore* semaphore) override;
         void signalSemaphore(const ISemaphore* semaphore) override;
