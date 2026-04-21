@@ -1,5 +1,7 @@
 ﻿#pragma once
+#include "Luma/Core/Export.h"
 #include "Luma/Containers/String.h"
+#include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
 namespace Luma
@@ -12,13 +14,15 @@ namespace Luma
         uint32_t flags;
     };
 
-    struct IWindow
+    struct IWindow : IRefCounted<IWindow>
     {
-        virtual ~IWindow() = default;
+        ~IWindow() override = default;
         virtual bool initialize(const FWindowDesc& windowDesc) = 0;
         virtual void destroy() = 0;
         virtual void pollEvents() = 0;
         virtual uint32_t getWidth() const = 0;
         virtual uint32_t getHeight() const = 0;
     };
+
+    LUMA_CORE_API IWindow* createWindow(const FWindowDesc& windowDesc);
 }

@@ -1,6 +1,6 @@
 ﻿#include "Luma/Rendering/RenderDevice.h"
-
 #include "Luma/Rendering/CommandBuffer.h"
+#include "Luma/Rendering/Semaphore.h"
 
 #ifdef LUMA_BUILD_WEBGPU
 #include "WebGPU/RenderDevice.h"
@@ -14,7 +14,10 @@ namespace Luma
 {
     ICommandBuffer* IRenderDevice::createRenderCommandBuffer()
     {
-        return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Render));
+        FCommandBufferDesc desc;
+        desc.device = this;
+        desc.queueType = EQueueType::Render;
+        return createCommandBuffer(desc);
     }
 
     ICommandBuffer* IRenderDevice::createComputeCommandBuffer()
@@ -25,6 +28,16 @@ namespace Luma
     ICommandBuffer* IRenderDevice::createCopyCommandBuffer()
     {
         return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Copy));
+    }
+
+    ISemaphore* IRenderDevice::createBinarySemaphore()
+    {
+        return createSemaphore(FSemaphoreDesc(this, ESemaphoreType::Binary, 0));
+    }
+
+    ISemaphore* IRenderDevice::createTimelineSemaphore(const uint64_t initialValue)
+    {
+        return createSemaphore(FSemaphoreDesc(this, ESemaphoreType::Timeline, initialValue));
     }
 
     IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc)

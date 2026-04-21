@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Luma/Core/Export.h"
 #include "Luma/Containers/String.h"
 #include "Luma/Containers/StringView.h"
 #include "Luma/Runtime/DialogFilters.h"
@@ -7,7 +8,7 @@ namespace Luma
 {
     struct IWindow;
 
-    struct FPath
+    struct LUMA_CORE_API FPath
     {
 #ifdef LUMA_PLATFORM_WINDOWS
         template<Character T>

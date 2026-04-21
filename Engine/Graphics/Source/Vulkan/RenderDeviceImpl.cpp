@@ -5,7 +5,7 @@
 #include "BufferImpl.h"
 #include "TextureImpl.h"
 #include "TextureViewImpl.h"
-
+#include "SemaphoreImpl.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Containers/Array.h"
@@ -14,6 +14,8 @@
 #include <Volk/volk.h>
 #include <rgfw/rgfw.h>
 #include <vma/vk_mem_alloc.h>
+
+
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
 #define VK_LAYER_KHRONOS_VALIDATION_NAME "VK_LAYER_KHRONOS_validation"
@@ -380,10 +382,8 @@ namespace Luma::Vulkan
 
         for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
         {
-            VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO };
-            vkCreateSemaphore(m_Handle, &semaphoreCreateInfo, nullptr, &m_Frames[imageIndex].presentSemaphore);
-            vkCreateSemaphore(m_Handle, &semaphoreCreateInfo, nullptr, &m_Frames[imageIndex].submitSemaphore);
-
+            m_Frames[imageIndex].presentSemaphore.initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
+            m_Frames[imageIndex].submitSemaphore.initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
             m_Frames[imageIndex].fence.initialize(FFenceDesc(this));
             m_Frames[imageIndex].cmdBuffer.initialize(FCommandBufferDesc(this, EQueueType::Render));
         }
@@ -403,12 +403,10 @@ namespace Luma::Vulkan
         m_ImmediateExecutor.destroy();
         for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
         {
-            vkDestroySemaphore(m_Handle, m_Frames[imageIndex].submitSemaphore, nullptr);
-            vkDestroySemaphore(m_Handle, m_Frames[imageIndex].presentSemaphore, nullptr);
+            m_Frames[imageIndex].submitSemaphore.destroy();
+            m_Frames[imageIndex].presentSemaphore.destroy();
             m_Frames[imageIndex].fence.destroy();
             m_Frames[imageIndex].cmdBuffer.destroy();
-            m_Frames[imageIndex].submitSemaphore = nullptr;
-            m_Frames[imageIndex].presentSemaphore = nullptr;
         }
 
         vkDestroyCommandPool(m_Handle, m_CopyPool, nullptr);
@@ -449,8 +447,8 @@ namespace Luma::Vulkan
         fence.wait(FENCE_WAIT_INFINITE);
         fence.reset();
 
-        const VkSemaphore& presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
-        if (!m_Swapchain.acquireNextImage(presentSemaphore, nullptr, m_CurrentFrameIndex))
+        FSemaphoreImpl& presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
+        if (!m_Swapchain.acquireNextImage(&presentSemaphore, nullptr, m_CurrentFrameIndex))
         {
             m_Swapchain.invalidate();
             return false;
@@ -513,17 +511,19 @@ namespace Luma::Vulkan
         vkCmdPipelineBarrier2(cmdBuffer.getHandle(), &inDependency);
 
         FFenceImpl& fence = m_Frames[m_LastFrameIndex].fence;
-        const VkSemaphore submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
-        const VkSemaphore presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
+        const FSemaphoreImpl& presentSemaphore = m_Frames[m_LastFrameIndex].presentSemaphore;
+        const FSemaphoreImpl& submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
         cmdBuffer.end();
 
-        m_RenderQueue.submit(&cmdBuffer, presentSemaphore, submitSemaphore, &fence, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+        m_RenderQueue.waitForSemaphore(&presentSemaphore);
+        m_RenderQueue.signalSemaphore(&submitSemaphore);
+        m_RenderQueue.executeCommandBuffer(&cmdBuffer, &fence, EPipelineStageBits::ColorTargetOutput);
     }
 
     void FRenderDeviceImpl::present()
     {
-        const VkSemaphore submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
-        if (!m_RenderQueue.present(&m_Swapchain, submitSemaphore, m_CurrentFrameIndex))
+        FSemaphoreImpl& submitSemaphore = m_Frames[m_CurrentFrameIndex].submitSemaphore;
+        if (!m_RenderQueue.present(&m_Swapchain, &submitSemaphore, m_CurrentFrameIndex))
             m_Swapchain.invalidate();
         m_LastFrameIndex = m_CurrentFrameIndex;
     }
@@ -568,10 +568,10 @@ namespace Luma::Vulkan
         return &m_CopyQueue;
     }
 
-    IBuffer* FRenderDeviceImpl::createBuffer(const FBufferDesc& bufferDesc) const
+    IBuffer* FRenderDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
     {
         FBufferDesc desc(bufferDesc);
-        desc.device = const_cast<FRenderDeviceImpl*>(this);
+        desc.device = this;
         FBufferImpl* buffer = new FBufferImpl();
         if (!buffer->initialize(desc))
         {
@@ -582,10 +582,10 @@ namespace Luma::Vulkan
         return buffer;
     }
 
-    ITexture* FRenderDeviceImpl::createTexture(const FTextureDesc& textureDesc) const
+    ITexture* FRenderDeviceImpl::createTexture(const FTextureDesc& textureDesc)
     {
         FTextureDesc desc(textureDesc);
-        desc.device = const_cast<FRenderDeviceImpl*>(this);
+        desc.device = this;
         FTextureImpl* texture = new FTextureImpl();
         if (!texture->initialize(desc))
         {
@@ -596,10 +596,10 @@ namespace Luma::Vulkan
         return texture;
     }
 
-    ITextureView* FRenderDeviceImpl::createTextureView(const FTextureViewDesc& textureViewDesc) const
+    ITextureView* FRenderDeviceImpl::createTextureView(const FTextureViewDesc& textureViewDesc)
     {
         FTextureViewDesc desc(textureViewDesc);
-        desc.device = const_cast<FRenderDeviceImpl*>(this);
+        desc.device = this;
         FTextureViewImpl* textureView = new FTextureViewImpl();
         if (!textureView->initialize(desc))
         {
@@ -610,15 +610,15 @@ namespace Luma::Vulkan
         return textureView;
     }
 
-    IShader* FRenderDeviceImpl::createShader(const FShaderDesc& shaderDesc) const
+    IShader* FRenderDeviceImpl::createShader(const FShaderDesc& shaderDesc)
     {
         return nullptr;
     }
 
-    ICommandBuffer* FRenderDeviceImpl::createCommandBuffer(const FCommandBufferDesc& commandBufferDesc) const
+    ICommandBuffer* FRenderDeviceImpl::createCommandBuffer(const FCommandBufferDesc& commandBufferDesc)
     {
         FCommandBufferDesc desc(commandBufferDesc);
-        desc.device = const_cast<FRenderDeviceImpl*>(this);
+        desc.device = this;
         FCommandBufferImpl* cmdBuffer = new FCommandBufferImpl();
         if (!cmdBuffer->initialize(desc))
         {
@@ -629,10 +629,10 @@ namespace Luma::Vulkan
         return cmdBuffer;
     }
 
-    ISampler* FRenderDeviceImpl::createSampler(const FSamplerDesc& samplerDesc) const
+    ISampler* FRenderDeviceImpl::createSampler(const FSamplerDesc& samplerDesc)
     {
         FSamplerDesc desc(samplerDesc);
-        desc.device = const_cast<FRenderDeviceImpl*>(this);
+        desc.device = this;
         FSamplerImpl* sampler = new FSamplerImpl();
         if (!sampler->initialize(desc))
         {
@@ -649,20 +649,20 @@ namespace Luma::Vulkan
     }
 
 
-    IGraphicsPipeline* FRenderDeviceImpl::createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) const
+    IGraphicsPipeline* FRenderDeviceImpl::createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc)
     {
         return nullptr;
     }
 
-    IComputePipeline* FRenderDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc) const
+    IComputePipeline* FRenderDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
     {
         return nullptr;
     }
 
-    IFence* FRenderDeviceImpl::createFence(const FFenceDesc& fenceDesc) const
+    IFence* FRenderDeviceImpl::createFence(const FFenceDesc& fenceDesc)
     {
         FFenceDesc desc(fenceDesc);
-        desc.device = const_cast<FRenderDeviceImpl*>(this);
+        desc.device = this;
         FFenceImpl* fence = new FFenceImpl();
         if (!fence->initialize(desc))
         {
@@ -671,6 +671,20 @@ namespace Luma::Vulkan
             return nullptr;
         }
         return fence;
+    }
+
+    ISemaphore* FRenderDeviceImpl::createSemaphore(const FSemaphoreDesc& semaphoreDesc)
+    {
+        FSemaphoreDesc desc(semaphoreDesc);
+        desc.device = this;
+        FSemaphoreImpl* semaphore = new FSemaphoreImpl();
+        if (!semaphore->initialize(desc))
+        {
+            semaphore->destroy();
+            delete semaphore;
+            return nullptr;
+        }
+        return semaphore;
     }
 
     VkCommandPool FRenderDeviceImpl::getCommandPool(const EQueueType queueType) const

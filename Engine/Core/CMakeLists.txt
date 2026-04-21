@@ -8,6 +8,7 @@ set(LUMA_CORE_SRC
         Include/Luma/Containers/StringConversion.h
         Include/Luma/Containers/StringFormat.h
         Include/Luma/Containers/StringView.h
+        Include/Luma/Containers/BufferView.h
 
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
@@ -27,7 +28,7 @@ set(LUMA_CORE_SRC
         ##Source/Runtime/Application.cpp
         Source/Memory/Memory.cpp
         Source/Memory/Allocator.cpp
-
+        Source/Runtime/Window.cpp
 )
 
 set(LUMA_CORE_WINDOWS_SRC

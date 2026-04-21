@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    struct FShaderCode
+    struct FShader
     {
         EShaderStageBits shaderStage = EShaderStageBits::None;
         const uint8_t* data = nullptr;
@@ -15,7 +15,7 @@ namespace Luma
     struct FShaderProgramDesc
     {
         uint32_t shaderCount = 0;
-        const FShaderCode* shaders = nullptr;
+        const FShader* shaders = nullptr;
     };
 
     struct IShaderProgram

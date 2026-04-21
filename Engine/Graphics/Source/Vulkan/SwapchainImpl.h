@@ -4,6 +4,8 @@
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Swapchain.h"
 #include "VulkanFwd.h"
+#include "Luma/Rendering/Fence.h"
+#include "Luma/Rendering/Semaphore.h"
 
 namespace Luma::Vulkan
 {
@@ -14,7 +16,7 @@ namespace Luma::Vulkan
     public:
         bool initialize(const FSwapchainDesc& swapchainDesc) override;
         void destroy() override;
-        bool acquireNextImage(VkSemaphore semaphore, VkFence fence, uint32_t& frameIndex) const;
+        bool acquireNextImage(ISemaphore* semaphore, IFence* fence, uint32_t& frameIndex) const;
 
         VkSwapchainKHR getHandle() const;
         const VkSwapchainKHR* getHandlePtr() const;

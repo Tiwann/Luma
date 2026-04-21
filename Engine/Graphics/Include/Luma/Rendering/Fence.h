@@ -1,4 +1,5 @@
 #pragma once
+#include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
 namespace Luma
@@ -12,10 +13,10 @@ namespace Luma
 
     static constexpr uint64_t FENCE_WAIT_INFINITE = 1'000'000'000;
 
-    struct IFence
+    struct IFence : IRefCounted<IFence>
     {
         IFence() = default;
-        virtual ~IFence() = default;
+        ~IFence() override = default;
 
         virtual bool initialize(const FFenceDesc& fenceDesc) = 0;
         virtual void destroy() = 0;

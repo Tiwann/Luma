@@ -5,7 +5,7 @@
 namespace Luma
 {
     template <typename T>
-    class TSharedRef
+    class Ref
     {
     public:
         using PointerType = T*;
@@ -16,37 +16,37 @@ namespace Luma
         using ConstPointerToConst = const T* const;
         using ValueType = T;
 
-        TSharedRef() = default;
+        Ref() = default;
 
-        explicit TSharedRef(PointerType ptr) : m_Pointer(ptr)
+        explicit Ref(PointerType ptr) : m_Pointer(ptr)
         {
             addRef(m_Pointer);
         }
 
-        TSharedRef(decltype(nullptr)) : m_Pointer(nullptr) {}
+        Ref(decltype(nullptr)) : m_Pointer(nullptr) {}
 
-        TSharedRef(const TSharedRef& other) : m_Pointer(other.m_Pointer)
+        Ref(const Ref& other) : m_Pointer(other.m_Pointer)
         {
             addRef(m_Pointer);
         }
 
-        TSharedRef(TSharedRef&& other) noexcept : m_Pointer(other.m_Pointer)
+        Ref(Ref&& other) noexcept : m_Pointer(other.m_Pointer)
         {
             other.m_Pointer = nullptr;
         }
 
         template <typename U>
-        TSharedRef(const TSharedRef<U>& other) : m_Pointer(reinterpret_cast<PointerType>(other.m_Pointer))
+        Ref(const Ref<U>& other) : m_Pointer(reinterpret_cast<PointerType>(other.m_Pointer))
         {
             addRef(m_Pointer);
         }
 
-        ~TSharedRef()
+        ~Ref()
         {
             relRef(m_Pointer);
         }
 
-        TSharedRef& operator=(const TSharedRef& other)
+        Ref& operator=(const Ref& other)
         {
             if (this == &other)
                 return *this;
@@ -58,7 +58,7 @@ namespace Luma
             return *this;
         }
 
-        TSharedRef& operator=(TSharedRef&& other) noexcept
+        Ref& operator=(Ref&& other) noexcept
         {
             if (this == &other)
                 return *this;
@@ -71,7 +71,7 @@ namespace Luma
         }
 
         template <typename U> requires (!std::is_same_v<T, U>)
-        TSharedRef& operator=(const TSharedRef<U>& other)
+        Ref& operator=(const Ref<U>& other)
         {
             PointerType old = m_Pointer;
             addRef(other.m_Pointer);
@@ -81,7 +81,7 @@ namespace Luma
         }
 
         template <typename U> requires (!std::is_same_v<T, U>)
-        TSharedRef& operator=(TSharedRef<U>&& other)
+        Ref& operator=(Ref<U>&& other)
         {
             relRef(m_Pointer);
             m_Pointer = other.m_Pointer;
@@ -97,13 +97,13 @@ namespace Luma
 
         bool operator==(const PointerType ptr) const { return m_Pointer == ptr; }
         bool operator!=(const PointerType ptr) const { return m_Pointer != ptr; }
-        bool operator==(const TSharedRef& ptr) const { return m_Pointer == ptr.m_Pointer; }
-        bool operator!=(const TSharedRef& ptr) const { return m_Pointer != ptr.m_Pointer; }
+        bool operator==(const Ref& ptr) const { return m_Pointer == ptr.m_Pointer; }
+        bool operator!=(const Ref& ptr) const { return m_Pointer != ptr.m_Pointer; }
 
         template <typename U>
-        TSharedRef<U> as() const
+        Ref<U> as() const
         {
-            return TSharedRef<U>(dynamic_cast<U*>(m_Pointer));
+            return Ref<U>(dynamic_cast<U*>(m_Pointer));
         }
 
 
@@ -116,8 +116,8 @@ namespace Luma
         PointerType get() { return m_Pointer; }
         ConstPointerType get() const { return m_Pointer; }
 
-        explicit operator PointerType() { return m_Pointer; }
-        explicit operator ConstPointerType() const { return m_Pointer; }
+        operator PointerType() { return m_Pointer; }
+        operator ConstPointerType() const { return m_Pointer; }
         operator bool() const { return m_Pointer; }
 
 
@@ -135,7 +135,7 @@ namespace Luma
             return result;
         }
 
-        void swap(TSharedRef& other) noexcept
+        void swap(Ref& other) noexcept
         {
             PointerType otherPointer = other.m_Pointer;
             other.m_Pointer = m_Pointer;
@@ -145,28 +145,28 @@ namespace Luma
         PointerType m_Pointer = nullptr;
 
         template <typename U>
-        friend class TSharedRef;
+        friend class Ref;
 
         template <typename U>
-        friend class TWeakRef;
+        friend class WeakRef;
     };
 
     template<typename T>
-    class TWeakRef
+    class WeakRef
     {
     public:
-        using PointerType = TSharedRef<T>::PointerType;
-        using ConstPointerType = TSharedRef<T>::ConstPointerType;
-        using ReferenceType = TSharedRef<T>::ReferenceType;
-        using ConstReferenceType = TSharedRef<T>::ConstReferenceType;
+        using PointerType = Ref<T>::PointerType;
+        using ConstPointerType = Ref<T>::ConstPointerType;
+        using ReferenceType = Ref<T>::ReferenceType;
+        using ConstReferenceType = Ref<T>::ConstReferenceType;
 
-        TWeakRef(decltype(nullptr)) : m_Pointer(nullptr) {}
-        TWeakRef(const TSharedRef<T>& ref) : m_Pointer(ref.m_Pointer) {}
-        TWeakRef(const TWeakRef&) = default;
-        TWeakRef(TWeakRef&&) = default;
-        TWeakRef& operator=(const TWeakRef&) = default;
-        TWeakRef& operator=(TWeakRef&&) = default;
-        ~TWeakRef() = default;
+        WeakRef(decltype(nullptr)) : m_Pointer(nullptr) {}
+        WeakRef(const Ref<T>& ref) : m_Pointer(ref.m_Pointer) {}
+        WeakRef(const WeakRef&) = default;
+        WeakRef(WeakRef&&) = default;
+        WeakRef& operator=(const WeakRef&) = default;
+        WeakRef& operator=(WeakRef&&) = default;
+        ~WeakRef() = default;
 
         explicit operator PointerType() { return m_Pointer; }
         explicit operator ConstPointerType() const { return m_Pointer; }
@@ -185,17 +185,17 @@ namespace Luma
     };
 
     template <typename T, typename... Args> requires std::is_base_of_v<IRefCounted<T>, T>
-    TSharedRef<T> createSharedRef(Args&&... args)
+    Ref<T> createSharedRef(Args&&... args)
     {
-        return TSharedRef<T>(new T(std::forward<Args>(args)...));
+        return Ref<T>(new T(std::forward<Args>(args)...));
     }
 
     template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
-    TSharedRef<T> makeShared(T* object)
+    Ref<T> makeShared(T* object)
     {
-        return TSharedRef<T>(object);
+        return Ref<T>(object);
     }
 
     template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
-    TWeakRef<T> createWeakRef(const TSharedRef<T>& ref) { return TWeakRef<T>(ref); }
+    WeakRef<T> createWeakRef(const Ref<T>& ref) { return WeakRef<T>(ref); }
 }

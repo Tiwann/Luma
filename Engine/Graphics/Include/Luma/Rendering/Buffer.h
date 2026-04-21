@@ -1,4 +1,5 @@
 #pragma once
+#include "Luma/Memory/RefCounted.h"
 #include "Resource.h"
 #include "BufferUsage.h"
 
@@ -16,7 +17,7 @@ namespace Luma
         bool alwaysMapped = false;
     };
 
-    struct IBuffer : IResource
+    struct IBuffer : IResource, IRefCounted<IBuffer>
     {
         IBuffer() = default;
         ~IBuffer() override = default;

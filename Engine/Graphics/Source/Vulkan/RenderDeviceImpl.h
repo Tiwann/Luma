@@ -4,6 +4,7 @@
 #include "SwapchainImpl.h"
 #include "QueueImpl.h"
 #include "FenceImpl.h"
+#include "SemaphoreImpl.h"
 #include "CommandBufferImpl.h"
 #include "ImmediateExecutorImpl.h"
 #include "VulkanFwd.h"
@@ -14,8 +15,8 @@ namespace Luma::Vulkan
 {
     struct FFrame
     {
-        VkSemaphore submitSemaphore = nullptr;
-        VkSemaphore presentSemaphore = nullptr;
+        FSemaphoreImpl submitSemaphore;
+        FSemaphoreImpl presentSemaphore;
         FFenceImpl fence;
         FCommandBufferImpl cmdBuffer;
     };
@@ -41,16 +42,17 @@ namespace Luma::Vulkan
         IQueue* getComputeQueue() override;
         IQueue* getCopyQueue() override;
 
-        IBuffer* createBuffer(const FBufferDesc& bufferDesc) const override;
-        ITexture* createTexture(const FTextureDesc& textureDesc) const override;
-        ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) const override;
-        IShader* createShader(const FShaderDesc& shaderDesc) const override;
-        ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) const override;
-        ISampler* createSampler(const FSamplerDesc& samplerDesc) const override;
+        IBuffer* createBuffer(const FBufferDesc& bufferDesc) override;
+        ITexture* createTexture(const FTextureDesc& textureDesc) override;
+        ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) override;
+        IShader* createShader(const FShaderDesc& shaderDesc) override;
+        ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) override;
+        ISampler* createSampler(const FSamplerDesc& samplerDesc) override;
         ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc) override;
-        IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) const override;
-        IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) const override;
-        IFence* createFence(const FFenceDesc& fenceDesc) const override;
+        IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) override;
+        IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) override;
+        IFence* createFence(const FFenceDesc& fenceDesc) override;
+        ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) override;
 
         ICommandBuffer* getCurrentCommandBuffer() { return &m_Frames[m_CurrentFrameIndex].cmdBuffer; }
 
@@ -64,6 +66,7 @@ namespace Luma::Vulkan
         VkCommandPool getCommandPool(EQueueType queueType) const;
         VkDescriptorPool getDescriptorPool() const { return m_DescriptorPool; }
         FImmediateExecutorImpl& getExecutor();
+
 
     private:
         static inline VkInstance s_Instance = nullptr;

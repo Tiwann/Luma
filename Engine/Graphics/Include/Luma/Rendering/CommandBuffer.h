@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Luma/Memory/RefCounted.h"
 #include "Luma/Graphics/Export.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
@@ -7,6 +8,7 @@
 #include "IndexFormat.h"
 #include "QueueType.h"
 #include <cstdint>
+
 
 namespace Luma
 {
@@ -40,10 +42,10 @@ namespace Luma
         uint32_t firstInstance;
     };
 
-    struct ICommandBuffer
+    struct ICommandBuffer : IRefCounted<ICommandBuffer>
     {
         ICommandBuffer() = default;
-        virtual ~ICommandBuffer() = default;
+        ~ICommandBuffer() override = default;
         virtual EQueueType getCommandBufferType() = 0;
         virtual bool initialize(const FCommandBufferDesc& cmdBufferDesc) = 0;
         virtual void destroy() = 0;

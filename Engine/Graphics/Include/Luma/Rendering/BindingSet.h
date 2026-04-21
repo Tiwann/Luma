@@ -12,12 +12,10 @@ namespace Luma
     struct ISampler;
     struct ITexture;
     struct IBindingSetLayout;
-    struct IDescriptorPool;
 
     struct FBindingSetDesc
     {
         IRenderDevice* device = nullptr;
-        //DescriptorPool* pool = nullptr;
         const IBindingSetLayout* layout = nullptr;
     };
 

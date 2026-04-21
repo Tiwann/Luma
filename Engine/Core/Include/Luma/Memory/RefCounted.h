@@ -18,7 +18,7 @@ namespace Luma
         {
             if (refCount.fetch_sub(1, std::memory_order_release) == 1)
             {
-                T* self = reinterpret_cast<T*>(this);
+                T* self = static_cast<T*>(this);
                 self->destroy();
                 delete self;
             }

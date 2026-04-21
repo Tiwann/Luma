@@ -112,14 +112,16 @@ namespace Luma::Vulkan
         m_Handle = nullptr;
     }
     
-    bool FSwapchainImpl::acquireNextImage(const VkSemaphore semaphore, const VkFence fence, uint32_t& frameIndex) const
+    bool FSwapchainImpl::acquireNextImage(ISemaphore* semaphore, IFence* fence, uint32_t& frameIndex) const
     {
-        if (!semaphore)
-            return false;
+        if (!semaphore) return false;
+
+        const VkFence vkFence = fence ? static_cast<FFenceImpl*>(fence)->getHandle() : nullptr;
+        const VkSemaphore vkSem = semaphore ? static_cast<FSemaphoreImpl*>(semaphore)->getHandle() : nullptr;
 
         const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
-        const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, semaphore, fence, &frameIndex);
+        const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, vkSem, vkFence, &frameIndex);
         if (VK_FAILED(result)) return false;
         return true;
     }

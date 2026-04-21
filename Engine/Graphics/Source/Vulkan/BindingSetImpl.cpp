@@ -14,6 +14,7 @@ namespace Luma::Vulkan
         if (!bindingSetDesc.device) return false;
         if (!bindingSetDesc.layout) return false;
 
+
         FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(bindingSetDesc.device);
         const VkDescriptorPool descriptorPool = device->getDescriptorPool();
 

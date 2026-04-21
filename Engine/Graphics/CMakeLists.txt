@@ -7,6 +7,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/Swapchain.cpp
         Source/Rendering/Sampler.cpp
         Source/Rendering/ComponentMapping.cpp
+        Source/Rendering/BufferUtils.cpp
 )
 
 set(LUMA_VULKAN_SRC
@@ -16,6 +17,7 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/SwapchainImpl.cpp
         Source/Vulkan/CommandBufferImpl.cpp
         Source/Vulkan/QueueImpl.cpp
+        Source/Vulkan/SemaphoreImpl.cpp
         Source/Vulkan/FenceImpl.cpp
         Source/Vulkan/BufferImpl.cpp
         Source/Vulkan/TextureImpl.cpp

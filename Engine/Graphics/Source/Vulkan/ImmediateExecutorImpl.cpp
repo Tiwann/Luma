@@ -40,7 +40,7 @@ namespace Luma::Vulkan
         {
             function(&m_CmdBuffer);
             m_CmdBuffer.end();
-            m_Queue->submit(&m_CmdBuffer, nullptr, nullptr, &m_Fence);
+            m_Queue->executeCommandBuffer(&m_CmdBuffer, &m_Fence, EPipelineStageBits::ColorTargetOutput);
             m_Fence.wait(FENCE_WAIT_INFINITE);
         }
     }
