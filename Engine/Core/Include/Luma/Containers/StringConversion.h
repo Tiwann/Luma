@@ -10,14 +10,14 @@ namespace Luma
     FString stringConvertToMultibyte(const FWideStringView& from);
 
     template<Character T>
-    TStringBase<T> stringFromView(TStringViewBase<T> view)
+    TString<T> stringFromView(TStringView<T> view)
     {
-        return TStringBase<T>(const_cast<T*>(view.Data()), view.Count());
+        return TString<T>(const_cast<T*>(view.Data()), view.Count());
     }
 
     template<Character To, Character From> requires (!std::is_same_v<To, From>)
-    TStringBase<To> stringConvert(const TStringBase<From>& from);
+    TString<To> stringConvert(const TString<From>& from);
 
     template<Character To, Character From> requires (!std::is_same_v<To, From>)
-    TStringBase<To> stringConvert(const TStringViewBase<From>& from);
+    TString<To> stringConvert(const TStringView<From>& from);
 }

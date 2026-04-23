@@ -44,25 +44,25 @@ namespace Luma
     }
 
     template<>
-    TStringBase<wchar_t> stringConvert(const TStringBase<char>& from)
+    TString<wchar_t> stringConvert(const TString<char>& from)
     {
         return stringConvertToWide(from);
     }
 
     template<>
-    TStringBase<char> stringConvert(const TStringBase<wchar_t>& from)
+    TString<char> stringConvert(const TString<wchar_t>& from)
     {
         return stringConvertToMultibyte(from);
     }
 
     template<>
-    TStringBase<wchar_t> stringConvert(const TStringViewBase<char>& from)
+    TString<wchar_t> stringConvert(const TStringView<char>& from)
     {
         return stringConvertToWide(from);
     }
 
     template<>
-    TStringBase<char> stringConvert(const TStringViewBase<wchar_t>& from)
+    TString<char> stringConvert(const TStringView<wchar_t>& from)
     {
         return stringConvertToMultibyte(from);
     }

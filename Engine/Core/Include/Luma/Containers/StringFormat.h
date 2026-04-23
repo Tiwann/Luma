@@ -25,7 +25,7 @@ namespace Luma
     }
 
     template<Character T, typename... Args>
-    uint32_t strscanf(const TStringViewBase<T> string, const TStringViewBase<T> format, Args*... args)
+    uint32_t strscanf(const TStringView<T> string, const TStringView<T> format, Args*... args)
     {
         if constexpr (typeid(T) == typeid(char))
         {

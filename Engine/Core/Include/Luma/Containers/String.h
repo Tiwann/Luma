@@ -23,23 +23,22 @@ namespace Luma
     }
     
     template<Character T>
-    class TStringBase
+    class TString
     {
     public:
         using CharacterType = T;
         using SizeType = uint64_t;
-        using StringLiteralType = const CharacterType*;
         using PointerType = CharacterType*;
-        
+
         static constexpr SizeType CharacterSize = sizeof(CharacterType);
-        
-        TStringBase()
+
+        TString()
         {
             m_Data = new CharacterType[1]{};
             m_Count = 0;
         }
-        
-        TStringBase(StringLiteralType data)
+
+        TString(const CharacterType* data)
         {
             assert(data, "Cannot construct string with nullptr!");
             m_Count = strlen(data);
@@ -47,12 +46,12 @@ namespace Luma
             memcpy(m_Data, data, m_Count * CharacterSize);
         }
 
-        explicit TStringBase(const SizeType count) : m_Count(count)
+        explicit TString(const SizeType count) : m_Count(count)
         {
             m_Data = new CharacterType[m_Count + 1]{};
         }
 
-        TStringBase(CharacterType* data, SizeType count)
+        TString(CharacterType* data, SizeType count)
         {
             assert(data, "Cannot construct string with nullptr!");
             m_Count = count;
@@ -60,7 +59,7 @@ namespace Luma
             memcpy(m_Data, data, m_Count * CharacterSize);
         }
 
-        TStringBase(const TStringBase& other)
+        TString(const TString& other)
         {
             delete[] m_Data;
             m_Data = new CharacterType[other.m_Count + 1]{};
@@ -68,7 +67,7 @@ namespace Luma
             m_Count = other.m_Count;
         }
 
-        TStringBase(TStringBase&& Other) noexcept
+        TString(TString&& Other) noexcept
         {
             m_Data = Other.m_Data;
             m_Count = Other.m_Count;
@@ -76,7 +75,7 @@ namespace Luma
             Other.m_Count = 0;
         }
 
-        TStringBase& operator=(const TStringBase& other)
+        TString& operator=(const TString& other)
         {
             if(this == &other)
                 return *this;
@@ -88,13 +87,13 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& operator=(TStringBase&& other) noexcept
+        TString& operator=(TString&& other) noexcept
         {
             if(this == &other)
                 return *this;
 
             delete[] m_Data;
-            
+
             m_Data = other.m_Data;
             m_Count = other.m_Count;
             other.m_Data = nullptr;
@@ -103,7 +102,7 @@ namespace Luma
         }
 
         template<SizeType N>
-        TStringBase& operator=(CharacterType (&&buffer)[N])
+        TString& operator=(CharacterType (&&buffer)[N])
         {
             const SizeType count = strlen(buffer);
             if (count < N)
@@ -118,7 +117,7 @@ namespace Luma
             return *this;
         }
 
-        ~TStringBase()
+        ~TString()
         {
             delete[] m_Data;
             m_Count = 0;
@@ -129,14 +128,14 @@ namespace Luma
             assert(index <= m_Count, "Index out of bounds");
             return m_Data[index];
         }
-        
+
         const CharacterType& operator[](SizeType index) const
         {
             assert(index <= m_Count, "Index out of bounds");
             return m_Data[index];
         }
 
-        bool operator==(const TStringBase& other) const
+        bool operator==(const TString& other) const
         {
             return std::strcmp(m_Data, other.m_Data) == 0 && m_Count == other.m_Count;
         }
@@ -145,15 +144,15 @@ namespace Luma
 
         CharacterType* data() { return m_Data; }
         const CharacterType* data() const { return m_Data; }
-        
+
         CharacterType* operator*() { return m_Data; }
         const CharacterType* operator*() const { return m_Data; }
-        
+
         SizeType count() const { return m_Count; }
         SizeType size() const { return m_Count * CharacterSize; }
 
 
-        TStringBase& resize(const SizeType newCount)
+        TString& resize(const SizeType newCount)
         {
             if (m_Count == newCount) return *this;
 
@@ -179,8 +178,8 @@ namespace Luma
 
             return *this;
         }
-        
-        TStringBase& append(StringLiteralType data)
+
+        TString& append(const CharacterType* data)
         {
             assert(data, "Cannot append string with nullptr string literal!");
             const SizeType dataCount = strlen(data);
@@ -194,8 +193,8 @@ namespace Luma
             return *this;
         }
 
-        
-        TStringBase& append(CharacterType character)
+
+        TString& append(CharacterType character)
         {
             const SizeType newCount = m_Count + 1;
             CharacterType* newData = new CharacterType[newCount + 1]{};
@@ -207,7 +206,7 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& append(const TStringBase& string)
+        TString& append(const TString& string)
         {
             const SizeType dataCount = string.count();
             const SizeType newCount = m_Count + dataCount;
@@ -219,8 +218,8 @@ namespace Luma
             m_Count = newCount;
             return *this;
         }
-        
-        TStringBase substr(SizeType begin, SizeType end) const
+
+        TString substr(SizeType begin, SizeType end) const
         {
             assert(begin < m_Count && begin + (end - begin) <= m_Count, "Indices out of bounds!");
             const SizeType newCount = end - begin + 1;
@@ -229,11 +228,11 @@ namespace Luma
             return {newData, newCount};
         }
 
-        TStringBase substr(const SizeType begin) const
+        TString substr(const SizeType begin) const
         {
             return substr(begin, m_Count);
         }
-        
+
         SizeType find(CharacterType character) const
         {
             for(SizeType i = 0; i < m_Count; ++i)
@@ -244,37 +243,37 @@ namespace Luma
             return -1;
         }
 
-        SizeType find(const TStringBase& string) const
+        SizeType find(const TString& string) const
         {
             std::basic_string_view<CharacterType> view(m_Data, m_Count);
             std::basic_string_view<CharacterType> otherView(string.m_Data, string.m_Count);
             return view.find(otherView);
         }
 
-        SizeType find(SizeType index, const TStringBase& string) const
+        SizeType find(SizeType index, const TString& string) const
         {
             std::basic_string_view<CharacterType> view(m_Data + index, m_Count);
             std::basic_string_view<CharacterType> otherView(string.m_Data, string.m_Count);
             return view.find(otherView);
         }
 
-        SizeType findLast(const TStringBase& string) const
+        SizeType findLast(const TString& string) const
         {
             std::basic_string_view<CharacterType> view(m_Data, m_Count);
             std::basic_string_view<CharacterType> otherView(string.m_Data, string.m_Count);
             return view.find_last_of(otherView);
         }
 
-        bool endsWith(const TStringBase& string) const
+        bool endsWith(const TString& string) const
         {
             return findLast(string) != SizeType(-1);
         }
 
-        bool startsWith(const TStringBase& string) const
+        bool startsWith(const TString& string) const
         {
             return find(string) == 0;
         }
-        
+
         SizeType occurrencesOf(CharacterType character) const
         {
             SizeType result = 0;
@@ -287,7 +286,7 @@ namespace Luma
             return result;
         }
 
-        TStringBase& replace(const TStringBase& from, const TStringBase& to)
+        TString& replace(const TString& from, const TString& to)
         {
             const SizeType index = find(from);
             if(index == -1ULL) return *this;
@@ -297,16 +296,16 @@ namespace Luma
                 memcpy(m_Data + index, *to, to.size());
                 return *this;
             }
-            
+
             const SizeType delta = to.count() - from.count();
             const SizeType newCount = m_Count + delta;
             CharacterType* newData = new CharacterType[newCount]{};
-                
+
             CharacterType* dest = newData;
             CharacterType* src = m_Data;
             SizeType size = index * CharacterSize;
             memcpy(dest, src, size);
-                
+
             dest = newData + index * CharacterSize;
             src = const_cast<CharacterType*>(*to);
             size = to.size();
@@ -323,7 +322,7 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& replace(SizeType index, SizeType count, const TStringBase& to)
+        TString& replace(SizeType index, SizeType count, const TString& to)
         {
             assert(index < m_Count && index + count <= m_Count, "Range is out of bounds!");
             if (index == -1ULL) return *this;
@@ -337,12 +336,12 @@ namespace Luma
             const SizeType delta = to.count() - count;
             const SizeType newCount = m_Count + delta;
             CharacterType* newData = new CharacterType[newCount]{};
-                
+
             CharacterType* dest = newData;
             CharacterType* src = m_Data;
             SizeType size = index * CharacterSize;
             memcpy(dest, src, size);
-                
+
             dest = newData + index * CharacterSize;
             src = const_cast<CharacterType*>(*to);
             size = to.size();
@@ -359,7 +358,7 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& replaceAll(const TStringBase& from, const TStringBase& to)
+        TString& replaceAll(const TString& from, const TString& to)
         {
             SizeType index = 0;
             while ((index = find(index, from)) != -1ULL)
@@ -369,7 +368,7 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& replaceAll(CharacterType from, CharacterType to)
+        TString& replaceAll(CharacterType from, CharacterType to)
         {
             if (from == to) return *this;
             if (!m_Data || m_Count <= 0) return *this;
@@ -384,14 +383,14 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& remove(SizeType from, SizeType to)
+        TString& remove(SizeType from, SizeType to)
         {
             assert(from < to, "Range is illegal");
             assert(from < m_Count, "Range is illegal");
             assert(to <= m_Count, "Range is illegal");
             assert(from + (to - from) <= m_Count, "Range is illegal");
             const SizeType delta = to - from;
-            
+
             const CharacterType* src = m_Data + to;
             CharacterType* dest = m_Data + from;
             const SizeType size = (m_Count - to) * CharacterSize;
@@ -401,24 +400,24 @@ namespace Luma
             return *this;
         }
 
-        TStringBase& remove(const TStringBase& string)
+        TString& remove(const TString& string)
         {
             const SizeType index = find(string);
             if (index == -1ULL) return *this;
             Remove(index, index + string.count());
             return *this;
         }
-        
+
         T* begin() { return m_Data; }
         T* end() { return m_Data + m_Count; }
         const T* begin() const { return m_Data; }
         const T* end() const { return m_Data + m_Count; }
-        TStringBase& operator+(const TStringBase& other)
+        TString& operator+(const TString& other)
         {
             return append(other);
         }
 
-        TStringBase& trimEnd(CharacterType character)
+        TString& trimEnd(CharacterType character)
         {
             SizeType count = 0;
             for (uint64_t index = m_Count - 1; index > 0; --index)
@@ -436,9 +435,9 @@ namespace Luma
             return *this;
         }
 
-        TStringBase trimStart(CharacterType character) const
+        TString trimStart(CharacterType character) const
         {
-            TStringBase copy(*this);
+            TString copy(*this);
             SizeType count = 0;
             while (count < copy.m_Count && copy.m_Data[count] == character)
                 ++count;
@@ -452,9 +451,9 @@ namespace Luma
             return copy;
         }
 
-        TStringBase trimStart(const TArray<CharacterType>& characters) const
+        TString trimStart(const TArray<CharacterType>& characters) const
         {
-            TStringBase copy(*this);
+            TString copy(*this);
             SizeType count = 0;
             while (count < copy.m_Count && characters.Contains(copy.m_Data[count]))
                 ++count;
@@ -468,7 +467,7 @@ namespace Luma
             return copy;
         }
 
-        friend std::basic_ostream<CharacterType>& operator<<(std::basic_ostream<CharacterType>& os, const TStringBase& string)
+        friend std::basic_ostream<CharacterType>& operator<<(std::basic_ostream<CharacterType>& os, const TString& string)
         {
             os.write(string.m_Data, string.m_Count * CharacterSize);
             os.flush();
@@ -480,11 +479,11 @@ namespace Luma
         uint64_t m_Count = 0;
     };
 
-    using FString = TStringBase<char>;
-    using FString8 = TStringBase<char>;
-    using FString16 = TStringBase<char16_t>;
-    using FString32 = TStringBase<char32_t>;
-    using FWideString = TStringBase<wchar_t>;
+    using FString = TString<char>;
+    using FString8 = TString<char>;
+    using FString16 = TString<char16_t>;
+    using FString32 = TString<char32_t>;
+    using FWideString = TString<wchar_t>;
 }
 
 
