@@ -1,5 +1,6 @@
 ﻿#include "BufferImpl.h"
 #include "RenderDeviceImpl.h"
+#include "VulkanUtils.h"
 #include <vma/vk_mem_alloc.h>
 
 
@@ -126,5 +127,10 @@ namespace Luma::Vulkan
     {
         const VmaAllocator allocatorHandle = m_Device->getAllocator();
         vmaGetAllocationInfo2(allocatorHandle, m_Allocation, &outAllocationInfo);
+    }
+
+    void FBufferImpl::setName(FStringView name)
+    {
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_BUFFER, m_Handle, name);
     }
 }

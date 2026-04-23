@@ -14,6 +14,7 @@ namespace Luma::Vulkan
         void destroy() override;
         VkSampler getHandle() const { return m_Handle; }
         EResourceState getResourceState() override;
+        void setName(FStringView name) override;
     private:
         FRenderDeviceImpl* m_Device = nullptr;
         VkSampler m_Handle = nullptr;

@@ -12,16 +12,16 @@ namespace Luma
     {
 #ifdef LUMA_PLATFORM_WINDOWS
         template<Character T>
-        static constexpr TStringBase<T>::CharacterType Separator = '\\';
+        static constexpr TString<T>::CharacterType Separator = '\\';
 
         template<Character T>
-        static constexpr TStringBase<T>::CharacterType OtherSeparator = '/';
+        static constexpr TString<T>::CharacterType OtherSeparator = '/';
 #else
         template<Character T>
-        static constexpr TStringBase<T>::CharacterType Separator = '/';
+        static constexpr TString<T>::CharacterType Separator = '/';
 
         template<Character T>
-        static constexpr TStringBase<T>::CharacterType OtherSeparator = '\\';
+        static constexpr TString<T>::CharacterType OtherSeparator = '\\';
 #endif
 
         static FString combine(FStringView path, FStringView other);

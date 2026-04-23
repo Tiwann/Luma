@@ -3,15 +3,17 @@
 #include "Luma/Graphics/Export.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
-#include "Luma/Math/Rect2.h"
 #include "Luma/Containers/StringView.h"
 #include "IndexFormat.h"
 #include "QueueType.h"
+#include "Scissor.h"
+#include "Viewport.h"
 #include <cstdint>
 
 
 namespace Luma
 {
+    class FGraphicsState;
     struct IRenderDevice;
     struct IBuffer;
     struct IGraphicsPipeline;
@@ -60,11 +62,12 @@ namespace Luma
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// RENDER CMDS
         ///////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setGraphicsState(const FGraphicsState& graphicsState);
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
-        virtual void setScissor(const FRect2u& scissor) = 0;
-        virtual void setViewport(const FRect2f& viewport, float minDepth = 0.0f, float maxDepth = 1.0f) = 0;
+        virtual void setScissor(const FScissor& scissor) = 0;
+        virtual void setViewport(const FViewport& viewport) = 0;
         virtual void draw(const FDrawCommand& drawCmd) = 0;
         void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
         virtual void drawIndexed(const FDrawIndexedCommand& drawIndexedCmd) = 0;
@@ -98,8 +101,8 @@ namespace Luma
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset);
         void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format);
         void bindGraphicsPipeline(const IGraphicsPipeline* pipeline);
-        void setScissor(const FRect2u& scissor);
-        void setViewport(const FRect2f& viewport, float minDepth = 0.0f, float maxDepth = 1.0f);
+        void setScissor(const FScissor& scissor);
+        void setViewport(const FViewport& viewport);
         void draw(const FDrawCommand& drawCmd);
         void drawIndexed(const FDrawIndexedCommand& drawIndexedCmd);
         void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount);

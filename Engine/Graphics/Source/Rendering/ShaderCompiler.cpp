@@ -183,11 +183,6 @@ namespace Luma
 
     TArray<FShaderCompileResult> FShaderCompiler::compile()
     {
-        using BlobHandle = Slang::ComPtr<slang::IBlob>;
-        using ModuleHandle = Slang::ComPtr<slang::IModule>;
-        using EntryPointHandle = Slang::ComPtr<slang::IEntryPoint>;
-        using ComponentHandle = Slang::ComPtr<slang::IComponentType>;
-
         if (m_Requests.isEmpty()) return {};
         TArray<FShaderCompileResult> results;
 
@@ -227,11 +222,10 @@ namespace Luma
                 continue;
             }
 
-
-            BlobHandle errorBlob = nullptr;
-            const auto& [name, filepath] = request.getModuleInfo();
-            ModuleHandle module = ModuleHandle(session->loadModuleFromSource(
-                    *name,
+            slang::BlobHandle errorBlob = nullptr;
+            const auto& [moduleName, filepath] = request.getModuleInfo();
+            slang::ModuleHandle module = slang::ModuleHandle(session->loadModuleFromSource(
+                    *moduleName,
                     *filepath,
                     nullptr,
                     errorBlob.writeRef()));
@@ -242,10 +236,10 @@ namespace Luma
                 continue;
             }
 
-            TArray<EntryPointHandle> entryPoints;
+            TArray<slang::EntryPointHandle> entryPoints;
             for (const auto& [name, stage] : request.getEntryPointInfos())
             {
-                EntryPointHandle entryPoint = nullptr;
+                slang::EntryPointHandle entryPoint = nullptr;
                 if (SLANG_FAILED(module->findEntryPointByName(*name, entryPoint.writeRef())))
                 {
                     results.add({false});
@@ -254,7 +248,7 @@ namespace Luma
                 entryPoints.addUnique(entryPoint);
             }
 
-            ComponentHandle program = nullptr;
+            slang::ComponentHandle program = nullptr;
             TArray<slang::IComponentType*> entryPointsAsComponent = entryPoints.transform<slang::IComponentType*>(
                 [](const auto& ep) { return ep.get(); });
             if (SLANG_FAILED(session->createCompositeComponentType(entryPointsAsComponent.data(), entryPointsAsComponent.count(), program.writeRef(), errorBlob.writeRef())))
@@ -264,7 +258,7 @@ namespace Luma
                 continue;
             }
 
-            ComponentHandle linkedProgram = nullptr;
+            slang::ComponentHandle linkedProgram = nullptr;
             if (SLANG_FAILED(program->link(linkedProgram.writeRef(), errorBlob.writeRef())))
             {
                 std::cout << strfmt("Failed to link shader program: {}", getErrorString(errorBlob)) << std::endl;
@@ -274,24 +268,9 @@ namespace Luma
 
             FShaderCompileResult compileResult{true};
 
-            TArray<FShaderReflectionData::FShaderBinding> bindings;
-            slang::ProgramLayout* layout = program->getLayout(0);
-            if (!layout)
-            {
-                fprintf(stderr, "Failed to obtain ProgramLayout.\n");
-                return results;
-            }
-
-            uint32_t paramCount = layout->getParameterCount();
-            for (uint32_t p = 0; p < paramCount; ++p)
-            {
-                slang::VariableLayoutReflection* param = layout->getParameterByIndex(p);
-                collectResourceBindings(param, /*accBinding=*/0, /*accSpace=*/0, bindings);
-            }
-
             for (uint32_t entryPointIndex = 0; entryPointIndex < entryPointsAsComponent.count(); entryPointIndex++)
             {
-                BlobHandle entryPointCode = nullptr;
+                slang::BlobHandle entryPointCode = nullptr;
                 if (SLANG_FAILED(linkedProgram->getEntryPointCode(entryPointIndex, 0, entryPointCode.writeRef(), errorBlob.writeRef())))
                 {
                     std::cout << strfmt("Failed to get entry point code: {}", getErrorString(errorBlob)) << std::endl;

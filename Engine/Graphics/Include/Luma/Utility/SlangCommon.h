@@ -16,6 +16,7 @@ namespace slang
 {
     using GlobalSessionHandle = Slang::ComPtr<IGlobalSession>;
     using SessionHandle = Slang::ComPtr<ISession>;
+    using ModuleHandle = Slang::ComPtr<IModule>;
     using EntryPointHandle = Slang::ComPtr<IEntryPoint>;
     using ComponentHandle = Slang::ComPtr<IComponentType>;
     using BlobHandle = Slang::ComPtr<IBlob>;

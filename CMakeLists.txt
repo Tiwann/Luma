@@ -18,6 +18,8 @@ if(LUMA_ENGINE_BUILD_VULKAN)
     include(CMake/Vulkan.cmake)
 endif ()
 
+add_library(luma-natvis INTERFACE LumaEngine.natvis)
+
 add_subdirectory(Engine/Vendor)
 add_subdirectory(Engine/Core)
 add_subdirectory(Engine/Graphics)

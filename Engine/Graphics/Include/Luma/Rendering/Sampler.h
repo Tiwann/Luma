@@ -6,6 +6,7 @@
 #include "Filter.h"
 #include "SamplerAddressMode.h"
 #include "Resource.h"
+#include "Luma/Containers/StringView.h"
 
 namespace Luma
 {
@@ -39,6 +40,7 @@ namespace Luma
 
         virtual bool initialize(const FSamplerDesc& samplerDesc) = 0;
         virtual void destroy() = 0;
+        virtual void setName(FStringView name) {}
         EResourceType getResourceType() final { return EResourceType::Sampler;  }
 
         ESamplerAddressMode getAddressModeU() const { return m_AddressModeU; }

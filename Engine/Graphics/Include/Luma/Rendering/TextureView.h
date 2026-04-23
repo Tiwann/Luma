@@ -2,6 +2,7 @@
 #include "TextureAspect.h"
 #include "ComponentMapping.h"
 #include "Luma/Runtime/Format.h"
+#include "Luma/Containers/StringView.h"
 #include <cstdint>
 
 namespace Luma
@@ -31,7 +32,7 @@ namespace Luma
         virtual ~ITextureView() = default;
         virtual bool initialize(const FTextureViewDesc& textureViewDesc) = 0;
         virtual void destroy() = 0;
-
+        virtual void setName(FStringView name) {}
         const ITexture* getTexture() const { return m_Texture; }
         EFormat getFormat() const { return m_Format; }
         FTextureAspectFlags getAspectFlags() const { return m_AspectFlags; }

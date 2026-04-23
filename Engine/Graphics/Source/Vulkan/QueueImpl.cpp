@@ -2,6 +2,7 @@
 #include "RenderDeviceImpl.h"
 #include "SemaphoreImpl.h"
 #include "CommandBufferImpl.h"
+#include "VulkanUtils.h"
 #include <Volk/volk.h>
 
 
@@ -111,5 +112,10 @@ namespace Luma::Vulkan
     bool FQueueImpl::same(const FQueueImpl& other) const
     {
         return m_Index == other.m_Index && m_Handle == other.m_Handle;
+    }
+
+    void FQueueImpl::setName(FStringView name)
+    {
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_QUEUE, m_Handle, name);
     }
 }

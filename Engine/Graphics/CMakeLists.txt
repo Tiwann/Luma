@@ -10,11 +10,13 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/BufferUtils.cpp
         Source/Rendering/ShaderCompileRequest.cpp
         Source/Rendering/ShaderCompiler.cpp
+        Source/Rendering/GraphicsState.cpp
         Source/Utility/SlangCommon.cpp
 )
 
 set(LUMA_VULKAN_SRC
         Source/Vulkan/VulkanMemoryAllocator.cpp
+        Source/Vulkan/VulkanUtils.cpp
         Source/Vulkan/RenderDeviceImpl.cpp
         Source/Vulkan/SamplerImpl.cpp
         Source/Vulkan/SwapchainImpl.cpp

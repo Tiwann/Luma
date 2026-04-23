@@ -9,6 +9,8 @@ set(LUMA_CORE_SRC
         Include/Luma/Containers/StringFormat.h
         Include/Luma/Containers/StringView.h
         Include/Luma/Containers/BufferView.h
+        Include/Luma/Containers/HashMap.h
+        Include/Luma/Containers/Pair.h
 
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
@@ -40,6 +42,7 @@ set(LUMA_CORE_WINDOWS_SRC
 
 
 add_library(luma-core ${LUMA_CORE_SRC})
+target_link_libraries(luma-core PUBLIC luma-natvis)
 target_include_directories(luma-core PRIVATE Source PUBLIC Include External)
 target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT PUBLIC LUMA_ENGINE_ROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26)

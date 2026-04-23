@@ -4,6 +4,8 @@
 #include "SwpchainBuffering.h"
 #include <cstdint>
 
+#include "Luma/Containers/StringView.h"
+
 namespace Luma
 {
     struct IRenderDevice;
@@ -43,6 +45,8 @@ namespace Luma
 
         virtual ITexture* getTexture(uint32_t index) { return nullptr; }
         virtual ITextureView* getTextureView(uint32_t index) { return nullptr; }
+
+        virtual void setName(FStringView name) {}
     protected:
         IRenderDevice* m_Device = nullptr;
         EFormat m_ImageFormat = EFormat::None;

@@ -2,7 +2,7 @@
 #include "Luma/Memory/RefCounted.h"
 #include "Resource.h"
 #include "BufferUsage.h"
-
+#include "Luma/Containers/StringView.h"
 #include <cstdint>
 
 namespace Luma
@@ -36,7 +36,7 @@ namespace Luma
         uint64_t getSize() const { return m_Size; }
         bool isAlwaysMapped() const { return m_AlwaysMapped; }
 
-
+        virtual void setName(FStringView name){}
     protected:
         uint64_t m_Size = 0;
         EBufferUsage m_Usage = EBufferUsage::None;

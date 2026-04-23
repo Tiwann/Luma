@@ -77,9 +77,9 @@ namespace Luma::Vulkan
         VmaVulkanFunctions* m_VulkanFunctions = nullptr;
 
         FSwapchainImpl m_Swapchain;
-        FQueueImpl m_RenderQueue;
-        FQueueImpl m_ComputeQueue;
-        FQueueImpl m_CopyQueue;
+        FQueueImpl m_RenderQueue{this};
+        FQueueImpl m_ComputeQueue{this};
+        FQueueImpl m_CopyQueue{this};
         FImmediateExecutorImpl m_ImmediateExecutor;
         FSemaphoreImpl m_SubmitSemaphores[3];
         FSemaphoreImpl m_PresentSemaphores[3];

@@ -20,7 +20,7 @@ namespace Luma::Vulkan
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset) override;
         void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) override;
         void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) override;
-        void setViewport(const FRect2f& viewport, float minDepth, float maxDepth) override;
+        void setViewport(const FViewport& viewport) override;
         void setScissor(const FRect2u& scissor) override;
         void draw(const FDrawCommand& drawCmd) override;
         void drawIndexed(const FDrawIndexedCommand& drawIndexedCmd) override;

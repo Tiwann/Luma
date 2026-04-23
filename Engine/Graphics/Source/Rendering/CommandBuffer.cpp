@@ -1,9 +1,17 @@
 #include "Luma/Rendering/CommandBuffer.h"
+#include "Luma/Rendering/GraphicsState.h"
 
 namespace Luma
 {
+    void ICommandBuffer::setGraphicsState(const FGraphicsState& graphicsState)
+    {
+        bindGraphicsPipeline(graphicsState.getGraphicsPipeline());
+        bindVertexBuffer(graphicsState.getVertexBuffer(), 0);
+        bindIndexBuffer(graphicsState.getIndexBuffer(), 0, graphicsState.getIndexFormat());
+    }
+
     void ICommandBuffer::draw(const uint32_t vertexCount, const uint32_t instanceCount,
-                                    const uint32_t firstVertex, const uint32_t firstInstance)
+                              const uint32_t firstVertex, const uint32_t firstInstance)
     {
         const FDrawCommand drawCmd{vertexCount, instanceCount, firstVertex, firstInstance};
         draw(drawCmd);
@@ -31,14 +39,14 @@ namespace Luma
         m_CmdBuffer->bindGraphicsPipeline(pipeline);
     }
 
-    void FRenderCommandBuffer::setScissor(const FRect2u& scissor)
+    void FRenderCommandBuffer::setScissor(const FScissor& scissor)
     {
         m_CmdBuffer->setScissor(scissor);
     }
 
-    void FRenderCommandBuffer::setViewport(const FRect2f& viewport, const float minDepth, const float maxDepth)
+    void FRenderCommandBuffer::setViewport(const FViewport& viewport)
     {
-        m_CmdBuffer->setViewport(viewport, minDepth, maxDepth);
+        m_CmdBuffer->setViewport(viewport);
     }
 
     void FRenderCommandBuffer::draw(const FDrawCommand& drawCmd)

@@ -1,6 +1,7 @@
 #include "SamplerImpl.h"
 #include "RenderDeviceImpl.h"
 #include "Conversions.h"
+#include "VulkanUtils.h"
 #include <Volk/volk.h>
 #include <iostream>
 
@@ -66,5 +67,10 @@ namespace Luma::Vulkan
     EResourceState FSamplerImpl::getResourceState()
     {
         return EResourceState::General;
+    }
+
+    void FSamplerImpl::setName(FStringView name)
+    {
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_SAMPLER, m_Handle, name);
     }
 }

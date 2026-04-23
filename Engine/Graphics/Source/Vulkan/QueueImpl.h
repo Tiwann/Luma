@@ -1,10 +1,9 @@
 ﻿#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Queue.h"
+#include "Luma/Containers/Array.h"
 #include "VulkanFwd.h"
 #include <cstdint>
-
-#include "Luma/Containers/Array.h"
 
 
 namespace Luma::Vulkan
@@ -13,10 +12,13 @@ namespace Luma::Vulkan
     class FCommandBufferImpl;
     class FFenceImpl;
     class FSemaphoreImpl;
+    class FRenderDeviceImpl;
 
     class LUMA_GRAPHICS_API FQueueImpl final : public IQueue
     {
     public:
+        FQueueImpl(FRenderDeviceImpl* device) : m_Device(device) {}
+
         bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence = nullptr, FPipelineStageFlags stageMask = EPipelineStageBits::None) override;
         bool present(ISwapchain* swapchain, ISemaphore* waitSemaphore, uint32_t imageIndex) override;
         void waitForSemaphore(const ISemaphore* semaphore) override;
@@ -34,8 +36,9 @@ namespace Luma::Vulkan
         bool sameHandle(const FQueueImpl& other) const;
         bool same(const FQueueImpl& other) const;
 
-
+        void setName(FStringView name) override;
     private:
+        FRenderDeviceImpl* m_Device = nullptr;
         VkQueue m_Handle = nullptr;
         uint32_t m_Index = 0xFFFFFFFF;
         TArray<const FSemaphoreImpl*> m_WaitSemaphores;

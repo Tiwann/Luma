@@ -18,11 +18,12 @@ namespace Luma::Vulkan
         bool initialize(const FTextureDesc& textureDesc) override;
         void destroy() override;
         bool isValid() override;
-
+        void setName(FStringView name) override;
         VkImage getImage() const;
         VmaAllocation getAllocation() const;
         EResourceState getResourceState() override;
         const ITextureView* getTextureView() const override;
+
     private:
         friend FSwapchainImpl;
         FRenderDeviceImpl* m_Device = nullptr;

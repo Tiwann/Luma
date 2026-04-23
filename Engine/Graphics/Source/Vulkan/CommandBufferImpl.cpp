@@ -2,6 +2,7 @@
 #include "RenderDeviceImpl.h"
 #include "BufferImpl.h"
 #include "Conversions.h"
+#include "VulkanUtils.h"
 #include <Volk/volk.h>
 
 
@@ -86,15 +87,15 @@ namespace Luma::Vulkan
     {
     }
 
-    void FCommandBufferImpl::setViewport(const FRect2f& viewport, float minDepth, float maxDepth)
+    void FCommandBufferImpl::setViewport(const FViewport& viewport)
     {
         VkViewport vp { };
-        vp.x = viewport.x;
-        vp.y = viewport.y + viewport.height;
-        vp.width = viewport.width;
-        vp.height = -viewport.height;
-        vp.minDepth = minDepth;
-        vp.maxDepth = maxDepth;
+        vp.x = viewport.area.x;
+        vp.y = viewport.area.y + viewport.area.height;
+        vp.width = viewport.area.width;
+        vp.height = -viewport.area.height;
+        vp.minDepth = viewport.minDepth;
+        vp.maxDepth = viewport.maxDepth;
         vkCmdSetViewport(m_Handle, 0, 1, &vp);
     }
 
@@ -158,10 +159,6 @@ namespace Luma::Vulkan
 
     void FCommandBufferImpl::setName(FStringView name)
     {
-        VkDebugUtilsObjectNameInfoEXT nameInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT };
-        nameInfo.objectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
-        nameInfo.objectHandle = reinterpret_cast<uint64_t>(m_Handle);
-        nameInfo.pObjectName = *name;
-        vkSetDebugUtilsObjectNameEXT(m_Device->getHandle(), &nameInfo);
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_COMMAND_BUFFER, m_Handle, name);
     }
 }

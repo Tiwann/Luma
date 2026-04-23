@@ -27,6 +27,8 @@ namespace Luma::Vulkan
         bool isValid() const override;
         ITexture* getTexture(uint32_t index) override;
         ITextureView* getTextureView(uint32_t index) override;
+
+        void setName(FStringView name) override;
     private:
         VkSwapchainKHR m_Handle = nullptr;
         VkImage m_Images[3] = { nullptr, nullptr, nullptr };

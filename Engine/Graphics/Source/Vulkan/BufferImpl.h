@@ -23,6 +23,8 @@ namespace Luma::Vulkan
         VkBuffer getHandle() const;
         const VkBuffer* getHandlePtr() const;
         void getAllocationInfo(VmaAllocationInfo2& outAllocationInfo) const;
+
+        void setName(FStringView name) override;
     private:
         FRenderDeviceImpl* m_Device = nullptr;
         VkBuffer m_Handle = nullptr;

@@ -2,9 +2,10 @@
 #include "RenderDeviceImpl.h"
 #include "CommandBufferImpl.h"
 #include "Conversions.h"
-#include <Volk/volk.h>
 #include "ImmediateExecutorImpl.h"
 #include "Luma/Containers/Array.h"
+#include "VulkanUtils.h"
+#include <Volk/volk.h>
 
 namespace Luma::Vulkan
 {
@@ -195,5 +196,10 @@ namespace Luma::Vulkan
         view.m_AspectFlags = ETextureAspectBits::Color;
         view.m_Texture = texture;
         return &view;
+    }
+
+    void FSwapchainImpl::setName(FStringView name)
+    {
+        setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_DEVICE, m_Handle, name);
     }
 }

@@ -5,6 +5,8 @@
 
 #include <vma/vk_mem_alloc.h>
 
+#include "VulkanUtils.h"
+
 
 namespace Luma::Vulkan
 {
@@ -129,6 +131,11 @@ namespace Luma::Vulkan
     bool FTextureImpl::isValid()
     {
         return m_Device && m_Image && m_Allocation;
+    }
+
+    void FTextureImpl::setName(FStringView name)
+    {
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_IMAGE, m_Image, name);
     }
 
     VkImage FTextureImpl::getImage() const

@@ -1,7 +1,9 @@
 #include "SemaphoreImpl.h"
 #include "RenderDeviceImpl.h"
 #include "Luma/Runtime/Assertion.h"
+#include "VulkanUtils.h"
 #include <Volk/volk.h>
+
 
 namespace Luma::Vulkan
 {
@@ -82,10 +84,6 @@ namespace Luma::Vulkan
 
     void FSemaphoreImpl::setName(FStringView name)
     {
-        VkDebugUtilsObjectNameInfoEXT nameInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT };
-        nameInfo.objectType = VK_OBJECT_TYPE_SEMAPHORE;
-        nameInfo.objectHandle = reinterpret_cast<uint64_t>(m_Handle);
-        nameInfo.pObjectName = *name;
-        vkSetDebugUtilsObjectNameEXT(m_Device->getHandle(), &nameInfo);
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_SEMAPHORE, m_Handle, name);
     }
 }

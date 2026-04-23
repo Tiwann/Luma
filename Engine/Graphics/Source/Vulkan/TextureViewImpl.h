@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/TextureView.h"
+
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan
@@ -13,7 +14,7 @@ namespace Luma::Vulkan
     public:
         bool initialize(const FTextureViewDesc& textureViewDesc) override;
         void destroy() override;
-
+        void setName(FStringView name) override;
         VkImage getImage() const;
         VkImageView getHandle() const;
     private:

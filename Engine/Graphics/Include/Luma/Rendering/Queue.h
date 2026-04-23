@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "QueueType.h"
 #include "Luma/Rendering/PipelineStage.h"
-
+#include "Luma/Containers/StringView.h"
 namespace Luma
 {
     struct ICommandBuffer;
@@ -20,6 +20,8 @@ namespace Luma
 
         EQueueType getQueueType() const { return m_QueueType; }
         void setQueueType(const EQueueType queueType) { m_QueueType = queueType; }
+
+        virtual void setName(FStringView name) { }
     protected:
         EQueueType m_QueueType = EQueueType::None;
     };

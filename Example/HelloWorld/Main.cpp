@@ -1,11 +1,12 @@
 ﻿#include <Luma/Runtime/DesktopWindow.h>
 #include <Luma/Rendering/RenderDevice.h>
 #include <Luma/Memory/Ref.h>
-#include <Luma/Runtime/Assertion.h>
 #include <Luma/Rendering/ShaderCompiler.h>
 #include <iostream>
+#include "Luma/Utility/SlangCommon.h"
 #include <slang/slang.h>
 #include <slang/slang-com-ptr.h>
+
 
 using namespace Luma;
 
@@ -40,7 +41,7 @@ int main()
         }
     }
 #else
-    Slang::ComPtr<slang::IGlobalSession> globalSession = nullptr;
+    slang::GlobalSessionHandle globalSession = nullptr;
     if (SLANG_FAILED(slang::createGlobalSession(globalSession.writeRef())))
     {
         std::cout << "Failed to create global session" << std::endl;

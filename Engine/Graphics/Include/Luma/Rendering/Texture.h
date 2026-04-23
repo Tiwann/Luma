@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Luma/Runtime/Format.h"
+#include "Luma/Containers/StringView.h"
 #include "Resource.h"
 #include "TextureUsage.h"
 #include "TextureDimension.h"
@@ -76,7 +77,7 @@ namespace Luma
         virtual bool initialize(const FTextureDesc& createInfo) = 0;
         virtual void destroy() = 0;
         virtual bool isValid() = 0;
-
+        virtual void setName(FStringView name) {}
         EResourceType getResourceType() final { return EResourceType::Texture; }
         EFormat getFormat() const { return m_Format; }
         uint32_t getWidth() const { return m_Width; }

@@ -2,8 +2,10 @@
 #include "TextureImpl.h"
 #include "RenderDeviceImpl.h"
 #include "Conversions.h"
+#include "VulkanUtils.h"
 
 #include <Volk/volk.h>
+
 
 namespace Luma::Vulkan
 {
@@ -53,6 +55,11 @@ namespace Luma::Vulkan
         const VkDevice deviceHandle = m_Device->getHandle();
         vkDestroyImageView(deviceHandle, m_Handle, nullptr);
         m_Handle = nullptr;
+    }
+
+    void FTextureViewImpl::setName(FStringView name)
+    {
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_IMAGE_VIEW, m_Handle, name);
     }
 
     VkImage FTextureViewImpl::getImage() const
