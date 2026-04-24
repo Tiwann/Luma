@@ -8,7 +8,7 @@
 #include "CommandBufferImpl.h"
 #include "ImmediateExecutorImpl.h"
 #include "VulkanFwd.h"
-
+#include "Luma/Utility/SlangFwd.h"
 #define VK_FAILED(res) (res != VK_SUCCESS)
 
 namespace Luma::Vulkan
@@ -59,7 +59,7 @@ namespace Luma::Vulkan
         VkDescriptorPool getDescriptorPool() const { return m_DescriptorPool; }
         FImmediateExecutorImpl& getExecutor();
 
-
+        slang::IGlobalSession* getSlangSession() const;
     private:
         static inline VkInstance s_Instance = nullptr;
         static inline uint32_t s_DeviceCount = 0;
@@ -89,5 +89,6 @@ namespace Luma::Vulkan
         uint32_t m_CurrentFrameIndex = 0;
         uint32_t m_SwapchainImageIndex = 0;
         IWindow* m_Window = nullptr;
+        slang::IGlobalSession* m_SlangSession = nullptr;
     };
 }

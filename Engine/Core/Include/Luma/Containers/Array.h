@@ -456,7 +456,7 @@ namespace Luma
         template<typename U> requires std::is_convertible_v<T, U>
         TArray<U> as()
         {
-            return transform<U>([](const T& element) { return U(element); });
+            return transform<U>([](const T& element) { return static_cast<U>(element); });
         }
 
         PointerType begin() { return m_Data; }

@@ -38,12 +38,12 @@ namespace Luma
         static FString getEngineAssetPath(const FStringView filepath);
 
 #ifdef LUMA_CLIENT
-        static FStringView GetApplicationDirectory()
+        static FStringView getClientDir()
         {
             return LUMA_APPLICATION_DIR;
         }
 
-        static FString GetAssetPath(const FStringView filepath)
+        static FString getAssetPath(const FStringView filepath)
         {
             return combine(FStringView(LUMA_APPLICATION_DIR), "Assets", filepath);
         }

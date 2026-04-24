@@ -1,174 +1,71 @@
 #include "Luma/Rendering/ShaderCompiler.h"
 #include "Luma/Containers/StringView.h"
 #include "Luma/Containers/StringFormat.h"
+#include "Luma/Containers/BufferView.h"
 #include "Luma/Utility/SlangCommon.h"
+#include "Luma/Utility/SpirvReflectCommon.h"
+
 #include <slang/slang.h>
 #include <slang/slang-com-ptr.h>
+#include <spirv_reflect.h>
+
+
 
 namespace Luma
 {
-    static void collectResourceBindings(
-    slang::VariableLayoutReflection* varLayout,
-    uint32_t                         accBinding,
-    uint32_t                         accSpace,
-    TArray<FShaderReflectionData::FShaderBinding>&    out)
-{
-    if (!varLayout) return;
-
-    slang::TypeLayoutReflection* typeLayout = varLayout->getTypeLayout();
-    if (!typeLayout) return;
-
-    slang::TypeReflection::Kind kind = typeLayout->getKind();
-
-    // ── Determine the "resource" layout unit for this variable ──────────────
-    //
-    // For Vulkan/SPIR-V targets we look for DescriptorTableSlot (a binding).
-    // For D3D targets we look for ShaderResource / UnorderedAccess /
-    // ConstantBuffer / SamplerState as appropriate.
-    // getCategoryCount()/getCategoryByIndex() tells us which units are used.
-
-    const int catCount = varLayout->getCategoryCount();
-
-    // ── Recurse into structs ─────────────────────────────────────────────────
-    if (kind == slang::TypeReflection::Kind::Struct)
+    static TArray<FShaderPushConstantRange> getPushConstantRangesReflection(const SpvReflectShaderModule& module)
     {
-        int fieldCount = typeLayout->getFieldCount();
-        for (int f = 0; f < fieldCount; ++f)
+        TArray<FShaderPushConstantRange> ranges;
+
+        uint32_t pcBlockCount = 0;
+        spvReflectEnumeratePushConstantBlocks(&module, &pcBlockCount, nullptr);
+        TArray<SpvReflectBlockVariable*> pushConstantBlocks(pcBlockCount);
+        spvReflectEnumeratePushConstantBlocks(&module, &pcBlockCount, pushConstantBlocks.data());
+
+        for (const SpvReflectBlockVariable* block : pushConstantBlocks)
         {
-            slang::VariableLayoutReflection* fieldLayout =
-                typeLayout->getFieldByIndex(f);
-
-            // Accumulate the field's own relative offsets
-            uint32_t fieldBinding = accBinding;
-            uint32_t fieldSpace   = accSpace;
-
-            for (int c = 0; c < fieldLayout->getCategoryCount(); ++c)
-            {
-                auto cat = fieldLayout->getCategoryByIndex(c);
-                if (cat == slang::ParameterCategory::DescriptorTableSlot ||
-                    cat == slang::ParameterCategory::ShaderResource       ||
-                    cat == slang::ParameterCategory::UnorderedAccess      ||
-                    cat == slang::ParameterCategory::ConstantBuffer       ||
-                    cat == slang::ParameterCategory::SamplerState)
-                {
-                    fieldBinding += (uint32_t)fieldLayout->getOffset(cat);
-                    fieldSpace   += (uint32_t)fieldLayout->getBindingSpace(cat);
-                }
-            }
-
-            collectResourceBindings(fieldLayout, fieldBinding, fieldSpace, out);
+            FShaderPushConstantRange range;
+            range.offset = block->offset;
+            range.size = block->size;
+            range.stage = getShaderStage(module.shader_stage);
+            ranges.add(range);
         }
-        return;
+
+        return ranges;
     }
 
-    // ── Recurse into ConstantBuffer<T> / ParameterBlock<T> ──────────────────
-    if (kind == slang::TypeReflection::Kind::ConstantBuffer ||
-        kind == slang::TypeReflection::Kind::ParameterBlock)
+    static TArray<FBindingSetLayoutDesc> getBindingSetLayoutDescReflection(const SpvReflectShaderModule& module)
     {
-        // The "container" part occupies a binding at the accumulated offset.
-        // The element type's resources start inside a (possibly new) space.
-        uint32_t containerBinding = accBinding;
-        uint32_t containerSpace   = accSpace;
+        uint32_t setLayoutCount = 0;
+        spvReflectEnumerateDescriptorSets(&module, &setLayoutCount, nullptr);
+        TArray<SpvReflectDescriptorSet*> sets(setLayoutCount);
+        spvReflectEnumerateDescriptorSets(&module, &setLayoutCount, sets.data());
 
-        for (int c = 0; c < catCount; ++c)
+        TArray<FBindingSetLayoutDesc> result;
+
+        for (const SpvReflectDescriptorSet* set : sets)
         {
-            auto cat = varLayout->getCategoryByIndex(c);
+            TBufferView<SpvReflectDescriptorBinding*> bindings(set->bindings, set->binding_count);
 
-            if (cat == slang::ParameterCategory::SubElementRegisterSpace)
+            FBindingSetLayoutDesc setLayoutDesc;
+            setLayoutDesc.setIndex = set->set;
+
+            for (const SpvReflectDescriptorBinding* binding : bindings)
             {
-                containerSpace += (uint32_t)varLayout->getOffset(cat);
+                FShaderBinding bindingInfo;
+                bindingInfo.bindingIndex = binding->binding;
+                bindingInfo.bindingType = getBindingType(binding->descriptor_type);
+                bindingInfo.descriptorCount = binding->count;
+                bindingInfo.name = binding->name;
+                bindingInfo.stageFlags = getShaderStage(module.shader_stage);
+                setLayoutDesc.bindings.add(bindingInfo);
             }
-            else if (cat == slang::ParameterCategory::DescriptorTableSlot ||
-                     cat == slang::ParameterCategory::ConstantBuffer)
-            {
-                containerBinding += (uint32_t)varLayout->getOffset(cat);
-            }
+
+            result.add(setLayoutDesc);
         }
 
-        // Emit a record for the container itself (the CB/PB binding)
-        {
-            FShaderReflectionData::FShaderBinding binding;
-            binding.name = varLayout->getName() ? varLayout->getName() : "<anon>";
-            binding.bindingIndex = containerBinding;
-            binding.setIndex = containerSpace;
-            //binding.bindingType = getBindingType(varLayout->getType()->getElementType)
-            out.addUnique(binding);
-        }
-
-        // Recurse into the element type using a synthesised variable layout.
-        // getElementVarLayout() gives the var-layout for the contained type
-        // including its offset relative to the container.
-        slang::VariableLayoutReflection* elemVarLayout =
-            typeLayout->getElementVarLayout();
-        if (elemVarLayout)
-        {
-            collectResourceBindings(
-                elemVarLayout, containerBinding, containerSpace, out);
-        }
-        return;
+        return result;
     }
-
-    // ── Leaf resource (Texture, Buffer, Sampler, …) ──────────────────────────
-    if (kind == slang::TypeReflection::Kind::Resource   ||
-        kind == slang::TypeReflection::Kind::SamplerState)
-    {
-        FShaderReflectionData::FShaderBinding binding;
-        binding.name     = varLayout->getName() ? varLayout->getName() : "<anon>";
-        binding.bindingIndex  = accBinding;
-        binding.setIndex    = accSpace;
-
-        // Pick the most descriptive category reported by the variable
-        for (int c = 0; c < catCount; ++c)
-        {
-            auto cat = varLayout->getCategoryByIndex(c);
-            if (cat != slang::ParameterCategory::Uniform)
-            {
-                // Apply the variable's own relative offset
-                binding.bindingIndex  += (uint32_t)varLayout->getOffset(cat);
-                binding.setIndex    += (uint32_t)varLayout->getBindingSpace(cat);
-                break;
-            }
-        }
-
-        out.addUnique(binding);
-        return;
-    }
-
-    // ── Arrays: recurse into element, stepping the binding each time ─────────
-    if (kind == slang::TypeReflection::Kind::Array)
-    {
-        slang::TypeLayoutReflection* elemTypeLayout =
-            typeLayout->getElementTypeLayout();
-        size_t elemCount = typeLayout->getElementCount();
-        bool unbounded   = (elemCount == ~size_t(0));
-
-        // Stride of one element (in bindings)
-        uint32_t stride = 0;
-        for (int c = 0; c < (int)elemTypeLayout->getCategoryCount(); ++c)
-        {
-            auto cat = elemTypeLayout->getCategoryByIndex(c);
-            if (cat != slang::ParameterCategory::Uniform)
-            {
-                stride = (uint32_t)elemTypeLayout->getStride(cat);
-                break;
-            }
-        }
-        if (stride == 0) stride = 1;
-
-        size_t limit = unbounded ? 1 : elemCount; // report first element for unbounded
-        for (size_t i = 0; i < limit; ++i)
-        {
-            // Build a temporary name with index suffix
-            // (real code might pass name down instead)
-            collectResourceBindings(
-                varLayout,
-                accBinding + (uint32_t)(i * stride),
-                accSpace,
-                out);
-        }
-        return;
-    }
-}
 
     FStringView getErrorString(slang::IBlob* blob)
     {
@@ -197,14 +94,7 @@ namespace Luma
             const auto toConstChar = [](const FString& includeDir) -> const char* { return *includeDir; };
             TArray<const char*> includes = request.getIncludeDirectories().transform<const char*>(toConstChar);
 
-            TArray<slang::PreprocessorMacroDesc> defines = request.getDefines().transform<slang::PreprocessorMacroDesc>(
-                [](const FShaderCompileDefine& define)
-                {
-                    slang::PreprocessorMacroDesc desc;
-                    desc.name = *define.key;
-                    desc.value = *define.value;
-                    return desc;
-                });
+            TArray<slang::PreprocessorMacroDesc> defines = request.getDefines().transform<slang::PreprocessorMacroDesc>(toPreprocessorMacroDesc);
 
             slang::SessionDesc sessionDesc;
             sessionDesc.targets = &shaderTargetDesc;
@@ -270,6 +160,9 @@ namespace Luma
 
             for (uint32_t entryPointIndex = 0; entryPointIndex < entryPointsAsComponent.count(); entryPointIndex++)
             {
+                const TArray<FShaderEntryPoint>& entryPointInfos = request.getEntryPointInfos();
+                const EShaderStageBits stage = entryPointInfos[entryPointIndex].stage;
+
                 slang::BlobHandle entryPointCode = nullptr;
                 if (SLANG_FAILED(linkedProgram->getEntryPointCode(entryPointIndex, 0, entryPointCode.writeRef(), errorBlob.writeRef())))
                 {
@@ -278,19 +171,23 @@ namespace Luma
                     continue;
                 }
 
-                const TArray<FShaderEntryPoint>& entryPointInfos = request.getEntryPointInfos();
-
+                
                 FShaderCompiledData compiledData;
                 compiledData.blob = TArray(static_cast<const uint8_t*>(entryPointCode->getBufferPointer()), entryPointCode->getBufferSize());
-                compiledData.stage = entryPointInfos[entryPointIndex].stage;
+                compiledData.stage = stage;
                 compileResult.compiledData.emplace(std::move(compiledData));
 
-                FShaderReflectionData reflectionData;
-                reflectionData.stage = entryPointInfos[entryPointIndex].stage;
-                compileResult.reflectionData.emplace(std::move(reflectionData));
+                SpvReflectShaderModule reflectModule;
+                spvReflectCreateShaderModule(entryPointCode->getBufferSize(), entryPointCode->getBufferPointer(), &reflectModule);
 
-                results.add(compileResult);
+                FShaderReflectionData reflectionData;
+                reflectionData.stage = stage;
+                reflectionData.pushConstantRanges = getPushConstantRangesReflection(reflectModule);
+                reflectionData.setLayoutDescs = getBindingSetLayoutDescReflection(reflectModule);
+                compileResult.reflectionData.emplace(std::move(reflectionData));
             }
+
+            results.add(compileResult);
         }
 
         return results;

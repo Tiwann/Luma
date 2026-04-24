@@ -1,20 +1,14 @@
 #pragma once
-#include "BindingType.h"
+#include "BindingSetLayout.h"
 #include "ShaderStage.h"
 #include "ShadingLanguage.h"
 #include "ShaderCompileTarget.h"
+#include "ShaderCompileDefine.h"
+#include "ShaderPushConstantRange.h"
 #include "Luma/Containers/String.h"
 
 namespace Luma
 {
-    struct FShaderCompileDefine
-    {
-        FString key;
-        FString value;
-
-        bool operator==(const FShaderCompileDefine& other) const = default;
-    };
-
     struct FShaderModuleInfo
     {
         FString name;
@@ -31,27 +25,9 @@ namespace Luma
 
     struct FShaderReflectionData
     {
-        struct FShaderBinding
-        {
-            FString name;
-            EBindingType bindingType;
-            uint32_t setIndex;
-            uint32_t bindingIndex;
-            bool operator==(const FShaderBinding& other) const = default;
-        };
-
-        struct FShaderPushConstantRange
-        {
-            uint32_t offset;
-            uint32_t size;
-            bool operator==(const FShaderPushConstantRange& other) const = default;
-        };
-
         EShaderStageBits stage;
-        TArray<FShaderBinding> bindingReflections;
+        TArray<FBindingSetLayoutDesc> setLayoutDescs;
         TArray<FShaderPushConstantRange> pushConstantRanges;
-
-        bool operator==(const FShaderReflectionData& other) const = default;
     };
 
     class FShaderCompileRequest

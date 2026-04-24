@@ -12,6 +12,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/ShaderCompiler.cpp
         Source/Rendering/GraphicsState.cpp
         Source/Utility/SlangCommon.cpp
+        Source/Utility/SpirvReflectCommon.cpp
 )
 
 set(LUMA_VULKAN_SRC
@@ -30,6 +31,7 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/ImmediateExecutorImpl.cpp
         Source/Vulkan/BindingSetLayoutImpl.cpp
         Source/Vulkan/BindingSetImpl.cpp
+        Source/Vulkan/ShaderImpl.cpp
 )
 
 set(LUMA_WEBGPU_SRC
@@ -38,9 +40,9 @@ set(LUMA_WEBGPU_SRC
 )
 
 add_library(luma-graphics ${LUMA_GRAPHICS_SRC})
+target_link_libraries(luma-graphics PRIVATE luma-core RGFW::RGFW spirv-reflect-static PUBLIC Vulkan::slang)
 target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS INTERFACE LUMA_CLIENT)
-target_link_libraries(luma-graphics PRIVATE luma-core RGFW::RGFW PUBLIC Vulkan::slang)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26)
 luma_generate_export_header(TARGET luma-graphics MODULE_NAME GRAPHICS)
 

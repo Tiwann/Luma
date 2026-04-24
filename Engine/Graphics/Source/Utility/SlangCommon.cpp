@@ -54,4 +54,12 @@ namespace Luma
         }
         return EBindingType::PushConstant;
     }
+
+    slang::PreprocessorMacroDesc toPreprocessorMacroDesc(const FShaderCompileDefine& define)
+    {
+        slang::PreprocessorMacroDesc desc;
+        desc.name = *define.key;
+        desc.value = *define.value;
+        return desc;
+    }
 }

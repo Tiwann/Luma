@@ -4,7 +4,7 @@
 
 namespace Luma::Vulkan
 {
-    struct FRenderDeviceImpl;
+    class FRenderDeviceImpl;
 
     class FBindingSetLayoutImpl : public IBindingSetLayout
     {

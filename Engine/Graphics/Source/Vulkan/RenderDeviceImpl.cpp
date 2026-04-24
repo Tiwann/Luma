@@ -6,18 +6,18 @@
 #include "TextureImpl.h"
 #include "TextureViewImpl.h"
 #include "SemaphoreImpl.h"
-#include "Luma/Rendering/Buffer.h"
+#include "ShaderImpl.h"
+
 #include "Luma/Runtime/DesktopWindow.h"
+#include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Containers/Array.h"
+#include "Luma/Containers/StringFormat.h"
 
 #include <iostream>
 #include <Volk/volk.h>
 #include <rgfw/rgfw.h>
+#include <slang/slang.h>
 #include <vma/vk_mem_alloc.h>
-
-#include "Luma/Containers/StringFormat.h"
-#include "Luma/Rendering/ResourceBarrier.h"
-
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
 #define VK_LAYER_KHRONOS_VALIDATION_NAME "VK_LAYER_KHRONOS_validation"
@@ -400,6 +400,8 @@ namespace Luma::Vulkan
 
         m_ImmediateExecutor.initialize({this, &m_RenderQueue});
         m_Window = deviceDesc.window;
+        if (SLANG_FAILED(slang::createGlobalSession(&m_SlangSession)))
+            return false;
         s_DeviceCount++;
         return true;
     }
@@ -407,6 +409,10 @@ namespace Luma::Vulkan
     void FRenderDeviceImpl::destroy()
     {
         waitIdle();
+        // I know this shouldn't be there
+        m_SlangSession->release();
+        slang::shutdown();
+        m_Window = nullptr;
         m_ImmediateExecutor.destroy();
         for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
         {
@@ -621,7 +627,16 @@ namespace Luma::Vulkan
 
     IShader* FRenderDeviceImpl::createShader(const FShaderDesc& shaderDesc)
     {
-        return nullptr;
+        FShaderDesc desc(shaderDesc);
+        desc.device = this;
+        FShaderImpl* shader = new FShaderImpl();
+        if (!shader->initialize(desc))
+        {
+            shader->destroy();
+            delete shader;
+            return nullptr;
+        }
+        return shader;
     }
 
     ICommandBuffer* FRenderDeviceImpl::createCommandBuffer(const FCommandBufferDesc& commandBufferDesc)
@@ -716,5 +731,10 @@ namespace Luma::Vulkan
     FImmediateExecutorImpl& FRenderDeviceImpl::getExecutor()
     {
         return m_ImmediateExecutor;
+    }
+
+    slang::IGlobalSession* FRenderDeviceImpl::getSlangSession() const
+    {
+        return m_SlangSession;
     }
 }

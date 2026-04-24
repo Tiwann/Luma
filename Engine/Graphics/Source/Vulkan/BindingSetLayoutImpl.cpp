@@ -1,9 +1,8 @@
 #include "BindingSetLayoutImpl.h"
+#include "RenderDeviceImpl.h"
 #include "Conversions.h"
 #include "Luma/Containers/Array.h"
 #include <Volk/volk.h>
-
-#include "RenderDeviceImpl.h"
 
 
 namespace Luma::Vulkan
@@ -13,17 +12,15 @@ namespace Luma::Vulkan
     bool FBindingSetLayoutImpl::initialize(const FBindingSetLayoutDesc& layoutDesc)
     {
         if (!layoutDesc.device) return false;
-        if (layoutDesc.bindingCount == 0) return false;
+        if (layoutDesc.bindings.isEmpty()) return false;
 
         TArray<VkDescriptorSetLayoutBinding> bindings;
         TArray<VkDescriptorBindingFlags> bindingFlags;
 
-        for (size_t i = 0; i < layoutDesc.bindingCount; i++)
+        for (const auto& binding : layoutDesc.bindings)
         {
-            const FShaderBinding& binding = layoutDesc.bindings[i];
-
             VkDescriptorSetLayoutBinding vkBinding = { };
-            vkBinding.binding = i;
+            vkBinding.binding = binding.bindingIndex;
             if (binding.bindingType == EBindingType::SampledTexture && binding.descriptorCount == 0)
                 vkBinding.descriptorCount = BINDLESS_MAX_TEXTURES;
             else
@@ -40,7 +37,7 @@ namespace Luma::Vulkan
         }
 
         VkDescriptorSetLayoutBindingFlagsCreateInfo bindingFlagCreateInfo = {VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO};
-        bindingFlagCreateInfo.bindingCount = layoutDesc.bindingCount;
+        bindingFlagCreateInfo.bindingCount = layoutDesc.bindings.count();
         bindingFlagCreateInfo.pBindingFlags = bindingFlags.data();
 
         VkDescriptorSetLayoutCreateInfo layoutCreateInfo = { VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO };

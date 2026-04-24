@@ -2,17 +2,15 @@
 #include <Luma/Rendering/RenderDevice.h>
 #include <Luma/Memory/Ref.h>
 #include <Luma/Rendering/ShaderCompiler.h>
-#include <iostream>
-#include "Luma/Utility/SlangCommon.h"
-#include <slang/slang.h>
-#include <slang/slang-com-ptr.h>
+#include <Luma/Runtime/Flags.h>
+#include <Luma/Rendering/Shader.h>
 
 
 using namespace Luma;
 
 int main()
 {
-#if 0
+
     FWindowDesc windowDesc;
     windowDesc.title = "First window";
     windowDesc.width = 800;
@@ -30,6 +28,13 @@ int main()
     Ref<IRenderDevice> renderDevice = Ref(createRenderDevice(deviceDesc));
     assert(renderDevice, "Render device failed to create! Exiting application.")
 
+    FShaderDesc shaderDesc;
+    shaderDesc.moduleName = "Fullscreen";
+    shaderDesc.filepath = R"(D:\Dev\Luma\Engine\Shaders\Fullscreen.slang)";
+    shaderDesc.stageFlags = EShaderStageBits::Vertex | EShaderStageBits::Fragment;
+
+    Ref<IShader> shader = Ref(renderDevice->createShader(shaderDesc));
+
     while (!window->shouldClose())
     {
         window->pollEvents();
@@ -40,26 +45,5 @@ int main()
             renderDevice->present();
         }
     }
-#else
-    slang::GlobalSessionHandle globalSession = nullptr;
-    if (SLANG_FAILED(slang::createGlobalSession(globalSession.writeRef())))
-    {
-        std::cout << "Failed to create global session" << std::endl;
-        return 1;
-    }
-
-    FShaderCompileRequest request;
-    request.setLanguage(EShadingLanguage::Slang);
-    request.setCompileTarget(EShaderCompileTarget::SPIRV);
-    request.setModuleInfo("Fullscreen", R"(D:\Dev\Luma\Engine\Shaders\Fullscreen.slang)");
-    request.addEntryPoint("vert", EShaderStageBits::Vertex);
-    request.addEntryPoint("frag", EShaderStageBits::Fragment);
-
-    FShaderCompiler compiler(globalSession.get());
-    compiler.addCompileRequest(request);
-
-    const auto results = compiler.compile();
-    if (results.isEmpty()) return 1;
-#endif
     return 0;
 }

@@ -12,7 +12,7 @@ namespace Luma
     template<Character T>
     TString<T> stringFromView(TStringView<T> view)
     {
-        return TString<T>(const_cast<T*>(view.Data()), view.Count());
+        return TString<T>(const_cast<T*>(view.data()), view.count());
     }
 
     template<Character To, Character From> requires (!std::is_same_v<To, From>)
