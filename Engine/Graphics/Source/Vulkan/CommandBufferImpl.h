@@ -17,9 +17,14 @@ namespace Luma::Vulkan
         bool begin() override;
         void end() override;
 
+        void beginDebugGroup(FStringView name, const FColor& color) override;
+        void endDebugGroup() override;
+
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset) override;
         void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) override;
         void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) override;
+        void beginRenderPass(const FRenderPassDesc& renderPassDesc) override;
+        void endRenderPass() override;
         void setViewport(const FViewport& viewport) override;
         void setScissor(const FRect2u& scissor) override;
         void draw(const FDrawCommand& drawCmd) override;
@@ -29,8 +34,8 @@ namespace Luma::Vulkan
         void bindComputePipeline(const IComputePipeline* pipeline) override;
         void dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) override;
         void dispatchIndirect(IBuffer* buffer, int64_t offset) override;
-        void copyBuffer(IBuffer* srcBuffer, int64_t srcOffset, uint64_t srcSize, IBuffer* dstBuffer, int64_t dstOffset,uint64_t dstSize) override;
-        void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice,uint32_t mipLevel) override;
+        void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) override;
+        void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex,uint32_t mipLevel) override;
 
         void setName(FStringView name) override;
         VkCommandBuffer getHandle() const { return m_Handle; }

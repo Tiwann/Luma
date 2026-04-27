@@ -44,7 +44,7 @@ namespace Luma
 
         const CharacterType& operator[](SizeType index) const
         {
-            assert(index < m_Count, "Index out of bounds!");
+            LUMA_ASSERT(index < m_Count, "Index out of bounds!");
             return m_Data[index];
         }
 
@@ -83,14 +83,14 @@ namespace Luma
 
         TStringView subview(SizeType index) const
         {
-            assert(index < m_Count, "Index out of bounds!");
+            LUMA_ASSERT(index < m_Count, "Index out of bounds!");
             return TStringView(m_Data + index, m_Count - index);
         }
 
         TStringView subview(SizeType index, SizeType length) const
         {
-            assert(index <= m_Count, "Index out of bounds!");
-            assert(index + length <= m_Count, "Out of bounds!");
+            LUMA_ASSERT(index <= m_Count, "Index out of bounds!");
+            LUMA_ASSERT(index + length <= m_Count, "Out of bounds!");
             return TStringView(m_Data + index, length);
         }
 

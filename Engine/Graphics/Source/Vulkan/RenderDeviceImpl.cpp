@@ -19,6 +19,9 @@
 #include <slang/slang.h>
 #include <vma/vk_mem_alloc.h>
 
+#include "GraphicsPipelineImpl.h"
+#include "Luma/Rendering/GraphicsPipeline.h"
+
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
 #define VK_LAYER_KHRONOS_VALIDATION_NAME "VK_LAYER_KHRONOS_validation"
@@ -478,7 +481,7 @@ namespace Luma::Vulkan
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
         barrier.image = m_Swapchain.getImage(m_SwapchainImageIndex);
         barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+        barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseMipLevel = 0;
         barrier.subresourceRange.levelCount = 1;
@@ -506,7 +509,7 @@ namespace Luma::Vulkan
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
         barrier.image = m_Swapchain.getImage(m_SwapchainImageIndex);
-        barrier.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+        barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseMipLevel = 0;
@@ -676,7 +679,15 @@ namespace Luma::Vulkan
 
     IGraphicsPipeline* FRenderDeviceImpl::createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc)
     {
-        return nullptr;
+        FGraphicsPipelineDesc desc(pipelineDesc);
+        desc.device = this;
+        FGraphicsPipelineImpl* pipeline = new FGraphicsPipelineImpl();
+        if (!pipeline->initialize(desc))
+        {
+            delete pipeline;
+            return nullptr;
+        }
+        return pipeline;
     }
 
     IComputePipeline* FRenderDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
@@ -689,7 +700,7 @@ namespace Luma::Vulkan
             delete pipeline;
             return nullptr;
         }
-        return nullptr;
+        return pipeline;
     }
 
     IFence* FRenderDeviceImpl::createFence(const FFenceDesc& fenceDesc)
@@ -718,6 +729,11 @@ namespace Luma::Vulkan
             return nullptr;
         }
         return semaphore;
+    }
+
+    ITextureView* FRenderDeviceImpl::getAcquiredSwapchainTextureView()
+    {
+        return m_Swapchain.getTextureView(m_SwapchainImageIndex);
     }
 
     VkInstance FRenderDeviceImpl::getInstance()

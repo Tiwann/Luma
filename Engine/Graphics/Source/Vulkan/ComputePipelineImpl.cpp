@@ -15,10 +15,10 @@ namespace Luma::Vulkan
         FShaderImpl* shader = static_cast<FShaderImpl*>(pipelineDesc.shader);
         const auto& modules = shader->getShaderModules();
         if (modules.count() < 1) return false;
-        const VkShaderModule module = modules.first();
+        const FShaderModule module = modules.first();
 
         VkPipelineShaderStageCreateInfo stageCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
-        stageCreateInfo.module = module;
+        stageCreateInfo.module = module.handle;
         stageCreateInfo.pName = "main";
         stageCreateInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
 

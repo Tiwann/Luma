@@ -44,7 +44,7 @@ set(LUMA_CORE_WINDOWS_SRC
 add_library(luma-core ${LUMA_CORE_SRC})
 target_link_libraries(luma-core PUBLIC luma-natvis)
 target_include_directories(luma-core PRIVATE Source PUBLIC Include External)
-target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT PUBLIC LUMA_ENGINE_ROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\")
+target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26)
 luma_generate_export_header(TARGET luma-core MODULE_NAME CORE)
 

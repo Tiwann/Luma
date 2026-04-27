@@ -19,6 +19,7 @@ namespace Luma
     struct IGraphicsPipeline;
     struct IComputePipeline;
     struct ITexture;
+    struct FRenderPassDesc;
 
 
     struct FCommandBufferDesc
@@ -66,6 +67,8 @@ namespace Luma
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
+        virtual void beginRenderPass(const FRenderPassDesc& renderPassDesc) = 0;
+        virtual void endRenderPass() = 0;
         virtual void setScissor(const FScissor& scissor) = 0;
         virtual void setViewport(const FViewport& viewport) = 0;
         virtual void draw(const FDrawCommand& drawCmd) = 0;
@@ -87,7 +90,7 @@ namespace Luma
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// COPY CMDS
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void copyBuffer(IBuffer* srcBuffer, int64_t srcOffset, uint64_t srcSize, IBuffer* dstBuffer, int64_t dstOffset, uint64_t dstSize) = 0;
+        virtual void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) = 0;
         virtual void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice, uint32_t mipLevel) = 0;
     };
 

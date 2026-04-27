@@ -163,7 +163,7 @@ namespace Luma::Vulkan
     ITexture* FSwapchainImpl::getTexture(uint32_t index)
     {
         if (!m_Device) return nullptr;
-        assert(index <= 3, "Index out of swapchain's image count range!");
+        LUMA_ASSERT(index <= 3, "Index out of swapchain's image count range!");
         FTextureImpl& texture = m_Textures[index];
         texture.m_Device = static_cast<FRenderDeviceImpl*>(m_Device);
         texture.m_Image = m_Images[index];
@@ -183,7 +183,7 @@ namespace Luma::Vulkan
     ITextureView* FSwapchainImpl::getTextureView(uint32_t index)
     {
         if (!m_Device) return nullptr;
-        assert(index <= 3, "Index out of swapchain's image count range!");
+        LUMA_ASSERT(index <= 3, "Index out of swapchain's image count range!");
 
         const ITexture* texture = getTexture(index);
         if (!texture) return nullptr;

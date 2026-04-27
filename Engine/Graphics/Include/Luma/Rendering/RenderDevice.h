@@ -70,6 +70,7 @@ namespace Luma
         virtual ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) = 0;
         virtual IShader* createShader(const FShaderDesc& shaderDesc) = 0;
         virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
+        virtual ICommandBuffer* getCommandBuffer() = 0;
         ICommandBuffer* createRenderCommandBuffer();
         ICommandBuffer* createComputeCommandBuffer();
         ICommandBuffer* createCopyCommandBuffer();
@@ -79,6 +80,7 @@ namespace Luma
         virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) = 0;
         virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
         virtual ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) = 0;
+        virtual ITextureView* getAcquiredSwapchainTextureView() = 0;
         ISemaphore* createBinarySemaphore();
         ISemaphore* createTimelineSemaphore(uint64_t initialValue);
     };

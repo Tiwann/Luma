@@ -45,6 +45,6 @@ namespace Luma::Vulkan
 
     void FFenceImpl::setName(FStringView name)
     {
-        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_COMMAND_BUFFER, m_Handle, name);
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_FENCE, m_Handle, name);
     }
 }

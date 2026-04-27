@@ -11,19 +11,19 @@ namespace Luma
         return strfmt("{}{}{}", path, Separator<char>, other).replaceAll(OtherSeparator<char>, Separator<char>);
     }
 
-    FStringView FPath::getEngineDirectory()
+    FStringView FPath::getEngineDir()
     {
         return LUMA_ENGINE_ROOT_DIR;
     }
 
-    FString FPath::getEngineAssetsDirectory()
+    FString FPath::getEngineAssetsDir()
     {
-        return combine(getEngineDirectory(), "Assets");
+        return combine(getEngineDir(), "Assets");
     }
 
     FString FPath::getEngineAssetPath(const FStringView filepath)
     {
-        return combine(getEngineAssetsDirectory(), filepath);
+        return combine(getEngineAssetsDir(), filepath);
     }
 
     FStringView FPath::getFilename(const FStringView filepath)

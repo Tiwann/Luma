@@ -2,7 +2,6 @@
 #include "ShaderStage.h"
 #include "Luma/Containers/String.h"
 #include "Luma/Memory/RefCounted.h"
-#include "Luma/Runtime/Asset.h"
 
 namespace Luma
 {
@@ -17,11 +16,10 @@ namespace Luma
         FString filepath = FString();
     };
 
-    struct IShader : IAsset, IRefCounted<IShader>
+    struct IShader : IRefCounted<IShader>
     {
         IShader() = default;
         ~IShader() override = default;
-        EAssetType getAssetType() const final { return EAssetType::Shader; }
 
         virtual bool initialize(const FShaderDesc& shaderDesc) = 0;
         virtual void destroy() = 0;

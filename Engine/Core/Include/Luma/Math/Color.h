@@ -25,7 +25,56 @@ namespace Luma
             const uint8_t alpha = static_cast<uint8_t>(saturate(a) * F(255.0) + F(0.5));
             return (red << 24) | (green << 16) | (blue << 8) | (alpha);
         }
+
+        TColor withOpacity(float opacity) {  return { r, g, b, opacity }; }
+        TColor withRed(float red) { return { red, g, b, a }; }
+        TColor withGreen(float green) { return { r, green, b, a }; }
+        TColor withBlue(float blue) { return { r, g, blue, a }; }
+
+        static const TColor Red;
+        static const TColor Green;
+        static const TColor Blue;
+        static const TColor Magenta;
+        static const TColor Cyan;
+        static const TColor Yellow;
+        static const TColor Black;
+        static const TColor White;
+        static const TColor Orange;
+        static const TColor Pink;
+        static const TColor Brown;
+        static const TColor Purple;
+        static const TColor Turquoise;
+        static const TColor Grey;
     };
+    
+    template<FloatType F>
+    const TColor<F> TColor<F>::Red        { 0xFF0000FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Green      { 0x00FF00FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Blue       { 0x0000FFFF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Magenta    { 0xFF00FFFF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Cyan       { 0x00FFFFFF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Yellow     { 0xFFFF00FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Black      { 0x000000FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::White      { 0xFFFFFFFF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Orange     { 0xFF8000FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Pink       { 0xFFC0CBFF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Brown      { 0x00000000 };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Purple     { 0x800080FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Turquoise  { 0x40E0D0FF };
+    template<FloatType F>
+    const TColor<F> TColor<F>::Grey       { 0x808080FF };
 
     using FColor = TColor<float>;
 }

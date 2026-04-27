@@ -63,7 +63,7 @@ namespace Luma::Vulkan
         signalInfo.semaphore = m_Handle;
         signalInfo.value = value;
         if (VK_FAILED(vkSignalSemaphore(deviceHandle, &signalInfo)))
-            assert(false, "[VULKAN] Failed to signal semaphore!")
+            LUMA_ASSERT(false, "[VULKAN] Failed to signal semaphore!");
     }
 
     void FSemaphoreImpl::wait(uint64_t value, uint64_t timeout)
@@ -79,7 +79,7 @@ namespace Luma::Vulkan
         waitInfo.pValues = &value;
 
         if (VK_FAILED(vkWaitSemaphores(deviceHandle, &waitInfo, timeout)))
-            assert(false, "[VULKAN] Failed to wait semaphore!")
+            LUMA_ASSERT(false, "[VULKAN] Failed to wait semaphore!");
     }
 
     void FSemaphoreImpl::setName(FStringView name)

@@ -32,6 +32,7 @@ namespace Luma
         m_Scissor = scissor;
     }
 
+
     const IGraphicsPipeline* FGraphicsState::getGraphicsPipeline() const
     {
         return m_GraphicsPipeline;

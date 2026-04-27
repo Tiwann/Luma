@@ -80,7 +80,10 @@ namespace Luma
 
         ~TArray()
         {
-            delete[] m_Data;
+            if (m_Data)
+                delete[] m_Data;
+            m_Count = 0;
+            m_Allocated = 0;
         }
 
         TArray& operator=(const TArray& other)
@@ -113,55 +116,55 @@ namespace Luma
 
         ReferenceType operator[](SizeType index)
         {
-            assert(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         ConstReferenceType operator[](SizeType index) const
         {
-            assert(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         void setAt(SizeType index, ConstReferenceType element)
         {
-            assert(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
             m_Data[index] = element;
         }
 
         ReferenceType getAt(SizeType index)
         {
-            assert(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         ConstReferenceType getAt(SizeType index) const
         {
-            assert(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         ReferenceType first()
         {
-            assert(m_Count != 0, "Cannot get first element, array is empty!");
+            LUMA_ASSERT(m_Count != 0, "Cannot get first element, array is empty!");
             return m_Data[0];
         }
 
         ConstReferenceType first() const
         {
-            assert(m_Count != 0, "Cannot get first element, array is empty!");
+            LUMA_ASSERT(m_Count != 0, "Cannot get first element, array is empty!");
             return m_Data[0];
         }
 
         ReferenceType last()
         {
-            assert(m_Count != 0, "Cannot get last element, array is empty!");
+            LUMA_ASSERT(m_Count != 0, "Cannot get last element, array is empty!");
             return m_Data[m_Count - 1];
         }
 
         ConstReferenceType last() const
         {
-            assert(m_Count != 0, "Cannot get first element, array is empty!");
+            LUMA_ASSERT(m_Count != 0, "Cannot get first element, array is empty!");
             return m_Data[m_Count - 1];
         }
 
@@ -324,7 +327,7 @@ namespace Luma
 
         void removeAt(SizeType index)
         {
-            assert(index <= m_Count, "Index out of bounds!");
+            LUMA_ASSERT(index <= m_Count, "Index out of bounds!");
             std::move(m_Data + index + 1, m_Data + m_Count, m_Data + index);
             m_Count--;
         }
@@ -375,7 +378,8 @@ namespace Luma
 
         void free()
         {
-            delete[] m_Data;
+            if (m_Data)
+                delete[] m_Data;
             m_Data = nullptr;
             m_Count = 0;
             m_Allocated = 0;

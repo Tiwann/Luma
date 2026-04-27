@@ -41,6 +41,12 @@ namespace Luma
             addRef(m_Pointer);
         }
 
+        template <typename U>
+        Ref(Ref<U>&& other) noexcept : m_Pointer(reinterpret_cast<PointerType>(other.m_Pointer))
+        {
+            other.m_Pointer = nullptr;
+        }
+
         ~Ref()
         {
             relRef(m_Pointer);

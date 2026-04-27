@@ -21,15 +21,15 @@ namespace Luma::Vulkan
         {
             VkDescriptorSetLayoutBinding vkBinding = { };
             vkBinding.binding = binding.bindingIndex;
-            if (binding.bindingType == EBindingType::SampledTexture && binding.descriptorCount == 0)
+            if (binding.bindingType == EBindingType::SampledTexture && binding.arrayCount == 0)
                 vkBinding.descriptorCount = BINDLESS_MAX_TEXTURES;
             else
-                vkBinding.descriptorCount = binding.descriptorCount;
+                vkBinding.descriptorCount = binding.arrayCount;
             vkBinding.stageFlags = convert<VkShaderStageFlags>(binding.stageFlags);
             vkBinding.descriptorType = convert<VkDescriptorType>(binding.bindingType);
             vkBinding.pImmutableSamplers = nullptr;
 
-            uint32_t bindingFlag = binding.descriptorCount == 0 && binding.bindingType == EBindingType::SampledTexture
+            uint32_t bindingFlag = binding.arrayCount == 0 && binding.bindingType == EBindingType::SampledTexture
                                        ? VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT |
                                        VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT : 0;
             bindingFlags.add(bindingFlag);
@@ -63,6 +63,7 @@ namespace Luma::Vulkan
         const VkDevice deviceHandle = m_Device->getHandle();
         if (m_Handle) vkDestroyDescriptorSetLayout(deviceHandle, m_Handle, nullptr);
         m_Handle = nullptr;
+        m_Device = nullptr;
     }
 
     VkDescriptorSetLayout FBindingSetLayoutImpl::getHandle() const

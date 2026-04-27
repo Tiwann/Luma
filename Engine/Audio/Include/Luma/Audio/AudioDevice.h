@@ -3,6 +3,9 @@
 #include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
+#include "Luma/Containers/String.h"
+#include "Luma/Memory/Ref.h"
+
 namespace Luma
 {
     struct FAudioDeviceDesc
@@ -11,6 +14,10 @@ namespace Luma
         uint32_t sampleRate = 44100;
         uint32_t maxListeners = 4;
     };
+
+    struct FAudioClip;
+    struct FAudioStream;
+    struct FAudioFormat;
 
     struct LUMA_AUDIO_API IAudioDevice : IRefCounted<IAudioDevice>
     {
@@ -30,6 +37,7 @@ namespace Luma
         uint32_t getNumListeners() const;
         uint32_t getNumChannels() const;
         uint32_t getSampleRate() const;
+
 
     private:
         struct Impl;

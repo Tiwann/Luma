@@ -4,24 +4,10 @@
 #include "Luma/Rendering/ShaderCompileDefine.h"
 #include "Luma/Rendering/ShaderStage.h"
 #include "SlangFwd.h"
-#include <slang/slang.h>
 
+enum SlangStage : uint32_t;
+enum SlangCompileTarget : int;
 
-namespace Slang
-{
-    template<typename T>
-    class ComPtr;
-}
-
-namespace slang
-{
-    using GlobalSessionHandle = Slang::ComPtr<IGlobalSession>;
-    using SessionHandle = Slang::ComPtr<ISession>;
-    using ModuleHandle = Slang::ComPtr<IModule>;
-    using EntryPointHandle = Slang::ComPtr<IEntryPoint>;
-    using ComponentHandle = Slang::ComPtr<IComponentType>;
-    using BlobHandle = Slang::ComPtr<IBlob>;
-}
 
 namespace Luma
 {

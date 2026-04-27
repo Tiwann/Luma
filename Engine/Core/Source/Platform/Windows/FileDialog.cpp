@@ -24,19 +24,19 @@ namespace Luma
         openFilename.nFilterIndex = 1;
         openFilename.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_EXPLORER;
 
-        const FString filterFString = filters.getFilterString();
-        const FWideString filterWideFString = stringConvert<wchar_t, char>(filterFString);
-        openFilename.lpstrFilter = *filterWideFString;
+        const auto filterFString = filters.getFilterString();
+        const auto filterWideString = stringConvert<wchar_t, char>(filterFString);
+        openFilename.lpstrFilter = *filterWideString;
 
-        const FWideString wideDefaultPath = stringConvert<wchar_t, char>(defaultPath);
+        const auto wideDefaultPath = stringConvert<wchar_t, char>(defaultPath);
         openFilename.lpstrInitialDir = *wideDefaultPath;
 
-        const FWideString wideTitle = stringConvert<wchar_t, char>(title);
+        const auto wideTitle = stringConvert<wchar_t, char>(title);
         openFilename.lpstrTitle = *wideTitle;
 
         const bool result = GetOpenFileNameW(&openFilename);
 
-        FString resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
+        auto resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
         return result ? *resultPath : "";
     }
 
@@ -55,19 +55,19 @@ namespace Luma
         openFilename.nFilterIndex = 1;
         openFilename.Flags = OFN_CREATEPROMPT | OFN_NOCHANGEDIR | OFN_OVERWRITEPROMPT | OFN_NOLONGNAMES | OFN_EXTENSIONDIFFERENT | OFN_EXPLORER;
 
-        const FString filterString = filters.getFilterString();
-        const FWideString filterWideString = stringConvert<wchar_t, char>(filterString);
+        const auto filterString = filters.getFilterString();
+        const auto filterWideString = stringConvert<wchar_t, char>(filterString);
         openFilename.lpstrFilter = *filterWideString;
 
-        const FWideString wideDefaultPath = stringConvert<wchar_t, char>(defaultPath);
+        const auto wideDefaultPath = stringConvert<wchar_t, char>(defaultPath);
         openFilename.lpstrInitialDir = *wideDefaultPath;
 
-        const FWideString wideTitle = stringConvert<wchar_t, char>(title);
+        const auto wideTitle = stringConvert<wchar_t, char>(title);
         openFilename.lpstrTitle = *wideTitle;
 
         const bool result = GetOpenFileNameW(&openFilename);
 
-        FString resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
+        auto resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
         return result ? *resultPath : "";
     }
 }

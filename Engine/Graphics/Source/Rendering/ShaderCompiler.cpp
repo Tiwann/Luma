@@ -2,6 +2,7 @@
 #include "Luma/Containers/StringView.h"
 #include "Luma/Containers/StringFormat.h"
 #include "Luma/Containers/BufferView.h"
+#include "Luma/Containers/HashMap.h"
 #include "Luma/Utility/SlangCommon.h"
 #include "Luma/Utility/SpirvReflectCommon.h"
 
@@ -13,60 +14,6 @@
 
 namespace Luma
 {
-    static TArray<FShaderPushConstantRange> getPushConstantRangesReflection(const SpvReflectShaderModule& module)
-    {
-        TArray<FShaderPushConstantRange> ranges;
-
-        uint32_t pcBlockCount = 0;
-        spvReflectEnumeratePushConstantBlocks(&module, &pcBlockCount, nullptr);
-        TArray<SpvReflectBlockVariable*> pushConstantBlocks(pcBlockCount);
-        spvReflectEnumeratePushConstantBlocks(&module, &pcBlockCount, pushConstantBlocks.data());
-
-        for (const SpvReflectBlockVariable* block : pushConstantBlocks)
-        {
-            FShaderPushConstantRange range;
-            range.offset = block->offset;
-            range.size = block->size;
-            range.stage = getShaderStage(module.shader_stage);
-            ranges.add(range);
-        }
-
-        return ranges;
-    }
-
-    static TArray<FBindingSetLayoutDesc> getBindingSetLayoutDescReflection(const SpvReflectShaderModule& module)
-    {
-        uint32_t setLayoutCount = 0;
-        spvReflectEnumerateDescriptorSets(&module, &setLayoutCount, nullptr);
-        TArray<SpvReflectDescriptorSet*> sets(setLayoutCount);
-        spvReflectEnumerateDescriptorSets(&module, &setLayoutCount, sets.data());
-
-        TArray<FBindingSetLayoutDesc> result;
-
-        for (const SpvReflectDescriptorSet* set : sets)
-        {
-            TBufferView<SpvReflectDescriptorBinding*> bindings(set->bindings, set->binding_count);
-
-            FBindingSetLayoutDesc setLayoutDesc;
-            setLayoutDesc.setIndex = set->set;
-
-            for (const SpvReflectDescriptorBinding* binding : bindings)
-            {
-                FShaderBinding bindingInfo;
-                bindingInfo.bindingIndex = binding->binding;
-                bindingInfo.bindingType = getBindingType(binding->descriptor_type);
-                bindingInfo.descriptorCount = binding->count;
-                bindingInfo.name = binding->name;
-                bindingInfo.stageFlags = getShaderStage(module.shader_stage);
-                setLayoutDesc.bindings.add(bindingInfo);
-            }
-
-            result.add(setLayoutDesc);
-        }
-
-        return result;
-    }
-
     FStringView getErrorString(slang::IBlob* blob)
     {
         const FStringView errorString = {(const char*)blob->getBufferPointer(), blob->getBufferSize()};
@@ -158,6 +105,8 @@ namespace Luma
 
             FShaderCompileResult compileResult{true};
 
+            THashMap<uint32_t, THashMap<uint32_t, FShaderBinding>> flattenedBindings;
+
             for (uint32_t entryPointIndex = 0; entryPointIndex < entryPointsAsComponent.count(); entryPointIndex++)
             {
                 const TArray<FShaderEntryPoint>& entryPointInfos = request.getEntryPointInfos();
@@ -180,13 +129,42 @@ namespace Luma
                 SpvReflectShaderModule reflectModule;
                 spvReflectCreateShaderModule(entryPointCode->getBufferSize(), entryPointCode->getBufferPointer(), &reflectModule);
 
-                FShaderReflectionData reflectionData;
-                reflectionData.stage = stage;
-                reflectionData.pushConstantRanges = getPushConstantRangesReflection(reflectModule);
-                reflectionData.setLayoutDescs = getBindingSetLayoutDescReflection(reflectModule);
-                compileResult.reflectionData.emplace(std::move(reflectionData));
+                TBufferView<SpvReflectDescriptorSet> sets(reflectModule.descriptor_sets, reflectModule.descriptor_binding_count);
+                for (const auto& set : sets)
+                {
+                    auto& bindingMap = flattenedBindings[set.set];
+
+                    TBufferView<SpvReflectDescriptorBinding*> bindings(set.bindings, set.binding_count);
+                    for (const auto* binding : bindings)
+                    {
+                        auto& shaderBinding = bindingMap.emplace(binding->binding);
+                        shaderBinding.name = FString(binding->name);
+                        shaderBinding.bindingType = getBindingType(binding->descriptor_type);
+                        shaderBinding.stageFlags = stage;
+                        shaderBinding.bindingIndex = binding->binding;
+                        shaderBinding.arrayCount = binding->count;
+                        shaderBinding.stageFlags |= stage;
+                    }
+                }
             }
 
+            FShaderReflectionData reflectionData;
+            for (auto& [set, bindingMap] : flattenedBindings)
+            {
+                auto* out = reflectionData.setLayoutDescs.single([&set](const auto& s) { return s.setIndex == set; });
+                if (!out)
+                {
+                    reflectionData.setLayoutDescs.add({});
+                    out = &reflectionData.setLayoutDescs.last();
+                }
+
+                for (auto& b : bindingMap)
+                {
+                    out->bindings.add(b.value);
+                }
+            }
+
+            compileResult.reflectionData.add(reflectionData);
             results.add(compileResult);
         }
 

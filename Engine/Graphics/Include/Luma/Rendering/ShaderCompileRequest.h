@@ -25,7 +25,6 @@ namespace Luma
 
     struct FShaderReflectionData
     {
-        EShaderStageBits stage;
         TArray<FBindingSetLayoutDesc> setLayoutDescs;
         TArray<FShaderPushConstantRange> pushConstantRanges;
     };

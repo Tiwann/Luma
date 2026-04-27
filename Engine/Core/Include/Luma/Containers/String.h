@@ -40,7 +40,7 @@ namespace Luma
 
         TString(const CharacterType* data)
         {
-            assert(data, "Cannot construct string with nullptr!");
+            LUMA_ASSERT(data, "Cannot construct string with nullptr!");
             m_Count = strlen(data);
             m_Data = new CharacterType[m_Count + 1]{};
             memcpy(m_Data, data, m_Count * CharacterSize);
@@ -53,7 +53,7 @@ namespace Luma
 
         TString(CharacterType* data, SizeType count)
         {
-            assert(data, "Cannot construct string with nullptr!");
+            LUMA_ASSERT(data, "Cannot construct string with nullptr!");
             m_Count = count;
             m_Data = new CharacterType[m_Count + 1]{};
             memcpy(m_Data, data, m_Count * CharacterSize);
@@ -125,13 +125,13 @@ namespace Luma
 
         CharacterType& operator[](SizeType index)
         {
-            assert(index <= m_Count, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count, "Index out of bounds");
             return m_Data[index];
         }
 
         const CharacterType& operator[](SizeType index) const
         {
-            assert(index <= m_Count, "Index out of bounds");
+            LUMA_ASSERT(index <= m_Count, "Index out of bounds");
             return m_Data[index];
         }
 
@@ -181,7 +181,7 @@ namespace Luma
 
         TString& append(const CharacterType* data)
         {
-            assert(data, "Cannot append string with nullptr string literal!");
+            LUMA_ASSERT(data, "Cannot append string with nullptr string literal!");
             const SizeType dataCount = strlen(data);
             const SizeType newCount = m_Count + dataCount;
             CharacterType* newData = new CharacterType[newCount + 1]{};
@@ -221,7 +221,7 @@ namespace Luma
 
         TString substr(SizeType begin, SizeType end) const
         {
-            assert(begin < m_Count && begin + (end - begin) <= m_Count, "Indices out of bounds!");
+            LUMA_ASSERT(begin < m_Count && begin + (end - begin) <= m_Count, "Indices out of bounds!");
             const SizeType newCount = end - begin + 1;
             CharacterType* newData = new CharacterType[newCount + 1]{};
             memcpy(newData, m_Data + begin, newCount * CharacterSize);
@@ -324,7 +324,7 @@ namespace Luma
 
         TString& replace(SizeType index, SizeType count, const TString& to)
         {
-            assert(index < m_Count && index + count <= m_Count, "Range is out of bounds!");
+            LUMA_ASSERT(index < m_Count && index + count <= m_Count, "Range is out of bounds!");
             if (index == -1ULL) return *this;
 
             if (to.count() <= count)
@@ -385,10 +385,10 @@ namespace Luma
 
         TString& remove(SizeType from, SizeType to)
         {
-            assert(from < to, "Range is illegal");
-            assert(from < m_Count, "Range is illegal");
-            assert(to <= m_Count, "Range is illegal");
-            assert(from + (to - from) <= m_Count, "Range is illegal");
+            LUMA_ASSERT(from < to, "Range is illegal");
+            LUMA_ASSERT(from < m_Count, "Range is illegal");
+            LUMA_ASSERT(to <= m_Count, "Range is illegal");
+            LUMA_ASSERT(from + (to - from) <= m_Count, "Range is illegal");
             const SizeType delta = to - from;
 
             const CharacterType* src = m_Data + to;

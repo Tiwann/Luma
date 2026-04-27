@@ -3,21 +3,29 @@
 #include "LoadOperation.h"
 #include "StoreOperation.h"
 #include "Luma/Math/Color.h"
+#include "Luma/Containers/Array.h"
 
 namespace Luma
 {
     struct ITextureView;
 
-    struct ClearValue
+    struct FClearValue
     {
         FColor color;
         float depth = 1.0f;
         uint32_t stencil = 0;
     };
 
-    struct FrameBufferAttachment
+    enum class ERenderPassAttachmentType
     {
-        ClearValue clearValue = ClearValue();
+        Color,
+        DepthStencil,
+    };
+
+    struct FRenderPassAttachment
+    {
+        ERenderPassAttachmentType type = ERenderPassAttachmentType::Color;
+        FClearValue clearValue = FClearValue();
         ELoadOp loadOp = ELoadOp::Load;
         EStoreOp storeOp = EStoreOp::Store;
         EResolveMode resolveMode = EResolveMode::None;
@@ -25,10 +33,10 @@ namespace Luma
         const ITextureView* resolveTextureView = nullptr;
     };
 
-    struct FrameBufferInfo
+    struct FRenderPassDesc
     {
-        FrameBufferAttachment colorAttachments[8];
-        uint32_t colorAttachmentCount;
-        FrameBufferAttachment depthAttachment;
+        TArray<FRenderPassAttachment*> colorAttachments;
+        FRenderPassAttachment* depthStencilAttachment = nullptr;
+        FRect2u renderArea;
     };
 }

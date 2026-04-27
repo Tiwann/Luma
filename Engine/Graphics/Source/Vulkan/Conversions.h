@@ -23,12 +23,13 @@
 #include "Luma/Rendering/ComponentSwizzle.h"
 #include "Luma/Rendering/ComponentMapping.h"
 #include "Luma/Runtime/Format.h"
+#include "Luma/Rendering/IndexFormat.h"
+#include "Luma/Rendering/ShaderDataType.h"
 
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
-#include "Luma/Rendering/IndexFormat.h"
-
+#include "Luma/Rendering/RenderPassDesc.h"
 
 namespace Luma::Vulkan
 {
@@ -619,6 +620,38 @@ namespace Luma::Vulkan
         case EIndexFormat::Uint16: return VK_INDEX_TYPE_UINT16;
         case EIndexFormat::Uint8: return VK_INDEX_TYPE_UINT8;
         default: return VK_INDEX_TYPE_UINT32;
+        }
+    }
+
+    template<>
+    inline VkFormat convert(const EShaderDataType& value)
+    {
+        switch (value)
+        {
+        case EShaderDataType::Float: return VK_FORMAT_R32_SFLOAT;
+        case EShaderDataType::Float2: return VK_FORMAT_R32G32_SFLOAT;
+        case EShaderDataType::Float3: return VK_FORMAT_R32G32B32_SFLOAT;
+        case EShaderDataType::Float4: return VK_FORMAT_R32G32B32A32_SFLOAT;
+        case EShaderDataType::Int: return VK_FORMAT_R32_SINT;
+        case EShaderDataType::Int2: return VK_FORMAT_R32G32_SINT;
+        case EShaderDataType::Int3: return VK_FORMAT_R32G32B32_SINT;
+        case EShaderDataType::Int4: return VK_FORMAT_R32G32B32A32_SINT;
+        case EShaderDataType::UInt: return VK_FORMAT_R32_UINT;
+        case EShaderDataType::UInt2: return VK_FORMAT_R32G32_UINT;
+        case EShaderDataType::UInt3: return VK_FORMAT_R32G32B32_UINT;
+        case EShaderDataType::UInt4: return VK_FORMAT_R32G32B32A32_UINT;
+            default: return VK_FORMAT_UNDEFINED;
+        }
+    }
+
+    template<>
+    inline VkImageLayout convert(const ERenderPassAttachmentType& value)
+    {
+        switch (value)
+        {
+        case ERenderPassAttachmentType::Color: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        case ERenderPassAttachmentType::DepthStencil: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        default: return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }
 }

@@ -1,4 +1,5 @@
 #include "Luma/Utility/SlangCommon.h"
+#include <slang/slang.h>
 
 namespace Luma
 {

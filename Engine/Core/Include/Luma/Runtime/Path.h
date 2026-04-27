@@ -26,26 +26,26 @@ namespace Luma
 
         static FString combine(FStringView path, FStringView other);
 
-        template<typename... Args> requires(TIsCharacter<Args>::value && ...)
+        template<typename... Args>
         static FString combine(const FStringView path, const FStringView other, const Args&... args)
         {
             return combine(combine(path, other), args...);
         }
 
 
-        static FStringView getEngineDirectory();
-        static FString getEngineAssetsDirectory();
-        static FString getEngineAssetPath(const FStringView filepath);
+        static FStringView getEngineDir();
+        static FString getEngineAssetsDir();
+        static FString getEngineAssetPath(FStringView filepath);
 
 #ifdef LUMA_CLIENT
-        static FStringView getClientDir()
+        static FStringView getExeDir()
         {
             return LUMA_APPLICATION_DIR;
         }
 
         static FString getAssetPath(const FStringView filepath)
         {
-            return combine(FStringView(LUMA_APPLICATION_DIR), "Assets", filepath);
+            return combine(FStringView(LUMA_APPLICATION_DIR), FStringView("Assets"), filepath);
         }
 #endif
 

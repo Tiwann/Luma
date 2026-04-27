@@ -46,7 +46,8 @@ namespace Luma::Vulkan
         IFence* createFence(const FFenceDesc& fenceDesc) override;
         ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) override;
 
-        ICommandBuffer* getCurrentCommandBuffer() { return &m_CmdBuffers[m_CurrentFrameIndex]; }
+        ICommandBuffer* getCommandBuffer() override { return &m_CmdBuffers[m_CurrentFrameIndex]; }
+        ITextureView* getAcquiredSwapchainTextureView() override;
 
         static VkInstance getInstance();
         VkDevice getHandle() const { return m_Handle; }

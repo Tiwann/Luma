@@ -19,6 +19,7 @@ if(LUMA_ENGINE_BUILD_VULKAN)
 endif ()
 
 add_library(luma-natvis INTERFACE LumaEngine.natvis)
+set(LUMA_ENGINE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine)
 
 add_subdirectory(Engine/Vendor)
 add_subdirectory(Engine/Core)

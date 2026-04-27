@@ -38,7 +38,7 @@ namespace Luma::Vulkan
     {
         if (!m_Device) return;
         const VkDescriptorPool descriptorPool = m_Device->getDescriptorPool();
-        assert(!VK_FAILED(vkFreeDescriptorSets(m_Device->getHandle(), descriptorPool, 1, &m_Handle)), "Failed to free descriptor set!");
+        LUMA_ASSERT(!VK_FAILED(vkFreeDescriptorSets(m_Device->getHandle(), descriptorPool, 1, &m_Handle)), "Failed to free descriptor set!");
     }
 
     bool FBindingSetImpl::bindTexture(const uint32_t binding, const ITexture* texture, const EBindingType bindingType)

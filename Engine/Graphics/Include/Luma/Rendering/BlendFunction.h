@@ -13,7 +13,7 @@ namespace Luma
         EBlendFactor alphaDest;
         EBlendOp alphaOp;
 
-        static constexpr const FBlendFunction& AlphaBlend()
+        static constexpr const FBlendFunction& alphaBlend()
         {
             static FBlendFunction alphaBlend = {
                 EBlendFactor::SourceAlpha,
@@ -26,7 +26,7 @@ namespace Luma
             return alphaBlend;
         }
 
-        static constexpr const FBlendFunction& AdditiveBlend()
+        static constexpr const FBlendFunction& additiveBlend()
         {
             static FBlendFunction additiveBlend = {
                 EBlendFactor::SourceAlpha,
@@ -40,7 +40,7 @@ namespace Luma
         }
     };
 
-    constexpr FBlendFunction MakeBlendFunction(EBlendFactor src, EBlendFactor dest, EBlendOp op)
+    constexpr FBlendFunction makeBlendFunction(EBlendFactor src, EBlendFactor dest, EBlendOp op)
     {
         return { src, dest, op, src, dest, op };
     }

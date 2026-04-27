@@ -11,6 +11,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/ShaderCompileRequest.cpp
         Source/Rendering/ShaderCompiler.cpp
         Source/Rendering/GraphicsState.cpp
+        Source/Rendering/InputLayout.cpp
         Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
 )
@@ -33,6 +34,7 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/BindingSetImpl.cpp
         Source/Vulkan/ShaderImpl.cpp
         Source/Vulkan/ComputePipelineImpl.cpp
+        Source/Vulkan/GraphicsPipelineImpl.cpp
 )
 
 set(LUMA_WEBGPU_SRC

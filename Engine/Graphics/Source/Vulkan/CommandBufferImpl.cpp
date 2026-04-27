@@ -2,9 +2,18 @@
 #include "RenderDeviceImpl.h"
 #include "BufferImpl.h"
 #include "ComputePipelineImpl.h"
+#include "GraphicsPipelineImpl.h"
+#include "Luma/Math/Functions.h"
+#include "Luma/Rendering/RenderPassDesc.h"
+
 #include "Conversions.h"
 #include "VulkanUtils.h"
 #include <Volk/volk.h>
+
+
+#define LUMA_CHECK(x, msg) \
+    LUMA_ASSERT(x, msg); \
+    if(!x) return
 
 namespace Luma::Vulkan
 {
@@ -64,6 +73,22 @@ namespace Luma::Vulkan
         vkEndCommandBuffer(m_Handle);
     }
 
+    void FCommandBufferImpl::beginDebugGroup(FStringView name, const FColor& color)
+    {
+        VkDebugUtilsLabelEXT labelInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT };
+        labelInfo.pLabelName = *name;
+        labelInfo.color[0] = color.r;
+        labelInfo.color[1] = color.g;
+        labelInfo.color[2] = color.b;
+        labelInfo.color[3] = color.a;
+        vkCmdBeginDebugUtilsLabelEXT(m_Handle, &labelInfo);
+    }
+
+    void FCommandBufferImpl::endDebugGroup()
+    {
+        vkCmdEndDebugUtilsLabelEXT(m_Handle);
+    }
+
     void FCommandBufferImpl::bindVertexBuffer(const IBuffer* buffer, const int64_t offset)
     {
         if (!buffer) return;
@@ -85,15 +110,85 @@ namespace Luma::Vulkan
 
     void FCommandBufferImpl::bindGraphicsPipeline(const IGraphicsPipeline* pipeline)
     {
+        if (!pipeline) return;
+        const FGraphicsPipelineImpl* pipelineImpl = static_cast<const FGraphicsPipelineImpl*>(pipeline);
+        vkCmdBindPipeline(m_Handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineImpl->getHandle());
+    }
+
+    static VkRenderingAttachmentInfo getVulkanRenderingAttachmentInfo(const FRenderPassAttachment& attachment)
+    {
+        const auto* textureViewImpl = static_cast<const FTextureViewImpl*>(attachment.textureView);
+        const auto* resolveTextureView = static_cast<const FTextureViewImpl*>(attachment.resolveTextureView);
+
+        VkRenderingAttachmentInfo info { VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO };
+        info.loadOp = convert<VkAttachmentLoadOp>(attachment.loadOp);
+        info.storeOp = convert<VkAttachmentStoreOp>(attachment.storeOp);
+        info.imageView = textureViewImpl->getHandle();
+        info.imageLayout = convert<VkImageLayout>(attachment.type);
+
+        switch (attachment.type)
+        {
+        case ERenderPassAttachmentType::Color:
+            {
+                const FColor& clearColor = attachment.clearValue.color;
+                info.clearValue.color = { clearColor.r, clearColor.g, clearColor.b, clearColor.a };
+            }
+            break;
+        case ERenderPassAttachmentType::DepthStencil:
+            {
+                const FClearValue& clearValue = attachment.clearValue;
+                info.clearValue.depthStencil = { clearValue.depth, clearValue.stencil };
+            }
+            break;
+        }
+
+        if (resolveTextureView)
+        {
+            info.resolveMode = convert<VkResolveModeFlagBits>(attachment.resolveMode);
+            info.resolveImageLayout = convert<VkImageLayout>(attachment.type);
+            info.resolveImageView = resolveTextureView->getHandle();
+        }
+
+        return info;
+    }
+
+    void FCommandBufferImpl::beginRenderPass(const FRenderPassDesc& renderPassDesc)
+    {
+        TArray<VkRenderingAttachmentInfo> colorAttachments;
+        VkRenderingAttachmentInfo depthStencilAttachment;
+        for (const auto* attachment : renderPassDesc.colorAttachments)
+            if (attachment) colorAttachments.add(getVulkanRenderingAttachmentInfo(*attachment));
+
+        VkRenderingInfo renderingInfo { VK_STRUCTURE_TYPE_RENDERING_INFO };
+        renderingInfo.layerCount = 1;
+        renderingInfo.viewMask = 0;
+        renderingInfo.renderArea.extent = { renderPassDesc.renderArea.width, renderPassDesc.renderArea.height };
+        renderingInfo.renderArea.offset = { (int32_t)renderPassDesc.renderArea.x, (int32_t)renderPassDesc.renderArea.y };
+        renderingInfo.pColorAttachments = colorAttachments.data();
+        renderingInfo.colorAttachmentCount = colorAttachments.count();
+
+        if (renderPassDesc.depthStencilAttachment)
+        {
+            depthStencilAttachment = getVulkanRenderingAttachmentInfo(*renderPassDesc.depthStencilAttachment);
+            renderingInfo.pDepthAttachment = &depthStencilAttachment;
+            renderingInfo.pStencilAttachment = &depthStencilAttachment;
+        }
+
+        vkCmdBeginRendering(m_Handle, &renderingInfo);
+    }
+
+    void FCommandBufferImpl::endRenderPass()
+    {
+        vkCmdEndRendering(m_Handle);
     }
 
     void FCommandBufferImpl::setViewport(const FViewport& viewport)
     {
         VkViewport vp { };
-        vp.x = viewport.area.x;
-        vp.y = viewport.area.y + viewport.area.height;
-        vp.width = viewport.area.width;
-        vp.height = -viewport.area.height;
+        vp.x = viewport.x;
+        vp.y = viewport.y + viewport.height;
+        vp.width = viewport.width;
+        vp.height = -viewport.height;
         vp.minDepth = viewport.minDepth;
         vp.maxDepth = viewport.maxDepth;
         vkCmdSetViewport(m_Handle, 0, 1, &vp);
@@ -130,10 +225,16 @@ namespace Luma::Vulkan
 
     void FCommandBufferImpl::drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount)
     {
+        LUMA_CHECK(buffer, "Invalid buffer handle!");
+        const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
+        vkCmdDrawIndirect(m_Handle, bufferImpl->getHandle(), offset, drawCount, sizeof(FDrawCommand));
     }
 
     void FCommandBufferImpl::drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount)
     {
+        LUMA_CHECK(buffer, "Invalid buffer handle!");
+        const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
+        vkCmdDrawIndexedIndirect(m_Handle, bufferImpl->getHandle(), offset, drawCount, sizeof(FDrawIndexedCommand));
     }
 
     void FCommandBufferImpl::bindComputePipeline(const IComputePipeline* pipeline)
@@ -150,14 +251,62 @@ namespace Luma::Vulkan
 
     void FCommandBufferImpl::dispatchIndirect(IBuffer* buffer, int64_t offset)
     {
+        LUMA_CHECK(buffer, "Invalid buffer handle!");
+        const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
+        vkCmdDispatchIndirect(m_Handle, bufferImpl->getHandle(), offset);
     }
 
-    void FCommandBufferImpl::copyBuffer(IBuffer* srcBuffer, int64_t srcOffset, uint64_t srcSize, IBuffer* dstBuffer,int64_t dstOffset, uint64_t dstSize)
+    void FCommandBufferImpl::copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size)
     {
+        LUMA_CHECK(srcBuffer, "Invalid buffer handle!");
+        LUMA_CHECK(dstBuffer, "Invalid buffer handle!");
+
+        VkBufferCopy2 region = { VK_STRUCTURE_TYPE_BUFFER_COPY_2 };
+        region.srcOffset = srcOffset;
+        region.dstOffset = dstOffset;
+        region.size = size;
+
+        const FBufferImpl* srcBufferImpl = static_cast<const FBufferImpl*>(srcBuffer);
+        const FBufferImpl* dstBufferImpl = static_cast<const FBufferImpl*>(dstBuffer);
+        VkCopyBufferInfo2 copyInfo { VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2 };
+        copyInfo.srcBuffer = srcBufferImpl->getHandle();
+        copyInfo.dstBuffer = dstBufferImpl->getHandle();
+        copyInfo.regionCount = 1;
+        copyInfo.pRegions = &region;
+        vkCmdCopyBuffer2(m_Handle, &copyInfo);
     }
 
-    void FCommandBufferImpl::copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture,uint32_t arraySlice, uint32_t mipLevel)
+    void FCommandBufferImpl::copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex, uint32_t mipLevel)
     {
+        LUMA_CHECK(buffer, "Invalid buffer handle!");
+        LUMA_CHECK(texture, "Invalid texture handle!");
+
+        const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
+        const FTextureImpl* textureImpl = static_cast<const FTextureImpl*>(texture);
+
+        const uint32_t mipWidth = max(1u, textureImpl->getWidth() >> mipLevel);
+        const uint32_t mipHeight = max(1u, textureImpl->getHeight() >> mipLevel);
+        const uint32_t mipDepth = max(1u, textureImpl->getDepth() >> mipLevel);
+
+        VkBufferImageCopy2 region = { VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2 };
+        region.bufferOffset = offset;
+        region.bufferRowLength = 0;
+        region.bufferImageHeight = 0;
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // ASSUMING COPYING ONLY COLOR TEXTURES
+        region.imageSubresource.mipLevel = mipLevel;
+        region.imageSubresource.baseArrayLayer = arrayIndex;
+        region.imageSubresource.layerCount = 1;
+        region.imageOffset = { 0, 0, 0 };
+        region.imageExtent = { mipWidth, mipHeight, mipDepth };
+
+        VkCopyBufferToImageInfo2 copyInfo = { VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2 };
+        copyInfo.srcBuffer = bufferImpl->getHandle();
+        copyInfo.dstImage = textureImpl->getImage();
+        copyInfo.dstImageLayout = convert<VkImageLayout>(textureImpl->getState());
+        copyInfo.regionCount = 1;
+        copyInfo.pRegions = &region;
+
+        vkCmdCopyBufferToImage2(m_Handle, &copyInfo);
     }
 
     void FCommandBufferImpl::setName(FStringView name)

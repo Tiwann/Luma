@@ -1,11 +1,10 @@
 #pragma once
-#include "Luma/Math/Rect2.h"
 
 namespace Luma
 {
     struct FViewport
     {
-        FRect2f area;
+        float x = 0, y = 0, width = 0, height = 0;
         float minDepth = 0, maxDepth = 0;
     };
 }

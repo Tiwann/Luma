@@ -12,16 +12,18 @@
 #endif
 
 #if defined(LUMA_DEBUG) ||defined(LUMA_DEV)
-#ifndef assert
-#define assert(x, msg) \
-    if(!(x)) \
-    { \
-        std::cerr << msg << '\n' << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n'; \
-        LUMA_DBG_BREAK(); \
-    }
+#ifndef LUMA_ASSERT
+#define LUMA_ASSERT(x, msg) \
+    do { \
+        if(!(x)) \
+        { \
+            std::cerr << msg << '\n' << "File: " << __FILE__ << '\n' << "Line: " << __LINE__ << '\n'; \
+            LUMA_DBG_BREAK(); \
+        } \
+    } while(0)
 #endif
 #else
-#ifndef assert
-#define assert(x, msg) ((void)0)
+#ifndef LUMA_ASSERT
+#define LUMA_ASSERT(x, msg) ((void)0)
 #endif
 #endif

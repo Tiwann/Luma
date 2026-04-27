@@ -53,7 +53,7 @@ namespace Luma::Vulkan
             VkShaderModule module;
             if (VK_FAILED(vkCreateShaderModule(device->getHandle(), &moduleCreateInfo, nullptr, &module)))
                 return false;
-            m_Modules.addUnique(module);
+            m_Modules.add({module, compiledData.stage});
         }
 
         TArray<FShaderPushConstantRange> pushConstantsRanges;
@@ -67,7 +67,7 @@ namespace Luma::Vulkan
                 FBindingSetLayoutImpl setLayout;
                 if (!setLayout.initialize(layoutDesc))
                     return false;
-                m_SetLayouts.add(setLayout);
+                m_SetLayouts.emplace(std::move(setLayout));
             }
 
             pushConstantsRanges.addRange(reflectionData.pushConstantRanges);
@@ -88,6 +88,8 @@ namespace Luma::Vulkan
 
     void FShaderImpl::destroy()
     {
+        if (!m_Device) return;
+
         vkDestroyPipelineLayout(m_Device->getHandle(), m_PipelineLayout, nullptr);
         m_PipelineLayout = nullptr;
 
@@ -95,8 +97,8 @@ namespace Luma::Vulkan
             setLayout.destroy();
         m_SetLayouts.clear();
 
-        for (const auto shaderModule : m_Modules)
-            vkDestroyShaderModule(m_Device->getHandle(), shaderModule, nullptr);
+        for (const auto& module : m_Modules)
+            vkDestroyShaderModule(m_Device->getHandle(), module.handle, nullptr);
         m_Modules.clear();
     }
 

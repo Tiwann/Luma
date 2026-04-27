@@ -43,7 +43,7 @@ namespace Luma::BufferUtils
 
         if (cmdBuffer->begin())
         {
-            cmdBuffer->copyBuffer(stagingBuffer, 0, size, vertexBuffer, 0, size);
+            cmdBuffer->copyBuffer(stagingBuffer, vertexBuffer, 0, 0, size);
             cmdBuffer->end();
 
             Ref<IFence> fence = Ref(device->createFence(FFenceDesc()));
@@ -83,7 +83,7 @@ namespace Luma::BufferUtils
 
         if (cmdBuffer->begin())
         {
-            cmdBuffer->copyBuffer(stagingBuffer, 0, size, indexBuffer, 0, size);
+            cmdBuffer->copyBuffer(stagingBuffer, indexBuffer, 0, 0, size);
             cmdBuffer->end();
 
             Ref<IFence> fence = Ref(device->createFence(FFenceDesc()));
