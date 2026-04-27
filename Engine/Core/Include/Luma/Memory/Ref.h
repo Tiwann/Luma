@@ -84,7 +84,7 @@ namespace Luma
         Ref& operator=(Ref<U>&& other)
         {
             relRef(m_Pointer);
-            m_Pointer = other.m_Pointer;
+            m_Pointer = static_cast<PointerType>(other.m_Pointer);
             other.m_Pointer = nullptr;
             return *this;
         }

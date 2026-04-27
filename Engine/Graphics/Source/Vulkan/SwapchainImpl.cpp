@@ -5,7 +5,9 @@
 #include "ImmediateExecutorImpl.h"
 #include "Luma/Containers/Array.h"
 #include "VulkanUtils.h"
+#include "Luma/Containers/StringFormat.h"
 #include <Volk/volk.h>
+
 
 namespace Luma::Vulkan
 {
@@ -50,6 +52,9 @@ namespace Luma::Vulkan
 
         if (vkGetSwapchainImagesKHR(deviceHandle, m_Handle, (uint32_t*)&m_Buffering, m_Images) != VK_SUCCESS)
             return false;
+
+        for (uint32_t i = 0; i < (uint32_t)m_Buffering; i++)
+            setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_IMAGE, m_Images[i], strfmt("Swapchain Image [{}]", i));
 
         TArray<VkImageMemoryBarrier2> barriers;
         for (size_t i = 0; i < getImageCount(); i++)

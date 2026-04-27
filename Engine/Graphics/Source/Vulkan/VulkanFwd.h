@@ -22,6 +22,7 @@ typedef struct VkDescriptorSetLayout_T* VkDescriptorSetLayout;
 typedef struct VkDescriptorSet_T* VkDescriptorSet;
 typedef struct VkPipelineLayout_T* VkPipelineLayout;
 typedef struct VkShaderModule_T* VkShaderModule;
+typedef struct VkPipeline_T* VkPipeline;
 struct VmaAllocationInfo;
 struct VmaAllocationInfo2;
 struct VmaVulkanFunctions;

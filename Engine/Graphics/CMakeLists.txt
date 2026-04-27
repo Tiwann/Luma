@@ -32,6 +32,7 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/BindingSetLayoutImpl.cpp
         Source/Vulkan/BindingSetImpl.cpp
         Source/Vulkan/ShaderImpl.cpp
+        Source/Vulkan/ComputePipelineImpl.cpp
 )
 
 set(LUMA_WEBGPU_SRC

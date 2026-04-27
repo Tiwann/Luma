@@ -1,10 +1,10 @@
 #include "CommandBufferImpl.h"
 #include "RenderDeviceImpl.h"
 #include "BufferImpl.h"
+#include "ComputePipelineImpl.h"
 #include "Conversions.h"
 #include "VulkanUtils.h"
 #include <Volk/volk.h>
-
 
 namespace Luma::Vulkan
 {
@@ -138,6 +138,9 @@ namespace Luma::Vulkan
 
     void FCommandBufferImpl::bindComputePipeline(const IComputePipeline* pipeline)
     {
+        if (!pipeline) return;
+        const FComputePipelineImpl* pipelineImpl = static_cast<const FComputePipelineImpl*>(pipeline);
+        vkCmdBindPipeline(m_Handle, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineImpl->getHandle());
     }
 
     void FCommandBufferImpl::dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)

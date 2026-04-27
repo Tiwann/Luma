@@ -7,7 +7,7 @@
 #include "TextureViewImpl.h"
 #include "SemaphoreImpl.h"
 #include "ShaderImpl.h"
-
+#include "ComputePipelineImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Containers/Array.h"
@@ -18,6 +18,7 @@
 #include <rgfw/rgfw.h>
 #include <slang/slang.h>
 #include <vma/vk_mem_alloc.h>
+
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
 #define VK_LAYER_KHRONOS_VALIDATION_NAME "VK_LAYER_KHRONOS_validation"
@@ -538,7 +539,7 @@ namespace Luma::Vulkan
     void FRenderDeviceImpl::present()
     {
         FSemaphoreImpl& submitSemaphore = m_SubmitSemaphores[m_CurrentFrameIndex];
-        if (!m_RenderQueue.present(&m_Swapchain, &submitSemaphore, m_CurrentFrameIndex))
+        if (!m_RenderQueue.present(&m_Swapchain, &submitSemaphore, m_SwapchainImageIndex))
             m_Swapchain.invalidate();
         m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % m_Swapchain.getImageCount();
     }
@@ -680,6 +681,14 @@ namespace Luma::Vulkan
 
     IComputePipeline* FRenderDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
     {
+        FComputePipelineDesc desc(pipelineDesc);
+        desc.device = this;
+        FComputePipelineImpl* pipeline = new FComputePipelineImpl();
+        if (!pipeline->initialize(desc))
+        {
+            delete pipeline;
+            return nullptr;
+        }
         return nullptr;
     }
 

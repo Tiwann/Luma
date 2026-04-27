@@ -15,6 +15,7 @@ namespace Luma::Vulkan
         IBindingSet* createBindingSet(uint32_t setIndex) override;
 
         const TArray<VkShaderModule>& getShaderModules() const { return m_Modules; }
+        VkPipelineLayout getPipelineLayout() const { return m_PipelineLayout; }
     private:
         FRenderDeviceImpl* m_Device = nullptr;
         TArray<FBindingSetLayoutImpl> m_SetLayouts;
