@@ -86,8 +86,6 @@ namespace Luma
         FColorBlendState colorBlend[8]{};
         FDepthStencilState depthStencil{};
         FMultisampleState multisample{};
-        FViewportState viewport{};
-        FScissorState scissor{};
         EFormat colorFormats[8] { EFormat::None };
         uint32_t colorFormatCount = 0;
         EFormat depthFormat = EFormat::None;

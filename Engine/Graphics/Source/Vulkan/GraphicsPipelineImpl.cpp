@@ -97,25 +97,11 @@ namespace Luma::Vulkan
         multisampleState.sampleShadingEnable = false;
         // MultisampleState.minSampleShading = ...; if sampleShading is true
 
-        VkViewport viewport;
-        viewport.x = pipelineDesc.viewport.x;
-        viewport.y = pipelineDesc.viewport.y + pipelineDesc.viewport.height;
-        viewport.width = pipelineDesc.viewport.width;
-        viewport.height = -pipelineDesc.viewport.height;
-        viewport.minDepth = pipelineDesc.viewport.minDepth;
-        viewport.maxDepth = pipelineDesc.viewport.maxDepth;
-
-        VkRect2D scissor;
-        scissor.offset.x = pipelineDesc.scissor.x;
-        scissor.offset.y = pipelineDesc.scissor.y;
-        scissor.extent.width = pipelineDesc.scissor.width;
-        scissor.extent.height = pipelineDesc.scissor.height;
-        
         VkPipelineViewportStateCreateInfo viewportState { VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO };
         viewportState.viewportCount = 1;
-        viewportState.pViewports = &viewport;
+        viewportState.pViewports = nullptr;
         viewportState.scissorCount = 1;
-        viewportState.pScissors = &scissor;
+        viewportState.pScissors = nullptr;
 
         TArray<VkFormat> colorFormats;
         for (uint32_t i = 0; i < pipelineDesc.colorFormatCount && i < 8; i++)
