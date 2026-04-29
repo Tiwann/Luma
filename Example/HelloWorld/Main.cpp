@@ -9,6 +9,7 @@
 #include <Luma/Rendering/GraphicsPipeline.h>
 #include <Luma/Runtime/Path.h>
 #include <Luma/Rendering/RenderPassDesc.h>
+#include <Luma/Rendering/Swapchain.h>
 
 
 using namespace Luma;
@@ -33,6 +34,11 @@ int main()
 
     Ref<IRenderDevice> renderDevice = Ref(createRenderDevice(renderDeviceDesc));
     LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
+    window->resizedEvent.bind([&renderDevice](uint32_t width, uint32_t height)
+    {
+        ISwapchain* swapchain = renderDevice->getSwapchain();
+        swapchain->invalidate();
+    });
 
     FAudioDeviceDesc audioDeviceDesc;
     audioDeviceDesc.numChannels = 2;
@@ -43,14 +49,14 @@ int main()
     LUMA_ASSERT(audioDevice, "Audio device failed to create! Exiting application.");
 
     FShaderDesc shaderDesc;
-    shaderDesc.stageFlags = FShaderStageFlags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
+    shaderDesc.stageFlags = Flags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
     shaderDesc.moduleName = "HelloTriangle";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTriangle.slang");
 
     IShader* shader = renderDevice->createShader(shaderDesc);
     LUMA_ASSERT(shader, "Failed to create shader! Exiting application.");
 
-    FGraphicsPipelineDesc pipelineDesc;
+    FGraphicsPipelineDesc pipelineDesc{};
     pipelineDesc.device = renderDevice;
     pipelineDesc.shaderProgram = shader;
     pipelineDesc.depthStencil.depthTestEnable = false;

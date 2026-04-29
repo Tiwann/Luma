@@ -11,6 +11,7 @@ set(LUMA_CORE_SRC
         Include/Luma/Containers/BufferView.h
         Include/Luma/Containers/HashMap.h
         Include/Luma/Containers/Pair.h
+        Include/Luma/Containers/Event.h
 
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp

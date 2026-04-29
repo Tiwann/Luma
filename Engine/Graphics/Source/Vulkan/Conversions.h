@@ -654,4 +654,15 @@ namespace Luma::Vulkan
         default: return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }
+
+    template<>
+    inline VkColorComponentFlags convert(const FColorChannelFlags& value)
+    {
+        VkColorComponentFlags result = 0;
+        if (value & EColorChannelBits::Red) result |= VK_COLOR_COMPONENT_R_BIT;
+        if (value & EColorChannelBits::Green) result |= VK_COLOR_COMPONENT_G_BIT;
+        if (value & EColorChannelBits::Blue) result |= VK_COLOR_COMPONENT_B_BIT;
+        if (value & EColorChannelBits::Alpha) result |= VK_COLOR_COMPONENT_A_BIT;
+        return result;
+    }
 }

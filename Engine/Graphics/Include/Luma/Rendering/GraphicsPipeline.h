@@ -38,7 +38,7 @@ namespace Luma
     struct FColorBlendState
     {
         bool colorBlendEnable = false;
-        FBlendFunction blendFunction;
+        FBlendFunction blendFunction = FBlendFunction::alphaBlend();
         FColorChannelFlags colorWriteMask = Flags(EColorChannelBits::Red) | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
     };
 
@@ -80,14 +80,14 @@ namespace Luma
     {
         IRenderDevice* device = nullptr;
         IShader* shaderProgram = nullptr;
-        FInputAssemblyState inputAssembly;
-        FVertexInputLayout inputLayout;
-        FRasterizationState rasterization;
-        FColorBlendState colorBlend[8];
-        FDepthStencilState depthStencil;
-        FMultisampleState multisample;
-        FViewportState viewport;
-        FScissorState scissor;
+        FInputAssemblyState inputAssembly{};
+        FVertexInputLayout inputLayout{};
+        FRasterizationState rasterization{};
+        FColorBlendState colorBlend[8]{};
+        FDepthStencilState depthStencil{};
+        FMultisampleState multisample{};
+        FViewportState viewport{};
+        FScissorState scissor{};
         EFormat colorFormats[8] { EFormat::None };
         uint32_t colorFormatCount = 0;
         EFormat depthFormat = EFormat::None;

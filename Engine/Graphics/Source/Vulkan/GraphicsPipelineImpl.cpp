@@ -68,18 +68,14 @@ namespace Luma::Vulkan
         {
             const auto& blendState = pipelineDesc.colorBlend[i];
 
-            VkPipelineColorBlendAttachmentState state;
-            state.blendEnable = blendState.colorBlendEnable;
-            state.colorWriteMask = blendState.colorWriteMask;
-            if (blendState.colorBlendEnable)
-            {
-                state.alphaBlendOp = convert<VkBlendOp>(blendState.blendFunction.alphaOp);
-                state.colorBlendOp = convert<VkBlendOp>(blendState.blendFunction.colorOp);
-                state.dstAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaDest);
-                state.dstColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorDest);
-                state.srcAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaSource);
-                state.srcColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorSource);
-            }
+            colorBlendStates[i].blendEnable = blendState.colorBlendEnable;
+            colorBlendStates[i].colorWriteMask = convert<VkColorComponentFlags>(blendState.colorWriteMask);
+            colorBlendStates[i].alphaBlendOp = convert<VkBlendOp>(blendState.blendFunction.alphaOp);
+            colorBlendStates[i].colorBlendOp = convert<VkBlendOp>(blendState.blendFunction.colorOp);
+            colorBlendStates[i].dstAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaDest);
+            colorBlendStates[i].dstColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorDest);
+            colorBlendStates[i].srcAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaSource);
+            colorBlendStates[i].srcColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorSource);
         }
 
         VkPipelineColorBlendStateCreateInfo colorBlendState { VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO };

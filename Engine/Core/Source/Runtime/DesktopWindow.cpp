@@ -8,6 +8,13 @@ namespace Luma
     {
         if (m_Handle) RGFW_window_close(m_Handle);
         m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, RGFW_windowCenter);
+        RGFW_window_setUserPtr(m_Handle, this);
+        RGFW_setEventCallback(RGFW_windowResized, [](const RGFW_event* event)
+        {
+            const FDesktopWindow* ptr = static_cast<FDesktopWindow*>(RGFW_window_getUserPtr(event->update.win));
+            ptr->resizedEvent(event->update.w, event->update.h);
+        });
+
         if (!m_Handle) return false;
         RGFW_window_show(m_Handle);
         return true;

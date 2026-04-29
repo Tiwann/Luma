@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Window.h"
 #include "Luma/Containers/String.h"
+#include "Luma/Containers/Event.h"
 #include "Luma/Core/Export.h"
 #include "Luma/Math/Vector.h"
 
@@ -31,6 +32,8 @@ namespace Luma
 
         FString getTitle() const;
         void setTitle(const FString& title);
+
+        TAction<uint32_t, uint32_t> resizedEvent;
     private:
         RGFW_window* m_Handle = nullptr;
     };
