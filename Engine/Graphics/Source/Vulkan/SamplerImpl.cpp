@@ -64,7 +64,7 @@ namespace Luma::Vulkan
         m_Handle = nullptr;
     }
 
-    EResourceState FSamplerImpl::getResourceState()
+    EResourceState FSamplerImpl::getResourceState() const
     {
         return EResourceState::General;
     }

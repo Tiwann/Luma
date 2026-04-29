@@ -1,19 +1,21 @@
-﻿#include <Luma/Audio/AudioDevice.h>
+﻿#include <Luma/Containers/StringFormat.h>
 #include <Luma/Memory/Ref.h>
 #include <Luma/Runtime/DesktopWindow.h>
 #include <Luma/Runtime/Flags.h>
+#include <Luma/Runtime/Path.h>
+#include <Luma/Runtime/Time.h>
 #include <Luma/Rendering/RenderDevice.h>
 #include <Luma/Rendering/ShaderCompiler.h>
 #include <Luma/Rendering/Shader.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/GraphicsPipeline.h>
-#include <Luma/Runtime/Path.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
+#include <Luma/Rendering/Texture.h>
 
+#include "Luma/Asset/StaticMesh.h"
 
 using namespace Luma;
-
 
 int main()
 {
@@ -23,7 +25,7 @@ int main()
     windowDesc.height = 600;
     windowDesc.flags = 0;
 
-    Ref<FDesktopWindow> window = Ref(createWindow(windowDesc));
+    Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
     FRenderDeviceDesc renderDeviceDesc;
@@ -32,31 +34,23 @@ int main()
     renderDeviceDesc.window = window;
     renderDeviceDesc.vSync = false;
 
-    Ref<IRenderDevice> renderDevice = Ref(createRenderDevice(renderDeviceDesc));
+    Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
     LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
-    window->resizedEvent.bind([&renderDevice](uint32_t width, uint32_t height)
+    window->resizedEvent.bind([&renderDevice](uint32_t, uint32_t)
     {
         ISwapchain* swapchain = renderDevice->getSwapchain();
         swapchain->invalidate();
     });
-
-    FAudioDeviceDesc audioDeviceDesc;
-    audioDeviceDesc.numChannels = 2;
-    audioDeviceDesc.sampleRate = 44100;
-    audioDeviceDesc.maxListeners = 4;
-
-    Ref<FAudioDevice> audioDevice = Ref(createAudioDevice(audioDeviceDesc));
-    LUMA_ASSERT(audioDevice, "Audio device failed to create! Exiting application.");
 
     FShaderDesc shaderDesc;
     shaderDesc.stageFlags = Flags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
     shaderDesc.moduleName = "HelloTriangle";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTriangle.slang");
 
-    IShader* shader = renderDevice->createShader(shaderDesc);
+    Ref<IShader> shader = renderDevice->createShader(shaderDesc);
     LUMA_ASSERT(shader, "Failed to create shader! Exiting application.");
 
-    FGraphicsPipelineDesc pipelineDesc{};
+    FGraphicsPipelineDesc pipelineDesc;
     pipelineDesc.device = renderDevice;
     pipelineDesc.shaderProgram = shader;
     pipelineDesc.depthStencil.depthTestEnable = false;
@@ -65,24 +59,43 @@ int main()
     pipelineDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
     pipelineDesc.colorFormatCount = 1;
 
-    IGraphicsPipeline* pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
+    Ref<IGraphicsPipeline> pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
+    FString filepath = FPath::openFileDialog("Choose a 3D Model", FPath::getDesktopDirectory(), FDialogFilters::ModelFilters, *window);
+    FStaticMesh mesh;
+    if (!mesh.loadFromFile(filepath, renderDevice))
+        return 1;
+
+    double lastFrameTime = 0.0;
+    double deltaTime = 0.0;
     while (!window->shouldClose())
     {
         window->pollEvents();
+        const double currentTime = FTime::getTime();
+        deltaTime = currentTime - lastFrameTime;
+        lastFrameTime = currentTime;
+        const uint32_t fps = static_cast<uint32_t>(1.0 / deltaTime);
+
+        static double time = 0.0;
+        time += deltaTime;
+        if (time >= 1.0)
+        {
+            window->setTitle(strfmt("{} | FPS: {}", windowDesc.title, fps));
+            time = 0.0;
+        }
 
         if (renderDevice->beginFrame())
         {
             ICommandBuffer* cmdBuffer = renderDevice->getCommandBuffer();
-            ITextureView* renderTarget = renderDevice->getAcquiredSwapchainTextureView();
+            const ITextureView* swapchainTexture = renderDevice->getAcquiredSwapchainTextureView();
 
             FRenderPassAttachment colorAttachment;
             colorAttachment.type = ERenderPassAttachmentType::Color;
             colorAttachment.loadOp = ELoadOp::Clear;
             colorAttachment.storeOp = EStoreOp::Store;
             colorAttachment.clearValue.color = FColor::Black;
-            colorAttachment.textureView = renderTarget;
+            colorAttachment.textureView = swapchainTexture;
 
             FRenderPassDesc renderPassDesc;
             renderPassDesc.renderArea = {0, 0, window->getWidth(), window->getHeight()};
@@ -92,7 +105,7 @@ int main()
             cmdBuffer->bindGraphicsPipeline(pipeline);
             cmdBuffer->setViewport({0.0f, 0.0f, (float)window->getWidth(), (float)window->getHeight(), 0.0f, 1.0f});
             cmdBuffer->setScissor({0, 0, window->getWidth(), window->getHeight()});
-            cmdBuffer->draw(FDrawCommand(3, 1, 0, 0));
+            cmdBuffer->draw(3, 1, 0, 0);
             cmdBuffer->endRenderPass();
 
             renderDevice->endFrame();
@@ -101,7 +114,5 @@ int main()
     }
 
     renderDevice->waitIdle();
-    pipeline->destroy();
-    shader->destroy();
     return 0;
 }

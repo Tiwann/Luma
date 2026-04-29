@@ -2,10 +2,11 @@
 #include "RenderDeviceImpl.h"
 #include "Luma/Rendering/TextureAspect.h"
 #include "Conversions.h"
+#include "VulkanUtils.h"
 
 #include <vma/vk_mem_alloc.h>
 
-#include "VulkanUtils.h"
+#include "Luma/Memory/Ref.h"
 
 
 namespace Luma::Vulkan
@@ -100,27 +101,57 @@ namespace Luma::Vulkan
             return false;
 
         // DECIDED TO EXPLICITLY TRANSITION TO LAYOUT GENERAL BY DEFAULT
-        /*const EResourceAccessFlagBits destAccess = isColorAttachment ? ResourceAccessFlagBits::ColorAttachmentWrite :
-        isDepthAttachment ? ResourceAccessFlagBits::DepthStencilAttachmentWrite :
-        isSampled ? ResourceAccessFlagBits::ShaderRead : ResourceAccessFlagBits::None;
+        const EResourceAccessBits destAccess = isColorAttachment ? EResourceAccessBits::ColorAttachmentWrite :
+        isDepthAttachment ? EResourceAccessBits::DepthStencilAttachmentWrite :
+        isSampled ? EResourceAccessBits::ShaderRead : EResourceAccessBits::None;
 
-        const ResourceState destState = isColorAttachment ? ResourceState::ColorAttachment :
-        isDepthAttachment ? ResourceState::DepthStencilAttachment :
-        isSampled ? ResourceState::ShaderRead : ResourceState::General;
+        const EResourceState destState = isColorAttachment ? EResourceState::ColorAttachment :
+        isDepthAttachment ? EResourceState::DepthStencilAttachment :
+        isSampled ? EResourceState::ShaderRead : EResourceState::General;
 
-        TextureBarrier barrier;
+        FTextureBarrier barrier;
         barrier.texture = this;
-        barrier.sourceAccess = ResourceAccessFlagBits::None;
+        barrier.sourceAccess = EResourceAccessBits::None;
         barrier.destAccess = destAccess;
         barrier.destState = destState;
         barrier.destQueue = nullptr;
         barrier.destQueue = nullptr;
-        RenderDevice::ImmediateTextureBarrier(device, barrier);*/
-        return true;
+
+        Ref<ICommandBuffer> cmdBuffer = device->createRenderCommandBuffer();
+        Ref<IFence> fence = device->createFence(FFenceDesc());
+
+        if (cmdBuffer->begin())
+        {
+            cmdBuffer->textureBarrier(barrier);
+            cmdBuffer->end();
+
+            FQueueImpl* queue = static_cast<FQueueImpl*>(device->getRenderQueue());
+            if (!queue) return false;
+            queue->executeCommandBuffer(cmdBuffer, fence);
+            fence->wait(FENCE_WAIT_INFINITE);
+            return true;
+        }
+        return false;
+    }
+
+    bool FTextureImpl::resize(const uint32_t width, const uint32_t height, const uint32_t depth)
+    {
+        FTextureDesc desc;
+        desc.format = m_Format;
+        desc.sampleCount = m_SampleCount;
+        desc.usageFlags = m_UsageFlags;
+        desc.width = width;
+        desc.height = height;
+        desc.depth = depth;
+        desc.mipCount = m_Mips;
+        desc.device = m_Device;
+        desc.arrayCount = m_ArrayCount;
+        return initialize(desc);
     }
 
     void FTextureImpl::destroy()
     {
+        if (!m_Device) return;
         m_View.destroy();
         const VmaAllocator allocatorHandle = m_Device->getAllocator();
         vmaDestroyImage(allocatorHandle, m_Image, m_Allocation);
@@ -133,7 +164,7 @@ namespace Luma::Vulkan
         return m_Device && m_Image && m_Allocation;
     }
 
-    void FTextureImpl::setName(FStringView name)
+    void FTextureImpl::setName(const FStringView name)
     {
         setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_IMAGE, m_Image, name);
     }
@@ -146,11 +177,6 @@ namespace Luma::Vulkan
     VmaAllocation FTextureImpl::getAllocation() const
     {
         return m_Allocation;
-    }
-
-    EResourceState FTextureImpl::getResourceState()
-    {
-        return m_State;
     }
 
     const ITextureView* FTextureImpl::getTextureView() const

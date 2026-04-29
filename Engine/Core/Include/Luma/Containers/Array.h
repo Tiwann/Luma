@@ -52,19 +52,19 @@ namespace Luma
         TArray(const std::initializer_list<T>& list) : m_Count(list.size()), m_Allocated(list.size())
         {
             m_Data = new T[m_Allocated]{};
-            std::copy(list.begin(), list.end(), m_Data);
+            std::ranges::copy(list.begin(), list.end(), m_Data);
         }
 
         TArray(ConstPointerType data, SizeType count) : m_Count(count), m_Allocated(count)
         {
             m_Data = new T[m_Allocated]{};
-            std::copy(data, data + count, m_Data);
+            std::ranges::copy(data, data + count, m_Data);
         }
 
         TArray(const TArray& other) : m_Count(other.m_Count), m_Allocated(other.m_Allocated)
         {
             m_Data = new T[m_Allocated]{};
-            std::copy(other.begin(), other.end(), m_Data);
+            std::ranges::copy(other.begin(), other.end(), m_Data);
         }
 
         TArray(TArray&& other) noexcept
@@ -489,7 +489,7 @@ namespace Luma
             if (m_Count <= 1)
                 return;
 
-            QuickSort(0, m_Count - 1, compareFunc);
+            quickSort(0, m_Count - 1, compareFunc);
         }
     private:
         void quickSort(SizeType low, SizeType high, const std::function<bool(const T&, const T&)>& compareFunc)

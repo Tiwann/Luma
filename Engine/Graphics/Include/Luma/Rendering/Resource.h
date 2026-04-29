@@ -7,7 +7,7 @@ namespace Luma
     struct IResource
     {
         virtual ~IResource() = default;
-        virtual EResourceType getResourceType() = 0;
-        virtual EResourceState getResourceState() = 0;
+        virtual EResourceType getResourceType() const = 0;
+        virtual EResourceState getResourceState() const = 0;
     };
 }

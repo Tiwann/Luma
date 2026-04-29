@@ -10,6 +10,11 @@
 #include "VulkanUtils.h"
 #include <Volk/volk.h>
 
+#include "BindingSetImpl.h"
+#include "ShaderImpl.h"
+#include "Luma/Asset/Material.h"
+#include "Luma/Asset/StaticMesh.h"
+
 
 #define LUMA_CHECK(x, msg) \
     LUMA_ASSERT(x, msg); \
@@ -73,7 +78,7 @@ namespace Luma::Vulkan
         vkEndCommandBuffer(m_Handle);
     }
 
-    void FCommandBufferImpl::beginDebugGroup(FStringView name, const FColor& color)
+    void FCommandBufferImpl::beginDebugGroup(const FStringView name, const FColor& color)
     {
         VkDebugUtilsLabelEXT labelInfo { VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT };
         labelInfo.pLabelName = *name;
@@ -87,6 +92,59 @@ namespace Luma::Vulkan
     void FCommandBufferImpl::endDebugGroup()
     {
         vkCmdEndDebugUtilsLabelEXT(m_Handle);
+    }
+
+    void FCommandBufferImpl::clearColor(const uint32_t attachmentIndex, const FColor& color)
+    {
+        VkClearAttachment clearAttachment;
+        clearAttachment.colorAttachment = attachmentIndex;
+        clearAttachment.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        clearAttachment.clearValue.color = VkClearColorValue{{ color.r, color.g, color.b, color.a }};
+
+        VkClearRect clearRect;
+        clearRect.rect.offset = VkOffset2D{ static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.x), static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.y) };
+        clearRect.rect.extent = VkExtent2D{ m_CurrentRenderPassDesc->renderArea.width, m_CurrentRenderPassDesc->renderArea.height };
+        clearRect.baseArrayLayer = 0;
+        clearRect.layerCount = 1;
+        vkCmdClearAttachments(m_Handle, 1, &clearAttachment, 1, &clearRect);
+    }
+
+    void FCommandBufferImpl::clearDepthStencil(const float depth, const uint8_t stencil)
+    {
+        VkClearAttachment clearAttachment;
+        clearAttachment.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+        clearAttachment.clearValue.depthStencil = { depth, stencil };
+
+        VkClearRect clearRect;
+        clearRect.rect.offset = VkOffset2D{ static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.x), static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.y) };
+        clearRect.rect.extent = VkExtent2D{ m_CurrentRenderPassDesc->renderArea.width, m_CurrentRenderPassDesc->renderArea.height };
+        clearRect.baseArrayLayer = 0;
+        clearRect.layerCount = 1;
+        vkCmdClearAttachments(m_Handle, 1, &clearAttachment, 1, &clearRect);
+    }
+
+    void FCommandBufferImpl::clearColorTexture(ITexture* texture, const FColor& color, const FTextureSubresourceRange& subresourceRange)
+    {
+        LUMA_CHECK(texture, "Invalid texture handle!");
+        FTextureImpl* textureImpl = static_cast<FTextureImpl*>(texture);
+        const VkClearColorValue clearColor = VkClearColorValue{{ color.r, color.g, color.b, color.a }};
+        const VkImageSubresourceRange range = convert<VkImageSubresourceRange>(subresourceRange);
+        vkCmdClearColorImage(m_Handle, textureImpl->getImage(),  convert<VkImageLayout>(texture->getResourceState()), &clearColor, 1, &range);
+    }
+
+    void FCommandBufferImpl::clearColorTexture(ITexture* texture, const FColor& color)
+    {
+        LUMA_CHECK(texture, "Invalid texture handle!");
+        FTextureImpl* textureImpl = static_cast<FTextureImpl*>(texture);
+        const VkClearColorValue clearColor = VkClearColorValue{{ color.r, color.g, color.b, color.a }};
+
+        VkImageSubresourceRange range;
+        range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        range.baseMipLevel = 0;
+        range.levelCount = textureImpl->getMipCount();
+        range.baseArrayLayer = 0;
+        range.layerCount = textureImpl->getArrayCount();
+        vkCmdClearColorImage(m_Handle, textureImpl->getImage(), convert<VkImageLayout>(texture->getResourceState()), &clearColor, 1, &range);
     }
 
     void FCommandBufferImpl::bindVertexBuffer(const IBuffer* buffer, const int64_t offset)
@@ -175,11 +233,13 @@ namespace Luma::Vulkan
         }
 
         vkCmdBeginRendering(m_Handle, &renderingInfo);
+        m_CurrentRenderPassDesc = &renderPassDesc;
     }
 
     void FCommandBufferImpl::endRenderPass()
     {
         vkCmdEndRendering(m_Handle);
+        m_CurrentRenderPassDesc = nullptr;
     }
 
     void FCommandBufferImpl::setViewport(const FViewport& viewport)
@@ -194,7 +254,7 @@ namespace Luma::Vulkan
         vkCmdSetViewport(m_Handle, 0, 1, &vp);
     }
 
-    void FCommandBufferImpl::setScissor(const FRect2u& scissor)
+    void FCommandBufferImpl::setScissor(const FScissor& scissor)
     {
         VkRect2D rect { };
         rect.offset.x = scissor.x;
@@ -223,14 +283,14 @@ namespace Luma::Vulkan
             drawIndexedCmd.firstInstance);
     }
 
-    void FCommandBufferImpl::drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount)
+    void FCommandBufferImpl::drawIndirect(const IBuffer* buffer, const uint64_t offset, const uint32_t drawCount)
     {
         LUMA_CHECK(buffer, "Invalid buffer handle!");
         const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
         vkCmdDrawIndirect(m_Handle, bufferImpl->getHandle(), offset, drawCount, sizeof(FDrawCommand));
     }
 
-    void FCommandBufferImpl::drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount)
+    void FCommandBufferImpl::drawIndexedIndirect(const IBuffer* buffer, const uint64_t offset, const uint32_t drawCount)
     {
         LUMA_CHECK(buffer, "Invalid buffer handle!");
         const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
@@ -244,19 +304,91 @@ namespace Luma::Vulkan
         vkCmdBindPipeline(m_Handle, VK_PIPELINE_BIND_POINT_COMPUTE, pipelineImpl->getHandle());
     }
 
-    void FCommandBufferImpl::dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
+    void FCommandBufferImpl::bindMaterial(const FMaterial* material)
+    {
+        LUMA_CHECK(material, "Invalid material handle!");
+        bindBindingSet(material->getBindingSet(), material->getShader());
+    }
+
+    void FCommandBufferImpl::bindBindingSet(const IBindingSet* bindingSet, const IShader* shader)
+    {
+        LUMA_CHECK(bindingSet, "Invalid binding set handle!");
+        LUMA_CHECK(shader, "Invalid shader handle!");
+
+        const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
+        const FBindingSetImpl* bindingSetImpl = static_cast<const FBindingSetImpl*>(bindingSet);
+
+        const VkDescriptorSet descriptorSets[] { bindingSetImpl->getHandle() };
+        VkBindDescriptorSetsInfo info = { VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO };
+        info.layout = shaderImpl->getPipelineLayout();
+        info.firstSet = bindingSetImpl->getSetIndex();
+        info.descriptorSetCount = 1;
+        info.pDescriptorSets = descriptorSets;
+        info.stageFlags = convert<VkShaderStageFlags>(shaderImpl->getStageFlags());
+        info.dynamicOffsetCount = 0;
+        info.pDynamicOffsets = nullptr;
+        vkCmdBindDescriptorSets2(m_Handle, &info);
+    }
+
+    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCameraf& camera)
+    {
+        LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
+        LUMA_CHECK(material, "Invalid material handle!");
+
+        const auto vertexBuffer = staticMesh->getVertexBuffer();
+        const auto indexBuffer = staticMesh->getIndexBuffer();
+        LUMA_CHECK(vertexBuffer, "Invalid vertex buffer handle!");
+        LUMA_CHECK(indexBuffer, "Invalid index buffer handle!");
+
+        bindMaterial(material);
+        for (const auto& perMaterialMeshParts : staticMesh->getPerMaterialMeshParts())
+        {
+            for (const FMeshPart& meshPart : perMaterialMeshParts.value)
+            {
+                bindVertexBuffer(vertexBuffer, meshPart.vertexOffset);
+                bindIndexBuffer(indexBuffer, meshPart.indexOffset, EIndexFormat::Uint32);
+                drawIndexed(FDrawIndexedCommand(meshPart.indexSize / sizeof(uint32_t), 1, 0, 0, 0));
+            }
+        }
+    }
+
+    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCameraf& camera)
+    {
+        LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
+
+        const auto vertexBuffer = staticMesh->getVertexBuffer();
+        const auto indexBuffer = staticMesh->getIndexBuffer();
+        LUMA_CHECK(vertexBuffer, "Invalid vertex buffer handle!");
+        LUMA_CHECK(indexBuffer, "Invalid index buffer handle!");
+
+        const THashMap<uint32_t, TArray<FMeshPart>>& perMaterialMeshParts = staticMesh->getPerMaterialMeshParts();
+
+        for (const auto& materialSlots : staticMesh->getMaterialSlots())
+        {
+            const TArray<FMeshPart>& meshParts = perMaterialMeshParts[materialSlots.key];
+
+            for (const FMeshPart& meshPart : meshParts)
+            {
+                bindVertexBuffer(vertexBuffer, meshPart.vertexOffset);
+                bindIndexBuffer(indexBuffer, meshPart.indexOffset, EIndexFormat::Uint32);
+                drawIndexed(FDrawIndexedCommand(meshPart.indexSize / sizeof(uint32_t), 1, 0, 0, 0));
+            }
+        }
+    }
+
+    void FCommandBufferImpl::dispatch(const uint32_t groupCountX, const uint32_t groupCountY, const uint32_t groupCountZ)
     {
         vkCmdDispatch(m_Handle, groupCountX, groupCountY, groupCountZ);
     }
 
-    void FCommandBufferImpl::dispatchIndirect(IBuffer* buffer, int64_t offset)
+    void FCommandBufferImpl::dispatchIndirect(IBuffer* buffer, const int64_t offset)
     {
         LUMA_CHECK(buffer, "Invalid buffer handle!");
         const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);
         vkCmdDispatchIndirect(m_Handle, bufferImpl->getHandle(), offset);
     }
 
-    void FCommandBufferImpl::copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size)
+    void FCommandBufferImpl::copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, const int64_t srcOffset, const int64_t dstOffset, const uint64_t size)
     {
         LUMA_CHECK(srcBuffer, "Invalid buffer handle!");
         LUMA_CHECK(dstBuffer, "Invalid buffer handle!");
@@ -276,7 +408,7 @@ namespace Luma::Vulkan
         vkCmdCopyBuffer2(m_Handle, &copyInfo);
     }
 
-    void FCommandBufferImpl::copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex, uint32_t mipLevel)
+    void FCommandBufferImpl::copyBufferToTexture(IBuffer* buffer, const int64_t offset, uint64_t size, ITexture* texture, const uint32_t arrayIndex, const uint32_t mipLevel)
     {
         LUMA_CHECK(buffer, "Invalid buffer handle!");
         LUMA_CHECK(texture, "Invalid texture handle!");
@@ -302,14 +434,38 @@ namespace Luma::Vulkan
         VkCopyBufferToImageInfo2 copyInfo = { VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2 };
         copyInfo.srcBuffer = bufferImpl->getHandle();
         copyInfo.dstImage = textureImpl->getImage();
-        copyInfo.dstImageLayout = convert<VkImageLayout>(textureImpl->getState());
+        copyInfo.dstImageLayout = convert<VkImageLayout>(textureImpl->getResourceState());
         copyInfo.regionCount = 1;
         copyInfo.pRegions = &region;
 
         vkCmdCopyBufferToImage2(m_Handle, &copyInfo);
     }
 
-    void FCommandBufferImpl::setName(FStringView name)
+    void FCommandBufferImpl::textureBarrier(const FTextureBarrier& barrier)
+    {
+        FTextureImpl* texture = static_cast<FTextureImpl*>(barrier.texture);
+        LUMA_CHECK(texture, "Invalid texture handle!");
+
+        const VkImageMemoryBarrier vkBarrier = makeTextureBarrier(barrier);
+        const VkPipelineStageFlags srcStageFlags = getSourcePipelineStageFlags(barrier.sourceAccess);
+        const VkPipelineStageFlags dstStageFlags = getDestPipelineStageFlags(barrier.destAccess);
+        vkCmdPipelineBarrier(m_Handle, srcStageFlags, dstStageFlags, 0, 0, nullptr, 0, nullptr, 1, &vkBarrier);
+        texture->setResourceState(barrier.destState);
+    }
+
+    void FCommandBufferImpl::bufferBarrier(const FBufferBarrier& barrier)
+    {
+        FBufferImpl* buffer = static_cast<FBufferImpl*>(barrier.buffer);
+        LUMA_CHECK(buffer, "Invalid buffer handle!");
+
+        const VkBufferMemoryBarrier vkBarrier = makeBufferBarrier(barrier);
+        const VkPipelineStageFlags srcStageFlags = getSourcePipelineStageFlags(barrier.sourceAccess);
+        const VkPipelineStageFlags dstStageFlags = getSourcePipelineStageFlags(barrier.destAccess);
+        vkCmdPipelineBarrier(m_Handle, srcStageFlags, dstStageFlags, 0, 0, nullptr, 1, &vkBarrier, 0, nullptr);
+        buffer->setResourceState(barrier.destState);
+    }
+
+    void FCommandBufferImpl::setName(const FStringView name)
     {
         setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_COMMAND_BUFFER, m_Handle, name);
     }

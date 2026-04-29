@@ -11,13 +11,13 @@ namespace Luma
 {
     FString FPath::openFileDialog(const FStringView title, const FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow)
     {
-        HWND* hwnd = static_cast<HWND*>(RGFW_window_getHWND(((FDesktopWindow&)owningWindow).getHandle()));
+        HWND hwnd = static_cast<HWND>(RGFW_window_getHWND(((FDesktopWindow&)owningWindow).getHandle()));
         if (!hwnd) return {};
 
         OPENFILENAMEW openFilename = { };
         ZeroMemory(&openFilename, sizeof(OPENFILENAMEW));
         WCHAR szFile[MAX_PATH] = { 0 };
-        openFilename.hwndOwner = *hwnd;
+        openFilename.hwndOwner = hwnd;
         openFilename.lStructSize = sizeof(OPENFILENAMEW);
         openFilename.lpstrFile = szFile;
         openFilename.nMaxFile = MAX_PATH;
@@ -37,18 +37,18 @@ namespace Luma
         const bool result = GetOpenFileNameW(&openFilename);
 
         auto resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
-        return result ? *resultPath : "";
+        return result ? resultPath : "";
     }
 
     FString FPath::saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow)
     {
-        HWND* hwnd = static_cast<HWND*>(RGFW_window_getHWND(((FDesktopWindow&)owningWindow).getHandle()));
+        HWND hwnd = static_cast<HWND>(RGFW_window_getHWND(((FDesktopWindow&)owningWindow).getHandle()));
         if (!hwnd) return {};
 
         OPENFILENAME openFilename = { };
         ZeroMemory(&openFilename, sizeof(OPENFILENAMEW));
         WCHAR szFile[MAX_PATH] = { 0 };
-        openFilename.hwndOwner = *hwnd;
+        openFilename.hwndOwner = hwnd;
         openFilename.lStructSize = sizeof(OPENFILENAME);
         openFilename.lpstrFile = szFile;
         openFilename.nMaxFile = MAX_PATH;

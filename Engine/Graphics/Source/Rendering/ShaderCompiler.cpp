@@ -146,6 +146,12 @@ namespace Luma
                         shaderBinding.stageFlags |= stage;
                     }
                 }
+
+                TBufferView<SpvReflectInterfaceVariable> interfaceVariables(reflectModule.interface_variables, reflectModule.interface_variable_count);
+                for (const auto& interfaceVar : interfaceVariables)
+                {
+
+                }
             }
 
             FShaderReflectionData reflectionData;

@@ -25,18 +25,19 @@ namespace Luma
 
         void addRef()
         {
-            m_RefCount.fetch_add(1, std::memory_order_acquire);
+            m_RefCount.fetch_add(1, std::memory_order_relaxed);
         }
 
         void relRef()
         {
-            if (m_RefCount.fetch_sub(1, std::memory_order_release) == 1)
+            if (m_RefCount.fetch_sub(1, std::memory_order_acq_rel) == 1)
             {
-                T* self = static_cast<T*>(this);
-                self->destroy();
-                delete self;
+                static_cast<T*>(this)->destroy();
+                delete this;
             }
         }
+
+        uint32_t getRefCount() const { return m_RefCount.load(); }
     private:
         mutable std::atomic<uint32_t> m_RefCount{0};
     };

@@ -31,6 +31,9 @@ namespace Luma::Vulkan
 
         m_Device = device;
         m_BindingSetLayout = bindingSetDesc.layout;
+
+        for (const auto& binding : bindingSetLayout->getBindings())
+            m_NameToBinding[binding.name] = binding.bindingIndex;
         return true;
     }
 
@@ -52,7 +55,7 @@ namespace Luma::Vulkan
         const FTextureImpl* vulkanTexture = static_cast<const FTextureImpl*>(texture);
         const FTextureViewImpl* textureView = static_cast<const FTextureViewImpl*>(vulkanTexture->getTextureView());
         VkDescriptorImageInfo imageInfo;
-        imageInfo.imageLayout = convert<VkImageLayout>(texture->getState());
+        imageInfo.imageLayout = convert<VkImageLayout>(texture->getResourceState());
         imageInfo.imageView = textureView->getHandle();
 
         VkWriteDescriptorSet write = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET };
@@ -80,7 +83,7 @@ namespace Luma::Vulkan
             const FTextureImpl* texture = static_cast<const FTextureImpl*>(textures[textureIndex]);
             const FTextureViewImpl* textureView = static_cast<const FTextureViewImpl*>(texture->getTextureView());
             VkDescriptorImageInfo imageInfo;
-            imageInfo.imageLayout = convert<VkImageLayout>(texture->getState());
+            imageInfo.imageLayout = convert<VkImageLayout>(texture->getResourceState());
             imageInfo.imageView = textureView->getHandle();
             imageInfos.add(imageInfo);
         }
@@ -127,7 +130,7 @@ namespace Luma::Vulkan
         const FSamplerImpl* samplerImpl = static_cast<const FSamplerImpl*>(sampler);
 
         VkDescriptorImageInfo imageInfo;
-        imageInfo.imageLayout = convert<VkImageLayout>(texture->getState());
+        imageInfo.imageLayout = convert<VkImageLayout>(texture->getResourceState());
         imageInfo.imageView = textureView->getHandle();
         imageInfo.sampler = samplerImpl->getHandle();
 
@@ -160,7 +163,7 @@ namespace Luma::Vulkan
 
             VkDescriptorImageInfo imageInfo;
             imageInfo.sampler = vulkanSampler;
-            imageInfo.imageLayout = convert<VkImageLayout>(texture->getState());
+            imageInfo.imageLayout = convert<VkImageLayout>(texture->getResourceState());
             imageInfo.imageView = textureView->getHandle();
             imageInfos.add(imageInfo);
         }
@@ -213,23 +216,23 @@ namespace Luma::Vulkan
         return true;
     }
 
-    bool FBindingSetImpl::bindTexture(const char* name, const ITexture* texture)
+    bool FBindingSetImpl::bindTexture(const FString& name, const ITexture* texture, const EBindingType bindingType)
     {
-        return false;
+        return bindTexture(m_NameToBinding[name], texture, bindingType);
     }
 
-    bool FBindingSetImpl::bindTextures(const char* name, const TArray<const ITexture*>& textures)
+    bool FBindingSetImpl::bindTextures(const FString& name, const TArray<const ITexture*>& textures, EBindingType bindingType)
     {
-        return false;
+        return bindTextures(m_NameToBinding[name], textures, bindingType);
     }
 
-    bool FBindingSetImpl::bindSampler(const char* name, const ISampler* sampler)
+    bool FBindingSetImpl::bindSampler(const FString& name, const ISampler* sampler)
     {
-        return false;
+        return bindSampler(m_NameToBinding[name], sampler);
     }
 
-    bool FBindingSetImpl::bindBuffer(const char* name, const IBuffer* buffer, uint64_t offset, uint64_t size)
+    bool FBindingSetImpl::bindBuffer(const FString& name, const IBuffer* buffer, uint64_t offset, uint64_t size)
     {
-        return false;
+        return bindBuffer(m_NameToBinding[name], buffer, offset, size);
     }
 }

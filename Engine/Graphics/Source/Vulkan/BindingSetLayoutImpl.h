@@ -4,12 +4,11 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    struct FRenderDeviceImpl;
 
     class FBindingSetLayoutImpl : public IBindingSetLayout
     {
     public:
-        ~FBindingSetLayoutImpl() override = default;
         bool initialize(const FBindingSetLayoutDesc& layoutDesc) override;
         void destroy() override;
 

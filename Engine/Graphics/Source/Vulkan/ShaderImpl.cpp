@@ -53,7 +53,7 @@ namespace Luma::Vulkan
             VkShaderModule module;
             if (VK_FAILED(vkCreateShaderModule(device->getHandle(), &moduleCreateInfo, nullptr, &module)))
                 return false;
-            m_Modules.add({module, compiledData.stage});
+            m_Modules.push_back({module, compiledData.stage});
         }
 
         TArray<FShaderPushConstantRange> pushConstantsRanges;
@@ -67,22 +67,24 @@ namespace Luma::Vulkan
                 FBindingSetLayoutImpl setLayout;
                 if (!setLayout.initialize(layoutDesc))
                     return false;
-                m_SetLayouts.emplace(std::move(setLayout));
+                m_SetLayouts.push_back(setLayout);
             }
 
             pushConstantsRanges.addRange(reflectionData.pushConstantRanges);
         }
 
         const auto toVulkanSetLayout = [](const FBindingSetLayoutImpl& setLayout) { return setLayout.getHandle(); };
-        const auto vulkanSetLayouts = m_SetLayouts.transform<VkDescriptorSetLayout>(toVulkanSetLayout);
+        std::vector<VkDescriptorSetLayout> vulkanSetLayouts(m_SetLayouts.size());
+        std::ranges::transform(m_SetLayouts, std::back_inserter(vulkanSetLayouts), toVulkanSetLayout);
 
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO };
         pipelineLayoutCreateInfo.pSetLayouts = vulkanSetLayouts.data();
-        pipelineLayoutCreateInfo.setLayoutCount = vulkanSetLayouts.count();
+        pipelineLayoutCreateInfo.setLayoutCount = vulkanSetLayouts.size();
         if (VK_FAILED(vkCreatePipelineLayout(device->getHandle(), &pipelineLayoutCreateInfo, nullptr, &m_PipelineLayout)))
             return false;
 
         m_Device = device;
+        m_StageFlags = shaderDesc.stageFlags;
         return true;
     }
 
@@ -102,14 +104,14 @@ namespace Luma::Vulkan
         m_Modules.clear();
     }
 
-    IBindingSet* FShaderImpl::createBindingSet(uint32_t setIndex)
+    IBindingSet* FShaderImpl::createBindingSet(uint32_t setIndex) const
     {
-        const auto* setLayout = m_SetLayouts.single([&setIndex](const FBindingSetLayoutImpl& s) { return s.getSetIndex() == setIndex; });
-        if (!setLayout) return nullptr;
+        const auto it = std::ranges::find_if(m_SetLayouts, [&setIndex](const FBindingSetLayoutImpl& s) { return s.getSetIndex() == setIndex; });
+        if (it == m_SetLayouts.end()) return nullptr;
 
         FBindingSetDesc bindingSetDesc;
         bindingSetDesc.device = m_Device;
-        bindingSetDesc.layout = setLayout;
+        bindingSetDesc.layout = &*it;
 
         FBindingSetImpl* bindingSet = new FBindingSetImpl();
         if (!bindingSet->initialize(bindingSetDesc))

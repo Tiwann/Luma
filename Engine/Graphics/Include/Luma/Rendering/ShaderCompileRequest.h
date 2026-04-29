@@ -23,6 +23,12 @@ namespace Luma
         bool operator==(const FShaderEntryPoint& other) const = default;
     };
 
+    struct FInterfaceVariable
+    {
+        FString name;
+
+    };
+
     struct FShaderReflectionData
     {
         TArray<FBindingSetLayoutDesc> setLayoutDescs;

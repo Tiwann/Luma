@@ -41,7 +41,7 @@ namespace Luma
         virtual bool initialize(const FSamplerDesc& samplerDesc) = 0;
         virtual void destroy() = 0;
         virtual void setName(FStringView name) {}
-        EResourceType getResourceType() final { return EResourceType::Sampler;  }
+        EResourceType getResourceType() const final { return EResourceType::Sampler;  }
 
         ESamplerAddressMode getAddressModeU() const { return m_AddressModeU; }
         ESamplerAddressMode getAddressModeV() const { return m_AddressModeU; }

@@ -116,18 +116,21 @@ namespace Luma
         Value& operator[](const Key& key) { return getOrInsert(key); }
         Value& operator[](Key&& key) { return getOrInsert(std::move(key)); }
 
-        Value& at(const Key& key)
-        {
-            PairType* found = find(key);
-            LUMA_ASSERT(found, "THashMap::at — key not found");
-            return found->value;
-        }
-
-        const Value& at(const Key& key) const
+        const Value& operator[](const Key& key) const
         {
             const PairType* found = find(key);
             LUMA_ASSERT(found, "THashMap::at — key not found");
             return found->value;
+        }
+
+        Value& at(const Key& key)
+        {
+            return operator[](key);
+        }
+
+        const Value& at(const Key& key) const
+        {
+            return operator[](key);
         }
 
         SizeType count() const { return m_Count; }

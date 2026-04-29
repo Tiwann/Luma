@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    struct FSubresourceRange
+    struct FTextureSubresourceRange
     {
         uint32_t baseMipLevel = 0;
         uint32_t mipCount = 0;

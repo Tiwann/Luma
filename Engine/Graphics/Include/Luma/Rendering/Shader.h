@@ -23,6 +23,10 @@ namespace Luma
 
         virtual bool initialize(const FShaderDesc& shaderDesc) = 0;
         virtual void destroy() = 0;
-        virtual IBindingSet* createBindingSet(uint32_t setIndex) = 0;
+        virtual IBindingSet* createBindingSet(uint32_t setIndex) const = 0;
+
+        FShaderStageFlags getStageFlags() const { return m_StageFlags; }
+    protected:
+        FShaderStageFlags m_StageFlags = EShaderStageBits::None;
     };
 }

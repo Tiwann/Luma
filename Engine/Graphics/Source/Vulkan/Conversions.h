@@ -30,6 +30,7 @@
 #include <vulkan/vulkan.h>
 
 #include "Luma/Rendering/RenderPassDesc.h"
+#include "Luma/Rendering/TextureSubresourceRange.h"
 
 namespace Luma::Vulkan
 {
@@ -664,5 +665,17 @@ namespace Luma::Vulkan
         if (value & EColorChannelBits::Blue) result |= VK_COLOR_COMPONENT_B_BIT;
         if (value & EColorChannelBits::Alpha) result |= VK_COLOR_COMPONENT_A_BIT;
         return result;
+    }
+
+    template<>
+    inline VkImageSubresourceRange convert(const FTextureSubresourceRange& value)
+    {
+        VkImageSubresourceRange range;
+        range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        range.baseMipLevel = value.baseMipLevel;
+        range.levelCount = value.mipCount;
+        range.baseArrayLayer = value.baseArrayLayer;
+        range.layerCount = value.layerCount;
+        return range;
     }
 }

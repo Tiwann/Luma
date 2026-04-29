@@ -54,6 +54,7 @@ namespace Luma::Vulkan
             return false;
 
         m_Device = device;
+        m_Bindings = layoutDesc.bindings;
         return true;
     }
 
@@ -64,6 +65,7 @@ namespace Luma::Vulkan
         if (m_Handle) vkDestroyDescriptorSetLayout(deviceHandle, m_Handle, nullptr);
         m_Handle = nullptr;
         m_Device = nullptr;
+        m_Bindings.clear();
     }
 
     VkDescriptorSetLayout FBindingSetLayoutImpl::getHandle() const

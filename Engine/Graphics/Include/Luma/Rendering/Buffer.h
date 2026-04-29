@@ -29,8 +29,8 @@ namespace Luma
         virtual void unmap(const void* ptr) = 0;
         virtual uint64_t getDeviceAddress() const = 0;
 
-        EResourceType getResourceType() final { return EResourceType::Buffer; }
-        EResourceState getResourceState() final { return m_State; }
+        EResourceType getResourceType() const final { return EResourceType::Buffer; }
+        EResourceState getResourceState() const final { return m_State; }
         void setResourceState(const EResourceState state) { m_State = state; }
         EBufferUsage getUsage() const { return m_Usage; }
         uint64_t getSize() const { return m_Size; }

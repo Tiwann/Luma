@@ -87,7 +87,9 @@ namespace Luma::Vulkan
             applicationInfo.applicationVersion = 0;
 
             TArray<const char*> layers;
+#ifdef LUMA_DEBUG
             layers.add(VK_LAYER_KHRONOS_VALIDATION_NAME);
+#endif
 
             TArray<const char*> extensions;
             extensions.add(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);

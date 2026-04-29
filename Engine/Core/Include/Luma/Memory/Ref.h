@@ -18,7 +18,13 @@ namespace Luma
 
         Ref() = default;
 
-        explicit Ref(PointerType ptr) : m_Pointer(ptr)
+        Ref(PointerType ptr) : m_Pointer(ptr)
+        {
+            addRef(m_Pointer);
+        }
+
+        template<typename U>
+        Ref(U* ptr) : m_Pointer(static_cast<PointerType>(ptr))
         {
             addRef(m_Pointer);
         }
@@ -36,13 +42,13 @@ namespace Luma
         }
 
         template <typename U>
-        Ref(const Ref<U>& other) : m_Pointer(reinterpret_cast<PointerType>(other.m_Pointer))
+        Ref(const Ref<U>& other) : m_Pointer(static_cast<PointerType>(other.m_Pointer))
         {
             addRef(m_Pointer);
         }
 
         template <typename U>
-        Ref(Ref<U>&& other) noexcept : m_Pointer(reinterpret_cast<PointerType>(other.m_Pointer))
+        Ref(Ref<U>&& other) noexcept : m_Pointer(static_cast<PointerType>(other.m_Pointer))
         {
             other.m_Pointer = nullptr;
         }
@@ -174,8 +180,8 @@ namespace Luma
         WeakRef& operator=(WeakRef&&) = default;
         ~WeakRef() = default;
 
-        explicit operator PointerType() { return m_Pointer; }
-        explicit operator ConstPointerType() const { return m_Pointer; }
+        operator PointerType() { return m_Pointer; }
+        operator ConstPointerType() const { return m_Pointer; }
         operator bool() const { return m_Pointer; }
         
         ReferenceType operator*() { return *m_Pointer; }
@@ -191,13 +197,13 @@ namespace Luma
     };
 
     template <typename T, typename... Args> requires std::is_base_of_v<IRefCounted<T>, T>
-    Ref<T> createSharedRef(Args&&... args)
+    Ref<T> createRef(Args&&... args)
     {
         return Ref<T>(new T(std::forward<Args>(args)...));
     }
 
     template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
-    Ref<T> makeShared(T* object)
+    Ref<T> makeRef(T* object)
     {
         return Ref<T>(object);
     }

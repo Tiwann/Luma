@@ -2,7 +2,7 @@
 #include "Luma/Rendering/Shader.h"
 #include "BindingSetLayoutImpl.h"
 #include "VulkanFwd.h"
-
+#include <vector>
 namespace Luma::Vulkan
 {
     class FRenderDeviceImpl;
@@ -19,15 +19,15 @@ namespace Luma::Vulkan
         ~FShaderImpl() override = default;
         bool initialize(const FShaderDesc& shaderDesc) override;
         void destroy() override;
-        IBindingSet* createBindingSet(uint32_t setIndex) override;
+        IBindingSet* createBindingSet(uint32_t setIndex) const override;
 
-        const TArray<FShaderModule>& getShaderModules() const { return m_Modules; }
+        const auto& getShaderModules() const { return m_Modules; }
         VkPipelineLayout getPipelineLayout() const { return m_PipelineLayout; }
 
     private:
         FRenderDeviceImpl* m_Device = nullptr;
-        TArray<FBindingSetLayoutImpl> m_SetLayouts;
-        TArray<FShaderModule> m_Modules;
+        std::vector<FBindingSetLayoutImpl> m_SetLayouts;
+        std::vector<FShaderModule> m_Modules;
         VkPipelineLayout m_PipelineLayout = nullptr;
     };
 }

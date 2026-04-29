@@ -1,5 +1,4 @@
 ﻿#include "Luma/Rendering/BufferUtils.h"
-
 #include "Luma/Memory/Ref.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"

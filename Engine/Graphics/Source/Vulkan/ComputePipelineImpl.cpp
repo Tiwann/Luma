@@ -14,8 +14,8 @@ namespace Luma::Vulkan
         FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(pipelineDesc.device);
         FShaderImpl* shader = static_cast<FShaderImpl*>(pipelineDesc.shader);
         const auto& modules = shader->getShaderModules();
-        if (modules.count() < 1) return false;
-        const FShaderModule module = modules.first();
+        if (modules.size() < 1) return false;
+        const FShaderModule module = modules[0];
 
         VkPipelineShaderStageCreateInfo stageCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
         stageCreateInfo.module = module.handle;

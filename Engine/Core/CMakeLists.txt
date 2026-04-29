@@ -38,6 +38,7 @@ set(LUMA_CORE_WINDOWS_SRC
         Source/Runtime/DesktopWindow.cpp
         Source/Platform/Windows/StringConversion.cpp
         Source/Platform/Windows/FileDialog.cpp
+        Source/Platform/Windows/Time.cpp
         Source/Platform/Windows/FileSystem.cpp
 )
 

@@ -1,19 +1,26 @@
 ﻿#pragma once
 #include "Luma/Memory/RefCounted.h"
-#include "Luma/Graphics/Export.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
+#include "Luma/Math/Matrix.h"
 #include "Luma/Containers/StringView.h"
 #include "IndexFormat.h"
 #include "QueueType.h"
 #include "Scissor.h"
 #include "Viewport.h"
+#include "Camera.h"
 #include <cstdint>
 
 
 namespace Luma
 {
-    class FGraphicsState;
+    class FStaticMesh;
+    struct IShader;
+    struct IBindingSet;
+    class FMaterial;
+    struct FTextureSubresourceRange;
+    struct FBufferBarrier;
+    struct FTextureBarrier;
     struct IRenderDevice;
     struct IBuffer;
     struct IGraphicsPipeline;
@@ -63,7 +70,10 @@ namespace Luma
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// RENDER CMDS
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setGraphicsState(const FGraphicsState& graphicsState);
+        virtual void clearColor(uint32_t attachmentIndex, const FColor& color) = 0;
+        virtual void clearDepthStencil(float depth, uint8_t stencil) = 0;
+        virtual void clearColorTexture(ITexture* texture, const FColor& color, const FTextureSubresourceRange& subresourceRange) = 0;
+        virtual void clearColorTexture(ITexture* texture, const FColor& color) = 0;
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
@@ -77,7 +87,12 @@ namespace Luma
         void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance);
         virtual void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
-
+        virtual void bindMaterial(const FMaterial* material) = 0;
+        virtual void bindBindingSet(const IBindingSet* bindingSet, const IShader* shader) = 0;
+        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCameraf& camera) = 0;
+        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCameraf& camera) = 0;
+        virtual void textureBarrier(const FTextureBarrier& barrier) = 0;
+        virtual void bufferBarrier(const FBufferBarrier& barrier) = 0;
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// COMPUTE CMDS
         ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,25 +107,7 @@ namespace Luma
         ///////////////////////////////////////////////////////////////////////////////////////////////
         virtual void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) = 0;
         virtual void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice, uint32_t mipLevel) = 0;
-    };
-
-    class LUMA_GRAPHICS_API FRenderCommandBuffer
-    {
-    public:
-        FRenderCommandBuffer() = delete;
-        FRenderCommandBuffer(ICommandBuffer* cmdBuffer) : m_CmdBuffer(cmdBuffer){}
-        virtual ~FRenderCommandBuffer() = default;
-
-        void bindVertexBuffer(const IBuffer* buffer, int64_t offset);
-        void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format);
-        void bindGraphicsPipeline(const IGraphicsPipeline* pipeline);
-        void setScissor(const FScissor& scissor);
-        void setViewport(const FViewport& viewport);
-        void draw(const FDrawCommand& drawCmd);
-        void drawIndexed(const FDrawIndexedCommand& drawIndexedCmd);
-        void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount);
-        void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount);
-    private:
-        ICommandBuffer* m_CmdBuffer = nullptr;
+    protected:
+        const FRenderPassDesc* m_CurrentRenderPassDesc = nullptr;
     };
 }

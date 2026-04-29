@@ -10,10 +10,11 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/BufferUtils.cpp
         Source/Rendering/ShaderCompileRequest.cpp
         Source/Rendering/ShaderCompiler.cpp
-        Source/Rendering/GraphicsState.cpp
         Source/Rendering/InputLayout.cpp
         Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
+        Source/Asset/StaticMesh.cpp
+        Source/Asset/Material.cpp
 )
 
 set(LUMA_VULKAN_SRC
@@ -43,7 +44,7 @@ set(LUMA_WEBGPU_SRC
 )
 
 add_library(luma-graphics ${LUMA_GRAPHICS_SRC})
-target_link_libraries(luma-graphics PRIVATE luma-core RGFW::RGFW spirv-reflect-static PUBLIC Vulkan::slang)
+target_link_libraries(luma-graphics PRIVATE luma-core RGFW::RGFW spirv-reflect-static assimp::assimp PUBLIC Vulkan::slang)
 target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS INTERFACE LUMA_CLIENT)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26)

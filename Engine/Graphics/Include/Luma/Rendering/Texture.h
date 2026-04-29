@@ -4,6 +4,7 @@
 #include "Resource.h"
 #include "TextureUsage.h"
 #include "TextureDimension.h"
+#include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
 namespace Luma
@@ -69,25 +70,25 @@ namespace Luma
         }
     };
 
-    struct ITexture : IResource
+    struct ITexture : IResource, IRefCounted<ITexture>
     {
         ITexture() = default;
         ~ITexture() override = default;
 
         virtual bool initialize(const FTextureDesc& createInfo) = 0;
+        virtual bool resize(uint32_t width, uint32_t height = 1, uint32_t depth = 1) = 0;
         virtual void destroy() = 0;
         virtual bool isValid() = 0;
         virtual void setName(FStringView name) {}
-        EResourceType getResourceType() final { return EResourceType::Texture; }
+        EResourceType getResourceType() const final { return EResourceType::Texture; }
         EFormat getFormat() const { return m_Format; }
         uint32_t getWidth() const { return m_Width; }
         uint32_t getHeight() const { return m_Height; }
         uint32_t getDepth() const { return m_Depth; }
         uint32_t getMipCount() const { return m_Mips; }
         uint32_t getSampleCount() const { return m_SampleCount; }
-        EResourceState getState() const { return m_State; }
         uint32_t getArrayCount() const { return m_ArrayCount; }
-        EResourceState getResourceState() override { return m_State; }
+        EResourceState getResourceState() const final { return m_State; }
         void setResourceState(const EResourceState state) { m_State = state; }
         FTextureUsageFlags getUsageFlags() const { return m_UsageFlags; }
         ETextureDimension getDimension() const { return m_Dimension; }

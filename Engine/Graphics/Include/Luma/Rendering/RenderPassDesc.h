@@ -4,6 +4,7 @@
 #include "StoreOperation.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Containers/Array.h"
+#include "Luma/Math/Rect2.h"
 
 namespace Luma
 {
