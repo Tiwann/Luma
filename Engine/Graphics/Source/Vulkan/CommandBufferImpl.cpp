@@ -361,11 +361,11 @@ namespace Luma::Vulkan
         LUMA_CHECK(vertexBuffer, "Invalid vertex buffer handle!");
         LUMA_CHECK(indexBuffer, "Invalid index buffer handle!");
 
-        const THashMap<uint32_t, TArray<FMeshPart>>& perMaterialMeshParts = staticMesh->getPerMaterialMeshParts();
+        const auto& perMaterialMeshParts = staticMesh->getPerMaterialMeshParts();
 
-        for (const auto& materialSlots : staticMesh->getMaterialSlots())
+        for (const auto& [index, slot] : staticMesh->getMaterialSlots())
         {
-            const TArray<FMeshPart>& meshParts = perMaterialMeshParts[materialSlots.key];
+            const auto& meshParts = perMaterialMeshParts[index];
 
             for (const FMeshPart& meshPart : meshParts)
             {
