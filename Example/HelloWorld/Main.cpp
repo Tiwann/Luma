@@ -12,8 +12,7 @@
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
 #include <Luma/Rendering/Texture.h>
-
-#include "Luma/Asset/StaticMesh.h"
+#include <Luma/Asset/StaticMesh.h>
 
 using namespace Luma;
 
@@ -62,28 +61,9 @@ int main()
     Ref<IGraphicsPipeline> pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
-    FString filepath = FPath::openFileDialog("Choose a 3D Model", FPath::getDesktopDirectory(), FDialogFilters::ModelFilters, *window);
-    FStaticMesh mesh;
-    if (!mesh.loadFromFile(filepath, renderDevice))
-        return 1;
-
-    double lastFrameTime = 0.0;
-    double deltaTime = 0.0;
     while (!window->shouldClose())
     {
         window->pollEvents();
-        const double currentTime = FTime::getTime();
-        deltaTime = currentTime - lastFrameTime;
-        lastFrameTime = currentTime;
-        const uint32_t fps = static_cast<uint32_t>(1.0 / deltaTime);
-
-        static double time = 0.0;
-        time += deltaTime;
-        if (time >= 1.0)
-        {
-            window->setTitle(strfmt("{} | FPS: {}", windowDesc.title, fps));
-            time = 0.0;
-        }
 
         if (renderDevice->beginFrame())
         {
