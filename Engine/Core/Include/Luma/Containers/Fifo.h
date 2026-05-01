@@ -12,9 +12,6 @@ namespace Luma
         using ValueType = ArrayType::ValueType;
         using ReferenceType = ArrayType::ReferenceType;
         using ConstReferenceType = ArrayType::ConstReferenceType;
-        using ForwardType = ArrayType::ForwardType;
-        using Iterator = ArrayType::Iterator;
-        using ConstIterator = ArrayType::ConstIterator;
 
         TFifo() = default;
         TFifo(const TFifo&) = default;
