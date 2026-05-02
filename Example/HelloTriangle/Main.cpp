@@ -11,17 +11,16 @@
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
 
-#include <Luma/Rendering/Renderer2D.h>
-
 using namespace Luma;
 
 int main()
 {
+    constexpr auto flags = TFlags(EWindowCreateBits::Centered);
     FWindowDesc windowDesc;
-    windowDesc.title = "First window";
+    windowDesc.title = "Hello Triangle";
     windowDesc.width = 800;
     windowDesc.height = 600;
-    windowDesc.flags = 0;
+    windowDesc.flags = flags;
 
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
@@ -41,7 +40,7 @@ int main()
     });
 
     FShaderDesc shaderDesc;
-    shaderDesc.stageFlags = TFlags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
+    shaderDesc.stageFlags = EShaderStageBits::Vertex | EShaderStageBits::Fragment;
     shaderDesc.moduleName = "HelloTriangle";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTriangle.slang");
 
@@ -60,20 +59,9 @@ int main()
     Ref<IGraphicsPipeline> pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
-    FRenderer2D renderer2d;
-    LUMA_ASSERT(renderer2d.initialize(renderDevice), "Failed to init renderer 2d! Exiting application.");
-
-    double lastTime = 0.0;
     while (!window->shouldClose())
     {
-        double time = FTime::getTime();
-        const double deltaTime = time - lastTime;
-        lastTime = time;
         window->pollEvents();
-
-        renderer2d.begin();
-        renderer2d.drawCircle(FVector2f(0, 0), 100.0f, FColor::Red);
-        renderer2d.end();
 
         if (renderDevice->beginFrame())
         {
@@ -97,8 +85,6 @@ int main()
             cmdBuffer->setScissor({0, 0, window->getWidth(), window->getHeight()});
             cmdBuffer->draw(3, 1, 0, 0);
             cmdBuffer->endRenderPass();
-
-            renderer2d.render(cmdBuffer, window->getWidth(), window->getHeight());
 
             renderDevice->endFrame();
             renderDevice->present();
