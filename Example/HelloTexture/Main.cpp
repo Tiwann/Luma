@@ -10,10 +10,8 @@
 #include <Luma/Rendering/GraphicsPipeline.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
-#include <Luma/Rendering/BindingSet.h>
 #include <Luma/Rendering/TextureUtils.h>
-
-#include "Luma/Asset/Material.h"
+#include <Luma/Asset/Material.h>
 
 using namespace Luma;
 
@@ -22,7 +20,7 @@ static constexpr uint32_t HEIGHT = 600;
 
 int main()
 {
-    constexpr auto flags = TFlags(EWindowCreateBits::Centered);
+    constexpr auto flags = EWindowCreateBits::Centered;
     FWindowDesc windowDesc;
     windowDesc.title = "Hello Triangle";
     windowDesc.width = WIDTH;
