@@ -6,14 +6,12 @@
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Rendering/BindingType.h"
 #include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/BindingSet.h"
+#include "Luma/Rendering/Shader.h"
 #include "Luma/Runtime/Asset.h"
 
 namespace Luma
 {
-    struct IRenderDevice;
-    struct IShader;
-    struct IBindingSet;
-
     struct FMaterialDesc
     {
         IRenderDevice* device = nullptr;
@@ -42,6 +40,6 @@ namespace Luma
         Ref<IRenderDevice> m_Device = nullptr;
         Ref<IShader> m_Shader = nullptr;
         Ref<IBindingSet> m_BindingSet = nullptr;
-        THashMap<EMaterialType, Ref<IGraphicsPipeline>> m_Pipelines;
+        //THashMap<EMaterialType, Ref<IGraphicsPipeline>> m_Pipelines;
     };
 }

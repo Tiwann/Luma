@@ -52,8 +52,11 @@ namespace Luma
 
     FMaterial* IRenderDevice::createMaterial(const FMaterialDesc& materialDesc)
     {
+        FMaterialDesc desc(materialDesc);
+        desc.device = this;
+
         FMaterial* material = new FMaterial();
-        if (!material->initialize(materialDesc))
+        if (!material->initialize(desc))
         {
             delete material;
             return nullptr;
