@@ -1,6 +1,9 @@
 [submodule "Engine/Vendor/spirv-reflect"]
-	path = Engine/Vendor/spirv-reflect
+	path = Vendor/spirv-reflect
 	url = git@github.com:KhronosGroup/SPIRV-Reflect.git
 [submodule "Engine/Vendor/assimp"]
-	path = Engine/Vendor/assimp
+	path = Vendor/assimp
 	url = git@github.com:assimp/assimp.git
+[submodule "Engine/Vendor/entt"]
+	path = Vendor/entt
+	url = git@github.com:skypjack/entt.git
