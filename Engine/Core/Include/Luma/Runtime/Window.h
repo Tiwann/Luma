@@ -10,9 +10,13 @@ namespace Luma
 {
     enum class EWindowCreateBits
     {
-        Centered,
-        NoDecoration,
-        Transparent,
+        None = 0,
+        Centered = BIT(0),
+        NoDecoration = BIT(1),
+        Transparent = BIT(2),
+        FullScreen = BIT(3),
+        Resizable = BIT(4),
+        NoDragAndDrop = BIT(5),
     };
 
     using FWindowCreateFlags = TFlags<EWindowCreateBits>;

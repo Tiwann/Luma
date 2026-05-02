@@ -12,8 +12,8 @@ namespace Luma
 
         union
         {
-            struct { T m00{T(1)}, m10{T(0)},
-                       m01{T(0)}, m11{T(1)}; };
+            struct { T m00, m10,
+                       m01, m11; };
             Vector columns[2];
         };
 

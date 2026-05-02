@@ -10,11 +10,11 @@ namespace Luma
     {
         union
         {
-            struct { T x{0}, y{0}; };
+            struct { T x, y; };
             T data[2];
         };
 
-        constexpr TVector() = default;
+        constexpr TVector() : x(T(0)), y(T(0)){}
         constexpr TVector(T x, T y) : x(x), y(y) {}
         constexpr TVector(T n) : x(n), y(n) {}
         constexpr explicit TVector(const TVector<T, 3>& other) : x(other.x), y(other.y) {}

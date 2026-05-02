@@ -40,7 +40,6 @@ namespace Luma::Vulkan
         IShader* createShader(const FShaderDesc& shaderDesc) override;
         ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) override;
         ISampler* createSampler(const FSamplerDesc& samplerDesc) override;
-        ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc) override;
         IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) override;
         IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) override;
         IFence* createFence(const FFenceDesc& fenceDesc) override;

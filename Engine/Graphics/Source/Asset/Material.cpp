@@ -45,6 +45,11 @@ namespace Luma
         if (m_BindingSet) m_BindingSet->bindTexture(name, texture, bindingType);
     }
 
+    void FMaterial::setCombinedTextureSampler(const FString& name, const ISampler* sampler, const ITexture* texture)
+    {
+        if (!m_BindingSet) m_BindingSet->bindCombinedSamplerTexture(name, sampler, texture);
+    }
+
     void FMaterial::setBuffer(const FString& name, const IBuffer* buffer, const uint64_t offset, const uint64_t size)
     {
         if (m_BindingSet) m_BindingSet->bindBuffer(name, buffer, offset, size);

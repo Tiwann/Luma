@@ -94,8 +94,8 @@ namespace Luma::Vulkan
             TArray<const char*> extensions;
             extensions.add(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
 
-            uint32_t rgfwExtensionCount = 0;
-            const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(reinterpret_cast<size_t*>(&rgfwExtensionCount));
+            size_t rgfwExtensionCount = 0;
+            const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(&rgfwExtensionCount);
             extensions.addRange(rgfwExtensions, rgfwExtensionCount);
             extensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
@@ -401,7 +401,23 @@ namespace Luma::Vulkan
             m_CmdBuffers[imageIndex].setName(strfmt("Command buffer (frame {})", imageIndex));
         }
 
-        //TODO: DESCRIPTOR POOLS
+        VkDescriptorPoolSize poolSizes[]
+        {
+            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32},
+            {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1024},
+            {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 64},
+            {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 64},
+            {VK_DESCRIPTOR_TYPE_SAMPLER, 32},
+        };
+
+        VkDescriptorPoolCreateInfo poolCreateInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
+        poolCreateInfo.pPoolSizes = poolSizes;
+        poolCreateInfo.poolSizeCount = std::size(poolSizes);
+        poolCreateInfo.maxSets = 1024;
+        poolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+        vkDestroyDescriptorPool(m_Handle, m_DescriptorPool, nullptr);
+        if (VK_FAILED(vkCreateDescriptorPool(m_Handle, &poolCreateInfo, nullptr, &m_DescriptorPool)))
+            return false;
 
 
         m_ImmediateExecutor.initialize({this, &m_RenderQueue});
@@ -431,7 +447,6 @@ namespace Luma::Vulkan
         vkDestroyCommandPool(m_Handle, m_CopyPool, nullptr);
         vkDestroyCommandPool(m_Handle, m_ComputePool, nullptr);
         vkDestroyCommandPool(m_Handle, m_RenderPool, nullptr);
-        //TODO: DESTROY COMMAND POOLS
 
         m_Swapchain.destroy();
         vmaDestroyAllocator(m_Allocator);
@@ -672,12 +687,6 @@ namespace Luma::Vulkan
         }
         return sampler;
     }
-
-    ISampler* FRenderDeviceImpl::getOrCreateSampler(const FSamplerDesc& samplerDesc)
-    {
-        return nullptr;
-    }
-
 
     IGraphicsPipeline* FRenderDeviceImpl::createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc)
     {

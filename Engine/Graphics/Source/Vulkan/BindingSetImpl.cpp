@@ -216,6 +216,12 @@ namespace Luma::Vulkan
         return true;
     }
 
+    bool FBindingSetImpl::bindCombinedSamplerTexture(const FString& name, const ISampler* sampler,
+        const ITexture* texture)
+    {
+        return bindCombinedSamplerTexture(m_NameToBinding[name], sampler, texture);
+    }
+
     bool FBindingSetImpl::bindTexture(const FString& name, const ITexture* texture, const EBindingType bindingType)
     {
         return bindTexture(m_NameToBinding[name], texture, bindingType);

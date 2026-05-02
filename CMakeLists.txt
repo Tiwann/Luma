@@ -21,12 +21,14 @@ endif ()
 add_library(luma-natvis INTERFACE LumaEngine.natvis)
 set(LUMA_ENGINE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(Vendor)
 add_subdirectory(Engine/Core)
 add_subdirectory(Engine/Graphics)
 add_subdirectory(Engine/Audio)
 
 if(LUMA_ENGINE_BUILD_EXAMPLES)
-add_subdirectory(Example/HelloTriangle)
+    add_subdirectory(Example/HelloTriangle)
+    add_subdirectory(Example/HelloTexture)
 endif ()
 

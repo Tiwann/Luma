@@ -28,6 +28,7 @@ namespace Luma
 
         void setSampler(const FString& name, const ISampler* sampler);
         void setTexture(const FString& name, const ITexture* texture, EBindingType bindingType);
+        void setCombinedTextureSampler(const FString& name, const ISampler* sampler, const ITexture* texture);
         void setBuffer(const FString& name, const IBuffer* buffer, uint64_t offset, uint64_t size);
 
         EAssetType getAssetType() const override { return EAssetType::Material; }

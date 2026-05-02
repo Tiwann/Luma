@@ -98,6 +98,7 @@ namespace Luma::Vulkan
     void FBufferImpl::unmap(const void* ptr)
     {
         if (m_AlwaysMapped) return;
+        LUMA_ASSERT(ptr == m_MappedData, "Pointer is a not mapped data!");
         const VmaAllocator allocatorHandle = m_Device->getAllocator();
         vmaUnmapMemory(allocatorHandle, m_Allocation);
     }

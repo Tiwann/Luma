@@ -80,6 +80,7 @@ namespace Luma
         FGraphicsPipelineDesc gpDesc;
         gpDesc.device = m_RenderDevice;
         gpDesc.shaderProgram = m_Shader;
+        gpDesc.colorFormatCount = 1;
         gpDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
         gpDesc.colorBlend[0] = {true};
         gpDesc.inputLayout = vertexLayout;
@@ -134,7 +135,7 @@ namespace Luma
 
     void FRenderer2D::begin()
     {
-        LUMA_ASSERT(!BeginDrawing, "Begin/End mismatch");
+        LUMA_ASSERT(!BeginDrawing, "begin/end mismatch");
         BeginDrawing = true;
         ReadyToRender = false;
         QuadVertices.clear();
@@ -144,7 +145,7 @@ namespace Luma
 
     void FRenderer2D::end()
     {
-        LUMA_ASSERT(BeginDrawing, "Begin/End mismatch");
+        LUMA_ASSERT(BeginDrawing, "begin/end mismatch");
 
         void* vertexMapped = m_VertexBuffer->map();
         memcpy(vertexMapped, QuadVertices.data(), QuadVertices.size());
@@ -203,7 +204,7 @@ namespace Luma
         QuadIndices.addRange(quadIndices);
     }
 
-    static uint32_t GetOrAddTexture(const ITexture* texture)
+    static uint32_t getOrAddTexture(const ITexture* texture)
     {
         LUMA_ASSERT(texture, "ITexture should be valid!");
         if (Textures.contains(texture))
@@ -368,7 +369,7 @@ namespace Luma
     void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const FColor& color)
     {
         if (!sprite.texture) return;
-        const uint32_t textureId = GetOrAddTexture(sprite.texture);
+        const uint32_t textureId = getOrAddTexture(sprite.texture);
 
         FMatrix3f transform;
         transform = rotate(transform, FAxisAnglef(FVector3f::Forward, rotation));

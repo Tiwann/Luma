@@ -3,10 +3,9 @@
 #include "Luma/Rendering/TextureAspect.h"
 #include "Conversions.h"
 #include "VulkanUtils.h"
+#include "Luma/Memory/Ref.h"
 
 #include <vma/vk_mem_alloc.h>
-
-#include "Luma/Memory/Ref.h"
 
 
 namespace Luma::Vulkan

@@ -14,9 +14,9 @@ namespace Luma
         {
             struct
             {
-                T m00{T(1)}, m10{T(0)}, m20{T(0)},
-                  m01{T(0)}, m11{T(1)}, m21{T(0)},
-                  m02{T(0)}, m12{T(0)}, m22{T(1)};
+                T m00, m10, m20,
+                  m01, m11, m21,
+                  m02, m12, m22;
             };
             Vector columns[3];
         };

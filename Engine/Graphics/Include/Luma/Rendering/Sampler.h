@@ -4,7 +4,9 @@
 #include "SamplerAddressMode.h"
 #include "Resource.h"
 #include "Luma/Containers/StringView.h"
+#include "Luma/Containers/HashMap.h"
 #include "Luma/Memory/RefCounted.h"
+
 
 namespace Luma
 {
@@ -29,7 +31,43 @@ namespace Luma
         FSamplerDesc& withAddressMode(ESamplerAddressMode in);
         FSamplerDesc& withFilter(EFilter inMinFilter, EFilter inMagFilter);
         FSamplerDesc& withLODRange(float min, float max);
+
+        bool operator==(const FSamplerDesc&) const = default;
     };
+
+    struct FSamplerDescHasher
+    {
+        static void hashCombine(uint64_t& seed, const uint64_t value)
+        {
+            seed ^= value + 0x9e3779b97f4a7c15ull + (seed << 6) + (seed >> 2);
+        }
+
+        uint64_t operator()(const FSamplerDesc& samplerDesc) const
+        {
+            uint64_t seed = 0;
+
+            hashCombine(seed, reinterpret_cast<uint64_t>(samplerDesc.device));
+
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.addressModeU));
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.addressModeV));
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.addressModeW));
+
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.minFilter));
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.magFilter));
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.mipmapFilter));
+
+            hashCombine(seed, static_cast<uint64_t>(samplerDesc.compareOp));
+
+            hashCombine(seed, samplerDesc.anisotropyEnable);
+            hashCombine(seed, samplerDesc.compareEnable);
+            hashCombine(seed, samplerDesc.unnormalizedCoordinates);
+
+            hashCombine(seed, *reinterpret_cast<const uint32_t*>(&samplerDesc.minLod));
+            hashCombine(seed, *reinterpret_cast<const uint32_t*>(&samplerDesc.maxLod));
+            return seed;
+        }
+    };
+
 
     struct ISampler : IResource, IRefCounted<ISampler>
     {

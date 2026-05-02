@@ -1,40 +1,5 @@
 #include "Luma/Rendering/Sampler.h"
-#include <unordered_map>
 
-static void hashCombine(size_t& seed, const size_t value)
-{
-    seed ^= value + 0x9e3779b97f4a7c15ull + (seed << 6) + (seed >> 2);
-}
-
-template<>
-struct std::hash<Luma::FSamplerDesc>
-{
-    size_t operator()(const Luma::FSamplerDesc& desc) const noexcept
-    {
-        std::size_t seed = 0;
-
-        hashCombine(seed, std::hash<void*>{}(desc.device));
-
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.addressModeU)));
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.addressModeV)));
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.addressModeW)));
-
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.minFilter)));
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.magFilter)));
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.mipmapFilter)));
-
-        hashCombine(seed, std::hash<uint32_t>{}(static_cast<uint32_t>(desc.compareOp)));
-
-        hashCombine(seed, std::hash<bool>{}(desc.anisotropyEnable));
-        hashCombine(seed, std::hash<bool>{}(desc.compareEnable));
-        hashCombine(seed, std::hash<bool>{}(desc.unnormalizedCoordinates));
-
-        hashCombine(seed, std::hash<float>{}(desc.minLod));
-        hashCombine(seed, std::hash<float>{}(desc.maxLod));
-
-        return seed;
-    }
-};
 
 namespace Luma
 {

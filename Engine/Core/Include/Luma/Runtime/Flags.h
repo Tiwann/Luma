@@ -11,7 +11,7 @@ namespace Luma
         return T(1) << n;
     }
 
-    template<typename Enum>
+    template<typename Enum> requires std::is_scoped_enum_v<Enum>
     class TFlags
     {
     public:
@@ -25,7 +25,7 @@ namespace Luma
         static constexpr TFlags none(){ return Flags(static_cast<Enum>(0)); }
 
         constexpr operator IntegerType() const { return (IntegerType)m_Value; }
-        constexpr explicit operator Enum() const { return (Enum)m_Value; }
+        constexpr operator Enum() const { return (Enum)m_Value; }
 
         constexpr bool operator==(const TFlags other) const { return m_Value == other.m_Value; }
         constexpr bool operator==(const Enum other) const { return m_Value == other; }
@@ -64,24 +64,27 @@ namespace Luma
         Enum m_Value = (Enum)0;
     };
 
-    template<typename Enum> requires std::is_scoped_enum_v<Enum>
+    template<typename Enum>
     constexpr TFlags<Enum> operator|(const Enum lhs, const Enum rhs)
     {
+        static_assert(std::is_scoped_enum_v<Enum>);
         using IntegerType = std::underlying_type_t<Enum>;
-        return Flags((Enum)((IntegerType)lhs | (IntegerType)rhs));
+        return TFlags((Enum)((IntegerType)lhs | (IntegerType)rhs));
     }
 
-    template<typename Enum> requires std::is_scoped_enum_v<Enum>
+    template<typename Enum>
     constexpr TFlags<Enum> operator&(const Enum lhs, const Enum rhs)
     {
+        static_assert(std::is_scoped_enum_v<Enum>);
         using IntegerType = std::underlying_type_t<Enum>;
-        return Flags((Enum)((IntegerType)lhs & (IntegerType)rhs));
+        return TFlags((Enum)((IntegerType)lhs & (IntegerType)rhs));
     }
 
-    template<typename Enum> requires std::is_scoped_enum_v<Enum>
+    template<typename Enum>
     constexpr TFlags<Enum> operator^(const Enum lhs, const Enum rhs)
     {
+        static_assert(std::is_scoped_enum_v<Enum>);
         using IntegerType = std::underlying_type_t<Enum>;
-        return Flags((Enum)((IntegerType)lhs ^ (IntegerType)rhs));
+        return TFlags((Enum)((IntegerType)lhs ^ (IntegerType)rhs));
     }
 }

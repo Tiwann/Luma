@@ -36,6 +36,7 @@ namespace Luma
         virtual bool bindCombinedSamplerTextures(uint32_t binding, const ISampler* sampler, const TArray<const ITexture*>& textures) = 0;
         virtual bool bindBuffer(uint32_t binding, const IBuffer* buffer, uint64_t offset, uint64_t size) = 0;
 
+        virtual bool bindCombinedSamplerTexture(const FString& name, const ISampler* sampler, const ITexture* texture) = 0;
         virtual bool bindTexture(const FString& name, const ITexture* texture, EBindingType bindingType) = 0;
         virtual bool bindTextures(const FString& name, const TArray<const ITexture*>& textures, EBindingType bindingType) = 0;
         virtual bool bindSampler(const FString& name, const ISampler* sampler) = 0;

@@ -3,10 +3,15 @@
 #include "SwpchainBuffering.h"
 #include "RenderDeviceType.h"
 #include "Luma/Memory/RefCounted.h"
+#include "Luma/Containers/HashMap.h"
+#include "Sampler.h"
 #include <cstdint>
+
 
 namespace Luma
 {
+    class FMaterial;
+    struct FMaterialDesc;
     struct FBufferDesc;
     struct FTextureDesc;
     struct FTextureViewDesc;
@@ -75,7 +80,7 @@ namespace Luma
         ICommandBuffer* createComputeCommandBuffer();
         ICommandBuffer* createCopyCommandBuffer();
         virtual ISampler* createSampler(const FSamplerDesc& samplerDesc) = 0;
-        virtual ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc) = 0;
+        ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc);
         virtual IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) = 0;
         virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) = 0;
         virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
@@ -83,6 +88,9 @@ namespace Luma
         virtual ITextureView* getAcquiredSwapchainTextureView() = 0;
         ISemaphore* createBinarySemaphore();
         ISemaphore* createTimelineSemaphore(uint64_t initialValue);
+        FMaterial* createMaterial(const FMaterialDesc& materialDesc);
+    protected:
+        THashMap<FSamplerDesc, ISampler*, FSamplerDescHasher> m_PerDescSamplers;
     };
 
     LUMA_GRAPHICS_API IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc);

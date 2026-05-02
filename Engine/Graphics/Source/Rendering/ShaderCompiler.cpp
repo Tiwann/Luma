@@ -15,6 +15,13 @@
 
 namespace Luma
 {
+    struct FPushConstantKey
+    {
+        uint64_t offset;
+        uint64_t size;
+        bool operator==(const FPushConstantKey&) const = default;
+    };
+
     FStringView getErrorString(slang::IBlob* blob)
     {
         const FStringView errorString = {(const char*)blob->getBufferPointer(), blob->getBufferSize()};
@@ -109,6 +116,7 @@ namespace Luma
             FShaderCompileResult compileResult{true};
 
             THashMap<uint32_t, THashMap<uint32_t, FShaderBinding>> flattenedBindings;
+            THashMap<FPushConstantKey, FShaderStageFlags> flattenedPushConstants;
 
             for (uint32_t entryPointIndex = 0; entryPointIndex < entryPointsAsComponent.count(); entryPointIndex++)
             {
@@ -150,14 +158,25 @@ namespace Luma
                     }
                 }
 
-                TBufferView<SpvReflectInterfaceVariable> interfaceVariables(reflectModule.interface_variables, reflectModule.interface_variable_count);
-                for (const auto& interfaceVar : interfaceVariables)
-                {
 
+                TBufferView<SpvReflectBlockVariable> pcs(reflectModule.push_constant_blocks, reflectModule.push_constant_block_count);
+                for (const auto& pc : pcs)
+                {
+                    FPushConstantKey key(pc.offset, pc.size);
+                    flattenedPushConstants[key] |= stage;
                 }
             }
 
             FShaderReflectionData reflectionData;
+            for (const auto& [pc, stage] : flattenedPushConstants)
+            {
+                FShaderPushConstantRange range;
+                range.offset = pc.offset;
+                range.size = pc.size;
+                range.stageFlags = stage;
+                reflectionData.pushConstantRanges.add(range);
+            }
+
             for (auto& [set, bindingMap] : flattenedBindings)
             {
                 auto* out = reflectionData.setLayoutDescs.single([&set](const auto& s) { return s.setIndex == set; });

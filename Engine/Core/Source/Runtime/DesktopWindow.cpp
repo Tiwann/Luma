@@ -2,17 +2,32 @@
 #include "Luma/Math/Vector2.h"
 #include <rgfw/rgfw.h>
 
+#define GET_WINDOW(event) static_cast<FDesktopWindow*>(RGFW_window_getUserPtr(event.win))
+
 namespace Luma
 {
+    static RGFW_windowFlags getFlags(const FWindowCreateFlags flags)
+    {
+        RGFW_windowFlags result = RGFW_windowNoResize | RGFW_windowAllowDND;
+        if (flags & EWindowCreateBits::Centered) result |= RGFW_windowCenter;
+        if (flags & EWindowCreateBits::FullScreen) result |= RGFW_windowFullscreen;
+        if (flags & EWindowCreateBits::Resizable) result &= ~RGFW_windowNoResize;
+        if (flags & EWindowCreateBits::NoDecoration) result |= RGFW_windowNoBorder;
+        if (flags & EWindowCreateBits::Transparent) result |= RGFW_windowTransparent;
+        if (flags & EWindowCreateBits::NoDragAndDrop) result &= ~RGFW_windowAllowDND;
+        return result;
+    }
+
     bool FDesktopWindow::initialize(const FWindowDesc& windowDesc)
     {
         if (m_Handle) RGFW_window_close(m_Handle);
-        m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, RGFW_windowCenter);
+        m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, getFlags(windowDesc.flags));
         RGFW_window_setUserPtr(m_Handle, this);
+
         RGFW_setEventCallback(RGFW_windowResized, [](const RGFW_event* event)
         {
-            const FDesktopWindow* ptr = static_cast<FDesktopWindow*>(RGFW_window_getUserPtr(event->update.win));
-            ptr->resizedEvent(event->update.w, event->update.h);
+            const auto* window = GET_WINDOW(event->update);
+            window->resizedEvent(event->update.w, event->update.h);
         });
 
         if (!m_Handle) return false;

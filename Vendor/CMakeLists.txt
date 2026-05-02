@@ -18,3 +18,4 @@ set(ASSIMP_BUILD_GLTF_IMPORTER ON)
 add_subdirectory(assimp)
 
 add_subdirectory(entt)
+add_subdirectory(stb)

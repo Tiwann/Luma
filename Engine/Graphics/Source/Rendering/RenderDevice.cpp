@@ -1,4 +1,6 @@
 ﻿#include "Luma/Rendering/RenderDevice.h"
+
+#include "Luma/Asset/Material.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Semaphore.h"
 
@@ -30,6 +32,14 @@ namespace Luma
         return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Copy));
     }
 
+    ISampler* IRenderDevice::getOrCreateSampler(const FSamplerDesc& samplerDesc)
+    {
+        ISampler*& sampler = m_PerDescSamplers[samplerDesc];
+        if (sampler) return sampler;
+        sampler = createSampler(samplerDesc);
+        return sampler;
+    }
+
     ISemaphore* IRenderDevice::createBinarySemaphore()
     {
         return createSemaphore(FSemaphoreDesc(this, ESemaphoreType::Binary, 0));
@@ -38,6 +48,17 @@ namespace Luma
     ISemaphore* IRenderDevice::createTimelineSemaphore(const uint64_t initialValue)
     {
         return createSemaphore(FSemaphoreDesc(this, ESemaphoreType::Timeline, initialValue));
+    }
+
+    FMaterial* IRenderDevice::createMaterial(const FMaterialDesc& materialDesc)
+    {
+        FMaterial* material = new FMaterial();
+        if (!material->initialize(materialDesc))
+        {
+            delete material;
+            return nullptr;
+        }
+        return material;
     }
 
     IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc)

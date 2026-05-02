@@ -33,7 +33,7 @@ namespace Luma
         FString getTitle() const;
         void setTitle(const FString& title);
 
-        TAction<uint32_t, uint32_t> resizedEvent;
+        TEvent<void(uint32_t, uint32_t)> resizedEvent;
     private:
         RGFW_window* m_Handle = nullptr;
     };
