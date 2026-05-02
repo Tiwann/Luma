@@ -13,6 +13,9 @@ set(LUMA_CORE_SRC
         Include/Luma/Containers/Pair.h
         Include/Luma/Containers/Event.h
 
+        Source/Components/TransformComponent.cpp
+        Source/Components/CameraComponent.cpp
+
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
         Source/Math/Matrix.cpp
@@ -32,6 +35,9 @@ set(LUMA_CORE_SRC
         Source/Memory/Memory.cpp
         Source/Memory/Allocator.cpp
         Source/Runtime/Window.cpp
+        Source/Runtime/Scene.cpp
+        Source/Runtime/Entity.cpp
+        Source/Runtime/Sprite.cpp
 )
 
 set(LUMA_CORE_WINDOWS_SRC
@@ -44,9 +50,9 @@ set(LUMA_CORE_WINDOWS_SRC
 
 
 add_library(luma-core ${LUMA_CORE_SRC})
-target_link_libraries(luma-core PUBLIC luma-natvis)
-target_include_directories(luma-core PRIVATE Source PUBLIC Include External)
-target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
+target_link_libraries(luma-core PUBLIC luma-natvis EnTT::EnTT)
+target_include_directories(luma-core PRIVATE Source ../Graphics/Include PUBLIC Include External)
+target_compile_definitions(luma-core PRIVATE LUMA_CORE PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26)
 luma_generate_export_header(TARGET luma-core MODULE_NAME CORE)
 

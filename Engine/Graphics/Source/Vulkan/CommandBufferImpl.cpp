@@ -166,6 +166,12 @@ namespace Luma::Vulkan
         vkCmdBindIndexBuffer2(m_Handle, bufferHandle, offset, size, convert<VkIndexType>(format));
     }
 
+    void FCommandBufferImpl::pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
+    {
+        const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
+        vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
+    }
+
     void FCommandBufferImpl::bindGraphicsPipeline(const IGraphicsPipeline* pipeline)
     {
         if (!pipeline) return;
@@ -330,7 +336,7 @@ namespace Luma::Vulkan
         vkCmdBindDescriptorSets2(m_Handle, &info);
     }
 
-    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCameraf& camera)
+    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCamera& camera)
     {
         LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
         LUMA_CHECK(material, "Invalid material handle!");
@@ -352,7 +358,7 @@ namespace Luma::Vulkan
         }
     }
 
-    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCameraf& camera)
+    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera)
     {
         LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
 

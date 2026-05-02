@@ -192,6 +192,8 @@ namespace Luma
 
         PointerType get() { return m_Pointer; }
         ConstPointerType get() const { return m_Pointer; }
+
+        bool operator==(const WeakRef& other) const { return m_Pointer == other.m_Pointer; }
     private:
         PointerType m_Pointer = nullptr;
     };

@@ -11,7 +11,8 @@ namespace Luma
         Shader,
         StaticMesh,
         SkinnedMesh,
-        Material
+        Material,
+        Scene
     };
 
     struct IAsset : IObject

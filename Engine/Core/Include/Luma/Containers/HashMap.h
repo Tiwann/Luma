@@ -171,6 +171,20 @@ namespace Luma
         Iterator end() { return {&m_Buckets, m_Buckets.count(), 0}; }
         ConstIterator end() const { return {&m_Buckets, m_Buckets.count(), 0}; }
 
+        Value* findValue(const Key& key)
+        {
+            PairType* pair = find(key);
+            if (!pair) return nullptr;
+            return &pair->value;
+        }
+
+        const Value* findValue(const Key& key) const
+        {
+            PairType* pair = find(key);
+            if (!pair) return nullptr;
+            return &pair->value;
+        }
+
         PairType* find(const Key& key)
         {
             BucketType& bucket = m_Buckets[getBucketIndex(key)];
@@ -188,6 +202,28 @@ namespace Luma
                     return &pair;
             return nullptr;
         }
+
+        bool operator==(const THashMap& other) const
+        {
+            if (count() != other.count())
+                return false;
+
+            for (const auto& [key, value] : *this)
+            {
+                const auto* pair = other.find(key);
+                if (!pair) return false;
+                if (pair->value != value) return false;
+            }
+            return true;
+        }
+
+        void clear()
+        {
+            for (auto& bucket : m_Buckets)
+                bucket.clear();
+        }
+
+        bool isEmpty() const { return m_Count <= 0; }
     private:
         SizeType getBucketIndex(const Key& key) const
         {

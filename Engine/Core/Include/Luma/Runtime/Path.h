@@ -45,7 +45,7 @@ namespace Luma
 
         static FString getAssetPath(const FStringView filepath)
         {
-            return combine(FStringView(LUMA_APPLICATION_DIR), FStringView("Assets"), filepath);
+            return combine(LUMA_APPLICATION_DIR, "Assets", filepath);
         }
 #endif
 

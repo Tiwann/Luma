@@ -12,5 +12,5 @@ namespace Luma
         DepthStencilAttachment = BIT(4),
     };
 
-    using FTextureUsageFlags = Flags<ETextureUsageBits>;
+    using FTextureUsageFlags = TFlags<ETextureUsageBits>;
 }

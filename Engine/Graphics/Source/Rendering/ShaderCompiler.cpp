@@ -10,6 +10,7 @@
 #include <slang/slang-com-ptr.h>
 #include <spirv_reflect.h>
 
+#include "Luma/Runtime/Path.h"
 
 
 namespace Luma
@@ -69,6 +70,7 @@ namespace Luma
 
             if (!module)
             {
+                std::cout << strfmt("Failed to load slang module: {}", getErrorString(errorBlob)) << std::endl;
                 results.add({false});
                 continue;
             }
@@ -79,6 +81,7 @@ namespace Luma
                 slang::EntryPointHandle entryPoint = nullptr;
                 if (SLANG_FAILED(module->findEntryPointByName(*name, entryPoint.writeRef())))
                 {
+                    std::cout << strfmt("Failed to find entry point \"{}\": {}", name, getErrorString(errorBlob)) << std::endl;
                     results.add({false});
                     continue;
                 }

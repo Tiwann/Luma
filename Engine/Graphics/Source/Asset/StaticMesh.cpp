@@ -57,6 +57,12 @@ namespace Luma
         return result;
     }
 
+    void FStaticMesh::destroy()
+    {
+        m_VertexBuffer->destroy();
+        m_IndexBuffer->destroy();
+    }
+
     bool FStaticMesh::loadFromFile(FStringView filepath, IRenderDevice* device)
     {
         if (filepath.isEmpty()) return false;

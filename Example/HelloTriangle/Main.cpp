@@ -1,5 +1,4 @@
-﻿#include <Luma/Containers/StringFormat.h>
-#include <Luma/Memory/Ref.h>
+﻿#include <Luma/Memory/Ref.h>
 #include <Luma/Runtime/DesktopWindow.h>
 #include <Luma/Runtime/Flags.h>
 #include <Luma/Runtime/Path.h>
@@ -11,9 +10,8 @@
 #include <Luma/Rendering/GraphicsPipeline.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
-#include <Luma/Rendering/Texture.h>
 
-#include "Luma/Asset/StaticMesh.h"
+#include <Luma/Rendering/Renderer2D.h>
 
 using namespace Luma;
 
@@ -43,7 +41,7 @@ int main()
     });
 
     FShaderDesc shaderDesc;
-    shaderDesc.stageFlags = Flags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
+    shaderDesc.stageFlags = TFlags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
     shaderDesc.moduleName = "HelloTriangle";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTriangle.slang");
 
@@ -62,28 +60,20 @@ int main()
     Ref<IGraphicsPipeline> pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
-    FString filepath = FPath::openFileDialog("Choose a 3D Model", FPath::getDesktopDirectory(), FDialogFilters::ModelFilters, *window);
-    FStaticMesh mesh;
-    if (!mesh.loadFromFile(filepath, renderDevice))
-        return 1;
+    FRenderer2D renderer2d;
+    LUMA_ASSERT(renderer2d.initialize(renderDevice), "Failed to init renderer 2d! Exiting application.");
 
-    double lastFrameTime = 0.0;
-    double deltaTime = 0.0;
+    double lastTime = 0.0;
     while (!window->shouldClose())
     {
+        double time = FTime::getTime();
+        const double deltaTime = time - lastTime;
+        lastTime = time;
         window->pollEvents();
-        const double currentTime = FTime::getTime();
-        deltaTime = currentTime - lastFrameTime;
-        lastFrameTime = currentTime;
-        const uint32_t fps = static_cast<uint32_t>(1.0 / deltaTime);
 
-        static double time = 0.0;
-        time += deltaTime;
-        if (time >= 1.0)
-        {
-            window->setTitle(strfmt("{} | FPS: {}", windowDesc.title, fps));
-            time = 0.0;
-        }
+        renderer2d.begin();
+        renderer2d.drawCircle(FVector2f(0, 0), 100.0f, FColor::Red);
+        renderer2d.end();
 
         if (renderDevice->beginFrame())
         {
@@ -107,6 +97,8 @@ int main()
             cmdBuffer->setScissor({0, 0, window->getWidth(), window->getHeight()});
             cmdBuffer->draw(3, 1, 0, 0);
             cmdBuffer->endRenderPass();
+
+            renderer2d.render(cmdBuffer, window->getWidth(), window->getHeight());
 
             renderDevice->endFrame();
             renderDevice->present();

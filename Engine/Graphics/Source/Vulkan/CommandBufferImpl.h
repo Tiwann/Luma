@@ -27,6 +27,7 @@ namespace Luma::Vulkan
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset) override;
         void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) override;
         void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) override;
+        void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) override;
         void beginRenderPass(const FRenderPassDesc& renderPassDesc) override;
         void endRenderPass() override;
         void setViewport(const FViewport& viewport) override;
@@ -38,8 +39,8 @@ namespace Luma::Vulkan
         void bindComputePipeline(const IComputePipeline* pipeline) override;
         void bindMaterial(const FMaterial* material) override;
         void bindBindingSet(const IBindingSet* bindingSet, const IShader* shader) override;
-        void drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCameraf& camera) override;
-        void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCameraf& camera) override;
+        void drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCamera& camera) override;
+        void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera) override;
         void dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) override;
         void dispatchIndirect(IBuffer* buffer, int64_t offset) override;
         void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) override;
@@ -48,7 +49,6 @@ namespace Luma::Vulkan
         void bufferBarrier(const FBufferBarrier& barrier) override;
         void setName(FStringView name) override;
         VkCommandBuffer getHandle() const { return m_Handle; }
-
 
     private:
         FRenderDeviceImpl* m_Device = nullptr;

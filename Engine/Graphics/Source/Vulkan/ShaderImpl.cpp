@@ -5,6 +5,8 @@
 #include "Luma/Rendering/ShaderCompiler.h"
 #include <Volk/volk.h>
 
+#include "Luma/Runtime/Path.h"
+
 
 namespace Luma::Vulkan
 {
@@ -21,6 +23,7 @@ namespace Luma::Vulkan
         request.setLanguage(EShadingLanguage::Slang);
         request.setCompileTarget(EShaderCompileTarget::SPIRV);
         request.setModuleInfo(shaderDesc.moduleName, shaderDesc.filepath);
+        request.addIncludeDirectory(FPath::combine(FPath::getEngineAssetsDir(), "Shaders/Include"));
 
         if (shaderDesc.stageFlags & EShaderStageBits::Vertex)
             request.addEntryPoint("vert", EShaderStageBits::Vertex);
@@ -74,12 +77,13 @@ namespace Luma::Vulkan
         }
 
         const auto toVulkanSetLayout = [](const FBindingSetLayoutImpl& setLayout) { return setLayout.getHandle(); };
-        std::vector<VkDescriptorSetLayout> vulkanSetLayouts(m_SetLayouts.size());
-        std::ranges::transform(m_SetLayouts, std::back_inserter(vulkanSetLayouts), toVulkanSetLayout);
+        TArray<VkDescriptorSetLayout> vulkanSetLayouts;
+        for (const auto& setLayout : m_SetLayouts)
+            vulkanSetLayouts.add(setLayout.getHandle());
 
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO };
         pipelineLayoutCreateInfo.pSetLayouts = vulkanSetLayouts.data();
-        pipelineLayoutCreateInfo.setLayoutCount = vulkanSetLayouts.size();
+        pipelineLayoutCreateInfo.setLayoutCount = vulkanSetLayouts.count();
         if (VK_FAILED(vkCreatePipelineLayout(device->getHandle(), &pipelineLayoutCreateInfo, nullptr, &m_PipelineLayout)))
             return false;
 

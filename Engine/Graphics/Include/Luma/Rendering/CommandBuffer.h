@@ -11,6 +11,8 @@
 #include "Camera.h"
 #include <cstdint>
 
+#include "ShaderStage.h"
+
 
 namespace Luma
 {
@@ -76,6 +78,7 @@ namespace Luma
         virtual void clearColorTexture(ITexture* texture, const FColor& color) = 0;
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
+        virtual void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
         virtual void beginRenderPass(const FRenderPassDesc& renderPassDesc) = 0;
         virtual void endRenderPass() = 0;
@@ -89,8 +92,8 @@ namespace Luma
         virtual void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void bindMaterial(const FMaterial* material) = 0;
         virtual void bindBindingSet(const IBindingSet* bindingSet, const IShader* shader) = 0;
-        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCameraf& camera) = 0;
-        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCameraf& camera) = 0;
+        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCamera& camera) = 0;
+        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera) = 0;
         virtual void textureBarrier(const FTextureBarrier& barrier) = 0;
         virtual void bufferBarrier(const FBufferBarrier& barrier) = 0;
         ///////////////////////////////////////////////////////////////////////////////////////////////

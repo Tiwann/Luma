@@ -31,6 +31,8 @@ namespace Luma
         FStaticMesh() = default;
         ~FStaticMesh() override = default;
 
+        void destroy();
+
         EAssetType getAssetType() const override { return EAssetType::StaticMesh; }
         bool loadFromFile(FStringView filepath, IRenderDevice* device);
 

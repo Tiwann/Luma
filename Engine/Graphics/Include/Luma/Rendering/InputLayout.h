@@ -32,6 +32,8 @@ namespace Luma
 
         const TArray<FVertexAttribute>& getInputAttributes() const;
         const THashMap<uint32_t, EVertexInputRate>& getInputBindings() const;
+
+        bool operator==(const FVertexInputLayout& other) const;
     private:
         THashMap<uint32_t, EVertexInputRate> m_InputBindings;
         TArray<FVertexAttribute> m_InputAttributes;

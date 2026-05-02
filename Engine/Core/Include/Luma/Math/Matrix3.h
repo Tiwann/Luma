@@ -21,7 +21,9 @@ namespace Luma
             Vector columns[3];
         };
 
-        constexpr TMatrix() = default;
+        constexpr TMatrix() : m00{T(1)}, m10{T(0)}, m20{T(0)},
+                              m01{T(0)}, m11{T(1)}, m21{T(0)},
+                              m02{T(0)}, m12{T(0)}, m22{T(1)} {}
 
         constexpr TMatrix(
             T m00, T m10, T m20,
@@ -124,6 +126,11 @@ namespace Luma
                 r0.dot(c1), r1.dot(c1), r2.dot(c1),
                 r0.dot(c2), r1.dot(c2), r2.dot(c2)
             );
+        }
+
+        TVector<T, 2> operator*(const TVector<T, 2>& v) const
+        {
+            return TVector<T, 2>(operator*(TVector<T, 3>(v, 1.0f)));
         }
 
         static constexpr bool isSquare() { return true; }

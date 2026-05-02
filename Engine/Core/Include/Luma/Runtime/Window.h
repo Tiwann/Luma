@@ -4,14 +4,26 @@
 #include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
+#include "Flags.h"
+
 namespace Luma
 {
+    enum class EWindowCreateBits
+    {
+        Centered,
+        NoDecoration,
+        Transparent,
+    };
+
+    using FWindowCreateFlags = TFlags<EWindowCreateBits>;
+
+
     struct FWindowDesc
     {
         FString title;
         uint32_t width;
         uint32_t height;
-        uint32_t flags;
+        FWindowCreateFlags flags;
     };
 
     struct IWindow : IRefCounted<IWindow>

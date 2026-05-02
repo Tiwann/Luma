@@ -12,5 +12,5 @@ namespace Luma
         Alpha = BIT(3),
     };
 
-    typedef Flags<EColorChannelBits> FColorChannelFlags;
+    typedef TFlags<EColorChannelBits> FColorChannelFlags;
 }

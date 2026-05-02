@@ -28,5 +28,5 @@ namespace Luma
         MeshShader = 0x00100000,
     };
 
-    using FPipelineStageFlags = Flags<EPipelineStageBits>;
+    using FPipelineStageFlags = TFlags<EPipelineStageBits>;
 }

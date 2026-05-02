@@ -1,5 +1,6 @@
 #pragma once
 #include "Concepts.h"
+#include "Vector4.h"
 
 namespace Luma
 {
@@ -25,6 +26,8 @@ namespace Luma
             const uint8_t alpha = static_cast<uint8_t>(saturate(a) * F(255.0) + F(0.5));
             return (red << 24) | (green << 16) | (blue << 8) | (alpha);
         }
+
+        constexpr operator TVector<F, 4>() const { return TVector<F, 4>{r, g, b, a}; }
 
         TColor withOpacity(float opacity) {  return { r, g, b, opacity }; }
         TColor withRed(float red) { return { red, g, b, a }; }

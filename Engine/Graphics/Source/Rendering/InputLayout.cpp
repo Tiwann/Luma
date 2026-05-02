@@ -2,6 +2,51 @@
 
 namespace Luma
 {
+    template<>
+    struct THasher<FVertexAttribute>
+    {
+        uint64_t operator()(const FVertexAttribute& attr) const noexcept
+        {
+            uint64_t seed = 0;
+            auto hashCombine = [&seed]<typename T>(const T& value)
+            {
+                seed ^= THasher<std::decay_t<T>>{}(value)
+                      + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            };
+
+            hashCombine(attr.name);
+            hashCombine(static_cast<std::underlying_type_t<EShaderDataType>>(attr.type));
+            hashCombine(attr.binding);
+
+            return seed;
+        }
+    };
+
+    template<>
+    struct THasher<FVertexInputLayout>
+    {
+        uint64_t operator()(const FVertexInputLayout& layout) const noexcept
+        {
+            size_t seed = 0;
+            auto hashCombine = [&seed]<typename T>(const T& value)
+            {
+                seed ^= THasher<std::decay_t<T>>{}(value)
+                      + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            };
+
+            for (const FVertexAttribute& attr : layout.getInputAttributes())
+                hashCombine(attr);
+
+            for (const auto& [binding, inputRate] : layout.getInputBindings())
+            {
+                hashCombine(binding);
+                hashCombine(static_cast<std::underlying_type_t<EVertexInputRate>>(inputRate));
+            }
+
+            return seed;
+        }
+    };
+
     void FVertexInputLayout::addInputBinding(const uint32_t binding, const EVertexInputRate inputRateBinding)
     {
         m_InputBindings[binding] = inputRateBinding;
@@ -73,5 +118,10 @@ namespace Luma
     const THashMap<uint32_t, EVertexInputRate>& FVertexInputLayout::getInputBindings() const
     {
         return m_InputBindings;
+    }
+
+    bool FVertexInputLayout::operator==(const FVertexInputLayout& other) const
+    {
+        return m_InputAttributes == other.m_InputAttributes && m_InputBindings == other.m_InputBindings;
     }
 }

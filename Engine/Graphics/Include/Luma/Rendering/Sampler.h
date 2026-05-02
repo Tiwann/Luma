@@ -1,12 +1,10 @@
 ﻿#pragma once
-#include <cstdint>
-#include <type_traits>
-
 #include "CompareOperation.h"
 #include "Filter.h"
 #include "SamplerAddressMode.h"
 #include "Resource.h"
 #include "Luma/Containers/StringView.h"
+#include "Luma/Memory/RefCounted.h"
 
 namespace Luma
 {
@@ -33,7 +31,7 @@ namespace Luma
         FSamplerDesc& withLODRange(float min, float max);
     };
 
-    struct ISampler : IResource
+    struct ISampler : IResource, IRefCounted<ISampler>
     {
         ISampler() = default;
         ~ISampler() override = default;

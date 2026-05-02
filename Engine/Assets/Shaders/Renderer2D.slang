@@ -1,5 +1,9 @@
 ﻿module Renderer2D;
-import Common;
+
+vector<T, N> operator*<T, int N>(matrix<T, N, N> lhs, vector<T, N> rhs) where T : __BuiltinFloatingPointType
+{
+	return mul(lhs, rhs);
+}
 
 enum QuadMode : uint32_t
 {
