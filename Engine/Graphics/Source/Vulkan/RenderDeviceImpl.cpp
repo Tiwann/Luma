@@ -490,9 +490,8 @@ namespace Luma::Vulkan
         fence.reset();
 
 
-        FCommandBufferImpl& commandBuffer = m_CmdBuffers[m_CurrentFrameIndex];
+        FCommandBufferImpl& commandBuffer = m_CmdBuffers[m_SwapchainImageIndex];
         if (!commandBuffer.begin()) return false;
-
 
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
@@ -521,7 +520,7 @@ namespace Luma::Vulkan
 
     void FRenderDeviceImpl::endFrame()
     {
-        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_CurrentFrameIndex];
+        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_SwapchainImageIndex];
 
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
