@@ -9,7 +9,7 @@
 #endif
 
 #ifdef LUMA_BUILD_VULKAN
-#include "Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
 #endif
 
 namespace Luma

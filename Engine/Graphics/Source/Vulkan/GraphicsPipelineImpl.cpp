@@ -1,7 +1,7 @@
-#include "GraphicsPipelineImpl.h"
-#include "RenderDeviceImpl.h"
-#include "ShaderImpl.h"
-#include "Conversions.h"
+#include "Luma/Vulkan/GraphicsPipelineImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/ShaderImpl.h"
+#include "Luma/Vulkan/Conversions.h"
 #include <Volk/volk.h>
 
 

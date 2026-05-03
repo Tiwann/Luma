@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/TextureView.h"
-
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan

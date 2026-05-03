@@ -1,6 +1,6 @@
-﻿#include "BufferImpl.h"
-#include "RenderDeviceImpl.h"
-#include "VulkanUtils.h"
+﻿#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 #include <vma/vk_mem_alloc.h>
 
 

@@ -1,8 +1,8 @@
-﻿#include "TextureImpl.h"
-#include "RenderDeviceImpl.h"
+﻿#include "Luma/Vulkan/TextureImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
 #include "Luma/Rendering/TextureAspect.h"
-#include "Conversions.h"
-#include "VulkanUtils.h"
+#include "Luma/Vulkan/Conversions.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 #include "Luma/Memory/Ref.h"
 
 #include <vma/vk_mem_alloc.h>

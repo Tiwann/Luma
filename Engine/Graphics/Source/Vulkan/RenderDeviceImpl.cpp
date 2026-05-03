@@ -1,13 +1,13 @@
-﻿#include "RenderDeviceImpl.h"
-#include "CommandBufferImpl.h"
-#include "FenceImpl.h"
-#include "SamplerImpl.h"
-#include "BufferImpl.h"
-#include "TextureImpl.h"
-#include "TextureViewImpl.h"
-#include "SemaphoreImpl.h"
-#include "ShaderImpl.h"
-#include "ComputePipelineImpl.h"
+﻿#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/CommandBufferImpl.h"
+#include "Luma/Vulkan/FenceImpl.h"
+#include "Luma/Vulkan/SamplerImpl.h"
+#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/TextureImpl.h"
+#include "Luma/Vulkan/TextureViewImpl.h"
+#include "Luma/Vulkan/SemaphoreImpl.h"
+#include "Luma/Vulkan/ShaderImpl.h"
+#include "Luma/Vulkan/ComputePipelineImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Containers/Array.h"
@@ -19,7 +19,7 @@
 #include <slang/slang.h>
 #include <vma/vk_mem_alloc.h>
 
-#include "GraphicsPipelineImpl.h"
+#include "Luma/Vulkan/GraphicsPipelineImpl.h"
 #include "Luma/Rendering/GraphicsPipeline.h"
 
 

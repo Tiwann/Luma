@@ -1,9 +1,10 @@
-#include "BindingSetImpl.h"
-#include "BindingSetLayoutImpl.h"
-#include "RenderDeviceImpl.h"
-#include "BufferImpl.h"
-#include "SamplerImpl.h"
-#include "Conversions.h"
+#include "Luma/Vulkan/BindingSetImpl.h"
+#include "Luma/Vulkan/BindingSetLayoutImpl.h"
+#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/SamplerImpl.h"
+#include "Luma/Vulkan/TextureViewImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/Conversions.h"
 #include "Luma/Runtime/Assertion.h"
 #include <Volk/volk.h>
 

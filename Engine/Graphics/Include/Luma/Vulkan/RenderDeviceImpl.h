@@ -51,6 +51,7 @@ namespace Luma::Vulkan
         static VkInstance getInstance();
         VkDevice getHandle() const { return m_Handle; }
         VkSurfaceKHR getSurface() const { return m_Surface; }
+        VkPhysicalDevice getPhysicalDevice() const { return m_PhysicalDevice; }
         VmaAllocator getAllocator() const { return m_Allocator; }
         VkCommandPool getRenderPool() const { return m_RenderPool; }
         VkCommandPool getComputePool() const { return m_ComputePool; }
