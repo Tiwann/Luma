@@ -6,12 +6,14 @@
 #include <Luma/Runtime/Time.h>
 #include <Luma/Asset/Material.h>
 #include <Luma/Containers/StringFormat.h>
+#include <imgui.h>
 
 using namespace Luma;
 
 static constexpr uint32_t WIDTH = 800;
 static constexpr uint32_t HEIGHT = 600;
 
+extern uint32_t g_Samples;
 extern bool g_Vsync;
 extern ESwapchainBuffering g_Buffering;
 extern ERenderDeviceType g_DeviceType;
@@ -25,7 +27,7 @@ int main(int argc, const char** argv)
 
     constexpr auto flags = EWindowCreateBits::Centered;
     FWindowDesc windowDesc;
-    windowDesc.title = "Hello Triangle";
+    windowDesc.title = "Hello Texture";
     windowDesc.width = WIDTH;
     windowDesc.height = HEIGHT;
     windowDesc.flags = flags;
@@ -63,6 +65,7 @@ int main(int argc, const char** argv)
     pipelineDesc.depthStencil.depthWriteEnable = false;
     pipelineDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
     pipelineDesc.colorFormatCount = 1;
+    pipelineDesc.multisample = {g_Samples};
 
     Ref<IGraphicsPipeline> pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");

@@ -26,6 +26,7 @@ add_subdirectory(Vendor)
 add_subdirectory(Engine/Core)
 add_subdirectory(Engine/Graphics)
 add_subdirectory(Engine/Audio)
+add_subdirectory(Engine/UI)
 
 if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)
