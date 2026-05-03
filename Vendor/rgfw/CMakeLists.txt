@@ -1,6 +1,6 @@
 if(NOT TARGET rgfw)
     add_library(rgfw STATIC src/rgfw.c)
-    add_library(RGFW::RGFW ALIAS rgfw)
+    add_library(luma::rgfw ALIAS rgfw)
     target_include_directories(rgfw PUBLIC include)
     if(LUMA_ENGINE_BUILD_VULKAN)
         target_link_libraries(rgfw PUBLIC Vulkan::volk)
