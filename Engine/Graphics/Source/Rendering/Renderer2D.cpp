@@ -80,9 +80,10 @@ namespace Luma
         FGraphicsPipelineDesc gpDesc;
         gpDesc.device = m_RenderDevice;
         gpDesc.shaderProgram = m_Shader;
+        gpDesc.rasterization.cullMode = ECullMode::FrontFace;
         gpDesc.colorFormatCount = 1;
         gpDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
-        gpDesc.colorBlend[0] = {true};
+        gpDesc.colorBlend[0] = FColorBlendState(true, FBlendFunction::alphaBlend());
         gpDesc.inputLayout = vertexLayout;
         gpDesc.depthStencil.depthTestEnable = false;
         gpDesc.depthStencil.depthWriteEnable = false;
