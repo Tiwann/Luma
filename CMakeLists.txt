@@ -30,5 +30,6 @@ add_subdirectory(Engine/Audio)
 if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)
     add_subdirectory(Example/HelloTexture)
+    add_subdirectory(Example/Renderer2D)
 endif ()
 

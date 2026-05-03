@@ -1,25 +1,28 @@
+#include <Luma/Rendering.h>
 #include <Luma/Memory/Ref.h>
 #include <Luma/Runtime/DesktopWindow.h>
 #include <Luma/Runtime/Flags.h>
 #include <Luma/Runtime/Path.h>
 #include <Luma/Runtime/Time.h>
-#include <Luma/Rendering/RenderDevice.h>
-#include <Luma/Rendering/ShaderCompiler.h>
-#include <Luma/Rendering/Shader.h>
-#include <Luma/Rendering/CommandBuffer.h>
-#include <Luma/Rendering/GraphicsPipeline.h>
-#include <Luma/Rendering/RenderPassDesc.h>
-#include <Luma/Rendering/Swapchain.h>
-#include <Luma/Rendering/TextureUtils.h>
 #include <Luma/Asset/Material.h>
+#include <Luma/Containers/StringFormat.h>
 
 using namespace Luma;
 
 static constexpr uint32_t WIDTH = 800;
 static constexpr uint32_t HEIGHT = 600;
 
-int main()
+extern bool g_Vsync;
+extern ESwapchainBuffering g_Buffering;
+extern ERenderDeviceType g_DeviceType;
+bool parseArgs(int, const char**);
+
+
+int main(int argc, const char** argv)
 {
+    if (!parseArgs(argc, argv))
+        return 1;
+
     constexpr auto flags = EWindowCreateBits::Centered;
     FWindowDesc windowDesc;
     windowDesc.title = "Hello Triangle";
@@ -32,9 +35,9 @@ int main()
 
     FRenderDeviceDesc renderDeviceDesc;
     renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
-    renderDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
+    renderDeviceDesc.buffering = g_Buffering;
     renderDeviceDesc.window = window;
-    renderDeviceDesc.vSync = false;
+    renderDeviceDesc.vSync = g_Vsync;
 
     Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
     LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
@@ -79,8 +82,22 @@ int main()
     LUMA_ASSERT(material, "Failed to create material! Exiting application.");
     material->setCombinedTextureSampler("texture", sampler, texture);
 
+    double lastTime = 0.0;
     while (!window->shouldClose())
     {
+        double currentTime = FTime::getTime();
+        double deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+
+        static double timer = 0.0;
+        timer += deltaTime;
+        if (timer >= 1.0)
+        {
+            timer = 0.0;
+            int32_t fps = 1.0 / deltaTime;
+            window->setTitle(strfmt("Hello Texture | FPS: {}", fps));
+        }
+
         window->pollEvents();
 
         if (renderDevice->beginFrame())
