@@ -31,6 +31,7 @@ add_subdirectory(Engine/UI)
 if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)
     add_subdirectory(Example/HelloTexture)
+    add_subdirectory(Example/HelloMesh)
     add_subdirectory(Example/Renderer2D)
 endif ()
 

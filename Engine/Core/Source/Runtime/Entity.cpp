@@ -2,37 +2,107 @@
 
 namespace Luma
 {
-    FEntity::FEntity(const uint32_t handle, FScene* context) : m_Context(context), m_Handle(handle)
+    void FEntity::onInit()
     {
+        for (auto* component : m_Components)
+            component->initialize();
     }
 
-    FEntity FEntity::getParent() const
+    void FEntity::onDestroy()
     {
-        return m_ParentHandle != 0 ? FEntity(m_ParentHandle, m_Context) : nullptr;
+        for (auto* component : m_Components)
+            component->destroy();
+        m_Components.clear();
     }
 
-    void FEntity::setParent(FEntity parent)
+    void FEntity::onUpdate(double deltaTime)
     {
-        m_ParentHandle = parent.m_Handle;
+        for (auto* component : m_Components)
+        {
+            if (component->isActive())
+                component->onUpdate(deltaTime);
+        }
     }
 
-    TArray<FEntity> FEntity::getChildren() const
+    void FEntity::onPhysicsUpdate(double deltaTime)
     {
-        return m_ChildrenHandles.transform<FEntity>([this](const uint32_t handle){ return FEntity(handle, m_Context); });
+        for (auto* component : m_Components)
+        {
+            if (component->isActive())
+                component->onPhysicsUpdate(deltaTime);
+        }
     }
 
-    void FEntity::addChild(FEntity child)
+    void FEntity::onLateUpdate(double deltaTime)
     {
-        m_ChildrenHandles.add(child.m_Handle);
+        for (auto* component : m_Components)
+        {
+            if (component->isActive())
+                component->onLateUpdate(deltaTime);
+        }
     }
 
-    void FEntity::removeChild(FEntity child)
+    void FEntity::onRender(ICommandBuffer* cmdBuffer)
     {
-        m_ChildrenHandles.remove(child.m_Handle);
+        for (auto* component : m_Components)
+        {
+            if (component->isActive())
+                component->onRender(cmdBuffer);
+        }
     }
 
-    bool FEntity::operator==(const FEntity& other) const
+    FEntity* FEntity::getParent() const
     {
-        return m_Context == other.m_Context && m_Handle == other.m_Handle;
+        return m_Parent;
+    }
+
+    void FEntity::setParent(FEntity* parent)
+    {
+        m_Parent = parent;
+    }
+
+    void FEntity::addChild(FEntity* child)
+    {
+        m_Children.addUnique(child);
+    }
+
+    void FEntity::removeChild(FEntity* child)
+    {
+        m_Children.remove(child);
+    }
+
+    FScene* FEntity::getOwner() const
+    {
+        return m_Owner;
+    }
+
+    EAssetType FEntity::getAssetType() const
+    {
+        return EAssetType::Entity;
+    }
+
+    bool FEntity::isActive() const
+    {
+        return m_Active;
+    }
+
+    void FEntity::setActive(bool active)
+    {
+        m_Active = active;
+    }
+
+    void FEntity::initialize()
+    {
+        onInit();
+    }
+
+    void FEntity::destroy()
+    {
+        onDestroy();
+    }
+
+    const TArray<FEntity*>& FEntity::getChildren() const
+    {
+        return m_Children;
     }
 }

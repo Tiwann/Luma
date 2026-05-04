@@ -4,9 +4,6 @@
 [submodule "Engine/Vendor/assimp"]
 	path = Vendor/assimp
 	url = git@github.com:assimp/assimp.git
-[submodule "Engine/Vendor/entt"]
-	path = Vendor/entt
-	url = git@github.com:skypjack/entt.git
 [submodule "Vendor/imgui"]
 	path = Vendor/imgui
 	url = git@github.com:ocornut/imgui.git

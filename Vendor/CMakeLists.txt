@@ -17,7 +17,6 @@ set(ASSIMP_BUILD_FBX_IMPORTER ON)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON)
 add_subdirectory(assimp)
 
-add_subdirectory(entt)
 add_subdirectory(stb)
 
 add_library(luma-imgui STATIC imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_tables.cpp imgui/imgui_widgets.cpp)

@@ -25,13 +25,13 @@ namespace Luma
         Ref<FMaterial> material;
     };
 
-    class FStaticMesh final : public IAsset, public IRefCounted<FStaticMesh>
+    class FStaticMesh final : public IAsset
     {
     public:
         FStaticMesh() = default;
         ~FStaticMesh() override = default;
 
-        void destroy();
+        void destroy() override;
 
         EAssetType getAssetType() const override { return EAssetType::StaticMesh; }
         bool loadFromFile(FStringView filepath, IRenderDevice* device);

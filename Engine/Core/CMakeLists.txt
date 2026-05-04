@@ -37,6 +37,8 @@ set(LUMA_CORE_SRC
         Source/Runtime/Window.cpp
         Source/Runtime/Scene.cpp
         Source/Runtime/Entity.cpp
+        Source/Runtime/EntityHandle.cpp
+        Source/Runtime/Component.cpp
         Source/Runtime/Sprite.cpp
 )
 
@@ -51,7 +53,7 @@ set(LUMA_CORE_WINDOWS_SRC
 
 add_library(luma-core ${LUMA_CORE_SRC})
 add_library(luma::core ALIAS luma-core)
-target_link_libraries(luma-core PUBLIC luma-natvis EnTT::EnTT)
+target_link_libraries(luma-core PUBLIC luma-natvis)
 target_include_directories(luma-core PRIVATE Source ../Graphics/Include PUBLIC Include External)
 target_compile_definitions(luma-core PRIVATE LUMA_CORE PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)

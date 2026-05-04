@@ -1,74 +1,73 @@
 #pragma once
 #include "Scene.h"
 #include "Luma/Containers/Array.h"
-#include "Luma/Containers/HashMap.h"
+#include "Luma/Runtime/Component.h"
 #include <cstdint>
 
 namespace Luma
 {
-    struct IComponent;
     struct FClass;
 
-    class FEntity
+    class FEntity final : IAsset
     {
     public:
-        FEntity() = default;
-        FEntity(uint32_t handle, FScene* context);
-        FEntity(decltype(nullptr)){}
+        FEntity(FScene* context) : m_Owner(context) {}
 
-        FEntity getParent() const;
-        void setParent(FEntity parent);
+        FEntity* getParent() const;
+        void setParent(FEntity* parent);
 
-        TArray<FEntity> getChildren() const;
-        void addChild(FEntity child);
-        void removeChild(FEntity child);
+        const TArray<FEntity*>& getChildren() const;
+        void addChild(FEntity* child);
+        void removeChild(FEntity* child);
 
-        bool operator==(const FEntity& other) const;
-
-        template<typename T>
+        template<typename T> requires std::is_base_of_v<IComponent, T>
         T* getComponent() const
         {
-            return m_Context->m_Registry.try_get<T>(m_Handle);
+            for (IComponent* component : m_Components)
+                if (T* asT = dynamic_cast<T*>(component))
+                    return asT;
+            return nullptr;
         }
 
-        template<typename T>
+        template<typename T> requires std::is_base_of_v<IComponent, T>
         T* addComponent()
         {
-            auto& component = m_Context->m_Registry.emplace<T>(static_cast<entt::entity>(m_Handle));
-            return &component;
+            T* component = new T();
+            component->m_Owner = this;
+            m_Components.add(component);
+            static_cast<IComponent*>(component)->initialize();
+            return component;
         }
 
-        template<typename T>
+        template<typename T> requires std::is_base_of_v<IComponent, T>
         void removeComponent(T* component)
         {
-            LUMA_ASSERT(component, "Invalid component!");
-            m_Context->m_Registry.remove(component);
+            static_cast<IComponent*>(component)->destroy();
+            m_Components.remove(component);
         }
+
+        FScene* getOwner() const;
+        EAssetType getAssetType() const override;
+
+        bool isActive() const;
+        void setActive(bool active);
+
     private:
-        FScene* m_Context = nullptr;
-        uint32_t m_Handle = 0;
-        uint32_t m_ParentHandle = 0;
-        TArray<uint32_t> m_ChildrenHandles;
-        bool m_BeingDestroyed = false;
+        void initialize();
+        void destroy() override;
 
-        friend struct THasher<FEntity>;
+        void onInit();
+        void onDestroy();
+        void onUpdate(double deltaTime);
+        void onPhysicsUpdate(double deltaTime);
+        void onLateUpdate(double deltaTime);
+        void onRender(ICommandBuffer* cmdBuffer);
+
         friend class FScene;
-    };
-
-    template<>
-    struct THasher<FEntity>
-    {
-        static void hashCombine(uint64_t& seed, const uint64_t value)
-        {
-            seed ^= value + 0x9e3779b97f4a7c15ull + (seed << 6) + (seed >> 2);
-        }
-
-        uint64_t operator()(const FEntity& entity) const
-        {
-            uint64_t seed = 0;
-            hashCombine(seed, reinterpret_cast<uint64_t>(entity.m_Context));
-            hashCombine(seed, entity.m_Handle);
-            return seed;
-        }
+        FScene* m_Owner = nullptr;
+        FEntity* m_Parent = nullptr;
+        bool m_Active = true;
+        TArray<FEntity*> m_Children;
+        TArray<IComponent*> m_Components;
     };
 }

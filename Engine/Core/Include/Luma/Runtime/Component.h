@@ -1,26 +1,32 @@
 #pragma once
-#include "Luma/Memory/RefCounted.h"
-#include "Luma/Rendering/Camera.h"
+#include "Luma/Runtime/Object.h"
 
 namespace Luma
 {
     struct ICommandBuffer;
     class FEntity;
 
-    struct IComponent : IRefCounted<IComponent>
+    struct IComponent : IObject
     {
         ~IComponent() override = default;
 
+        FEntity* getOwner() const;
+        void setActive(bool active);
+        bool isActive() const;
+
+    protected:
         virtual void onInit(){}
         virtual void onDestroy(){}
         virtual void onUpdate(double deltaTime){}
         virtual void onPhysicsUpdate(double deltaTime){}
-        virtual void onPreRender(ICommandBuffer* cmdBuffer){}
-        virtual void onRender(ICommandBuffer* cmdBuffer, const FCamera& camera){}
-        virtual void onPostRender(){}
+        virtual void onLateUpdate(double deltaTime){}
+        virtual void onRender(ICommandBuffer* cmdBuffer){}
+    private:
+        friend class FEntity;
+        FEntity* m_Owner = nullptr;
+        bool m_Active = true;
 
-        void destroy(){ onDestroy(); }
-
-        FEntity getOwner();
+        void initialize() { onInit(); }
+        void destroy() override { onDestroy(); }
     };
 }

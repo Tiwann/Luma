@@ -1,70 +1,82 @@
 #include "Luma/Runtime/Scene.h"
 #include "Luma/Runtime/Entity.h"
-#include "Luma/Runtime/Component.h"
+#include "Luma/Runtime/EntityHandle.h"
+#include "Luma/Components/TransformComponent.h"
 
 namespace Luma
 {
-    FScene::FScene()
+    FEntityHandle FScene::createEntity()
     {
-
+        FEntity* entity = new FEntity(this);
+        const uint32_t id = s_EntityId;
+        m_Entities[s_EntityId++] = entity;
+        entity->addComponent<FTransformComponent>();
+        entity->initialize();
+        return FEntityHandle(id, this);
     }
 
-    FEntity FScene::createEntity()
+    void FScene::destroyEntity(FEntityHandle entity)
     {
-        const uint32_t handle = static_cast<uint32_t>(m_Registry.create());
-        return FEntity(handle, this);
+        LUMA_ASSERT(entity.getContext() == this, "Entity context don't match!");
+        FEntity** pEntity = m_Entities.findValue(entity.getHandle());
+        if (!pEntity) return;
+        (*pEntity)->destroy();
+        delete *pEntity;
+        m_Entities.remove(entity.getHandle());
     }
 
-    void FScene::destroyEntity(FEntity entity)
+    void FScene::initialize()
     {
-        LUMA_ASSERT(entity.m_Context == this, "Entity context don't match!");
-        m_Registry.destroy(static_cast<entt::entity>(entity.m_Handle));
-        const auto view = m_Registry.view<IComponent>();
-        view.each([](IComponent& component) { component.destroy(); });
+        for (auto& [_, entity] : m_Entities)
+        {
+            if (entity->isActive())
+                entity->initialize();
+        }
     }
 
     void FScene::destroy()
     {
-        const auto view = m_Registry.view<entt::entity>();
-        view.each([this](const entt::entity& handle)
+        for (auto& [_, entity] : m_Entities)
         {
-            FEntity entity(static_cast<uint32_t>(handle), this);
-            destroyEntity(entity);
-        });
-    }
-
-    void FScene::onInit()
-    {
-        const auto view = m_Registry.view<IComponent>();
-        view.each([](IComponent& component)
-        {
-            component.onInit();
-        });
-    }
-
-    void FScene::onDestroy()
-    {
+            entity->destroy();
+            delete entity;
+        }
+        m_Entities.clear();
     }
 
     void FScene::onUpdate(double deltaTime)
     {
-        const auto view = m_Registry.view<IComponent>();
-        view.each([&deltaTime](IComponent& component)
+        for (auto& [_, entity] : m_Entities)
         {
-            component.onUpdate(deltaTime);
-        });
+            if (entity->isActive())
+                entity->onUpdate(deltaTime);
+        }
     }
 
     void FScene::onPhysicsUpdate(double deltaTime)
     {
+        for (auto& [_, entity] : m_Entities)
+        {
+            if (entity->isActive())
+                entity->onPhysicsUpdate(deltaTime);
+        }
     }
 
-    void FScene::onRender(ICommandBuffer* cmdBuffer, const FCamera& camera)
+    void FScene::onLateUpdate(double deltaTime)
     {
-        const auto view = m_Registry.view<IComponent>();
-        view.each([cmdBuffer, camera](IComponent& component)
+        for (auto& [_, entity] : m_Entities)
         {
-            component.onRender(cmdBuffer, camera);
-        });
+            if (entity->isActive())
+                entity->onLateUpdate(deltaTime);
+        }
+    }
+
+    void FScene::onRender(ICommandBuffer* cmdBuffer)
+    {
+        for (auto& [_, entity] : m_Entities)
+        {
+            if (entity->isActive())
+                entity->onRender(cmdBuffer);
+        }
     }
 }

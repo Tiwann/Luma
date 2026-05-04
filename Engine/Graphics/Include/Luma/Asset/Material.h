@@ -1,9 +1,7 @@
 #pragma once
 #include "MaterialType.h"
 #include "Luma/Containers/HashMap.h"
-#include "Luma/Containers/StringView.h"
 #include "Luma/Memory/Ref.h"
-#include "Luma/Memory/RefCounted.h"
 #include "Luma/Rendering/BindingType.h"
 #include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Rendering/BindingSet.h"
@@ -18,11 +16,11 @@ namespace Luma
         IShader* shader = nullptr;
     };
 
-    class FMaterial : public IAsset, public IRefCounted<FMaterial>
+    class FMaterial : public IAsset
     {
     public:
         bool initialize(const FMaterialDesc& materialDesc);
-        void destroy();
+        void destroy() override;
 
         void setSampler(const FString& name, const ISampler* sampler);
         void setTexture(const FString& name, const ITexture* texture, EBindingType bindingType);
