@@ -24,6 +24,8 @@ namespace Luma::Vulkan
         request.setCompileTarget(EShaderCompileTarget::SPIRV);
         request.setModuleInfo(shaderDesc.moduleName, shaderDesc.filepath);
         request.addIncludeDirectory(FPath::combine(FPath::getEngineAssetsDir(), "Shaders/Include"));
+        request.addIncludeDirectories(shaderDesc.includePaths);
+        request.addDefines(shaderDesc.defines);
 
         if (shaderDesc.stageFlags & EShaderStageBits::Vertex)
             request.addEntryPoint("vert", EShaderStageBits::Vertex);
@@ -66,6 +68,7 @@ namespace Luma::Vulkan
             {
                 FBindingSetLayoutDesc layoutDesc(setLayoutDesc);
                 layoutDesc.device = device;
+
 
                 FBindingSetLayoutImpl setLayout;
                 if (!setLayout.initialize(layoutDesc))

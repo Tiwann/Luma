@@ -140,7 +140,7 @@ namespace Luma
                 SpvReflectShaderModule reflectModule;
                 spvReflectCreateShaderModule(entryPointCode->getBufferSize(), entryPointCode->getBufferPointer(), &reflectModule);
 
-                TBufferView<SpvReflectDescriptorSet> sets(reflectModule.descriptor_sets, reflectModule.descriptor_binding_count);
+                TBufferView<SpvReflectDescriptorSet> sets(reflectModule.descriptor_sets, reflectModule.descriptor_set_count);
                 for (const auto& set : sets)
                 {
                     auto& bindingMap = flattenedBindings[set.set];
@@ -148,7 +148,7 @@ namespace Luma
                     TBufferView<SpvReflectDescriptorBinding*> bindings(set.bindings, set.binding_count);
                     for (const auto* binding : bindings)
                     {
-                        auto& shaderBinding = bindingMap.emplace(binding->binding);
+                        auto& shaderBinding = bindingMap[binding->binding];
                         shaderBinding.name = FString(binding->name);
                         shaderBinding.bindingType = getBindingType(binding->descriptor_type);
                         shaderBinding.stageFlags = stage;
@@ -184,6 +184,7 @@ namespace Luma
                 {
                     reflectionData.setLayoutDescs.add({});
                     out = &reflectionData.setLayoutDescs.last();
+                    out->setIndex = set;
                 }
 
                 for (auto& b : bindingMap)

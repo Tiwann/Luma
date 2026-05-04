@@ -7,6 +7,16 @@ namespace Luma
         m_Defines.addUnique({key, value});
     }
 
+    void FShaderCompileRequest::addDefines(const TArray<FShaderCompileDefine>& defines)
+    {
+        m_Defines.addRange(defines);
+    }
+
+    void FShaderCompileRequest::addIncludeDirectories(const TArray<FString>& includeDirectories)
+    {
+        m_IncludeDirectories.addRange(includeDirectories);
+    }
+
     void FShaderCompileRequest::setModuleInfo(const FString& moduleName, const FString& filepath)
     {
         m_ModuleInfo = FShaderModuleInfo(moduleName, filepath);

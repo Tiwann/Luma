@@ -55,6 +55,7 @@ namespace Luma::Vulkan
 
         m_Device = device;
         m_Bindings = layoutDesc.bindings;
+        m_SetIndex = layoutDesc.setIndex;
         return true;
     }
 
