@@ -24,8 +24,8 @@ namespace Luma
 
         void onInit() override;
         void onDestroy() override;
-        void onPreRender(ICommandBuffer* cmdBuffer) override;
-        void onRender(ICommandBuffer* cmdBuffer, const FCamera& camera) override;
+        void onUpdate(double deltaTime) override;
+        void onRender(ICommandBuffer* cmdBuffer) override;
 
         Ref<FStaticMesh> getMesh() const;
         void setMesh(Ref<FStaticMesh> newMesh);

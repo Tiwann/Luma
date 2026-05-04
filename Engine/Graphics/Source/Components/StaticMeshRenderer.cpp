@@ -59,12 +59,7 @@ namespace Luma
         m_BindingSet2->destroy();
     }
 
-    void FStaticMeshRenderer::onPreRender(ICommandBuffer* cmdBuffer)
-    {
-    
-    }
-
-    void FStaticMeshRenderer::onRender(ICommandBuffer* cmdBuffer, const FCamera& camera)
+    void FStaticMeshRenderer::onRender(ICommandBuffer* cmdBuffer)
     {
         if (!m_StaticMesh) return;
 
@@ -74,8 +69,8 @@ namespace Luma
         if (!vertexBuffer || !indexBuffer) return;
         if (materialSlots.count() <= 0) return;
 
-        const auto width = camera.getWidth();
-        const auto height = camera.getHeight();
+        const auto width = 0;
+        const auto height = 0;
 
         cmdBuffer->setViewport(FViewport(0, 0, width, height, 0, 1));
         cmdBuffer->setScissor(FScissor(0, 0, width, height));
