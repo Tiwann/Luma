@@ -1,5 +1,7 @@
 #pragma once
 #include "Luma/Runtime/Component.h"
+#include "Luma/Runtime/Entity.h"
+#include "Luma/Components/TransformComponent.h"
 
 namespace Luma
 {
@@ -16,5 +18,12 @@ namespace Luma
     bool IComponent::isActive() const
     {
         return m_Active;
+    }
+
+    FTransformComponent* IComponent::getTransformComponent() const
+    {
+        const FEntity* owner = getOwner();
+        if (!owner) return nullptr;
+        return owner->getComponent<FTransformComponent>();
     }
 }

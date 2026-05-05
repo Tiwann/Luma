@@ -30,6 +30,16 @@ namespace Luma
         }
 
         template<typename T> requires std::is_base_of_v<IComponent, T>
+        TArray<T*> getAllComponentsOfType() const
+        {
+            TArray<T*> components;
+            for (IComponent* component : m_Components)
+                if (T* asT = dynamic_cast<T*>(component))
+                    components.addUnique(asT);
+            return components;
+        }
+
+        template<typename T> requires std::is_base_of_v<IComponent, T>
         T* addComponent()
         {
             T* component = new T();

@@ -11,7 +11,10 @@ namespace Luma
     void FEntity::onDestroy()
     {
         for (auto* component : m_Components)
+        {
             component->destroy();
+            delete component;
+        }
         m_Components.clear();
     }
 

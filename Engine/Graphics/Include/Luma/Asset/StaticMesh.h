@@ -25,6 +25,14 @@ namespace Luma
         Ref<FMaterial> material;
     };
 
+    struct FMaterialTextures
+    {
+        Ref<ITexture> baseColor;
+        Ref<ITexture> metallicRoughnessAO;
+        Ref<ITexture> normal;
+        Ref<ITexture> emission;
+    };
+
     class FStaticMesh final : public IAsset
     {
     public:
@@ -49,5 +57,6 @@ namespace Luma
         Ref<IBuffer> m_IndexBuffer = nullptr;
         THashMap<uint32_t, TArray<FMeshPart>> m_PerMaterialData;
         THashMap<uint32_t, FMaterialSlot> m_MaterialSlots;
+        THashMap<uint32_t, FMaterialTextures> m_Textures;
     };
 }

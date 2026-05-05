@@ -36,7 +36,8 @@ namespace Luma
         static FStringView getEngineDir();
         static FString getEngineAssetsDir();
         static FString getEngineAssetPath(FStringView filepath);
-
+        static FString getEngineShadersDir();
+        static FString getEngineShaderPath(FStringView filepath);
 #ifdef LUMA_CLIENT
         static FStringView getExeDir()
         {

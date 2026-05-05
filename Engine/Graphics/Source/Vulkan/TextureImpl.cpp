@@ -66,13 +66,9 @@ namespace Luma::Vulkan
         const bool isSampled = usageFlags & ETextureUsageBits::Sampled;
 
         FTextureAspectFlags aspectFlags = 0;
-        if (isColorAttachment || isSampled) aspectFlags |= ETextureAspectBits::Color;
-        if (isDepthAttachment)
-        {
-            aspectFlags |= ETextureAspectBits::Depth;
-            aspectFlags |= ETextureAspectBits::Stencil;
-        }
-
+        if (isColorAttachment || isSampled) aspectFlags = ETextureAspectBits::Color;
+        if (isDepthAttachment) aspectFlags = ETextureAspectBits::Depth | ETextureAspectBits::Stencil;
+        
         m_Device = device;
         m_Format = textureDesc.format;
         m_Width = textureDesc.width;

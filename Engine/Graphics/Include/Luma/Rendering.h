@@ -14,3 +14,4 @@
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
 #include <Luma/Rendering/TextureUtils.h>
+#include <Luma/Rendering/SceneRenderer.h>

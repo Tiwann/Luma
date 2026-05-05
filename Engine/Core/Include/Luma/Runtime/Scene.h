@@ -6,6 +6,7 @@ namespace Luma
 {
     class FEntity;
     class FEntityHandle;
+    struct IComponent;
     struct ICommandBuffer;
 
     class FScene final : public IAsset
@@ -25,6 +26,11 @@ namespace Luma
 
         FEntityHandle createEntity();
         void destroyEntity(FEntityHandle entity);
+        TArray<FEntity*> getEntities();
+
+        template<typename T> requires std::is_base_of_v<IComponent, T>
+        T* getFirstComponent();
+
     private:
         friend class FEntity;
         friend class FEntityHandle;

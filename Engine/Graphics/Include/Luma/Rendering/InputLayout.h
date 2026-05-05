@@ -22,6 +22,7 @@ namespace Luma
 
         void addInputBinding(uint32_t binding, EVertexInputRate inputRateBinding);
         void addInputAttribute(const FVertexAttribute& attribute);
+        void addInputAttribute(FString name, EShaderDataType type, uint32_t binding);
 
         uint32_t getStride(uint32_t binding) const;
         uint32_t getAttributeCount() const;

@@ -16,9 +16,10 @@ struct VertexInput
 struct GBuffer
 {
 	float4 albedo : SV_TARGET0;
-	float4 position : SV_TARGET1;
+	float4 metallicGlossiness : SV_TARGET1;
 	float4 normal : SV_TARGET2;
-	float4 metallicGlossiness : SV_TARGET3;
+	float4 emission : SV_TARGET3;
+	float4 position : SV_TARGET4;
 }
 
 struct VertexOutput
@@ -33,9 +34,9 @@ struct VertexOutput
 };
 
 [[vk::binding(0, 0)]] Sampler2D albedoTex;
-[[vk::binding(1, 0)]] Sampler2D normalTex;
-[[vk::binding(2, 0)]] Sampler2D metallicTex;
-[[vk::binding(3, 0)]] Sampler2D glossinessTex;
+[[vk::binding(1, 0)]] Sampler2D metallicRoughnessTex;
+[[vk::binding(2, 0)]] Sampler2D normalTex;
+[[vk::binding(3, 0)]] Sampler2D emissionTex;
 
 [shader("vertex")]
 VertexOutput vert(VertexInput input)
@@ -66,11 +67,14 @@ GBuffer frag(VertexOutput input)
     float3 sampledNormal = normalTex.Sample(input.texCoord).xyz * 2.0 - 1.0;
     gBuffer.normal = float4(normalize(TBN * sampledNormal), 0.0);
 
-	float4 metallicMap = metallicTex.Sample(input.texCoord);
-	float4 glossinessMap = glossinessTex.Sample(input.texCoord);
-	gBuffer.metallicGlossiness.r = metallicMap.r;
-	gBuffer.metallicGlossiness.g = glossinessMap.r;
+	float4 metallicRoughMap = metallicRoughnessTex.Sample(input.texCoord);
+	gBuffer.metallicGlossiness.r = metallicRoughMap.r;
+	gBuffer.metallicGlossiness.g = metallicRoughMap.r;
 	gBuffer.metallicGlossiness.b = 0.0;
 	gBuffer.metallicGlossiness.a = 1.0;
+
+	gBuffer.emission = emissionTex.Sample(input.texCoord);
+
+
 	return gBuffer;
 }

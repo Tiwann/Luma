@@ -56,7 +56,12 @@ namespace Luma
     {
         m_InputAttributes.add(attribute);
     }
-    
+
+    void FVertexInputLayout::addInputAttribute(FString name, EShaderDataType type, uint32_t binding)
+    {
+        m_InputAttributes.add(FVertexAttribute{name, type, binding});
+    }
+
     uint32_t FVertexInputLayout::getStride(const uint32_t binding) const
     {
         uint32_t result = 0;

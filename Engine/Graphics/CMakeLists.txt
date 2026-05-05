@@ -15,6 +15,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/Renderer2D.cpp
         Source/Rendering/TextureUtils.cpp
         Source/Rendering/ResourceBarrier.cpp
+        Source/Rendering/SceneRenderer.cpp
         Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
         Source/Asset/StaticMesh.cpp

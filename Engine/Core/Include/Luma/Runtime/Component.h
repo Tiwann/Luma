@@ -3,6 +3,7 @@
 
 namespace Luma
 {
+    class FTransformComponent;
     struct ICommandBuffer;
     class FEntity;
 
@@ -14,6 +15,7 @@ namespace Luma
         void setActive(bool active);
         bool isActive() const;
 
+        FTransformComponent* getTransformComponent() const;
     protected:
         virtual void onInit(){}
         virtual void onDestroy(){}

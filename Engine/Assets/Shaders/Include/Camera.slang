@@ -12,4 +12,6 @@ public struct CameraData
 	public float3 cameraDir;
 };
 
+#ifdef DECLARE_CAMERA_BUFFER
 [vk::binding(0, 2)] public ConstantBuffer<CameraData> u_CameraData : register(b0, space2);
+#endif

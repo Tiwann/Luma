@@ -25,6 +25,14 @@ namespace Luma
         m_Entities.remove(entity.getHandle());
     }
 
+    TArray<FEntity*> FScene::getEntities()
+    {
+        TArray<FEntity*> entities;
+        for (auto& [_, entity] : m_Entities)
+            entities.addUnique(entity);
+        return entities;
+    }
+
     void FScene::initialize()
     {
         for (auto& [_, entity] : m_Entities)

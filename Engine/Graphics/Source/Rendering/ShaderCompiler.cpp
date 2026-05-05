@@ -193,6 +193,7 @@ namespace Luma
                 }
             }
 
+            reflectionData.setLayoutDescs.sort([](const auto& a, const auto& b) { return a.setIndex < b.setIndex; });
             compileResult.reflectionData.add(reflectionData);
             results.add(compileResult);
         }

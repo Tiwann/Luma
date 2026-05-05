@@ -4,6 +4,8 @@ project(luma LANGUAGES C CXX)
 include(CMakeDependentOption)
 include(CMake/LumaHelpers.cmake)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(LUMA_ENGINE_BUILD_EXAMPLES "Build the example targets" ON)
 
 cmake_dependent_option(LUMA_ENGINE_BUILD_D3D12 "Build the engine with D3D12 backend" ON WIN32 OFF)
@@ -34,4 +36,3 @@ if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloMesh)
     add_subdirectory(Example/Renderer2D)
 endif ()
-

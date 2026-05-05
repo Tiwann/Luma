@@ -431,6 +431,8 @@ namespace Luma::Vulkan
     void FRenderDeviceImpl::destroy()
     {
         waitIdle();
+
+        vkDestroyDescriptorPool(m_Handle, m_DescriptorPool, nullptr);
         // I know this shouldn't be there
         m_SlangSession->release();
         slang::shutdown();
@@ -610,7 +612,6 @@ namespace Luma::Vulkan
         FBufferImpl* buffer = new FBufferImpl();
         if (!buffer->initialize(desc))
         {
-            buffer->destroy();
             delete buffer;
             return nullptr;
         }
@@ -624,7 +625,6 @@ namespace Luma::Vulkan
         FTextureImpl* texture = new FTextureImpl();
         if (!texture->initialize(desc))
         {
-            texture->destroy();
             delete texture;
             return nullptr;
         }
@@ -638,7 +638,6 @@ namespace Luma::Vulkan
         FTextureViewImpl* textureView = new FTextureViewImpl();
         if (!textureView->initialize(desc))
         {
-            textureView->destroy();
             delete textureView;
             return nullptr;
         }
@@ -652,7 +651,6 @@ namespace Luma::Vulkan
         FShaderImpl* shader = new FShaderImpl();
         if (!shader->initialize(desc))
         {
-            shader->destroy();
             delete shader;
             return nullptr;
         }
@@ -666,7 +664,6 @@ namespace Luma::Vulkan
         FCommandBufferImpl* cmdBuffer = new FCommandBufferImpl();
         if (!cmdBuffer->initialize(desc))
         {
-            cmdBuffer->destroy();
             delete cmdBuffer;
             return nullptr;
         }
@@ -680,7 +677,6 @@ namespace Luma::Vulkan
         FSamplerImpl* sampler = new FSamplerImpl();
         if (!sampler->initialize(desc))
         {
-            sampler->destroy();
             delete sampler;
             return nullptr;
         }
@@ -720,7 +716,6 @@ namespace Luma::Vulkan
         FFenceImpl* fence = new FFenceImpl();
         if (!fence->initialize(desc))
         {
-            fence->destroy();
             delete fence;
             return nullptr;
         }
@@ -734,7 +729,6 @@ namespace Luma::Vulkan
         FSemaphoreImpl* semaphore = new FSemaphoreImpl();
         if (!semaphore->initialize(desc))
         {
-            semaphore->destroy();
             delete semaphore;
             return nullptr;
         }

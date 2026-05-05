@@ -180,6 +180,9 @@ namespace Luma
         WeakRef& operator=(WeakRef&&) = default;
         ~WeakRef() = default;
 
+
+        WeakRef& operator=(PointerType ptr) { m_Pointer = ptr; return *this; }
+
         operator PointerType() { return m_Pointer; }
         operator ConstPointerType() const { return m_Pointer; }
         operator bool() const { return m_Pointer; }
