@@ -27,7 +27,7 @@ namespace Luma
         uint32_t sampleCount = 1;
         uint32_t arrayCount = 1;
 
-        static FTextureDesc Texture1D(const uint32_t width, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
+        static FTextureDesc texture1D(const uint32_t width, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             FTextureDesc desc;
             desc.usageFlags = ETextureUsageBits::Sampled;
@@ -41,7 +41,7 @@ namespace Luma
             return desc;
         }
 
-        static FTextureDesc Texture2D(const uint32_t width, const uint32_t height, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
+        static FTextureDesc texture2D(const uint32_t width, const uint32_t height, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             FTextureDesc desc;
             desc.usageFlags = ETextureUsageBits::Sampled;
@@ -55,7 +55,7 @@ namespace Luma
             return desc;
         }
 
-        static FTextureDesc Texture3D(const uint32_t width, const uint32_t height, const uint32_t depth, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
+        static FTextureDesc texture3D(const uint32_t width, const uint32_t height, const uint32_t depth, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             FTextureDesc desc;
             desc.usageFlags = ETextureUsageBits::Sampled;

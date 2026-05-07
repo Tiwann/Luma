@@ -32,8 +32,9 @@ struct VertexOutput
 }
 
 [vk::push_constant] ConstantBuffer<float4x4> modelViewProj;
-[vk::binding(0, 0)] SamplerState sampler;
-[vk::binding(1, 0)] Texture2D textures[];
+[vk::binding(0, 0)] SamplerState nearestSampler;
+[vk::binding(1, 0)] SamplerState linearSampler;
+[vk::binding(2, 0)] Texture2D textures[];
 
 
 Texture2D getTexture(uint32_t index)
@@ -94,7 +95,7 @@ float screenPxRange(Texture2D texture, float pixelRange, float2 uv)
 
 float4 drawCharacter(Texture2D texture, float2 uv, float4 color)
 {
-	float3 msd = texture.Sample(sampler, uv).rgb;
+	float3 msd = texture.Sample(linearSampler, uv).rgb;
     float sd = median(msd);
     float screenPxDistance = screenPxRange(texture, 4, uv) * (sd - 0.5);
     float opacity = clamp(screenPxDistance + 0.5, 0.0, 1.0);
@@ -103,7 +104,7 @@ float4 drawCharacter(Texture2D texture, float2 uv, float4 color)
 
 float4 drawSprite(Texture2D texture, float2 uv, float4 color)
 {
-	float4 sample = texture.Sample(sampler, uv);
+	float4 sample = texture.Sample(nearestSampler, uv);
 	return sample * color;
 }
 

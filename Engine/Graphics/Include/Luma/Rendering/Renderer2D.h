@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Luma/Asset/Font.h"
 #include "Luma/Containers/StringView.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Matrix4.h"
@@ -21,7 +22,7 @@ namespace Luma
     struct TextParams
     {
         ETextAlignment alignment = ETextAlignment::Left;
-        FTextStyleFlags style = ETextStyleBits::None;
+        FTextStyleFlags style = ETextStyleBits::Regular;
         float characterSpacing = 0.0f;
         float lineSpacing = 0.0f;
         float fontSize = 10.0f;
@@ -96,7 +97,7 @@ namespace Luma
 
         /// Sets the current font
         /// @param font Font asset to use. Null will assign the default font.
-        //void SetFont(Ref<Font> font);
+        void setFont(Ref<FFont> font);
 
         /// Sets the world space matrix
         /// @param localToWorld World space matrix to use
@@ -110,7 +111,7 @@ namespace Luma
         Ref<IBuffer> m_VertexBuffer = nullptr;
         Ref<IBuffer> m_IndexBuffer = nullptr;
         Ref<IBindingSet> m_BindingSet = nullptr;
-        //Ref<Font> m_Font = nullptr;
+        Ref<FFont> m_Font = nullptr;
         FMatrix4f m_LocalToWorldMatrix;
         static const FMatrix4f DefaultLocalToWorldMatrix;
     };

@@ -15,6 +15,7 @@ namespace Luma
     public:
         TStringView() = default;
         TStringView(const StringType& string) : m_Data(string.data()), m_Count(string.count()) { }
+
         constexpr TStringView(ConstPointerType data) : m_Data(data), m_Count(strlen(data)){}
         constexpr TStringView(ConstPointerType data, SizeType count) : m_Data(data), m_Count(count){}
         constexpr TStringView(decltype(nullptr)) : m_Data(nullptr), m_Count(0){}

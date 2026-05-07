@@ -58,7 +58,7 @@ namespace Luma
         if (!device) return false;
         if (width == 0 || height == 0) return false;
 
-        FTextureDesc textureDesc = FTextureDesc::Texture2D(width, height, EFormat::None, 1, 8);
+        FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::None, 1, 8);
 
         textureDesc.format = EFormat::R8G8B8A8_UNORM;
         textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorAttachment;
@@ -117,7 +117,7 @@ namespace Luma
             return false;
         }
 
-        const FTextureDesc textureDesc = FTextureDesc::Texture2D(desc.width, desc.height, EFormat::R8G8B8A8_SRGB);
+        const FTextureDesc textureDesc = FTextureDesc::texture2D(desc.width, desc.height, EFormat::R8G8B8A8_SRGB);
         m_FinalTexture = device->createTexture(textureDesc);
         if (!m_FinalTexture)
         {

@@ -2,6 +2,10 @@
 #include "Luma/Containers/StringView.h"
 #include "Luma/Rendering/Texture.h"
 
+namespace Luma
+{
+    struct IRenderDevice;
+}
 
 namespace Luma::TextureUtils
 {

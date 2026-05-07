@@ -24,6 +24,7 @@ namespace Luma
 
     FStringView getErrorString(slang::IBlob* blob)
     {
+        if (!blob) return nullptr;
         const FStringView errorString = {(const char*)blob->getBufferPointer(), blob->getBufferSize()};
         return errorString;
     }

@@ -13,7 +13,8 @@ namespace Luma
         SkinnedMesh,
         Material,
         Scene,
-        Entity
+        Entity,
+        Font
     };
 
     struct IAsset : IObject

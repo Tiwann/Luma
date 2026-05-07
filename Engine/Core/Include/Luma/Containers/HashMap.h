@@ -23,6 +23,15 @@ namespace Luma
         }
     };
 
+    template<IntegerType T>
+    struct THasher<T>
+    {
+        uint64_t operator()(const T& key) const
+        {
+            return static_cast<uint64_t>(key);
+        }
+    };
+
     template<typename Key, typename Value, typename Hasher = THasher<Key>>
     class THashMap final
     {

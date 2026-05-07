@@ -13,6 +13,7 @@
 #include <Luma/Rendering/TextureUtils.h>
 #include <Luma/Asset/Material.h>
 
+#include "Luma/Asset/Font.h"
 #include "Luma/Rendering/Renderer2D.h"
 
 using namespace Luma;
@@ -46,17 +47,26 @@ int main()
         swapchain->invalidate();
     });
 
-    FRenderer2D renderer;
-    if (!renderer.initialize(renderDevice))
+    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create();
+    if (!renderer->initialize(renderDevice))
+    {
         LUMA_ASSERT(false, "Failed to initialize renderer 2d! Exiting application.");
+        return 1;
+    }
+
+    Ref<FFont> font = Ref<FFont>::create();
+    const FString fontFilepath = FPath::getAssetPath("Fonts/OpenSans-Regular.ttf");
+    font->loadAndGenerate(fontFilepath, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
+    renderer->setFont(font);
+
 
     while (!window->shouldClose())
     {
         window->pollEvents();
 
-        renderer.begin();
-        renderer.drawQuad(FRect2f(0, 0, 200, 200), 0.0f, FColor::White);
-        renderer.end();
+        renderer->begin();
+        renderer->drawText("Hello World", {0, 0}, 150, FColor::Red);
+        renderer->end();
 
         if (renderDevice->beginFrame())
         {
@@ -75,15 +85,12 @@ int main()
             renderPassDesc.colorAttachments.add(&colorAttachment);
 
             cmdBuffer->beginRenderPass(renderPassDesc);
-            renderer.render(cmdBuffer, WIDTH, HEIGHT);
+            renderer->render(cmdBuffer, WIDTH, HEIGHT);
             cmdBuffer->endRenderPass();
 
             renderDevice->endFrame();
             renderDevice->present();
         }
     }
-
-    renderer.destroy();
-    renderDevice->waitIdle();
     return 0;
 }

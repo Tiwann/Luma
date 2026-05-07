@@ -134,7 +134,7 @@ namespace Luma
                     const uint8_t* data = reinterpret_cast<uint8_t*>(loadedTexture->pcData);
                     const uint32_t width = loadedTexture->mWidth;
                     const uint32_t height = loadedTexture->mHeight;
-                    const FTextureDesc textureDesc = FTextureDesc::Texture2D(width, height, EFormat::R8G8B8A8_UNORM);
+                    const FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_UNORM);
                     Ref<ITexture> texture = device->createTexture(textureDesc);
                     if (!texture) return nullptr;
 

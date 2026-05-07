@@ -61,7 +61,7 @@ namespace Luma::TextureUtils
         const size_t pixelsSize = width * height * 4 * sizeof(stbi_uc);
         if (!pixels) return nullptr;
 
-        const FTextureDesc createInfo = FTextureDesc::Texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
+        const FTextureDesc createInfo = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
         ITexture* texture = device->createTexture(createInfo);
         if (!texture) return nullptr;
 
@@ -84,7 +84,7 @@ namespace Luma::TextureUtils
         const size_t pixelsSize = width * height * 4 * sizeof(stbi_uc);
         if (!pixels) return nullptr;
 
-        const FTextureDesc createInfo = FTextureDesc::Texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
+        const FTextureDesc createInfo = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
         ITexture* texture = device->createTexture(createInfo);
         if (!texture) return nullptr;
 

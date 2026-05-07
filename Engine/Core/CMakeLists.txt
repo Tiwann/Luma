@@ -16,6 +16,11 @@ set(LUMA_CORE_SRC
         Source/Components/TransformComponent.cpp
         Source/Components/CameraComponent.cpp
 
+        Source/IO/ArrayStream.cpp
+        Source/IO/FileStream.cpp
+        Source/IO/MemoryStream.cpp
+        Source/IO/Stream.cpp
+
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
         Source/Math/Matrix.cpp
@@ -40,6 +45,9 @@ set(LUMA_CORE_SRC
         Source/Runtime/EntityHandle.cpp
         Source/Runtime/Component.cpp
         Source/Runtime/Sprite.cpp
+        Source/Runtime/FileUtils.cpp
+
+        Source/Asset/Font.cpp
 )
 
 set(LUMA_CORE_WINDOWS_SRC
@@ -53,7 +61,7 @@ set(LUMA_CORE_WINDOWS_SRC
 
 add_library(luma-core ${LUMA_CORE_SRC})
 add_library(luma::core ALIAS luma-core)
-target_link_libraries(luma-core PUBLIC luma-natvis)
+target_link_libraries(luma-core PUBLIC luma-natvis msdf-atlas-gen::msdf-atlas-gen luma::graphics)
 target_include_directories(luma-core PRIVATE Source ../Graphics/Include PUBLIC Include External)
 target_compile_definitions(luma-core PRIVATE LUMA_CORE PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)

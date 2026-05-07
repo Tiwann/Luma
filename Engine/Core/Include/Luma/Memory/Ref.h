@@ -153,6 +153,9 @@ namespace Luma
             other.m_Pointer = m_Pointer;
             m_Pointer = otherPointer;
         }
+
+        template<typename... Args>
+        static Ref<T> create(Args&&... args) { return Ref(new T(std::forward<Args>(args)...)); }
     private:
         PointerType m_Pointer = nullptr;
 

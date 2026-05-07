@@ -65,7 +65,7 @@ namespace Luma
         FShaderDesc shaderDesc;
         shaderDesc.moduleName = "Renderer2D";
         shaderDesc.stageFlags = TFlags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
-        shaderDesc.filepath = FPath::getEngineAssetPath("Shaders/Renderer2D.slang");
+        shaderDesc.filepath = FPath::getEngineShaderPath("Renderer2D.slang");
         m_Shader = m_RenderDevice->createShader(shaderDesc);
         if (!m_Shader) return false;
 
@@ -80,7 +80,7 @@ namespace Luma
         FGraphicsPipelineDesc gpDesc;
         gpDesc.device = m_RenderDevice;
         gpDesc.shaderProgram = m_Shader;
-        gpDesc.rasterization.cullMode = ECullMode::FrontFace;
+        gpDesc.rasterization.cullMode = ECullMode::None;
         gpDesc.colorFormatCount = 1;
         gpDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
         gpDesc.colorBlend[0] = FColorBlendState(true, FBlendFunction::alphaBlend());
@@ -105,30 +105,34 @@ namespace Luma
         m_IndexBuffer = m_RenderDevice->createBuffer(ibDesc);
         if (!m_IndexBuffer) return false;
 
-        FSamplerDesc createInfo = FSamplerDesc();
-        m_Sampler = m_RenderDevice->getOrCreateSampler(createInfo);
+        FSamplerDesc samplerDesc = FSamplerDesc();
+        samplerDesc.magFilter = EFilter::Linear;
+        samplerDesc.magFilter = EFilter::Linear;
+        m_Sampler = m_RenderDevice->getOrCreateSampler(samplerDesc);
         if (!m_Sampler) return false;
 
-        createInfo.magFilter = EFilter::Nearest;
-        createInfo.minFilter = EFilter::Nearest;
-        m_SpriteSampler = m_RenderDevice->getOrCreateSampler(createInfo);
+        samplerDesc.magFilter = EFilter::Nearest;
+        samplerDesc.minFilter = EFilter::Nearest;
+        m_SpriteSampler = m_RenderDevice->getOrCreateSampler(samplerDesc);
 
         m_BindingSet = m_Shader->createBindingSet(0);
         if (!m_BindingSet) return false;
 
-        m_BindingSet->bindSampler(0, m_Sampler);
+        m_BindingSet->bindSampler(0, m_SpriteSampler);
+        m_BindingSet->bindSampler(1, m_Sampler);
         m_LocalToWorldMatrix = DefaultLocalToWorldMatrix;
         return true;
     }
 
     void FRenderer2D::destroy()
     {
+        m_RenderDevice->waitIdle();
         m_RenderDevice = nullptr;
-        //m_Font = nullptr;
-        if (m_Shader) m_Shader->destroy();
-        if (m_Pipeline) m_Pipeline->destroy();
-        if (m_VertexBuffer) m_VertexBuffer->destroy();
-        if (m_IndexBuffer) m_IndexBuffer->destroy();
+        m_Font = nullptr;
+        m_Shader = nullptr;
+        m_Pipeline = nullptr;
+        m_VertexBuffer = nullptr;
+        m_IndexBuffer = nullptr;
         QuadVertices.free();
         QuadIndices.free();
     }
@@ -156,7 +160,7 @@ namespace Luma
         memcpy(indexMapped, QuadIndices.data(), QuadIndices.size());
         m_IndexBuffer->unmap(indexMapped);
 
-        m_BindingSet->bindTextures(1, Textures, EBindingType::SampledTexture);
+        m_BindingSet->bindTextures(2, Textures, EBindingType::SampledTexture);
         BeginDrawing = false;
         ReadyToRender = true;
     }
@@ -168,7 +172,7 @@ namespace Luma
         const FMatrix4f projection = scale(orthoTopLeft<float>(width, height, 1.0f, -1.0, 1.0f), {1.0f, -1.0f, 1.0f});
         const FMatrix4f mvp = projection * m_LocalToWorldMatrix;
         cmdBuffer->beginDebugGroup("FRenderer2D", FColor::Orange);
-        cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, mvp.valuePtr(), 0, sizeof(FMatrix4f));
+        cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
         cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::Uint32);
         cmdBuffer->bindGraphicsPipeline(m_Pipeline);
@@ -243,101 +247,66 @@ namespace Luma
         drawEllipse(position, {radius, radius}, 0.0f, color);
     }
 
-    /*void FRenderer2D::drawText(const StringView text, const FVector2f& position, const float fontSize, const FColor& color)
+    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float fontSize, const FColor& color)
     {
         const TextParams params
         {
-            .alignment = TextAlignment::Left,
-            .style = TextStyleBits::None,
+            .alignment = ETextAlignment::Left,
+            .style = ETextStyleBits::Regular,
             .characterSpacing = 0.0f,
             .lineSpacing = 0.0f,
             .fontSize = fontSize
         };
 
         drawText(text, position, 0.0f, color, params);
-    }*/
+    }
 
-    /*void FRenderer2D::drawText(const StringView text, const FVector2f& position, const float rotation, const FColor& color, TextParams params)
+    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float rotation, const FColor& color, TextParams params)
     {
-        using namespace msdf_atlas;
-
         if (!m_Font) return;
-        if (!m_Font->GetAtlasTexture()) return;
-        WeakRef<ITexture> atlasTexture = m_Font->GetAtlasTexture();
+        WeakRef<ITexture> atlasTexture = m_Font->getAtlasTexture();
+        if (!atlasTexture) return;
 
-        const uint32_t textureId = GetOrAddTexture(atlasTexture);
-        const FontGeometry& fontGeometry = m_Font->GetFontGeometry();
-        const auto& metrics = fontGeometry.getMetrics();
+        const uint32_t textureId = getOrAddTexture(atlasTexture);
 
-        float posX = 0.0f, posY = 0.0f;
-        const WideString wideText = StringConvertToWide(text);
-        const float textWidth = m_Font->CalculateTextWidth<wchar_t>(wideText, params.characterSpacing);
-        const float fsScale = 1.0f / (metrics.ascenderY - metrics.descenderY);
-        switch (params.alignment)
-        {
-        case TextAlignment::Left:
-            posX = 0.0f;
-            posY = fsScale * metrics.ascenderY;
-            break;
-        case TextAlignment::Center:
-            posX = -0.5f * textWidth;
-            posY = fsScale * metrics.ascenderY;
-            break;
-        case TextAlignment::Right:
-            posX = textWidth;
-            posY = fsScale * metrics.ascenderY;
-            break;
-        }
+        const FFontMetrics metrics = m_Font->getMetrics();
+        const double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+
+        double posX = 0.0;
+        double posY = fsScale * metrics.ascenderY;
 
         FMatrix3f transform = FMatrix3f::Identity;
-        transform.Scale(params.fontSize);
-        transform.Rotate(Vector3::Forward, rotation);
-        transform.Translate(position);
+        transform = scale(transform, params.fontSize);
+        transform = rotate(transform, {FVector3f::Forward, rotation});
+        transform = translate(transform, position);
 
-        for (size_t index = 0; index < wideText.Count(); index++)
+        for (size_t index = 0; index < text.count(); index++)
         {
-            const auto character = wideText[index];
-            const GlyphGeometry* glyph = fontGeometry.getGlyph(character) ? fontGeometry.getGlyph(character)
-            : fontGeometry.getGlyph('?') ? fontGeometry.getGlyph('?') : nullptr;
-            if (!glyph) continue;
+            const auto character = m_Font->hasGlyph(text[index]) ? text[index] : '?';
+
+            if (!m_Font->hasGlyph(character))
+                continue;
 
             if (character == L'\r')
                 continue;
 
             if (character == L'\t')
             {
-                posX += 4.0f * fontGeometry.getGlyph(' ')->getAdvance() * params.characterSpacing;
+                posX += 4.0 * m_Font->getAdvance(' ') * params.characterSpacing;
                 continue;
             }
 
             if (character == L'\n')
             {
-                switch (params.alignment)
-                {
-                case ETextAlignment::Left:
-                    posX = 0.0f;
-                    break;
-                case ETextAlignment::Center:
-                    posX = -0.5f * textWidth;
-                    break;
-                case ETextAlignment::Right:
-                    posX = textWidth;
-                    break;
-                }
-
                 posY += fsScale * metrics.lineHeight + params.lineSpacing;
                 continue;
             }
 
             double tcl, tcb, tcr, tct;
-            glyph->getQuadAtlasBounds(tcl, tcb, tcr, tct);
-            tcl /= atlasTexture->getWidth();
-            tcr /= atlasTexture->getWidth();
-            tcb /= atlasTexture->getHeight();
-            tct /= atlasTexture->getHeight();
+            m_Font->getAtlasTextureCoordinates(character, tcl, tcr, tct, tcb);
 
             double pl, pb, pr, pt;
-            glyph->getQuadPlaneBounds(pl, pb, pr, pt);
+            m_Font->getPlaneBounds(character, pl, pr, pt, pb);
 
             const uint32_t lastVertexCount = QuadVertices.count();
 
@@ -357,15 +326,14 @@ namespace Luma
             };
             QuadIndices.addRange(quadIndices);
 
-            if (index != wideText.count() - 1)
+            if (index != text.count() - 1)
             {
-                const auto nextCharacter = wideText[index + 1];
-                double advance = 0.0;
-                fontGeometry.getAdvance(advance, character, nextCharacter);
-                posX += fsScale * advance + params.characterSpacing;
+                const auto nextCharacter = text[index + 1];
+                const double advance = m_Font->getAdvance(character, nextCharacter);
+                posX += fsScale * (advance + params.characterSpacing);
             }
         }
-    }*/
+    }
 
     void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const FColor& color)
     {
@@ -400,10 +368,10 @@ namespace Luma
         QuadIndices.addRange(quadIndices);
     }
 
-    /*void FRenderer2D::SetFont(Ref<Font> font)
+    void FRenderer2D::setFont(Ref<FFont> font)
     {
         m_Font = font;
-    }*/
+    }
 
     void FRenderer2D::setLocalToWorldMatrix(const FMatrix4f& localToWorld)
     {

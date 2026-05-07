@@ -1,4 +1,3 @@
-#pragma once
 #include "Luma/Runtime/Component.h"
 #include "Luma/Runtime/Entity.h"
 #include "Luma/Components/TransformComponent.h"
