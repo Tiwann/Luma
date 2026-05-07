@@ -64,7 +64,7 @@ namespace Luma
 
         FShaderDesc shaderDesc;
         shaderDesc.moduleName = "Renderer2D";
-        shaderDesc.stageFlags = TFlags(EShaderStageBits::Vertex) | EShaderStageBits::Fragment;
+        shaderDesc.stageFlags = EShaderStageBits::Vertex | EShaderStageBits::Fragment;
         shaderDesc.filepath = FPath::getEngineShaderPath("Renderer2D.slang");
         m_Shader = m_RenderDevice->createShader(shaderDesc);
         if (!m_Shader) return false;
