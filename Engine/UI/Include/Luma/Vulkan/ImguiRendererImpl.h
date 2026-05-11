@@ -20,7 +20,7 @@ namespace Luma::Vulkan
         void beginFrame() override;
         void endFrame() override;
         void render(ICommandBuffer* cmdBuffer) override;
-        void drawTexture(ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) override;
+        void drawTexture(const ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) override;
 
         uint64_t addTexture(const ITextureView* texture);
         uint64_t getOrAddTexture(const ITextureView* texture);

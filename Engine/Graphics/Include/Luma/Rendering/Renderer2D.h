@@ -16,6 +16,7 @@
 #include "Luma/Rendering/Shader.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/BindingSet.h"
+#include "Luma/Rendering/GraphicsPipeline.h"
 
 namespace Luma
 {

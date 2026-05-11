@@ -3,9 +3,6 @@
 #include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
-#include "Luma/Containers/String.h"
-#include "Luma/Memory/Ref.h"
-
 namespace Luma
 {
     struct FAudioDeviceDesc
@@ -37,8 +34,7 @@ namespace Luma
         uint32_t getNumListeners() const;
         uint32_t getNumChannels() const;
         uint32_t getSampleRate() const;
-
-
+    
     private:
         struct Impl;
         Impl* m_Pimpl = nullptr;

@@ -171,7 +171,7 @@ namespace Luma
 
         const FMatrix4f projection = scale(orthoTopLeft<float>(width, height, 1.0f, -1.0, 1.0f), {1.0f, -1.0f, 1.0f});
         const FMatrix4f mvp = projection * m_LocalToWorldMatrix;
-        cmdBuffer->beginDebugGroup("FRenderer2D", FColor::Orange);
+        cmdBuffer->beginDebugGroup("Renderer2D", FColor::Cyan);
         cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
         cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::Uint32);
@@ -253,8 +253,8 @@ namespace Luma
         {
             .alignment = ETextAlignment::Left,
             .style = ETextStyleBits::Regular,
-            .characterSpacing = 0.0f,
-            .lineSpacing = 0.0f,
+            .characterSpacing = 1.0f,
+            .lineSpacing = 1.0f,
             .fontSize = fontSize
         };
 
@@ -270,13 +270,12 @@ namespace Luma
         const uint32_t textureId = getOrAddTexture(atlasTexture);
 
         const FFontMetrics metrics = m_Font->getMetrics();
-        const double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+        const double fsScale = params.fontSize / (metrics.ascenderY - metrics.descenderY);
 
         double posX = 0.0;
         double posY = fsScale * metrics.ascenderY;
 
         FMatrix3f transform = FMatrix3f::Identity;
-        transform = scale(transform, params.fontSize);
         transform = rotate(transform, {FVector3f::Forward, rotation});
         transform = translate(transform, position);
 
@@ -298,7 +297,7 @@ namespace Luma
 
             if (character == L'\n')
             {
-                posY += fsScale * metrics.lineHeight + params.lineSpacing;
+                posY += fsScale * metrics.lineHeight * params.lineSpacing;
                 continue;
             }
 
@@ -330,7 +329,7 @@ namespace Luma
             {
                 const auto nextCharacter = text[index + 1];
                 const double advance = m_Font->getAdvance(character, nextCharacter);
-                posX += fsScale * (advance + params.characterSpacing);
+                posX += fsScale * advance * params.characterSpacing;
             }
         }
     }

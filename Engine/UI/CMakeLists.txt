@@ -1,6 +1,7 @@
 ﻿
 set(LUMA_UI_SRC
     Source/Rendering/ImGuiRenderer.cpp
+    Source/UI/ImGui.cpp
 )
 
 set(LUMA_UI_VULKAN_SRC

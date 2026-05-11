@@ -31,7 +31,7 @@ namespace Luma
         virtual void endFrame() = 0;
         virtual void render(ICommandBuffer* cmdBuffer) = 0;
 
-        virtual void drawTexture(ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) = 0;
+        virtual void drawTexture(const ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) = 0;
 
         ImGuiContext* getContext() const { return m_Context; }
     protected:

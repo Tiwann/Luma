@@ -177,6 +177,7 @@ namespace Luma
 
         WeakRef(decltype(nullptr)) : m_Pointer(nullptr) {}
         WeakRef(const Ref<T>& ref) : m_Pointer(ref.m_Pointer) {}
+        WeakRef(Ref<T>&& ref) : m_Pointer(ref.m_Pointer) {}
         WeakRef(const WeakRef&) = default;
         WeakRef(WeakRef&&) = default;
         WeakRef& operator=(const WeakRef&) = default;

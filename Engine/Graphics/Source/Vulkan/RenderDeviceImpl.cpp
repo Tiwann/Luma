@@ -421,9 +421,12 @@ namespace Luma::Vulkan
 
 
         m_ImmediateExecutor.initialize({this, &m_RenderQueue});
-        m_Window = deviceDesc.window;
         if (SLANG_FAILED(slang::createGlobalSession(&m_SlangSession)))
             return false;
+
+        m_Window = deviceDesc.window;
+        m_Window->resizedEvent.bind([this](uint32_t, uint32_t) { m_Swapchain.invalidate(); });
+
         s_DeviceCount++;
         return true;
     }

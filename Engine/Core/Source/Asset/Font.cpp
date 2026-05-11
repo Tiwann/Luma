@@ -98,6 +98,74 @@ namespace Luma
         glyph->getQuadPlaneBounds(left, bottom, right, top);
     }
 
+    double FFont::getTextHeight(FStringView text, float fontSize, float lineSpacing)
+    {
+        const FFontMetrics metrics = getMetrics();
+        const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
+
+        double posY = fsScale * metrics.ascenderY;
+
+        for (size_t index = 0; index < text.count(); index++)
+        {
+            const auto character = hasGlyph(text[index]) ? text[index] : '?';
+
+            if (!hasGlyph(character))
+                continue;
+
+            if (character == L'\r')
+                continue;
+
+            if (character == L'\t')
+                continue;
+
+            if (character == L'\n')
+            {
+                posY += fsScale * metrics.lineHeight + lineSpacing;
+                continue;
+            }
+        }
+
+        return posY;
+    }
+
+    double FFont::getTextWidth(FStringView text, float fontSize, float characterSpacing)
+    {
+        const FFontMetrics metrics = getMetrics();
+        const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
+
+        double posX = 0.0;
+
+        for (size_t index = 0; index < text.count(); index++)
+        {
+            const auto character = hasGlyph(text[index]) ? text[index] : '?';
+
+            if (!hasGlyph(character))
+                continue;
+
+            if (character == L'\r')
+                continue;
+
+            if (character == L'\t')
+            {
+                posX += 4.0 * getAdvance(' ') * characterSpacing;
+                continue;
+            }
+
+            if (character == L'\n')
+                continue;
+
+            if (index != text.count() - 1)
+            {
+                const auto nextCharacter = text[index + 1];
+                const double advance = getAdvance(character, nextCharacter);
+                posX += fsScale * advance * characterSpacing;
+            }
+        }
+
+        return posX;
+    }
+
+
     bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device)
     {
         msdfgen::FreetypeHandle* freetype = msdfgen::initializeFreetype();
@@ -188,6 +256,7 @@ namespace Luma
                 m_AtlasTexture = device->createTexture(textureDesc);
                 if (!TextureUtils::uploadTextureData(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE * 4))
                     return false;
+                break;
             }
         default: return false;
         }
@@ -204,7 +273,7 @@ namespace Luma
     void FFont::destroy()
     {
         m_AtlasTexture = nullptr;
-        msdfgen::destroyFont(m_PrivateData->handle);
+        if (m_PrivateData->handle) msdfgen::destroyFont(m_PrivateData->handle);
         m_PrivateData->handle = nullptr;
     }
 }

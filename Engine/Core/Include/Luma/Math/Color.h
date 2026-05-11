@@ -51,33 +51,33 @@ namespace Luma
     };
     
     template<FloatType F>
-    const TColor<F> TColor<F>::Red        { 0xFF0000FF };
+    constexpr TColor<F> TColor<F>::Red        { 0xFF0000FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Green      { 0x00FF00FF };
+    constexpr TColor<F> TColor<F>::Green      { 0x00FF00FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Blue       { 0x0000FFFF };
+    constexpr TColor<F> TColor<F>::Blue       { 0x0000FFFF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Magenta    { 0xFF00FFFF };
+    constexpr TColor<F> TColor<F>::Magenta    { 0xFF00FFFF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Cyan       { 0x00FFFFFF };
+    constexpr TColor<F> TColor<F>::Cyan       { 0x00FFFFFF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Yellow     { 0xFFFF00FF };
+    constexpr TColor<F> TColor<F>::Yellow     { 0xFFFF00FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Black      { 0x000000FF };
+    constexpr TColor<F> TColor<F>::Black      { 0x000000FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::White      { 0xFFFFFFFF };
+    constexpr TColor<F> TColor<F>::White      { 0xFFFFFFFF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Orange     { 0xFF8000FF };
+    constexpr TColor<F> TColor<F>::Orange     { 0xFF8000FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Pink       { 0xFFC0CBFF };
+    constexpr TColor<F> TColor<F>::Pink       { 0xFFC0CBFF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Brown      { 0x00000000 };
+    constexpr TColor<F> TColor<F>::Brown      { 0x00000000 };
     template<FloatType F>
-    const TColor<F> TColor<F>::Purple     { 0x800080FF };
+    constexpr TColor<F> TColor<F>::Purple     { 0x800080FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Turquoise  { 0x40E0D0FF };
+    constexpr TColor<F> TColor<F>::Turquoise  { 0x40E0D0FF };
     template<FloatType F>
-    const TColor<F> TColor<F>::Grey       { 0x808080FF };
+    constexpr TColor<F> TColor<F>::Grey       { 0x808080FF };
 
     using FColor = TColor<float>;
 }

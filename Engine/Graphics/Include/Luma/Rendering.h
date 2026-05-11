@@ -7,6 +7,7 @@
 #include <Luma/Rendering/Buffer.h>
 #include <Luma/Rendering/Queue.h>
 #include <Luma/Rendering/Texture.h>
+#include <Luma/Rendering/TextureView.h>
 #include <Luma/Rendering/Sampler.h>
 #include <Luma/Rendering/Camera.h>
 #include <Luma/Rendering/Fence.h>

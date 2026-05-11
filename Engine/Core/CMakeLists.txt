@@ -36,7 +36,7 @@ set(LUMA_CORE_SRC
         Source/Runtime/Path.cpp
         Source/Runtime/DialogFilters.cpp
         Source/Containers/StringFormat.cpp
-        ##Source/Runtime/Application.cpp
+        Source/Runtime/Application.cpp
         Source/Memory/Memory.cpp
         Source/Memory/Allocator.cpp
         Source/Runtime/Window.cpp
@@ -61,7 +61,7 @@ set(LUMA_CORE_WINDOWS_SRC
 
 add_library(luma-core ${LUMA_CORE_SRC})
 add_library(luma::core ALIAS luma-core)
-target_link_libraries(luma-core PUBLIC luma-natvis msdf-atlas-gen::msdf-atlas-gen luma::graphics)
+target_link_libraries(luma-core PUBLIC luma-natvis msdf-atlas-gen::msdf-atlas-gen luma::graphics luma::ui luma::audio)
 target_include_directories(luma-core PRIVATE Source ../Graphics/Include PUBLIC Include External)
 target_compile_definitions(luma-core PRIVATE LUMA_CORE PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)

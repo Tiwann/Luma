@@ -30,6 +30,42 @@ namespace Luma
             window->resizedEvent(event->update.w, event->update.h);
         });
 
+        RGFW_setEventCallback(RGFW_windowMoved, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->update);
+            window->movedEvent(event->update.x, event->update.y);
+        });
+
+        RGFW_setEventCallback(RGFW_windowFocusIn, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->focus);
+            window->focusedEvent(true);
+        });
+
+        RGFW_setEventCallback(RGFW_windowFocusOut, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->focus);
+            window->focusedEvent(false);
+        });
+
+        RGFW_setEventCallback(RGFW_windowClose, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->common);
+            window->closedEvent();
+        });
+
+        RGFW_setEventCallback(RGFW_windowMaximized, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->common);
+            window->maximizedEvent();
+        });
+
+        RGFW_setEventCallback(RGFW_windowMinimized, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->common);
+            window->minimizedEvent();
+        });
+
         if (!m_Handle) return false;
         RGFW_window_show(m_Handle);
         return true;
@@ -63,7 +99,7 @@ namespace Luma
 
     FVector2u FDesktopWindow::getPosition() const
     {
-        FVector2i result;
+        FVector2<int32_t> result;
         RGFW_window_getPosition(m_Handle, &result.x, &result.y);
         return result.as<uint32_t>();
     }
@@ -113,3 +149,5 @@ namespace Luma
         RGFW_window_setName(m_Handle, *title);
     }
 }
+
+#undef GET_WINDOW

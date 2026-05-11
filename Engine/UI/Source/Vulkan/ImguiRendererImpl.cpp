@@ -110,7 +110,7 @@ namespace Luma::Vulkan
         ImGui_ImplVulkan_RenderDrawData(drawData, cmdBufferImpl->getHandle());
     }
 
-    void FImguiRendererImpl::drawTexture(ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1)
+    void FImguiRendererImpl::drawTexture(const ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1)
     {
         const ImTextureID textureId = getOrAddTexture(textureView);
         ImGui::Image(textureId, ImVec2(textureView->getWidth(), textureView->getHeight()), {uv0.x, uv0.y}, {uv1.x, uv1.y});

@@ -5,6 +5,7 @@ set(LUMA_AUDIO_SRC
 "Source/AudioDevice.cpp")
 
 add_library(luma-audio ${LUMA_AUDIO_SRC})
+add_library(luma::audio ALIAS luma-audio)
 target_link_libraries(luma-audio PRIVATE luma-core)
 target_include_directories(luma-audio PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-audio PRIVATE LUMA_AUDIO)
