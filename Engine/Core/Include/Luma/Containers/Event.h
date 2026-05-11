@@ -117,7 +117,4 @@ namespace Luma
         TArray<FEntry> m_Entries;
         uint64_t m_NextHandle{0};
     };
-
-    template <typename... Args>
-    using TAction = TEvent<void(Args...)>;
 }

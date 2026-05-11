@@ -1,6 +1,6 @@
-﻿#include "ComputePipelineImpl.h"
-#include "ShaderImpl.h"
-#include "RenderDeviceImpl.h"
+﻿#include "Luma/Vulkan/ComputePipelineImpl.h"
+#include "Luma/Vulkan/ShaderImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
 #include <Volk/volk.h>
 
 

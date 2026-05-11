@@ -2,17 +2,68 @@
 #include "Luma/Math/Vector2.h"
 #include <rgfw/rgfw.h>
 
+#define GET_WINDOW(event) static_cast<FDesktopWindow*>(RGFW_window_getUserPtr(event.win))
+
 namespace Luma
 {
+    static RGFW_windowFlags getFlags(const FWindowCreateFlags flags)
+    {
+        RGFW_windowFlags result = RGFW_windowNoResize | RGFW_windowAllowDND;
+        if (flags & EWindowCreateBits::Centered) result |= RGFW_windowCenter;
+        if (flags & EWindowCreateBits::FullScreen) result |= RGFW_windowFullscreen;
+        if (flags & EWindowCreateBits::Resizable) result &= ~RGFW_windowNoResize;
+        if (flags & EWindowCreateBits::NoDecoration) result |= RGFW_windowNoBorder;
+        if (flags & EWindowCreateBits::Transparent) result |= RGFW_windowTransparent;
+        if (flags & EWindowCreateBits::NoDragAndDrop) result &= ~RGFW_windowAllowDND;
+        return result;
+    }
+
     bool FDesktopWindow::initialize(const FWindowDesc& windowDesc)
     {
         if (m_Handle) RGFW_window_close(m_Handle);
-        m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, RGFW_windowCenter);
+        m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, getFlags(windowDesc.flags));
         RGFW_window_setUserPtr(m_Handle, this);
+
         RGFW_setEventCallback(RGFW_windowResized, [](const RGFW_event* event)
         {
-            const FDesktopWindow* ptr = static_cast<FDesktopWindow*>(RGFW_window_getUserPtr(event->update.win));
-            ptr->resizedEvent(event->update.w, event->update.h);
+            const auto* window = GET_WINDOW(event->update);
+            window->resizedEvent(event->update.w, event->update.h);
+        });
+
+        RGFW_setEventCallback(RGFW_windowMoved, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->update);
+            window->movedEvent(event->update.x, event->update.y);
+        });
+
+        RGFW_setEventCallback(RGFW_windowFocusIn, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->focus);
+            window->focusedEvent(true);
+        });
+
+        RGFW_setEventCallback(RGFW_windowFocusOut, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->focus);
+            window->focusedEvent(false);
+        });
+
+        RGFW_setEventCallback(RGFW_windowClose, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->common);
+            window->closedEvent();
+        });
+
+        RGFW_setEventCallback(RGFW_windowMaximized, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->common);
+            window->maximizedEvent();
+        });
+
+        RGFW_setEventCallback(RGFW_windowMinimized, [](const RGFW_event* event)
+        {
+            const auto* window = GET_WINDOW(event->common);
+            window->minimizedEvent();
         });
 
         if (!m_Handle) return false;
@@ -48,7 +99,7 @@ namespace Luma
 
     FVector2u FDesktopWindow::getPosition() const
     {
-        FVector2i result;
+        FVector2<int32_t> result;
         RGFW_window_getPosition(m_Handle, &result.x, &result.y);
         return result.as<uint32_t>();
     }
@@ -98,3 +149,5 @@ namespace Luma
         RGFW_window_setName(m_Handle, *title);
     }
 }
+
+#undef GET_WINDOW

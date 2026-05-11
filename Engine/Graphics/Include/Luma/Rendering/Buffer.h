@@ -11,7 +11,7 @@ namespace Luma
 
     struct FBufferDesc
     {
-        IRenderDevice* device;
+        IRenderDevice* device = nullptr;
         EBufferUsage usage = EBufferUsage::None;
         uint64_t size = 0;
         bool alwaysMapped = false;

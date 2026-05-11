@@ -1,8 +1,8 @@
-﻿#include "QueueImpl.h"
-#include "RenderDeviceImpl.h"
-#include "SemaphoreImpl.h"
-#include "CommandBufferImpl.h"
-#include "VulkanUtils.h"
+﻿#include "Luma/Vulkan/QueueImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/SemaphoreImpl.h"
+#include "Luma/Vulkan/CommandBufferImpl.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 #include <Volk/volk.h>
 
 

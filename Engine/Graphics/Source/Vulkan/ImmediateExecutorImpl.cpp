@@ -1,5 +1,5 @@
-#include "ImmediateExecutorImpl.h"
-#include "QueueImpl.h"
+#include "Luma/Vulkan/ImmediateExecutorImpl.h"
+#include "Luma/Vulkan/QueueImpl.h"
 
 namespace Luma::Vulkan
 {

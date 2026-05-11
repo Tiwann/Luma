@@ -42,7 +42,9 @@ namespace Luma
         void setCompileTarget(EShaderCompileTarget target);
         void setLanguage(EShadingLanguage language);
         void addDefine(const FString& key, const FString& value);
+        void addDefines(const TArray<FShaderCompileDefine>& defines);
         void addIncludeDirectory(const FString& includeDirectory);
+        void addIncludeDirectories(const TArray<FString>& includeDirectories);
         void addEntryPoint(const FString& name, EShaderStageBits stage);
 
         EShadingLanguage getLanguage() const;

@@ -7,6 +7,6 @@ namespace Luma
     {
         uint64_t offset = 0;
         uint64_t size = 0;
-        EShaderStageBits stage = EShaderStageBits::None;
+        FShaderStageFlags stageFlags = EShaderStageBits::None;
     };
 }

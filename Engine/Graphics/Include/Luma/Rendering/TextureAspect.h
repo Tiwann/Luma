@@ -11,5 +11,5 @@ namespace Luma
         Stencil = BIT(2),
     };
 
-    using FTextureAspectFlags = Flags<ETextureAspectBits>;
+    using FTextureAspectFlags = TFlags<ETextureAspectBits>;
 }

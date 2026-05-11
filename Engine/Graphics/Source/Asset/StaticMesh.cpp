@@ -11,6 +11,7 @@
 #include <assimp/GltfMaterial.h>
 
 #include "Luma/Rendering/BufferUtils.h"
+#include "Luma/Rendering/TextureUtils.h"
 
 
 namespace Luma
@@ -57,6 +58,12 @@ namespace Luma
         return result;
     }
 
+    void FStaticMesh::destroy()
+    {
+        m_VertexBuffer->destroy();
+        m_IndexBuffer->destroy();
+    }
+
     bool FStaticMesh::loadFromFile(FStringView filepath, IRenderDevice* device)
     {
         if (filepath.isEmpty()) return false;
@@ -101,13 +108,70 @@ namespace Luma
             indexOffset += meshPart.indexSize;
         }
 
-
         m_VertexBuffer = BufferUtils::createVertexBuffer(device, allVertices.data(), allVertices.count());
         if (!m_VertexBuffer) return false;
 
         m_IndexBuffer = BufferUtils::createIndexBuffer(device, allVertices.data(), allVertices.count());
         if (!m_IndexBuffer) return false;
 
+#if 0
+        const auto getTexture = [loadedScene, device](const aiMaterial* material, aiTextureType textureType) -> Ref<ITexture>
+        {
+            aiString path;
+            if (material->GetTexture(textureType, 0, &path) != aiReturn_SUCCESS) return nullptr;
+
+            if (const aiTexture* loadedTexture = loadedScene->GetEmbeddedTexture(path.C_Str()))
+            {
+                if (loadedTexture->mHeight == 0)
+                {
+                    const uint8_t* data = reinterpret_cast<uint8_t*>(loadedTexture->pcData);
+                    const uint64_t size = loadedTexture->mWidth;
+                    Ref<ITexture> texture = TextureUtils::loadTexture(device, data, size);
+                    return texture;
+                }
+                else
+                {
+                    const uint8_t* data = reinterpret_cast<uint8_t*>(loadedTexture->pcData);
+                    const uint32_t width = loadedTexture->mWidth;
+                    const uint32_t height = loadedTexture->mHeight;
+                    const FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_UNORM);
+                    Ref<ITexture> texture = device->createTexture(textureDesc);
+                    if (!texture) return nullptr;
+
+                    if (!TextureUtils::uploadTextureData(device, texture, 0, 0, data, width * height * 4))
+                    {
+                        texture->destroy();
+                        return nullptr;
+                    }
+                    return texture;
+                }
+            }
+
+            return nullptr;
+        };
+
+        TBufferView<aiMaterial*> materials(loadedScene->mMaterials, loadedScene->mNumMaterials);
+        for (auto& [index, slot] : m_MaterialSlots)
+        {
+            const aiMaterial* loadedMaterial = materials[index];
+
+            FMaterialTextures materialTextures;
+            materialTextures.baseColor = getTexture(loadedMaterial, aiTextureType_BASE_COLOR);
+            materialTextures.metallicRoughnessAO = getTexture(loadedMaterial, aiTextureType_GLTF_METALLIC_ROUGHNESS);
+            materialTextures.emission = getTexture(loadedMaterial, aiTextureType_EMISSION_COLOR);
+            materialTextures.normal = getTexture(loadedMaterial, aiTextureType_NORMALS);
+            m_Textures[index] = materialTextures;
+
+            FMaterialDesc materialDesc;
+            materialDesc.shader = shader;
+            slot.material = device->createMaterial(materialDesc);
+            slot.material->setTexture("albedoTex", materialTextures.baseColor, EBindingType::SampledTexture);
+            slot.material->setTexture("metallicRoughnessTex", materialTextures.metallicRoughnessAO, EBindingType::SampledTexture);
+            slot.material->setTexture("normalTex", materialTextures.normal, EBindingType::SampledTexture);
+            slot.material->setTexture("emissionTex", materialTextures.emission, EBindingType::SampledTexture);
+        }
+
+#endif
         return true;
     }
 

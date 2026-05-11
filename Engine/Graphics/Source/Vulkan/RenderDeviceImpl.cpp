@@ -1,13 +1,13 @@
-﻿#include "RenderDeviceImpl.h"
-#include "CommandBufferImpl.h"
-#include "FenceImpl.h"
-#include "SamplerImpl.h"
-#include "BufferImpl.h"
-#include "TextureImpl.h"
-#include "TextureViewImpl.h"
-#include "SemaphoreImpl.h"
-#include "ShaderImpl.h"
-#include "ComputePipelineImpl.h"
+﻿#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/CommandBufferImpl.h"
+#include "Luma/Vulkan/FenceImpl.h"
+#include "Luma/Vulkan/SamplerImpl.h"
+#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/TextureImpl.h"
+#include "Luma/Vulkan/TextureViewImpl.h"
+#include "Luma/Vulkan/SemaphoreImpl.h"
+#include "Luma/Vulkan/ShaderImpl.h"
+#include "Luma/Vulkan/ComputePipelineImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Containers/Array.h"
@@ -19,7 +19,7 @@
 #include <slang/slang.h>
 #include <vma/vk_mem_alloc.h>
 
-#include "GraphicsPipelineImpl.h"
+#include "Luma/Vulkan/GraphicsPipelineImpl.h"
 #include "Luma/Rendering/GraphicsPipeline.h"
 
 
@@ -94,8 +94,8 @@ namespace Luma::Vulkan
             TArray<const char*> extensions;
             extensions.add(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
 
-            uint32_t rgfwExtensionCount = 0;
-            const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(reinterpret_cast<size_t*>(&rgfwExtensionCount));
+            size_t rgfwExtensionCount = 0;
+            const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(&rgfwExtensionCount);
             extensions.addRange(rgfwExtensions, rgfwExtensionCount);
             extensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
@@ -401,13 +401,32 @@ namespace Luma::Vulkan
             m_CmdBuffers[imageIndex].setName(strfmt("Command buffer (frame {})", imageIndex));
         }
 
-        //TODO: DESCRIPTOR POOLS
+        VkDescriptorPoolSize poolSizes[]
+        {
+            {VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 32},
+            {VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1024},
+            {VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 64},
+            {VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 64},
+            {VK_DESCRIPTOR_TYPE_SAMPLER, 32},
+        };
+
+        VkDescriptorPoolCreateInfo poolCreateInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO};
+        poolCreateInfo.pPoolSizes = poolSizes;
+        poolCreateInfo.poolSizeCount = std::size(poolSizes);
+        poolCreateInfo.maxSets = 1024;
+        poolCreateInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+        vkDestroyDescriptorPool(m_Handle, m_DescriptorPool, nullptr);
+        if (VK_FAILED(vkCreateDescriptorPool(m_Handle, &poolCreateInfo, nullptr, &m_DescriptorPool)))
+            return false;
 
 
         m_ImmediateExecutor.initialize({this, &m_RenderQueue});
-        m_Window = deviceDesc.window;
         if (SLANG_FAILED(slang::createGlobalSession(&m_SlangSession)))
             return false;
+
+        m_Window = deviceDesc.window;
+        m_Window->resizedEvent.bind([this](uint32_t, uint32_t) { m_Swapchain.invalidate(); });
+
         s_DeviceCount++;
         return true;
     }
@@ -415,6 +434,8 @@ namespace Luma::Vulkan
     void FRenderDeviceImpl::destroy()
     {
         waitIdle();
+
+        vkDestroyDescriptorPool(m_Handle, m_DescriptorPool, nullptr);
         // I know this shouldn't be there
         m_SlangSession->release();
         slang::shutdown();
@@ -431,7 +452,6 @@ namespace Luma::Vulkan
         vkDestroyCommandPool(m_Handle, m_CopyPool, nullptr);
         vkDestroyCommandPool(m_Handle, m_ComputePool, nullptr);
         vkDestroyCommandPool(m_Handle, m_RenderPool, nullptr);
-        //TODO: DESTROY COMMAND POOLS
 
         m_Swapchain.destroy();
         vmaDestroyAllocator(m_Allocator);
@@ -475,9 +495,8 @@ namespace Luma::Vulkan
         fence.reset();
 
 
-        FCommandBufferImpl& commandBuffer = m_CmdBuffers[m_CurrentFrameIndex];
+        FCommandBufferImpl& commandBuffer = m_CmdBuffers[m_SwapchainImageIndex];
         if (!commandBuffer.begin()) return false;
-
 
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
@@ -506,7 +525,7 @@ namespace Luma::Vulkan
 
     void FRenderDeviceImpl::endFrame()
     {
-        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_CurrentFrameIndex];
+        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_SwapchainImageIndex];
 
         VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
@@ -596,7 +615,6 @@ namespace Luma::Vulkan
         FBufferImpl* buffer = new FBufferImpl();
         if (!buffer->initialize(desc))
         {
-            buffer->destroy();
             delete buffer;
             return nullptr;
         }
@@ -610,7 +628,6 @@ namespace Luma::Vulkan
         FTextureImpl* texture = new FTextureImpl();
         if (!texture->initialize(desc))
         {
-            texture->destroy();
             delete texture;
             return nullptr;
         }
@@ -624,7 +641,6 @@ namespace Luma::Vulkan
         FTextureViewImpl* textureView = new FTextureViewImpl();
         if (!textureView->initialize(desc))
         {
-            textureView->destroy();
             delete textureView;
             return nullptr;
         }
@@ -638,7 +654,6 @@ namespace Luma::Vulkan
         FShaderImpl* shader = new FShaderImpl();
         if (!shader->initialize(desc))
         {
-            shader->destroy();
             delete shader;
             return nullptr;
         }
@@ -652,7 +667,6 @@ namespace Luma::Vulkan
         FCommandBufferImpl* cmdBuffer = new FCommandBufferImpl();
         if (!cmdBuffer->initialize(desc))
         {
-            cmdBuffer->destroy();
             delete cmdBuffer;
             return nullptr;
         }
@@ -666,18 +680,11 @@ namespace Luma::Vulkan
         FSamplerImpl* sampler = new FSamplerImpl();
         if (!sampler->initialize(desc))
         {
-            sampler->destroy();
             delete sampler;
             return nullptr;
         }
         return sampler;
     }
-
-    ISampler* FRenderDeviceImpl::getOrCreateSampler(const FSamplerDesc& samplerDesc)
-    {
-        return nullptr;
-    }
-
 
     IGraphicsPipeline* FRenderDeviceImpl::createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc)
     {
@@ -712,7 +719,6 @@ namespace Luma::Vulkan
         FFenceImpl* fence = new FFenceImpl();
         if (!fence->initialize(desc))
         {
-            fence->destroy();
             delete fence;
             return nullptr;
         }
@@ -726,7 +732,6 @@ namespace Luma::Vulkan
         FSemaphoreImpl* semaphore = new FSemaphoreImpl();
         if (!semaphore->initialize(desc))
         {
-            semaphore->destroy();
             delete semaphore;
             return nullptr;
         }

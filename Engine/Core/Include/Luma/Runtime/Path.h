@@ -36,7 +36,8 @@ namespace Luma
         static FStringView getEngineDir();
         static FString getEngineAssetsDir();
         static FString getEngineAssetPath(FStringView filepath);
-
+        static FString getEngineShadersDir();
+        static FString getEngineShaderPath(FStringView filepath);
 #ifdef LUMA_CLIENT
         static FStringView getExeDir()
         {
@@ -45,7 +46,7 @@ namespace Luma
 
         static FString getAssetPath(const FStringView filepath)
         {
-            return combine(FStringView(LUMA_APPLICATION_DIR), FStringView("Assets"), filepath);
+            return combine(LUMA_APPLICATION_DIR, "Assets", filepath);
         }
 #endif
 

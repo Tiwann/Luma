@@ -153,6 +153,9 @@ namespace Luma
             other.m_Pointer = m_Pointer;
             m_Pointer = otherPointer;
         }
+
+        template<typename... Args>
+        static Ref<T> create(Args&&... args) { return Ref(new T(std::forward<Args>(args)...)); }
     private:
         PointerType m_Pointer = nullptr;
 
@@ -174,11 +177,15 @@ namespace Luma
 
         WeakRef(decltype(nullptr)) : m_Pointer(nullptr) {}
         WeakRef(const Ref<T>& ref) : m_Pointer(ref.m_Pointer) {}
+        WeakRef(Ref<T>&& ref) : m_Pointer(ref.m_Pointer) {}
         WeakRef(const WeakRef&) = default;
         WeakRef(WeakRef&&) = default;
         WeakRef& operator=(const WeakRef&) = default;
         WeakRef& operator=(WeakRef&&) = default;
         ~WeakRef() = default;
+
+
+        WeakRef& operator=(PointerType ptr) { m_Pointer = ptr; return *this; }
 
         operator PointerType() { return m_Pointer; }
         operator ConstPointerType() const { return m_Pointer; }
@@ -192,6 +199,8 @@ namespace Luma
 
         PointerType get() { return m_Pointer; }
         ConstPointerType get() const { return m_Pointer; }
+
+        bool operator==(const WeakRef& other) const { return m_Pointer == other.m_Pointer; }
     private:
         PointerType m_Pointer = nullptr;
     };

@@ -8,6 +8,7 @@
 #include "BlendFunction.h"
 #include "CompareOperation.h"
 #include "Luma/Memory/RefCounted.h"
+#include "Luma/Runtime/Flags.h"
 
 
 namespace Luma
@@ -39,7 +40,7 @@ namespace Luma
     {
         bool colorBlendEnable = false;
         FBlendFunction blendFunction = FBlendFunction::alphaBlend();
-        FColorChannelFlags colorWriteMask = Flags(EColorChannelBits::Red) | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
+        FColorChannelFlags colorWriteMask = TFlags(EColorChannelBits::Red) | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
     };
 
     struct FDepthStencilState

@@ -3,6 +3,7 @@
 #include "ComponentMapping.h"
 #include "Luma/Runtime/Format.h"
 #include "Luma/Containers/StringView.h"
+#include "Luma/Math/Rect2.h"
 #include <cstdint>
 
 namespace Luma
@@ -41,6 +42,7 @@ namespace Luma
         uint32_t getDepth() const { return m_Depth; }
         uint32_t getBaseMipLevel() const { return m_BaseMipLevel; }
         uint32_t getMipCount() const { return m_MipCount; }
+        FRect2u getArea() const { return FRect2u(0, 0, m_Width, m_Height); }
     protected:
         const ITexture* m_Texture = nullptr;
         EFormat m_Format = EFormat::None;

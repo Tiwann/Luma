@@ -1,8 +1,10 @@
-#include "ShaderImpl.h"
-#include "RenderDeviceImpl.h"
-#include "BindingSetImpl.h"
+#include "Luma/Vulkan/ShaderImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/BindingSetImpl.h"
 #include "Luma/Rendering/ShaderCompileRequest.h"
 #include "Luma/Rendering/ShaderCompiler.h"
+#include "Luma/Runtime/Path.h"
+#include "Luma/Vulkan/Conversions.h"
 #include <Volk/volk.h>
 
 
@@ -21,6 +23,9 @@ namespace Luma::Vulkan
         request.setLanguage(EShadingLanguage::Slang);
         request.setCompileTarget(EShaderCompileTarget::SPIRV);
         request.setModuleInfo(shaderDesc.moduleName, shaderDesc.filepath);
+        request.addIncludeDirectory(FPath::combine(FPath::getEngineAssetsDir(), "Shaders/Include"));
+        request.addIncludeDirectories(shaderDesc.includePaths);
+        request.addDefines(shaderDesc.defines);
 
         if (shaderDesc.stageFlags & EShaderStageBits::Vertex)
             request.addEntryPoint("vert", EShaderStageBits::Vertex);
@@ -64,6 +69,7 @@ namespace Luma::Vulkan
                 FBindingSetLayoutDesc layoutDesc(setLayoutDesc);
                 layoutDesc.device = device;
 
+
                 FBindingSetLayoutImpl setLayout;
                 if (!setLayout.initialize(layoutDesc))
                     return false;
@@ -73,13 +79,24 @@ namespace Luma::Vulkan
             pushConstantsRanges.addRange(reflectionData.pushConstantRanges);
         }
 
-        const auto toVulkanSetLayout = [](const FBindingSetLayoutImpl& setLayout) { return setLayout.getHandle(); };
-        std::vector<VkDescriptorSetLayout> vulkanSetLayouts(m_SetLayouts.size());
-        std::ranges::transform(m_SetLayouts, std::back_inserter(vulkanSetLayouts), toVulkanSetLayout);
+        TArray<VkDescriptorSetLayout> vulkanSetLayouts;
+        for (const auto& setLayout : m_SetLayouts)
+            vulkanSetLayouts.add(setLayout.getHandle());
+
+        TArray<VkPushConstantRange> pcr = pushConstantsRanges.transform<VkPushConstantRange>([](const auto& range)
+        {
+            VkPushConstantRange result;
+            result.offset = range.offset;
+            result.size = range.size;
+            result.stageFlags = convert<VkShaderStageFlags>(range.stageFlags);
+            return result;
+        });
 
         VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO };
         pipelineLayoutCreateInfo.pSetLayouts = vulkanSetLayouts.data();
-        pipelineLayoutCreateInfo.setLayoutCount = vulkanSetLayouts.size();
+        pipelineLayoutCreateInfo.setLayoutCount = vulkanSetLayouts.count();
+        pipelineLayoutCreateInfo.pPushConstantRanges = pcr.data();
+        pipelineLayoutCreateInfo.pushConstantRangeCount = pcr.count();
         if (VK_FAILED(vkCreatePipelineLayout(device->getHandle(), &pipelineLayoutCreateInfo, nullptr, &m_PipelineLayout)))
             return false;
 

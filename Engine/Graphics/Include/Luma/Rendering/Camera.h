@@ -22,7 +22,7 @@ namespace Luma
         using Quat = TQuat<F>;
         using AxisAngle = TAxisAngle<F>;
 
-        explicit TCamera() = default;
+        TCamera() = default;
 
         const Matrix& getViewMatrix();
         const Matrix& getProjectionMatrix();
@@ -50,18 +50,17 @@ namespace Luma
         ECameraProjectionMode m_ProjectionMode = ECameraProjectionMode::Perspective;
         F m_FieldOfView = F(45.0);
         F m_Near = F(0.01);
-        F m_Far = F(10000.0);
-        F m_OrthoSize = F(1.0);
+        F m_Far = F(1000.0);
+        F m_OrthoSize = F(100.0);
 
         Vector m_Position = Vector::Zero;
         Quat m_Rotation = Quat::Identity;
 
-        TLazy<Matrix> m_ViewMatrix;
-        TLazy<Matrix> m_ProjectionMatrix;
-        TLazy<Matrix> m_ViewProjectionMatrix;
+        TLazy<Matrix> m_ViewMatrix{};
+        TLazy<Matrix> m_ProjectionMatrix{};
+        TLazy<Matrix> m_ViewProjectionMatrix{};
     };
 
-    using FCameraf = TCamera<float>;
-    using FCamerad = TCamera<double>;
+    using FCamera = TCamera<float>;
 }
 

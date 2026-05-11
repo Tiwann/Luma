@@ -4,24 +4,24 @@
 
 #define NOVA_DECLARE_CLASS(className) \
 public: \
-static inline constexpr const Luma::RTTI::Class* staticClass() \
+static inline constexpr const Luma::Class* staticClass() \
 { \
 return &m_StaticClass_Generated; \
 } \
 private: \
-static constexpr Luma::RTTI::Class m_StaticClass_Generated{#className, nullptr}; \
+static constexpr Luam::Class m_StaticClass_Generated{#className, nullptr}; \
 
 
 #define NOVA_DECLARE_CLASS_WITH_PARENT(className, parentClass) \
 public: \
-static inline constexpr const Luma::RTTI::Class* staticClass() \
+static inline constexpr const Luam::Class* staticClass() \
 { \
 return &m_StaticClass_Generated; \
 } \
 private: \
-static constexpr Luma::RTTI::Class m_StaticClass_Generated{#className, parentClass::staticClass()}; \
+static constexpr Luam::Class m_StaticClass_Generated{#className, parentClass::staticClass()}; \
 
-namespace Luma::RTTI
+namespace Luma
 {
     class LUMA_CORE_API FClass final
     {

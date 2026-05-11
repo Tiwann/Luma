@@ -15,6 +15,7 @@ namespace Luma
     public:
         TStringView() = default;
         TStringView(const StringType& string) : m_Data(string.data()), m_Count(string.count()) { }
+
         constexpr TStringView(ConstPointerType data) : m_Data(data), m_Count(strlen(data)){}
         constexpr TStringView(ConstPointerType data, SizeType count) : m_Data(data), m_Count(count){}
         constexpr TStringView(decltype(nullptr)) : m_Data(nullptr), m_Count(0){}
@@ -24,9 +25,14 @@ namespace Luma
         TStringView& operator=(const TStringView&) = default;
         TStringView& operator=(TStringView&&) noexcept = default;
 
-        bool operator==(const TStringView& Other) const
+        bool operator==(const TStringView& other) const
         {
-            return m_Count == Other.m_Count && ::memcpy(m_Data, Other.m_Data, m_Count * StringType::CharacterSize);
+            return m_Count == other.m_Count && memcmp(m_Data, other.m_Data, m_Count * StringType::CharacterSize) == 0;
+        }
+
+        bool operator==(ConstPointerType other) const
+        {
+            return m_Count == Luma::strlen(other) && memcmp(m_Data, other, m_Count * StringType::CharacterSize) == 0;
         }
 
         bool isValid() const { return m_Data && m_Count != 0; }

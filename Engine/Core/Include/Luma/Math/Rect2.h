@@ -24,7 +24,7 @@ namespace Luma
         constexpr T centerY() const { return y + height / (T)2; }
         constexpr TVector<T, 2> center() const { return TVector<T, 2>(centerX(), centerY()); }
 
-        constexpr bool contains(T x, T u) const
+        constexpr bool contains(T x, T y) const
         {
             return x >= left() && x <= right() &&
                 y >= top() && y <= bottom();

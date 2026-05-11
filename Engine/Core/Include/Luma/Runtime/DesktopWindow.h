@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Window.h"
 #include "Luma/Containers/String.h"
-#include "Luma/Containers/Event.h"
 #include "Luma/Core/Export.h"
 #include "Luma/Math/Vector.h"
 
@@ -18,6 +17,7 @@ namespace Luma
         bool initialize(const FWindowDesc& windowDesc) override;
         void destroy() override;
         void pollEvents() override;
+        bool shouldClose() const override;
         uint32_t getWidth() const override;
         uint32_t getHeight() const override;
         FVector2u getPosition() const;
@@ -26,14 +26,11 @@ namespace Luma
         bool isMaximized() const;
         bool isMinimized() const;
         void setFullscreen(bool fullscreen);
-        bool shouldClose() const;
 
         RGFW_window* getHandle() const;
 
         FString getTitle() const;
         void setTitle(const FString& title);
-
-        TAction<uint32_t, uint32_t> resizedEvent;
     private:
         RGFW_window* m_Handle = nullptr;
     };

@@ -34,11 +34,7 @@ namespace Luma::BufferUtils
         if (!vertexBuffer) return nullptr;
 
         Ref<ICommandBuffer> cmdBuffer = Ref(device->createCopyCommandBuffer());
-        if (!cmdBuffer)
-        {
-            vertexBuffer->destroy();
-            return nullptr;
-        }
+        LUMA_ASSERT(cmdBuffer, "Failed to create command buffer! Maybe pool is full ?");
 
         if (cmdBuffer->begin())
         {
@@ -46,14 +42,8 @@ namespace Luma::BufferUtils
             cmdBuffer->end();
 
             Ref<IFence> fence = Ref(device->createFence(FFenceDesc()));
-            if (!fence)
-            {
-                vertexBuffer->destroy();
-                return nullptr;
-            }
-
-            const IQueue* copyQueue = device->getCopyQueue();
-            // copyQueue->
+            IQueue* copyQueue = device->getCopyQueue();
+            copyQueue->executeCommandBuffer(cmdBuffer, fence);
             fence->wait(FENCE_WAIT_INFINITE);
             return vertexBuffer;
         }
@@ -74,11 +64,7 @@ namespace Luma::BufferUtils
         if (!indexBuffer) return nullptr;
 
         Ref<ICommandBuffer> cmdBuffer = Ref(device->createCopyCommandBuffer());
-        if (!cmdBuffer)
-        {
-            indexBuffer->destroy();
-            return nullptr;
-        }
+        LUMA_ASSERT(cmdBuffer, "Failed to create command buffer! Maybe pool is full ?");
 
         if (cmdBuffer->begin())
         {
@@ -86,14 +72,8 @@ namespace Luma::BufferUtils
             cmdBuffer->end();
 
             Ref<IFence> fence = Ref(device->createFence(FFenceDesc()));
-            if (!fence)
-            {
-                indexBuffer->destroy();
-                return nullptr;
-            }
-
-            const IQueue* copyQueue = device->getCopyQueue();
-            // copyQueue->
+            IQueue* copyQueue = device->getCopyQueue();
+            copyQueue->executeCommandBuffer(cmdBuffer, fence);
             fence->wait(FENCE_WAIT_INFINITE);
             return indexBuffer;
         }

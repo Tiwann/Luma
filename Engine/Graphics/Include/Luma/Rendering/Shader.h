@@ -2,6 +2,7 @@
 #include "ShaderStage.h"
 #include "Luma/Containers/String.h"
 #include "Luma/Memory/RefCounted.h"
+#include "Luma/Rendering/ShaderCompileDefine.h"
 
 namespace Luma
 {
@@ -14,6 +15,8 @@ namespace Luma
         FShaderStageFlags stageFlags = EShaderStageBits::None;
         FString moduleName = FString();
         FString filepath = FString();
+        TArray<FString> includePaths;
+        TArray<FShaderCompileDefine> defines;
     };
 
     struct IShader : IRefCounted<IShader>

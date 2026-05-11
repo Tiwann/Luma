@@ -16,5 +16,5 @@ namespace Luma
         Mesh = BIT(7),
     };
 
-    typedef Flags<EShaderStageBits> FShaderStageFlags;
+    typedef TFlags<EShaderStageBits> FShaderStageFlags;
 }

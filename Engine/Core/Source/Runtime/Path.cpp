@@ -26,6 +26,16 @@ namespace Luma
         return combine(getEngineAssetsDir(), filepath);
     }
 
+    FString FPath::getEngineShadersDir()
+    {
+        return combine(getEngineAssetsDir(), "Shaders/Source");
+    }
+
+    FString FPath::getEngineShaderPath(FStringView filepath)
+    {
+        return combine(getEngineShadersDir(), filepath);
+    }
+
     FStringView FPath::getFilename(const FStringView filepath)
     {
         const auto sep = filepath.findLast(Separator<char>);

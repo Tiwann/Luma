@@ -11,8 +11,8 @@ namespace Luma
         T angle;
     };
 
-    using FAxisAngle2f = TAxisAngle<float>;
-    using FAxisAngle2d = TAxisAngle<double>;
-    using FAxisAngle2u = TAxisAngle<uint32_t>;
-    using FAxisAngle2i = TAxisAngle<int32_t>;
+    using FAxisAnglef = TAxisAngle<float>;
+    using FAxisAngled = TAxisAngle<double>;
+    using FAxisAngleu = TAxisAngle<uint32_t>;
+    using FAxisAnglei = TAxisAngle<int32_t>;
 }

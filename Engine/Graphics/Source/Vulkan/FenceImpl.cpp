@@ -1,6 +1,6 @@
-#include "FenceImpl.h"
-#include "RenderDeviceImpl.h"
-#include "VulkanUtils.h"
+#include "Luma/Vulkan/FenceImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 #include <Volk/volk.h>
 
 

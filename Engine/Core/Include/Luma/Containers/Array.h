@@ -320,7 +320,7 @@ namespace Luma
             SizeType index = find(element);
             if(index == SizeType(-1)) return false;
 
-            std::move(m_Data + index + 1, m_Data + m_Count, m_Data + index);
+            std::move<PointerType, PointerType>(m_Data + index + 1, m_Data + m_Count, m_Data + index);
             m_Count--;
             return true;
         }

@@ -1,9 +1,11 @@
 #pragma once
+#include "Luma/Memory/RefCounted.h"
 
 namespace Luma
 {
-    struct IObject
+    struct IObject : IRefCounted<IObject>
     {
-        virtual ~IObject() = default;
+        ~IObject() override = default;
+        virtual void destroy(){}
     };
 }

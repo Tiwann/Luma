@@ -1,19 +1,19 @@
-#include "CommandBufferImpl.h"
-#include "RenderDeviceImpl.h"
-#include "BufferImpl.h"
-#include "ComputePipelineImpl.h"
-#include "GraphicsPipelineImpl.h"
-#include "Luma/Math/Functions.h"
 #include "Luma/Rendering/RenderPassDesc.h"
-
-#include "Conversions.h"
-#include "VulkanUtils.h"
-#include <Volk/volk.h>
-
-#include "BindingSetImpl.h"
-#include "ShaderImpl.h"
+#include "Luma/Math/Functions.h"
+#include "Luma/Vulkan/CommandBufferImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/ComputePipelineImpl.h"
+#include "Luma/Vulkan/GraphicsPipelineImpl.h"
+#include "Luma/Vulkan/Conversions.h"
+#include "Luma/Vulkan/VulkanUtils.h"
+#include "Luma/Vulkan/BindingSetImpl.h"
+#include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Asset/Material.h"
 #include "Luma/Asset/StaticMesh.h"
+
+
+#include <Volk/volk.h>
 
 
 #define LUMA_CHECK(x, msg) \
@@ -164,6 +164,12 @@ namespace Luma::Vulkan
         const VkDeviceSize size = bufferImpl->getSize();
 
         vkCmdBindIndexBuffer2(m_Handle, bufferHandle, offset, size, convert<VkIndexType>(format));
+    }
+
+    void FCommandBufferImpl::pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
+    {
+        const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
+        vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
     }
 
     void FCommandBufferImpl::bindGraphicsPipeline(const IGraphicsPipeline* pipeline)
@@ -330,7 +336,7 @@ namespace Luma::Vulkan
         vkCmdBindDescriptorSets2(m_Handle, &info);
     }
 
-    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCameraf& camera)
+    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCamera& camera)
     {
         LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
         LUMA_CHECK(material, "Invalid material handle!");
@@ -352,7 +358,7 @@ namespace Luma::Vulkan
         }
     }
 
-    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCameraf& camera)
+    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera)
     {
         LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
 

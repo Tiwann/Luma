@@ -2,7 +2,6 @@
 #include "Concepts.h"
 #include "Vector.h"
 #include "AxisAngle.h"
-#include <cmath>
 
 namespace Luma
 {

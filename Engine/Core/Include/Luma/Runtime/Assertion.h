@@ -24,6 +24,6 @@
 #endif
 #else
 #ifndef LUMA_ASSERT
-#define LUMA_ASSERT(x, msg) ((void)0)
+#define LUMA_ASSERT(x, msg) do { if(!(x)) { } } while(0)
 #endif
 #endif

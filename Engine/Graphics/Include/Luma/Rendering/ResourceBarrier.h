@@ -23,7 +23,7 @@ namespace Luma
         HostWrite = BIT(9),
     };
 
-    using FResourceAccessFlags = Flags<EResourceAccessBits>;
+    using FResourceAccessFlags = TFlags<EResourceAccessBits>;
 
     struct FTextureBarrier
     {

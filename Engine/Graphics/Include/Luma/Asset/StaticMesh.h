@@ -25,11 +25,21 @@ namespace Luma
         Ref<FMaterial> material;
     };
 
-    class FStaticMesh final : public IAsset, public IRefCounted<FStaticMesh>
+    struct FMaterialTextures
+    {
+        Ref<ITexture> baseColor;
+        Ref<ITexture> metallicRoughnessAO;
+        Ref<ITexture> normal;
+        Ref<ITexture> emission;
+    };
+
+    class FStaticMesh final : public IAsset
     {
     public:
         FStaticMesh() = default;
         ~FStaticMesh() override = default;
+
+        void destroy() override;
 
         EAssetType getAssetType() const override { return EAssetType::StaticMesh; }
         bool loadFromFile(FStringView filepath, IRenderDevice* device);
@@ -47,5 +57,6 @@ namespace Luma
         Ref<IBuffer> m_IndexBuffer = nullptr;
         THashMap<uint32_t, TArray<FMeshPart>> m_PerMaterialData;
         THashMap<uint32_t, FMaterialSlot> m_MaterialSlots;
+        THashMap<uint32_t, FMaterialTextures> m_Textures;
     };
 }

@@ -1,8 +1,8 @@
-﻿#include "TextureViewImpl.h"
-#include "TextureImpl.h"
-#include "RenderDeviceImpl.h"
-#include "Conversions.h"
-#include "VulkanUtils.h"
+﻿#include "Luma/Vulkan/TextureViewImpl.h"
+#include "Luma/Vulkan/TextureImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/Conversions.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 
 #include <Volk/volk.h>
 

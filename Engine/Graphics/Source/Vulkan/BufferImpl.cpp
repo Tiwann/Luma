@@ -1,7 +1,9 @@
-﻿#include "BufferImpl.h"
-#include "RenderDeviceImpl.h"
-#include "VulkanUtils.h"
+﻿#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 #include <vma/vk_mem_alloc.h>
+
+#include "Luma/Containers/StringFormat.h"
 
 
 namespace Luma::Vulkan
@@ -70,6 +72,8 @@ namespace Luma::Vulkan
         if (VK_FAILED(vmaCreateBuffer(allocatorHandle, &bufferCreateInfo, &bufferAllocationCreateInfo, &m_Handle, &m_Allocation, &allocationInfo)))
             return false;
 
+        std::cout << strfmt("Allocated {} bytes on GPU.\n", allocationInfo.size);
+
         m_Device = device;
         m_Size = bufferDesc.size;
         m_Usage = bufferDesc.usage;
@@ -84,6 +88,7 @@ namespace Luma::Vulkan
         vmaDestroyBuffer(allocatorHandle, m_Handle, m_Allocation);
         m_Handle = nullptr;
         m_Allocation = nullptr;
+        std::cout << strfmt("Freed {} bytes on GPU.\n", m_Size);
     }
 
     void* FBufferImpl::map()
@@ -97,7 +102,11 @@ namespace Luma::Vulkan
 
     void FBufferImpl::unmap(const void* ptr)
     {
-        if (m_AlwaysMapped) return;
+        if (m_AlwaysMapped)
+        {
+            LUMA_ASSERT(ptr == m_MappedData, "Pointer is a not mapped data!");
+            return;
+        }
         const VmaAllocator allocatorHandle = m_Device->getAllocator();
         vmaUnmapMemory(allocatorHandle, m_Allocation);
     }

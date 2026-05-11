@@ -1,0 +1,5 @@
+if(NOT TARGET stb_image)
+    add_library(stb_image STATIC src/stb_image.c)
+    add_library(stb::image ALIAS stb_image)
+    target_include_directories(stb_image PUBLIC include)
+endif ()
