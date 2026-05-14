@@ -5,6 +5,7 @@ include(CMakeDependentOption)
 include(CMake/LumaHelpers.cmake)
 
 option(LUMA_ENGINE_BUILD_EXAMPLES "Build the example targets" ON)
+option(LUMA_ENGINE_BUILD_EDITOR "Build the editor application" ON)
 
 cmake_dependent_option(LUMA_ENGINE_BUILD_D3D12 "Build the engine with D3D12 backend" ON WIN32 OFF)
 option(LUMA_ENGINE_BUILD_VULKAN "Build the engine with Vulkan backend" ON)
@@ -40,3 +41,6 @@ if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/PongGame)
 endif ()
 
+if(LUMA_ENGINE_BUILD_EDITOR)
+    add_subdirectory(Editor)
+endif ()
