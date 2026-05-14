@@ -27,12 +27,13 @@ namespace Luma
         bool isMinimized() const;
         void setFullscreen(bool fullscreen);
 
-        RGFW_window* getHandle() const;
 
         FString getTitle() const;
         void setTitle(const FString& title);
 
+        RGFW_window* getHandle() const;
     private:
         RGFW_window* m_Handle = nullptr;
+        FString m_Title;
     };
 }
