@@ -218,36 +218,49 @@ namespace Luma
         return Textures.count() - 1;
     }
 
-    void FRenderer2D::drawQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color)
+    void FRenderer2D::drawQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color) const
     {
         addQuad(position, size, rotation, color, QuadMode::Quad, 0);
     }
 
-    void FRenderer2D::drawQuad(const FRect2f& rect, const float rotation, const FColor& color)
+    void FRenderer2D::drawQuad(const FRect2f& rect, const float rotation, const FColor& color) const
     {
         const FVector2f position = { rect.x, rect.y };
         const FVector2f size = { rect.width, rect.height };
         drawQuad(position, size, rotation, color);
     }
 
-    void FRenderer2D::drawEllipse(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color)
+    void FRenderer2D::drawEllipse(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color) const
     {
         addQuad(position, size, rotation, color, QuadMode::Ellipse, 0);
     }
 
-    void FRenderer2D::drawEllipse(const FRect2f& rect, const float rotation, const FColor& color)
+    void FRenderer2D::drawEllipse(const FRect2f& rect, const float rotation, const FColor& color) const
     {
         const FVector2f position = { rect.x, rect.y };
         const FVector2f size = { rect.width, rect.height };
         drawEllipse(position, size, rotation, color);
     }
 
-    void FRenderer2D::drawCircle(const FVector2f& position, float radius, const FColor& color)
+    void FRenderer2D::drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation,
+        const FColor& color) const
     {
-        drawEllipse(position, {radius, radius}, 0.0f, color);
+        const FVector2f newPos = { position.x - size.x * 0.5f, position.y - size.y * 0.5f };
+        drawEllipse(newPos, size, rotation, color);
     }
 
-    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float fontSize, const FColor& color)
+    void FRenderer2D::drawCircleCentered(const FVector2f& position, float radius, const FColor& color) const
+    {
+        const FVector2f newPos = { position.x - radius, position.y - radius };
+        drawCircle(newPos, radius, color);
+    }
+
+    void FRenderer2D::drawCircle(const FVector2f& position, float radius, const FColor& color) const
+    {
+        drawEllipse(position, {radius * 2.0f, radius * 2.0f}, 0.0f, color);
+    }
+
+    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float fontSize, const FColor& color) const
     {
         const TextParams params
         {
@@ -261,7 +274,16 @@ namespace Luma
         drawText(text, position, 0.0f, color, params);
     }
 
-    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float rotation, const FColor& color, TextParams params)
+    void FRenderer2D::drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const FColor& color) const
+    {
+        const float width = m_Font->getTextWidth(text, fontSize);
+        const float height = m_Font->getTextHeight(text, fontSize);
+        const float x = position.x - width * 0.5f;
+        const float y = position.y - height;
+        drawText(text, {x, y}, fontSize, color);
+    }
+
+    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float rotation, const FColor& color, TextParams params) const
     {
         if (!m_Font) return;
         WeakRef<ITexture> atlasTexture = m_Font->getAtlasTexture();
@@ -334,7 +356,7 @@ namespace Luma
         }
     }
 
-    void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const FColor& color)
+    void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const FColor& color) const
     {
         if (!sprite.texture) return;
         const uint32_t textureId = getOrAddTexture(sprite.texture);

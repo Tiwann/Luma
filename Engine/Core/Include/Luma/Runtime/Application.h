@@ -12,7 +12,7 @@
 
 namespace Luma
 {
-    struct FApplicationConfiguration
+    struct FApplicationConfig
     {
         FString applicationName = "Luma Application";
         uint32_t windowWidth = 600;
@@ -30,8 +30,7 @@ namespace Luma
         void run();
         void exit();
 
-
-        virtual FApplicationConfiguration getConfiguration() const = 0;
+        virtual FApplicationConfig getConfiguration() const = 0;
         virtual ERenderDeviceType getRenderDeviceType() const = 0;
 
         virtual void onInit(){}
@@ -42,7 +41,6 @@ namespace Luma
         virtual void onGUI(){}
         virtual void onDrawDebug(){}
         virtual void onDestroy(){}
-
 
         float getDeltaTime() const;
         Ref<IWindow> getWindow() const;

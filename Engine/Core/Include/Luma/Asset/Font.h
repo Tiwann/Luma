@@ -61,8 +61,8 @@ namespace Luma
         void getAtlasTextureCoordinates(uint32_t unicode, double& left, double& right, double& top, double& bottom) const;
         void getPlaneBounds(uint32_t unicode, double& left, double& right, double& top, double& bottom) const;
 
-        double getTextWidth(FStringView text, float fontSize, float characterSpacing = 1.0f);
-        double getTextHeight(FStringView text, float fontSize, float lineSpacing = 1.0f);
+        double getTextWidth(FStringView text, float fontSize, float characterSpacing = 1.0f) const;
+        double getTextHeight(FStringView text, float fontSize, float lineSpacing = 1.0f) const;
     private:
         EFontAtlasType m_AtlasType = EFontAtlasType::None;
         Ref<ITexture> m_AtlasTexture = nullptr;

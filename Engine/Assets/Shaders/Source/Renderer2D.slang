@@ -60,13 +60,14 @@ float ellipseMask(float2 uv)
 	// achieving that using dot(x, x)
 	float2 center = (uv - float2(0.5, 0.5)) * 2.0;
 	float length = dot(center, center);
-	float mask = 1.0 - smoothstep(0.993, 0.999, length);
+	float delta = max(fwidth(length), 0.0005);
+	float mask = 1.0 - smoothstep(1.0 - delta, 1.0 + delta, length);
 	return saturate(mask);
 }
 
 float4 drawEllipse(float2 uv, float4 color)
 {
-	return color * ellipseMask(uv);
+	return float4(color.rgb, ellipseMask(uv));
 }
 
 float median(float r, float g, float b)

@@ -1,8 +1,8 @@
-#include "Game.h"
+#include "GameApplication.h"
 
 int main(int argc, char** argv)
 {
-    FGame game(argc, argv);
+    FGameApplication game(argc, argv);
     game.run();
     return 0;
 }

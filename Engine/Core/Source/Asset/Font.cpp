@@ -98,7 +98,7 @@ namespace Luma
         glyph->getQuadPlaneBounds(left, bottom, right, top);
     }
 
-    double FFont::getTextHeight(FStringView text, float fontSize, float lineSpacing)
+    double FFont::getTextHeight(FStringView text, float fontSize, float lineSpacing) const
     {
         const FFontMetrics metrics = getMetrics();
         const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
@@ -128,7 +128,7 @@ namespace Luma
         return posY;
     }
 
-    double FFont::getTextWidth(FStringView text, float fontSize, float characterSpacing)
+    double FFont::getTextWidth(FStringView text, float fontSize, float characterSpacing) const
     {
         const FFontMetrics metrics = getMetrics();
         const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);

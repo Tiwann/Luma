@@ -4,7 +4,7 @@
 #include "Luma/Rendering/Renderer2D.h"
 #include "Luma/Runtime/Time.h"
 #include "Luma/Runtime/Window.h"
-
+#include "Luma/Input/Immediate.h"
 #include <imgui.h>
 
 
@@ -18,7 +18,7 @@ namespace Luma
 
     void IApplication::run()
     {
-        const FApplicationConfiguration configuration = getConfiguration();
+        const FApplicationConfig configuration = getConfiguration();
         const ERenderDeviceType deviceType = getRenderDeviceType();
 
         FWindowDesc windowDesc;
@@ -33,6 +33,7 @@ namespace Luma
             return;
         }
         m_Window->closedEvent.bindMember(this, &IApplication::exit);
+        FInput::initialize(m_Window);
 
 
         FRenderDeviceDesc rdDesc;
@@ -94,6 +95,7 @@ namespace Luma
             m_DeltaTime = currentTime - m_LastTime;
             m_LastTime = currentTime;
             m_Window->pollEvents();
+            FInput::update();
 
             m_Renderer2D->begin();
             onUpdate(static_cast<float>(m_DeltaTime));
@@ -157,6 +159,7 @@ namespace Luma
 
     void IApplication::destroy()
     {
+        FInput::destroy();
         if (m_RenderDevice) m_RenderDevice->waitIdle();
         onDestroy();
         

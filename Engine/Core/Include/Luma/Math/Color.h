@@ -29,10 +29,21 @@ namespace Luma
 
         constexpr operator TVector<F, 4>() const { return TVector<F, 4>{r, g, b, a}; }
 
-        TColor withOpacity(float opacity) {  return { r, g, b, opacity }; }
-        TColor withRed(float red) { return { red, g, b, a }; }
-        TColor withGreen(float green) { return { r, green, b, a }; }
-        TColor withBlue(float blue) { return { r, g, blue, a }; }
+        TColor withOpacity(float opacity) const { return { r, g, b, opacity }; }
+        TColor withRed(float red) const { return { red, g, b, a }; }
+        TColor withGreen(float green) const { return { r, green, b, a }; }
+        TColor withBlue(float blue) const { return { r, g, blue, a }; }
+
+        static constexpr TColor lerp(const TColor& a, const TColor& b, F t)
+        {
+            static constexpr auto lerp = [](const F from, const F to, const F alpha) { return from + (to - from) * alpha; };
+            return {
+                lerp(a.r, b.r, t),
+                lerp(a.g, b.g, t),
+                lerp(a.b, b.b, t),
+                lerp(a.a, b.a, t),
+            };
+        }
 
         static const TColor Red;
         static const TColor Green;
@@ -48,6 +59,7 @@ namespace Luma
         static const TColor Purple;
         static const TColor Turquoise;
         static const TColor Grey;
+        static const TColor Transparent;
     };
     
     template<FloatType F>
@@ -78,6 +90,8 @@ namespace Luma
     constexpr TColor<F> TColor<F>::Turquoise  { 0x40E0D0FF };
     template<FloatType F>
     constexpr TColor<F> TColor<F>::Grey       { 0x808080FF };
+    template<FloatType F>
+    constexpr TColor<F> TColor<F>::Transparent{ 0x000000FF };
 
     using FColor = TColor<float>;
 }

@@ -52,49 +52,64 @@ namespace Luma
         /// @param size size of the quad in screen space
         /// @param rotation Rotation of the quad in radians
         /// @param color Color to fill the quad with
-        void drawQuad(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color);
+        void drawQuad(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color) const;
 
         /// Draw a colored quad
         /// @param rect Rectangle to draw (position + size)
         /// @param rotation Rotation of the quad to draw in radians
         /// @param color Color to fill the quad with
-        void drawQuad(const FRect2f& rect, float rotation, const FColor& color);
+        void drawQuad(const FRect2f& rect, float rotation, const FColor& color) const;
 
         /// Draw a colored ellipse
         /// @param position Position of the top left corner of the circumscribed rectangle of the ellipse
         /// @param size Size of the ellipse
         /// @param rotation Rotation in radians of the ellipse
         /// @param color Color to fill the ellipse with
-        void drawEllipse(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color);
+        void drawEllipse(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color) const;
 
         /// Draw a colored ellipse
         /// @param rect Circumscribed rectangle of the ellipse
         /// @param rotation Rotation in radians of the ellipse
         /// @param color Color to fill the ellipse with
-        void drawEllipse(const FRect2f& rect, float rotation, const FColor& color);
+        void drawEllipse(const FRect2f& rect, float rotation, const FColor& color) const;
+
+        // Draw a colored ellipse
+        /// @param position Position of the center of the ellipse
+        /// @param size Size of the ellipse
+        /// @param rotation Rotation in radians of the ellipse
+        /// @param color Color to fill the ellipse with
+        void drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color) const;
 
         /// Draw a colored ellipse
         /// @param position Position of the top left corner of the circumscribed square of the circle
         /// @param radius Radius of the circle
         /// @param color Color to fill the circle with
-        void drawCircle(const FVector2f& position, float radius, const FColor& color);
+        void drawCircle(const FVector2f& position, float radius, const FColor& color) const;
+
+        /// Draw a colored ellipse
+        /// @param position Position of the center of the circle
+        /// @param radius Radius of the circle
+        /// @param color Color to fill the circle with
+        void drawCircleCentered(const FVector2f& position, float radius, const FColor& color) const;
 
 
-        void drawText(FStringView text, const FVector2f& position, float fontSize, const FColor& color);
+        void drawText(FStringView text, const FVector2f& position, float fontSize, const FColor& color) const;
+        void drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const FColor& color) const;
+
         /// Draw a colored text
         /// @param text Text to draw
         /// @param position Position of the text in screen space
         /// @param rotation Rotation of the text
         /// @param color Color of the text
         /// @param params
-        void drawText(FStringView text, const FVector2f& position, float rotation, const FColor& color, TextParams params);
+        void drawText(FStringView text, const FVector2f& position, float rotation, const FColor& color, TextParams params) const;
 
         /// Draw a sprite
         /// @param sprite Sprite to draw
         /// @param position Position in screen space
         /// @param rotation Rotation of the sprite
         /// @param color Color of the sprite
-        void drawSprite(const Sprite& sprite, const FVector2f& position, float rotation, const FColor& color);
+        void drawSprite(const Sprite& sprite, const FVector2f& position, float rotation, const FColor& color) const;
 
         /// Sets the current font
         /// @param font Font asset to use. Null will assign the default font.

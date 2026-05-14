@@ -31,6 +31,7 @@ namespace Luma
 
         FString getTitle() const;
         void setTitle(const FString& title);
+
     private:
         RGFW_window* m_Handle = nullptr;
     };

@@ -12,6 +12,9 @@ namespace Luma
         constexpr TRect() : x((T)0), y((T)0), width((T)0), height((T)0) {}
         constexpr TRect(T x, T y, T width, T height) : x(x), y(y), width(width), height(height) {}
 
+        template<typename U>
+        constexpr operator TRect<U, 2>() const { return TRect<U, 2>(U(x), U(y), U(width), U(height)); }
+
         constexpr T top() const { return y; }
         constexpr T bottom() const { return y + height; }
         constexpr T left() const { return x; }

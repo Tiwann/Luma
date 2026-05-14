@@ -19,6 +19,9 @@ if(LUMA_ENGINE_BUILD_VULKAN)
 endif ()
 
 add_library(luma-natvis INTERFACE LumaEngine.natvis)
+add_library(luma::natvis ALIAS luma-natvis)
+set_target_properties(luma-natvis PROPERTIES FOLDER luma-engine)
+
 set(LUMA_ENGINE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
