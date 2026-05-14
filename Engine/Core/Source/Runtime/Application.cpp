@@ -99,6 +99,7 @@ namespace Luma
 
             m_Renderer2D->begin();
             onUpdate(static_cast<float>(m_DeltaTime));
+            onDrawGui();
             m_Renderer2D->end();
 
             m_ImguiRenderer->beginFrame();
@@ -194,6 +195,11 @@ namespace Luma
     Ref<FRenderer2D> IApplication::getRenderer2D() const
     {
         return m_Renderer2D;
+    }
+
+    FRect2<uint32_t> IApplication::getWindowBounds() const
+    {
+        return m_Window->getBounds();
     }
 
     FVector2<uint32_t> IApplication::getWindowSize() const

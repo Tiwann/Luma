@@ -38,7 +38,7 @@ namespace Luma
         virtual void onPreRender(ICommandBuffer* cmdBuffer){}
         virtual void onRender(ICommandBuffer* cmdBuffer){}
         virtual void onPostRender(ICommandBuffer* cmdBuffer){}
-        virtual void onGUI(){}
+        virtual void onDrawGui(){}
         virtual void onDrawDebug(){}
         virtual void onDestroy(){}
 
@@ -47,8 +47,9 @@ namespace Luma
         Ref<IAudioDevice> getAudioDevice() const;
         Ref<IRenderDevice> getRenderDevice() const;
         Ref<FRenderer2D> getRenderer2D() const;
-        FVector2<uint32_t> getWindowSize() const;
 
+        FRect2<uint32_t> getWindowBounds() const;
+        FVector2<uint32_t> getWindowSize() const;
     protected:
         void update();
         void render();

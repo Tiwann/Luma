@@ -1,9 +1,8 @@
 ﻿#include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/RenderDeviceImpl.h"
 #include "Luma/Vulkan/VulkanUtils.h"
-#include <vma/vk_mem_alloc.h>
-
 #include "Luma/Containers/StringFormat.h"
+#include <vma/vk_mem_alloc.h>
 
 
 namespace Luma::Vulkan
@@ -72,8 +71,6 @@ namespace Luma::Vulkan
         if (VK_FAILED(vmaCreateBuffer(allocatorHandle, &bufferCreateInfo, &bufferAllocationCreateInfo, &m_Handle, &m_Allocation, &allocationInfo)))
             return false;
 
-        std::cout << strfmt("Allocated {} bytes on GPU.\n", allocationInfo.size);
-
         m_Device = device;
         m_Size = bufferDesc.size;
         m_Usage = bufferDesc.usage;
@@ -88,7 +85,6 @@ namespace Luma::Vulkan
         vmaDestroyBuffer(allocatorHandle, m_Handle, m_Allocation);
         m_Handle = nullptr;
         m_Allocation = nullptr;
-        std::cout << strfmt("Freed {} bytes on GPU.\n", m_Size);
     }
 
     void* FBufferImpl::map()

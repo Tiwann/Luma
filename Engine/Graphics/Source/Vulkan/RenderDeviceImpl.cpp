@@ -427,6 +427,15 @@ namespace Luma::Vulkan
         m_Window = deviceDesc.window;
         m_Window->resizedEvent.bind([this](uint32_t, uint32_t) { m_Swapchain.invalidate(); });
 
+        VkPhysicalDeviceProperties properties;
+        vkGetPhysicalDeviceProperties(m_PhysicalDevice, &properties);
+
+        FString infoString;
+        infoString.append(strfmt("Using Vulkan 1.4\n"));
+        infoString.append(strfmt("    Device: {}\n", properties.deviceName));
+        infoString.append(strfmt("Successfully initialized render device!"));
+        std::cout << infoString << std::endl;
+
         s_DeviceCount++;
         return true;
     }

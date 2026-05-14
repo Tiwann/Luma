@@ -47,6 +47,7 @@ set(LUMA_CORE_SRC
         Source/Runtime/Component.cpp
         Source/Runtime/Sprite.cpp
         Source/Runtime/FileUtils.cpp
+        Source/Runtime/EntryPoint.cpp
 
         Source/Asset/Font.cpp
 )

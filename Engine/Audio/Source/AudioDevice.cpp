@@ -1,7 +1,10 @@
 ﻿#include "Luma/Audio/AudioDevice.h"
+#include "Luma/Containers/String.h"
+#include "Luma/Containers/StringFormat.h"
 #include <miniaudio.h>
 #include <cstdlib>
 #include <cstring>
+
 
 #define MA_FAILED(result) ((result) != MA_SUCCESS)
 #define MA_RETURN_ON_FAIL(result) if(MA_FAILED((result))) return false
@@ -93,6 +96,18 @@ namespace Luma
 
         result = ma_engine_start(&m_Pimpl->m_Engine);
         MA_RETURN_ON_FAIL(result);
+
+        auto* device = ma_engine_get_device(&m_Pimpl->m_Engine);
+        auto* context = ma_device_get_context(device);
+        const char* backendName = ma_get_backend_name(context->backend);
+
+        FString infoString;
+        infoString.append(strfmt("Using miniaudio with {} backend.\n", backendName));
+        infoString.append(strfmt("    Channel count: {}\n", m_Pimpl->m_Channels));
+        infoString.append(strfmt("    Sample rate: {}\n", m_Pimpl->m_SampleRate));
+        infoString.append(strfmt("    Max listeners: {}\n", m_Pimpl->m_ListenerCount));
+        infoString.append(strfmt("Successfully initialized audio device!"));
+        std::cout << infoString << std::endl;
 
         m_Pimpl->m_Channels = desc.numChannels;
         m_Pimpl->m_SampleRate = desc.sampleRate;
