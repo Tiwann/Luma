@@ -59,12 +59,13 @@ namespace Luma
     FAudioDevice::FAudioDevice()
     {
         m_Pimpl = new Impl;
-
+        if (!s_Instance) s_Instance = this;
     }
 
     FAudioDevice::~FAudioDevice()
     {
         delete m_Pimpl;
+        s_Instance = nullptr;
     }
 
     bool FAudioDevice::initialize(const FAudioDeviceDesc& desc)
@@ -134,6 +135,11 @@ namespace Luma
     uint32_t FAudioDevice::getSampleRate() const
     {
         return m_Pimpl->m_SampleRate;
+    }
+
+    FAudioDevice* FAudioDevice::getInstance()
+    {
+        return s_Instance;
     }
 
     FAudioDevice* createAudioDevice(const FAudioDeviceDesc& desc)

@@ -34,10 +34,12 @@ namespace Luma
         uint32_t getNumListeners() const;
         uint32_t getNumChannels() const;
         uint32_t getSampleRate() const;
-    
+
+        static FAudioDevice* getInstance();
     private:
         struct Impl;
         Impl* m_Pimpl = nullptr;
+        static inline FAudioDevice* s_Instance = nullptr;
     };
 
     LUMA_AUDIO_API FAudioDevice* createAudioDevice(const FAudioDeviceDesc& desc = FAudioDeviceDesc());

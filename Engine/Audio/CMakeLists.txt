@@ -1,8 +1,9 @@
 ﻿
-
 set(LUMA_AUDIO_SRC
-"External/miniaudio.c"
-"Source/AudioDevice.cpp")
+        External/miniaudio.c
+        Source/AudioDevice.cpp
+        Source/AudioClip.cpp
+)
 
 add_library(luma-audio ${LUMA_AUDIO_SRC})
 add_library(luma::audio ALIAS luma-audio)
