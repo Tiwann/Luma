@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Luma/Runtime/Assertion.h"
 #include "Array.h"
+#include <cstring>
 #include <string_view>
 #include <iostream>
 

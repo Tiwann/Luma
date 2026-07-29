@@ -1,5 +1,6 @@
 #pragma once
 #include "Luma/Core/Export.h"
+#include <cstddef>
 
 namespace Luma::Memory
 {

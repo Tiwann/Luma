@@ -29,7 +29,7 @@ namespace Luma::Memory
 #ifdef LUMA_PLATFORM_WINDOWS
         return _aligned_malloc(size, alignment);
 #else
-        return ::aligned_alloc(size, alignment);
+        return aligned_alloc(alignment, size);
 #endif
     }
 
@@ -38,7 +38,7 @@ namespace Luma::Memory
 #ifdef LUMA_PLATFORM_WINDOWS
         return _aligned_realloc(ptr, size, alignment);
 #else
-        return ::aligned_realloc(ptr, size, alignment);
+        return realloc(ptr, size);
 #endif
     }
 
@@ -47,7 +47,7 @@ namespace Luma::Memory
 #ifdef LUMA_PLATFORM_WINDOWS
         _aligned_free(ptr);
 #else
-        ::aligned_free(ptr);
+        free(ptr);
 #endif
     }
 

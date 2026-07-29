@@ -1,6 +1,6 @@
 ﻿
 set(LUMA_UI_SRC
-    Source/Rendering/ImGuiRenderer.cpp
+    Source/Rendering/ImguiRenderer.cpp
     Source/UI/ImGui.cpp
 )
 

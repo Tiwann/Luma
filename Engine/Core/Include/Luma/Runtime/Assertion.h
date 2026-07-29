@@ -7,7 +7,7 @@
 #ifdef LUMA_PLATFORM_WINDOWS
 #define LUMA_DBG_BREAK() __debugbreak()
 #else
-#define LUMA_DBG_BREAK __builtin_trap()
+#define LUMA_DBG_BREAK() __builtin_trap()
 #endif
 #endif
 

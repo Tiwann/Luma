@@ -54,7 +54,7 @@ namespace Luma::Vulkan
         {
             if(result != VK_SUCCESS)
             {
-                std::println(std::cerr, "Something went wrong.");
+                std::cerr << "Something went wrong." << std::endl;
             }
         };
 

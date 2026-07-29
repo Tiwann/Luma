@@ -60,6 +60,11 @@ set(LUMA_CORE_WINDOWS_SRC
         Source/Platform/Windows/FileSystem.cpp
 )
 
+set(LUMA_CORE_LINUX_SRC
+        Source/Runtime/DesktopWindow.cpp
+
+)
+
 
 add_library(luma-core ${LUMA_CORE_SRC})
 add_library(luma::core ALIAS luma-core)
