@@ -31,10 +31,13 @@ namespace Luma
 
         //result = ma_sound_init_from_data_source(audioDevice->get, &m_Decoder, 0, nullptr, &m_Handle);
         //if (result != MA_SUCCESS) return false;
+
+        return false;
     }
 
     bool FAudioClip::loadFromMemory(const void* data, size_t size)
     {
+        return false;
     }
 
     void FAudioClip::destroy()
