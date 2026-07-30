@@ -7,4 +7,8 @@ if(NOT TARGET rgfw)
         target_link_libraries(rgfw PUBLIC Vulkan::volk)
         target_compile_definitions(rgfw PUBLIC RGFW_VULKAN RGFW_USE_VOLK)
     endif ()
+
+    if(LINUX)
+        target_link_libraries(rgfw PRIVATE X11 Xrandr)
+    endif ()
 endif ()

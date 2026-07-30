@@ -62,6 +62,10 @@ set(LUMA_CORE_WINDOWS_SRC
 
 set(LUMA_CORE_LINUX_SRC
         Source/Runtime/DesktopWindow.cpp
+        Source/Platform/Linux/StringConversion.cpp
+        Source/Platform/Linux/FileDialog.cpp
+        Source/Platform/Linux/FileSystem.cpp
+        Source/Platform/Linux/Time.cpp
 
 )
 
@@ -92,6 +96,7 @@ if (WIN32)
     target_link_libraries(luma-core PRIVATE luma::rgfw)
 elseif (LINUX)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_LINUX)
+    target_sources(luma-core PRIVATE ${LUMA_CORE_LINUX_SRC})
     target_link_libraries(luma-core PRIVATE luma::rgfw)
 elseif (MACOS)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_MACOS)
