@@ -53,9 +53,9 @@ namespace Luma
         bool unbind(uint64_t handle)
         {
             if (handle == 0) return false;
-            const FEntry* entry = m_Entries.single([&handle](const FEntry& entry) { return entry.handle == handle; });
-            if (!entry) return false;
-            m_Entries.remove(*entry);
+            const FEntry* found = m_Entries.single([&handle](const FEntry& entry) -> bool { return entry.handle == handle; });
+            if (!found) return false;
+            m_Entries.remove(*found);
             return true;
         }
 

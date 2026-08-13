@@ -456,6 +456,11 @@ namespace Luma::Vulkan
         infoString.append(strfmt("Successfully initialized render device!"));
         std::cout << infoString << std::endl;
 
+        deviceDesc.window->resizedEvent.bind([this](uint32_t, uint32_t)
+        {
+            m_Swapchain.invalidate();
+        });
+
         s_DeviceCount++;
         return true;
     }

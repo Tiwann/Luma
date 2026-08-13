@@ -23,13 +23,7 @@ static constexpr uint32_t HEIGHT = 600;
 
 int main()
 {
-    constexpr auto flags = EWindowCreateBits::Centered;
-    FWindowDesc windowDesc;
-    windowDesc.title = "Hello Triangle";
-    windowDesc.width = WIDTH;
-    windowDesc.height = HEIGHT;
-    windowDesc.flags = flags;
-
+    const FWindowDesc windowDesc { "Hello Triangle", WIDTH, HEIGHT, EWindowCreateBits::Centered };
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
@@ -38,14 +32,8 @@ int main()
     renderDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
     renderDeviceDesc.window = window;
     renderDeviceDesc.vSync = true;
-
     Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
     LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
-    window->resizedEvent.bind([&renderDevice](uint32_t, uint32_t)
-    {
-        ISwapchain* swapchain = renderDevice->getSwapchain();
-        swapchain->invalidate();
-    });
 
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create();
     if (!renderer->initialize(renderDevice))

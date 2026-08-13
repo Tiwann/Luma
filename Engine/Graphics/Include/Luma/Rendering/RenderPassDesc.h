@@ -12,7 +12,7 @@ namespace Luma
 
     struct FClearValue
     {
-        FColor color;
+        FColor color{FColor::Black};
         float depth = 1.0f;
         uint32_t stencil = 0;
     };

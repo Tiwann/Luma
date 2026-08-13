@@ -107,6 +107,7 @@ namespace Luma::Vulkan
 
         uint32_t m_CurrentFrameIndex = 0;
         uint32_t m_SwapchainImageIndex = 0;
+        uint64_t m_WindowResizeEventId = UINT64_MAX;
         IWindow* m_Window = nullptr;
         slang::IGlobalSession* m_SlangSession = nullptr;
     };

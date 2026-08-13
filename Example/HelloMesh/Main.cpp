@@ -35,11 +35,6 @@ int main()
 
     Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
     LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
-    window->resizedEvent.bind([&renderDevice](uint32_t, uint32_t)
-    {
-        ISwapchain* swapchain = renderDevice->getSwapchain();
-        swapchain->invalidate();
-    });
 
     FString filepath = FPath::openFileDialog("Open a model file.", FPath::getDesktopDirectory(), FDialogFilters::ModelFilters, *window);
     if (filepath.isEmpty()) return 1;
@@ -68,7 +63,6 @@ int main()
     if (!sceneRenderer->initialize(rendererDesc)) return 1;
     window->resizedEvent.bindMember(sceneRenderer.get(), &FSceneRenderer::resize);
     sceneRenderer->setScene(scene);
-
 
     while (!window->shouldClose())
     {

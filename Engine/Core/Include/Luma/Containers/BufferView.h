@@ -22,6 +22,9 @@ namespace Luma
             return TBufferView<U>(m_Data, m_Count * (sizeof(T) / sizeof(U)));
         }
 
+        const T& first() const { return m_Data[0]; }
+        const T& last() const { return m_Data[m_Count]; }
+
         uint64_t count() const { return m_Count; }
         uint64_t size() const { return m_Count * sizeof(T); }
         const T* data() const { return m_Data; }
