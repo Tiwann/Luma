@@ -471,6 +471,14 @@ namespace Luma::Vulkan
         buffer->setResourceState(barrier.destState);
     }
 
+    void FCommandBufferImpl::bindDescriptorBuffer(const IBuffer* buffer)
+    {
+        VkDescriptorBufferBindingInfoEXT bindingInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT};
+        bindingInfo.address = buffer->getDeviceAddress();
+        bindingInfo.usage = VK_BUFFER_USAGE_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT | VK_BUFFER_USAGE_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT;
+        vkCmdBindDescriptorBuffersEXT(m_Handle, 1, &bindingInfo);
+    }
+
     void FCommandBufferImpl::setName(const FStringView name)
     {
         setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_COMMAND_BUFFER, m_Handle, name);

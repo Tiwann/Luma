@@ -246,6 +246,27 @@ namespace Luma
             m_Count += other.count();
         }
 
+        void addRange(TArray&& other)
+        {
+            const SizeType totalCount = m_Count + other.m_Count;
+            if(totalCount >= m_Allocated)
+            {
+                do
+                {
+                    m_Allocated = getNewSize(m_Allocated);
+                } while (m_Allocated < totalCount);
+
+                PointerType newData = new T[m_Allocated]{};
+                for(SizeType i = 0; i < m_Count; ++i)
+                    newData[i] = m_Data[i];
+                delete[] m_Data;
+                m_Data = newData;
+            }
+
+            std::move(other.begin(), other.end(), &m_Data[m_Count]);
+            m_Count += other.count();
+        }
+
         template<size_t N>
         void addRange(const T(&data)[N])
         {

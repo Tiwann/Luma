@@ -9,10 +9,23 @@
 #include "ImmediateExecutorImpl.h"
 #include "VulkanFwd.h"
 #include "Luma/Utility/SlangFwd.h"
+
 #define VK_FAILED(res) (res != VK_SUCCESS)
 
 namespace Luma::Vulkan
 {
+    struct FDescriptorBufferProperties
+    {
+        uint32_t descriptorBufferOffsetAlignment = 0;
+        uint32_t maxDescriptorBufferBindings = 0;
+        uint32_t uniformBufferDescriptorSize = 0;
+        uint32_t storageBufferDescriptorSize = 0;
+        uint32_t sampledImageDescriptorSize = 0;
+        uint32_t storageImageDescriptorSize = 0;
+        uint32_t samplerDescriptorSize = 0;
+        uint32_t combinedImageSamplerDescriptorSize = 0;
+    };
+
     class LUMA_GRAPHICS_API FRenderDeviceImpl final : public IRenderDevice
     {
     public:
@@ -47,6 +60,10 @@ namespace Luma::Vulkan
 
         ICommandBuffer* getCommandBuffer() override { return &m_CmdBuffers[m_CurrentFrameIndex]; }
         ITextureView* getAcquiredSwapchainTextureView() override;
+
+        void writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler) override;
+        void writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType) override;
+        void writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource, uint64_t resourceOffset, uint64_t resourceSize, EBufferBindingType bindingType) override;
 
         static VkInstance getInstance();
         VkDevice getHandle() const { return m_Handle; }
@@ -86,6 +103,7 @@ namespace Luma::Vulkan
         FSemaphoreImpl m_PresentSemaphores[3];
         FFenceImpl m_Fences[3];
         FCommandBufferImpl m_CmdBuffers[3];
+        FDescriptorBufferProperties m_DescriptorBufferProperties;
 
         uint32_t m_CurrentFrameIndex = 0;
         uint32_t m_SwapchainImageIndex = 0;

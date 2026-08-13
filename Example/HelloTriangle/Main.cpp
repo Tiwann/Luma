@@ -23,7 +23,7 @@ int main()
     windowDesc.title = "First window";
     windowDesc.width = 800;
     windowDesc.height = 600;
-    windowDesc.flags = 0;
+    windowDesc.flags = EWindowCreateBits::Centered;
 
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");

@@ -96,6 +96,7 @@ namespace Luma
         virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera) = 0;
         virtual void textureBarrier(const FTextureBarrier& barrier) = 0;
         virtual void bufferBarrier(const FBufferBarrier& barrier) = 0;
+        virtual void bindDescriptorBuffer(const IBuffer* buffer){LUMA_ASSERT(false, "Not Implemented");}
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// COMPUTE CMDS
         ///////////////////////////////////////////////////////////////////////////////////////////////

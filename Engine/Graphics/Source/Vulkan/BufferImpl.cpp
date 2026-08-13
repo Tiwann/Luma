@@ -18,6 +18,9 @@ namespace Luma::Vulkan
         case EBufferUsage::StorageBuffer: return VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
         case EBufferUsage::StagingBuffer: return VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
         case EBufferUsage::IndirectBuffer: return VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        case EBufferUsage::DescriptorBuffer:
+            return VK_BUFFER_USAGE_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT | VK_BUFFER_USAGE_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT
+            | VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
         default: return 0;
         }
     }
@@ -39,6 +42,7 @@ namespace Luma::Vulkan
         case EBufferUsage::UniformBuffer:
         case EBufferUsage::StorageBuffer:
         case EBufferUsage::IndirectBuffer:
+        case EBufferUsage::DescriptorBuffer:
             {
                 bufferAllocationCreateInfo.priority = 1.0f;
                 bufferAllocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
@@ -54,22 +58,20 @@ namespace Luma::Vulkan
                 bufferAllocationCreateInfo.priority = 0.5f;
                 bufferAllocationCreateInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
                 bufferAllocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
-                if (bufferDesc.alwaysMapped)
-                {
-                    bufferAllocationCreateInfo.usage = VMA_MEMORY_USAGE_AUTO;
-                    bufferAllocationCreateInfo.flags = VMA_ALLOCATION_CREATE_MAPPED_BIT | VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT;
-                }
             }
             break;
         }
 
         FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(bufferDesc.device);
         const VmaAllocator allocatorHandle = device->getAllocator();
-        
+
         vmaDestroyBuffer(allocatorHandle, m_Handle, m_Allocation);
         VmaAllocationInfo allocationInfo;
         if (VK_FAILED(vmaCreateBuffer(allocatorHandle, &bufferCreateInfo, &bufferAllocationCreateInfo, &m_Handle, &m_Allocation, &allocationInfo)))
             return false;
+
+        if (!bufferDesc.debugName.isEmpty())
+            setName(bufferDesc.debugName);
 
         m_Device = device;
         m_Size = bufferDesc.size;

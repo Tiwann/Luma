@@ -15,6 +15,7 @@ namespace Luma
         EBufferUsage usage = EBufferUsage::None;
         uint64_t size = 0;
         bool alwaysMapped = false;
+        FString debugName;
     };
 
     struct IBuffer : IResource, IRefCounted<IBuffer>
@@ -28,6 +29,9 @@ namespace Luma
         virtual void* map() = 0;
         virtual void unmap(const void* ptr) = 0;
         virtual uint64_t getDeviceAddress() const = 0;
+
+        template<typename T>
+        T* map() { return static_cast<T*>(map()); }
 
         EResourceType getResourceType() const final { return EResourceType::Buffer; }
         EResourceState getResourceState() const final { return m_State; }

@@ -47,6 +47,7 @@ namespace Luma::Vulkan
         void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex,uint32_t mipLevel) override;
         void textureBarrier(const FTextureBarrier& barrier) override;
         void bufferBarrier(const FBufferBarrier& barrier) override;
+        void bindDescriptorBuffer(const IBuffer* buffer) override;
         void setName(FStringView name) override;
         VkCommandBuffer getHandle() const { return m_Handle; }
 

@@ -7,6 +7,10 @@
 #include "Sampler.h"
 #include <cstdint>
 
+#include "BindingType.h"
+#include "BufferBinding.h"
+#include "TextureBinding.h"
+
 
 namespace Luma
 {
@@ -89,6 +93,10 @@ namespace Luma
         ISemaphore* createBinarySemaphore();
         ISemaphore* createTimelineSemaphore(uint64_t initialValue);
         FMaterial* createMaterial(const FMaterialDesc& materialDesc);
+
+        virtual void writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler){ LUMA_ASSERT(false, "Feature not available on this device"); };
+        virtual void writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType){ LUMA_ASSERT(false, "Feature not available on this device"); };
+        virtual void writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource, uint64_t resourceOffset, uint64_t resourceSize, EBufferBindingType bindingType){ LUMA_ASSERT(false, "Feature not available on this device"); };
     protected:
         THashMap<FSamplerDesc, ISampler*, FSamplerDescHasher> m_PerDescSamplers;
     };

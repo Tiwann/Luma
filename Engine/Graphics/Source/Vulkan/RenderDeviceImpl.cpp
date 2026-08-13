@@ -21,6 +21,7 @@
 
 #include "Luma/Vulkan/GraphicsPipelineImpl.h"
 #include "Luma/Rendering/GraphicsPipeline.h"
+#include "Luma/Vulkan/Conversions.h"
 
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
@@ -95,8 +96,8 @@ namespace Luma::Vulkan
             extensions.add(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
 
             size_t rgfwExtensionCount = 0;
-            const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(&rgfwExtensionCount);
-            extensions.addRange(rgfwExtensions, rgfwExtensionCount);
+            const auto** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(&rgfwExtensionCount);
+            extensions.addRange({rgfwExtensions, rgfwExtensionCount});
             extensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
             VkInstanceCreateInfo instanceCreateInfo = { VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO };
@@ -161,6 +162,20 @@ namespace Luma::Vulkan
                 return false;
         }
 
+        VkPhysicalDeviceDescriptorBufferPropertiesEXT descriptorBufferProperties { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT };
+        VkPhysicalDeviceProperties2 physicalDeviceProperties { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, &descriptorBufferProperties };
+        vkGetPhysicalDeviceProperties2(m_PhysicalDevice, &physicalDeviceProperties);
+
+        m_DescriptorBufferProperties.descriptorBufferOffsetAlignment = descriptorBufferProperties.descriptorBufferOffsetAlignment;
+        m_DescriptorBufferProperties.uniformBufferDescriptorSize = descriptorBufferProperties.uniformBufferDescriptorSize;
+        m_DescriptorBufferProperties.maxDescriptorBufferBindings = descriptorBufferProperties.maxDescriptorBufferBindings;
+        m_DescriptorBufferProperties.uniformBufferDescriptorSize = descriptorBufferProperties.uniformBufferDescriptorSize;
+        m_DescriptorBufferProperties.storageBufferDescriptorSize = descriptorBufferProperties.storageBufferDescriptorSize;
+        m_DescriptorBufferProperties.sampledImageDescriptorSize = descriptorBufferProperties.sampledImageDescriptorSize;
+        m_DescriptorBufferProperties.storageImageDescriptorSize = descriptorBufferProperties.storageImageDescriptorSize;
+        m_DescriptorBufferProperties.samplerDescriptorSize = descriptorBufferProperties.samplerDescriptorSize;
+        m_DescriptorBufferProperties.combinedImageSamplerDescriptorSize = descriptorBufferProperties.combinedImageSamplerDescriptorSize;
+
         if (FDesktopWindow* window = dynamic_cast<FDesktopWindow*>(deviceDesc.window))
         {
             if (VK_FAILED(RGFW_window_createSurface_Vulkan(window->getHandle(), s_Instance, &m_Surface)))
@@ -224,9 +239,15 @@ namespace Luma::Vulkan
         TArray<const char*> deviceExtensions;
         deviceExtensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
+        deviceExtensions.add(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
+
+        VkPhysicalDeviceDescriptorBufferFeaturesEXT descriptorBufferFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT };
+        descriptorBufferFeatures.descriptorBuffer = true;
+        descriptorBufferFeatures.descriptorBufferPushDescriptors = true;
 
         VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawParametersFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES };
         shaderDrawParametersFeatures.shaderDrawParameters = true;
+        shaderDrawParametersFeatures.pNext = &descriptorBufferFeatures;
 
         VkPhysicalDeviceSynchronization2Features synchronization2Features = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES };
         synchronization2Features.synchronization2 = true;
@@ -318,7 +339,6 @@ namespace Luma::Vulkan
             return false;
         }
 
-        //TODO: CREATE COMMANDS POOLS
         VkCommandPoolCreateInfo commandPoolCreateInfo = { VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO };
         commandPoolCreateInfo.queueFamilyIndex = m_RenderQueue.getIndex();
         commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
@@ -750,6 +770,88 @@ namespace Luma::Vulkan
     ITextureView* FRenderDeviceImpl::getAcquiredSwapchainTextureView()
     {
         return m_Swapchain.getTextureView(m_SwapchainImageIndex);
+    }
+
+    void FRenderDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)
+    {
+        const FSamplerImpl* samplerImpl = static_cast<const FSamplerImpl*>(sampler);
+        const VkSampler samplerHandle = samplerImpl->getHandle();
+
+        VkDescriptorGetInfoEXT getInfo { VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT };
+        getInfo.type = VK_DESCRIPTOR_TYPE_SAMPLER;
+        getInfo.data.pSampler = &samplerHandle;
+
+        uint8_t* mappedPtr = buffer->map<uint8_t>();
+        vkGetDescriptorEXT(m_Handle, &getInfo, m_DescriptorBufferProperties.samplerDescriptorSize, mappedPtr + offset);
+        buffer->unmap(mappedPtr);
+    }
+
+    void FRenderDeviceImpl::writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType)
+    {
+        const FTextureViewImpl* textureViewImpl = static_cast<const FTextureViewImpl*>(texture->getTextureView());
+
+        VkDescriptorImageInfo imageInfo;
+        imageInfo.imageView = textureViewImpl->getHandle();
+        imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        VkDescriptorGetInfoEXT getInfo { VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT };
+        getInfo.type = bindingType == ETextureBindingType::Storage ? VK_DESCRIPTOR_TYPE_STORAGE_IMAGE : VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+        getInfo.data.pSampledImage = &imageInfo;
+        getInfo.data.pStorageImage = &imageInfo;
+
+        const auto descriptorSize = bindingType == ETextureBindingType::Sampled ?
+        m_DescriptorBufferProperties.sampledImageDescriptorSize
+        : m_DescriptorBufferProperties.storageImageDescriptorSize;
+
+        uint8_t* mappedPtr = buffer->map<uint8_t>();
+        vkGetDescriptorEXT(m_Handle, &getInfo, descriptorSize, mappedPtr + offset);
+        buffer->unmap(mappedPtr);
+    }
+
+    static VkDescriptorType getDescriptorType(EBufferBindingType bindingType)
+    {
+        switch (bindingType)
+        {
+        case EBufferBindingType::Uniform: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case EBufferBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        case EBufferBindingType::UniformTexel: return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+        case EBufferBindingType::StorageTexel: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+        default: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        }
+    }
+
+    void FRenderDeviceImpl::writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource,
+        uint64_t resourceOffset, uint64_t resourceSize, EBufferBindingType bindingType)
+    {
+        LUMA_ASSERT(resourceOffset + resourceSize <= bufferResource->getSize(), "Size is too big!");
+
+        VkDescriptorAddressInfoEXT addressInfo { VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT };
+        addressInfo.address = bufferResource->getDeviceAddress() + resourceOffset;
+        addressInfo.format = VK_FORMAT_UNDEFINED;
+        addressInfo.range = resourceSize;
+
+        VkDescriptorGetInfoEXT getInfo { VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT };
+        getInfo.type = getDescriptorType(bindingType);
+        getInfo.data.pStorageBuffer = bindingType == EBufferBindingType::Storage ? &addressInfo : nullptr;
+        getInfo.data.pStorageTexelBuffer = bindingType == EBufferBindingType::StorageTexel ? &addressInfo : nullptr;
+        getInfo.data.pUniformBuffer = bindingType == EBufferBindingType::Uniform ? &addressInfo : nullptr;
+        getInfo.data.pUniformTexelBuffer = bindingType == EBufferBindingType::UniformTexel ? &addressInfo : nullptr;
+
+        const auto getDescriptorSize = [this, bindingType]()
+        {
+            switch (bindingType)
+            {
+            case EBufferBindingType::Uniform: return m_DescriptorBufferProperties.uniformBufferDescriptorSize;
+            case EBufferBindingType::Storage: return m_DescriptorBufferProperties.storageBufferDescriptorSize;
+            case EBufferBindingType::UniformTexel: return m_DescriptorBufferProperties.uniformBufferDescriptorSize;
+            case EBufferBindingType::StorageTexel: return m_DescriptorBufferProperties.storageBufferDescriptorSize;
+            default: return 0u;
+            }
+        };
+
+        uint8_t* mappedPtr = buffer->map<uint8_t>();
+        vkGetDescriptorEXT(m_Handle, &getInfo, getDescriptorSize(), mappedPtr + offset);
+        buffer->unmap(mappedPtr);
     }
 
     VkInstance FRenderDeviceImpl::getInstance()
