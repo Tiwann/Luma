@@ -32,6 +32,7 @@ add_subdirectory(Engine/Graphics)
 add_subdirectory(Engine/Audio)
 add_subdirectory(Engine/Input)
 add_subdirectory(Engine/UI)
+add_subdirectory(Engine/Physics)
 
 if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)

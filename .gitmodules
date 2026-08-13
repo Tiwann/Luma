@@ -14,3 +14,6 @@
 [submodule "Vendor/msdf-atlas-gen"]
 	path = Vendor/msdf-atlas-gen
 	url = git@github.com:Chlumsky/msdf-atlas-gen.git
+[submodule "Vendor/box3d"]
+	path = Vendor/box3d
+	url = https://github.com/erincatto/box3d.git

@@ -45,3 +45,6 @@ set(FREETYPE_LIBRARY Freetype::Freetype)
 set(FREETYPE_INCLUDE_DIRS ${freetype_SOURCE_DIR}/include)
 add_subdirectory(msdf-atlas-gen)
 set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER luma-vendor)
+
+
+add_subdirectory(box3d)
