@@ -17,6 +17,7 @@
 #include "Luma/Asset/Font.h"
 #include "Luma/Containers/StringFormat.h"
 #include "Luma/Physics/BoxShape.h"
+#include "Luma/Physics/PlaneShape.h"
 #include "Luma/Rendering/Renderer2D.h"
 
 using namespace Luma;
@@ -46,8 +47,16 @@ int main()
 
     Ref<FPhysicsWorld> physicsWorld = Ref<FPhysicsWorld>::create();
 
+    FPhysicsBodyDesc floorDesc;
+    floorDesc.bodyType = EPhysicsBodyType::Static;
+    Ref<FPhysicsBody> floor = physicsWorld->createBody(floorDesc);
+
+    Ref<FPlaneShape> floorShape = Ref<FPlaneShape>::create();
+    floor->attachShape(floorShape);
+
     FPhysicsBodyDesc bodyDesc;
     bodyDesc.bodyType = EPhysicsBodyType::Dynamic;
+    bodyDesc.initialPosition = FVector3f(0.0f, 3.0f, 0.0f);
     Ref<FPhysicsBody> body = physicsWorld->createBody(bodyDesc);
 
     Ref<FBoxShape> boxShape = Ref<FBoxShape>::create(FVector3f(0.5f, 0.5f, 0.5f));

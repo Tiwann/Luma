@@ -8,11 +8,30 @@
 #include "Luma/Physics/PhysicsShape.h"
 #include "Luma/Physics/BoxShape.h"
 #include "Luma/Physics/SphereShape.h"
+#include "Luma/Physics/PlaneShape.h"
 #include "Luma/Containers/Array.h"
 #include "Luma/Memory/Ref.h"
 
 namespace Luma
 {
+    namespace
+    {
+        b3Quat makePlaneRotation(const b3Vec3& normal)
+        {
+            const b3Vec3 cross = b3Cross(b3Vec3_axisY, normal);
+            if (b3LengthSquared(cross) < 1.0e-6f)
+            {
+                if (normal.y >= 0.0f)
+                    return b3Quat_identity;
+                return b3MakeQuatFromAxisAngle(b3Vec3_axisX, B3_PI);
+            }
+
+            b3Quat rotation;
+            rotation.v = cross;
+            rotation.s = 1.0f + b3Dot(b3Vec3_axisY, normal);
+            return b3NormalizeQuat(rotation);
+        }
+    }
     struct FPhysicsBody::Impl
     {
         const FPhysicsWorld* world = nullptr;
@@ -135,6 +154,18 @@ namespace Luma
             sphere.center = convert<b3Vec3>(shapeImpl.localPosition);
             sphere.radius = geometry.radius;
             shapeId = b3CreateSphereShape(m_Pimpl->bodyId, &def, &sphere);
+            break;
+        }
+        case IPhysicsShape::EType::Plane:
+        {
+            const FPhysicsShapeGeometry geometry = shape->getGeometry();
+
+            b3Transform transform;
+            transform.p = b3MulSV(geometry.offset, convert<b3Vec3>(geometry.normal));
+            transform.q = makePlaneRotation(convert<b3Vec3>(geometry.normal));
+
+            b3BoxHull hull = b3MakeTransformedBoxHull(geometry.halfExtents.x, geometry.halfExtents.y, geometry.halfExtents.z, transform);
+            shapeId = b3CreateHullShape(m_Pimpl->bodyId, &def, &hull.base);
             break;
         }
         }

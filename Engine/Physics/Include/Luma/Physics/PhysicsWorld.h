@@ -36,6 +36,7 @@ namespace Luma
     private:
         struct Impl;
         friend class FPhysicsBody;
+        friend class FPhysicsWorldDebugRenderer;
 
         Impl* m_Pimpl = nullptr;
     };
