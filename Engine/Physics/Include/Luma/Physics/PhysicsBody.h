@@ -4,6 +4,7 @@
 #include "Luma/Math/Quaternion.h"
 #include "Luma/Math/Vector3.h"
 #include "Luma/Memory/RefCounted.h"
+#include "Luma/Memory/Ref.h"
 #include "Luma/Physics/Export.h"
 
 namespace Luma
@@ -32,6 +33,12 @@ namespace Luma
         ~FPhysicsBody() override = default;
 
         void destroy();
+
+        void attachShape(Ref<IPhysicsShape> shape, bool updateMass = true);
+        void detachShape(IPhysicsShape* shape, bool updateMass = true);
+        void detachAllShapes();
+        uint32_t getShapeCount() const;
+        IPhysicsShape* getShape(uint32_t index) const;
 
         void setBodyType(EPhysicsBodyType bodyType);
         EPhysicsBodyType getBodyType() const;
@@ -70,6 +77,11 @@ namespace Luma
         void addTorque(const FVector3f& torque);
         void addAngularImpulse(const FVector3f& impulse);
     private:
+        friend class IPhysicsShape;
+
+        void createNativeShape(IPhysicsShape* shape);
+        void refreshShape(IPhysicsShape* shape);
+
         struct Impl;
         Impl* m_Pimpl = nullptr;
     };

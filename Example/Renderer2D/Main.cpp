@@ -50,6 +50,9 @@ int main()
     bodyDesc.bodyType = EPhysicsBodyType::Dynamic;
     Ref<FPhysicsBody> body = physicsWorld->createBody(bodyDesc);
 
+    Ref<FBoxShape> boxShape = Ref<FBoxShape>::create(FVector3f(0.5f, 0.5f, 0.5f));
+    body->attachShape(boxShape);
+
     while (!window->shouldClose())
     {
         window->pollEvents();

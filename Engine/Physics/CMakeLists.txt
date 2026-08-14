@@ -2,6 +2,9 @@
 set(LUMA_PHYSICS_SRC
     Source/PhysicsWorld.cpp
     Source/PhysicsBody.cpp
+    Source/PhysicsShape.cpp
+    Source/BoxShape.cpp
+    Source/SphereShape.cpp
 )
 
 add_library(luma-physics ${LUMA_PHYSICS_SRC})
