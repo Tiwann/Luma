@@ -155,7 +155,7 @@ namespace Luma
         }
 
         template<typename... Args>
-        static Ref<T> create(Args&&... args) { return Ref(new T(std::forward<Args>(args)...)); }
+        static Ref create(Args&&... args) { return Ref(new T(std::forward<Args>(args)...)); }
     private:
         PointerType m_Pointer = nullptr;
 

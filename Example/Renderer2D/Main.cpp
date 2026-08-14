@@ -13,7 +13,10 @@
 #include <Luma/Rendering/TextureUtils.h>
 #include <Luma/Asset/Material.h>
 
+#include "Luma/Physics/PhysicsWorld.h"
 #include "Luma/Asset/Font.h"
+#include "Luma/Containers/StringFormat.h"
+#include "Luma/Physics/BoxShape.h"
 #include "Luma/Rendering/Renderer2D.h"
 
 using namespace Luma;
@@ -25,7 +28,6 @@ int main()
 {
     const FWindowDesc windowDesc { "Hello Triangle", WIDTH, HEIGHT, EWindowCreateBits::Centered };
     Ref<FDesktopWindow> window = createWindow(windowDesc);
-    LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
     FRenderDeviceDesc renderDeviceDesc;
     renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
@@ -33,27 +35,31 @@ int main()
     renderDeviceDesc.window = window;
     renderDeviceDesc.vSync = true;
     Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
-    LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
 
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create();
-    if (!renderer->initialize(renderDevice))
-    {
-        LUMA_ASSERT(false, "Failed to initialize renderer 2d! Exiting application.");
-        return 1;
-    }
+    renderer->initialize(renderDevice);
 
     Ref<FFont> font = Ref<FFont>::create();
     const FString fontFilepath = FPath::getAssetPath("Fonts/OpenSans-Regular.ttf");
     font->loadAndGenerate(fontFilepath, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
     renderer->setFont(font);
 
+    Ref<FPhysicsWorld> physicsWorld = Ref<FPhysicsWorld>::create();
+
+    FPhysicsBodyDesc bodyDesc;
+    bodyDesc.bodyType = EPhysicsBodyType::Dynamic;
+    Ref<FPhysicsBody> body = physicsWorld->createBody(bodyDesc);
 
     while (!window->shouldClose())
     {
         window->pollEvents();
 
+        physicsWorld->step();
+
+        FVector3f position = body->getPosition();
+
         renderer->begin();
-        renderer->drawText("Hello World", {0, 0}, 150, FColor::Red);
+        renderer->drawText(strfmt("Position: ({}, {}, {})", position.x, position.y, position.z), {0, 0}, 50, FColor::Blue);
         renderer->end();
 
         if (renderDevice->beginFrame())
@@ -80,5 +86,6 @@ int main()
             renderDevice->present();
         }
     }
+
     return 0;
 }
