@@ -50,6 +50,8 @@ set(LUMA_CORE_SRC
         Source/Runtime/EntryPoint.cpp
 
         Source/Asset/Font.cpp
+
+        Source/BinaryData/RobotoFont.cpp
 )
 
 set(LUMA_CORE_WINDOWS_SRC

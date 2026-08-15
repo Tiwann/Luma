@@ -5,6 +5,8 @@
 #include "Luma/Rendering/TextureUtils.h"
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
+#include "Luma/Runtime/FileUtils.h"
+
 namespace Luma
 {
     static constexpr uint32_t ATLAS_DEFAULT_SIZE = 256;
@@ -166,13 +168,14 @@ namespace Luma
     }
 
 
-    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device)
+    bool FFont::loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType,
+        const TArray<FCharacterSet>& charSets, IRenderDevice* device)
     {
         msdfgen::FreetypeHandle* freetype = msdfgen::initializeFreetype();
         if (!freetype) return false;
 
         if (m_PrivateData->handle) msdfgen::destroyFont(m_PrivateData->handle);
-        m_PrivateData->handle = msdfgen::loadFont(freetype, *filepath);
+        m_PrivateData->handle = msdfgen::loadFontData(freetype, fontData.data(), fontData.count());
         if (!m_PrivateData->handle) return false;
 
         m_PrivateData->glyphs.clear();
@@ -263,6 +266,13 @@ namespace Luma
 
         m_AtlasType = atlasType;
         return true;
+    }
+
+    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device)
+    {
+        const TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
+        if (filepath.isEmpty()) return false;
+        return loadAndGenerate(TBufferView<uint8_t>(fileContent.data(), filepath.count()), atlasType, charSets, device);
     }
 
     bool FFont::loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath)

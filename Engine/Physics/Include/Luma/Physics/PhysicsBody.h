@@ -64,6 +64,7 @@ namespace Luma
         void setConstraints(FPhysicsConstraintsFlags constraints);
         FPhysicsConstraintsFlags getConstraints() const;
 
+        void setMass(float mass);
         float getMass() const;
         FVector3f getCenterOfMass() const;
 

@@ -10,7 +10,7 @@ namespace Luma
     public:
         constexpr TBufferView() = default;
 
-        TBufferView(const T* data, uint64_t count) : m_Data(data), m_Count(count){}
+        constexpr TBufferView(const T* data, uint64_t count) : m_Data(data), m_Count(count){}
         TBufferView(const TBufferView& buffer) : m_Data(buffer.m_Data), m_Count(buffer.m_Count){}
 
         const T* begin() const { return m_Data; }

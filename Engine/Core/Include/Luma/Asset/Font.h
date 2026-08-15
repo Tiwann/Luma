@@ -1,4 +1,5 @@
 #pragma once
+#include "Luma/Containers/BufferView.h"
 #include "Luma/Containers/StringView.h"
 #include "Luma/Memory/Ref.h"
 #include "Luma/Runtime/Asset.h"
@@ -45,6 +46,7 @@ namespace Luma
         static EAssetType getStaticAssetType() { return EAssetType::Font; }
         EAssetType getAssetType() const override { return getStaticAssetType(); }
 
+        bool loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device);
         bool loadAndGenerate(FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device);
         bool loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath);
         void destroy() override;

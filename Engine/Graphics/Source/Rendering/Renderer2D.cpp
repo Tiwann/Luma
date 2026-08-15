@@ -20,6 +20,7 @@
 #include "Luma/Rendering/Sampler.h"
 #include "Luma/Runtime/Assertion.h"
 #include "Luma/Runtime/Path.h"
+#include "Luma/BinaryData/RobotoFont.h"
 
 namespace Luma
 {
@@ -53,6 +54,7 @@ namespace Luma
     static constexpr uint32_t MAX_QUAD = 1024;
     static bool BeginDrawing = false;
     static bool ReadyToRender = false;
+    static Ref<FFont> DefaultFont = nullptr;
     static TArray<QuadVertex> QuadVertices;
     static TArray<uint32_t> QuadIndices;
     static TArray<const ITexture*> Textures;
@@ -61,6 +63,10 @@ namespace Luma
     {
         if (!renderDevice) return false;
         m_RenderDevice = renderDevice;
+
+        DefaultFont = Ref<FFont>::create();
+        DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
+        setFont(DefaultFont);
 
         FShaderDesc shaderDesc;
         shaderDesc.moduleName = "Renderer2D";
@@ -128,6 +134,7 @@ namespace Luma
     {
         m_RenderDevice->waitIdle();
         m_RenderDevice = nullptr;
+        DefaultFont = nullptr;
         m_Font = nullptr;
         m_Shader = nullptr;
         m_Pipeline = nullptr;
@@ -391,6 +398,11 @@ namespace Luma
 
     void FRenderer2D::setFont(Ref<FFont> font)
     {
+        if (!font)
+        {
+            m_Font = DefaultFont;
+            return;
+        }
         m_Font = font;
     }
 

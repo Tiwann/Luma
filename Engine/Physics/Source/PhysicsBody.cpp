@@ -329,6 +329,16 @@ namespace Luma
         return convert<FPhysicsConstraintsFlags>(b3Body_GetMotionLocks(m_Pimpl->bodyId));
     }
 
+    void FPhysicsBody::setMass(float mass)
+    {
+        b3MassData massData;
+        massData.center = b3Vec3_zero;
+        massData.inertia = b3Mat3_identity;
+        massData.mass = mass;
+
+        b3Body_SetMassData(m_Pimpl->bodyId, massData);
+    }
+
     float FPhysicsBody::getMass() const
     {
         return b3Body_GetMass(m_Pimpl->bodyId);
@@ -336,7 +346,7 @@ namespace Luma
 
     FVector3f FPhysicsBody::getCenterOfMass() const
     {
-        return convert<FVector3f>(b3Body_GetWorldCenter(m_Pimpl->bodyId));
+        return convert<FVector3f>(b3Body_GetLocalCenter(m_Pimpl->bodyId));
     }
 
     void FPhysicsBody::setAwake(bool awake)

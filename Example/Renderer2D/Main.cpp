@@ -16,6 +16,8 @@
 #include "Luma/Physics/PhysicsWorld.h"
 #include "Luma/Asset/Font.h"
 #include "Luma/Containers/StringFormat.h"
+#include "Luma/Input/Immediate.h"
+#include "Luma/Math/Math.h"
 #include "Luma/Physics/BoxShape.h"
 #include "Luma/Physics/PlaneShape.h"
 #include "Luma/Rendering/Renderer2D.h"
@@ -40,20 +42,16 @@ int main()
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create();
     renderer->initialize(renderDevice);
 
-    Ref<FFont> font = Ref<FFont>::create();
-    const FString fontFilepath = FPath::getAssetPath("Fonts/OpenSans-Regular.ttf");
-    font->loadAndGenerate(fontFilepath, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
-    renderer->setFont(font);
-
     Ref<FPhysicsWorld> physicsWorld = Ref<FPhysicsWorld>::create();
-
 
     Ref<FPhysicsBody> floor = physicsWorld->createBody({EPhysicsBodyType::Static});
     Ref<FPlaneShape> floorShape = Ref<FPlaneShape>::create();
     floor->attachShape(floorShape);
 
 
-    Ref<FPhysicsBody> cube = physicsWorld->createBody({EPhysicsBodyType::Dynamic, FVector3f(0.0f, 3.0f, 0.0f)});
+    Ref<FPhysicsBody> cube = physicsWorld->createBody({EPhysicsBodyType::Dynamic, FVector3f(0.0f, 10.0f, 0.0f)});
+    cube->setConstraints(EPhysicsConstraintsBits::PositionX|EPhysicsConstraintsBits::PositionZ);
+
     Ref<FBoxShape> boxShape = Ref<FBoxShape>::create(FVector3f(0.5f, 0.5f, 0.5f));
     cube->attachShape(boxShape);
 
@@ -63,10 +61,20 @@ int main()
 
         physicsWorld->step();
 
+        if (FInput::getKeyDown(EKey::Space))
+        {
+            FVector3f velocity = std::sqrt(-2.0f * physicsWorld->getGravity().y * 5.0f);
+            cube->setLinearVelocity(velocity);
+        }
+
         FVector3f position = cube->getPosition();
+        
 
         renderer->begin();
-        renderer->drawText(strfmt("Position: ({}, {}, {})", position.x, position.y, position.z), {0, 0}, 50, FColor::Blue);
+        renderer->drawText(strfmt("Position: ({:.3f}, {:.3f}, {:.3f})", position.x, position.y, position.z), {0, 0}, 20, FColor::Cyan);
+        renderer->drawText(strfmt("Rotation: ({:.3f}, {:.3f}, {:.3f})", position.x, position.y, position.z), {0, 0}, 40, FColor::Cyan);
+        renderer->drawText(strfmt("Mass: {}", cube->getMass()), {0, 60}, 20, FColor::Cyan);
+        renderer->drawText(strfmt("Center of Mass: ({:.3f}, {:.3f}, {:.3f})", cube->getCenterOfMass().x, cube->getCenterOfMass().y, cube->getCenterOfMass().z), {0, 80}, 20, FColor::Cyan);
         renderer->end();
 
         if (renderDevice->beginFrame())
