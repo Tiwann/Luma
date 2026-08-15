@@ -47,20 +47,15 @@ int main()
 
     Ref<FPhysicsWorld> physicsWorld = Ref<FPhysicsWorld>::create();
 
-    FPhysicsBodyDesc floorDesc;
-    floorDesc.bodyType = EPhysicsBodyType::Static;
-    Ref<FPhysicsBody> floor = physicsWorld->createBody(floorDesc);
 
+    Ref<FPhysicsBody> floor = physicsWorld->createBody({EPhysicsBodyType::Static});
     Ref<FPlaneShape> floorShape = Ref<FPlaneShape>::create();
     floor->attachShape(floorShape);
 
-    FPhysicsBodyDesc bodyDesc;
-    bodyDesc.bodyType = EPhysicsBodyType::Dynamic;
-    bodyDesc.initialPosition = FVector3f(0.0f, 3.0f, 0.0f);
-    Ref<FPhysicsBody> body = physicsWorld->createBody(bodyDesc);
 
+    Ref<FPhysicsBody> cube = physicsWorld->createBody({EPhysicsBodyType::Dynamic, FVector3f(0.0f, 3.0f, 0.0f)});
     Ref<FBoxShape> boxShape = Ref<FBoxShape>::create(FVector3f(0.5f, 0.5f, 0.5f));
-    body->attachShape(boxShape);
+    cube->attachShape(boxShape);
 
     while (!window->shouldClose())
     {
@@ -68,7 +63,7 @@ int main()
 
         physicsWorld->step();
 
-        FVector3f position = body->getPosition();
+        FVector3f position = cube->getPosition();
 
         renderer->begin();
         renderer->drawText(strfmt("Position: ({}, {}, {})", position.x, position.y, position.z), {0, 0}, 50, FColor::Blue);
