@@ -27,8 +27,7 @@ int main()
     renderDeviceDesc.vSync = true;
     Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
 
-    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create();
-    renderer->initialize(renderDevice);
+    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(renderDevice);
 
     FTime::initialize();
 

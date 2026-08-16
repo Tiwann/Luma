@@ -35,6 +35,7 @@ namespace Luma
         static constexpr uint32_t MAX_QUAD = FMath::sqr(512);
     public:
         FRenderer2D() = default;
+        FRenderer2D(Ref<IRenderDevice> renderDevice);
         ~FRenderer2D() override = default;
 
         bool initialize(Ref<IRenderDevice> renderDevice);

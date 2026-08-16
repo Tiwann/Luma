@@ -25,6 +25,11 @@
 
 namespace Luma
 {
+    FRenderer2D::FRenderer2D(Ref<IRenderDevice> renderDevice)
+    {
+        initialize(renderDevice);
+    }
+
     bool FRenderer2D::initialize(Ref<IRenderDevice> renderDevice)
     {
         if (!renderDevice) return false;
