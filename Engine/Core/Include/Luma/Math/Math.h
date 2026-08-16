@@ -52,6 +52,9 @@ namespace Luma
         template<NumberType T>
         static constexpr T saturate(T x) { return clamp<T>(x, T(0), T(1)); }
 
+        template<NumberType T>
+        static constexpr T sqr(T x) { return x * x; }
+
         template<FloatType T>
         static T cos(T x) { return std::cos(x); }
 

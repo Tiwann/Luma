@@ -21,52 +21,18 @@
 #include "Luma/Runtime/Assertion.h"
 #include "Luma/Runtime/Path.h"
 #include "Luma/BinaryData/RobotoFont.h"
+#include "Luma/Memory/Memory.h"
 
 namespace Luma
 {
-    const FMatrix4f FRenderer2D::DefaultLocalToWorldMatrix = FMatrix4f::Identity;
-
-    enum class QuadMode
-    {
-        Quad,
-        Ellipse,
-        Text,
-        Sprite
-    };
-
-    struct QuadVertex
-    {
-        FVector2f position;
-        FVector2f uv;
-        FVector4f color;
-        QuadMode quadMode;
-        uint32_t textureId;
-    };
-
-    struct Batch
-    {
-        TArray<QuadVertex> vertices;
-        TArray<uint32_t> indices;
-        TArray<WeakRef<ITexture>> textures;
-    };
-
-    static constexpr uint32_t MAX_BATCHES = 10;
-    static constexpr uint32_t MAX_QUAD = 1024;
-    static bool BeginDrawing = false;
-    static bool ReadyToRender = false;
-    static Ref<FFont> DefaultFont = nullptr;
-    static TArray<QuadVertex> QuadVertices;
-    static TArray<uint32_t> QuadIndices;
-    static TArray<const ITexture*> Textures;
-
     bool FRenderer2D::initialize(Ref<IRenderDevice> renderDevice)
     {
         if (!renderDevice) return false;
         m_RenderDevice = renderDevice;
 
-        DefaultFont = Ref<FFont>::create();
-        DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
-        setFont(DefaultFont);
+        m_DefaultFont = Ref<FFont>::create();
+        m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
+        setFont(m_DefaultFont);
 
         FShaderDesc shaderDesc;
         shaderDesc.moduleName = "Renderer2D";
@@ -126,7 +92,7 @@ namespace Luma
 
         m_BindingSet->bindSampler(0, m_SpriteSampler);
         m_BindingSet->bindSampler(1, m_Sampler);
-        m_LocalToWorldMatrix = DefaultLocalToWorldMatrix;
+        m_LocalToWorldMatrix = FMatrix4f::Identity;
         return true;
     }
 
@@ -134,51 +100,51 @@ namespace Luma
     {
         m_RenderDevice->waitIdle();
         m_RenderDevice = nullptr;
-        DefaultFont = nullptr;
+        m_DefaultFont = nullptr;
         m_Font = nullptr;
         m_Shader = nullptr;
         m_Pipeline = nullptr;
         m_VertexBuffer = nullptr;
         m_IndexBuffer = nullptr;
-        QuadVertices.free();
-        QuadIndices.free();
+        m_QuadVertices.free();
+        m_QuadIndices.free();
     }
 
 
     void FRenderer2D::begin()
     {
-        LUMA_ASSERT(!BeginDrawing, "begin/end mismatch");
-        BeginDrawing = true;
-        ReadyToRender = false;
-        QuadVertices.clear();
-        QuadIndices.clear();
-        Textures.clear();
+        LUMA_ASSERT(!m_BeginDrawing, "begin/end mismatch");
+        m_BeginDrawing = true;
+        m_ReadyToRender = false;
+        m_QuadVertices.clear();
+        m_QuadIndices.clear();
+        m_Textures.clear();
     }
 
     void FRenderer2D::end()
     {
-        LUMA_ASSERT(BeginDrawing, "begin/end mismatch");
+        LUMA_ASSERT(m_BeginDrawing, "begin/end mismatch");
 
         void* vertexMapped = m_VertexBuffer->map();
-        memcpy(vertexMapped, QuadVertices.data(), QuadVertices.size());
+        Memory::memcpy(vertexMapped, m_QuadVertices.data(), m_QuadVertices.size());
         m_VertexBuffer->unmap(vertexMapped);
 
         void* indexMapped = m_IndexBuffer->map();
-        memcpy(indexMapped, QuadIndices.data(), QuadIndices.size());
+        Memory::memcpy(indexMapped, m_QuadIndices.data(), m_QuadIndices.size());
         m_IndexBuffer->unmap(indexMapped);
 
-        m_BindingSet->bindTextures(2, Textures, EBindingType::SampledTexture);
-        BeginDrawing = false;
-        ReadyToRender = true;
+        m_BindingSet->bindTextures(2, m_Textures, EBindingType::SampledTexture);
+        m_BeginDrawing = false;
+        m_ReadyToRender = true;
     }
 
     void FRenderer2D::render(ICommandBuffer* cmdBuffer, uint32_t width, uint32_t height)
     {
-        LUMA_ASSERT(ReadyToRender, "not ready to render yet!!");
+        LUMA_ASSERT(m_ReadyToRender, "not ready to render yet!!");
 
-        const FMatrix4f projection = scale(orthoTopLeft<float>(width, height, 1.0f, -1.0, 1.0f), {1.0f, -1.0f, 1.0f});
+        const FMatrix4f projection = scale(orthoTopLeft(static_cast<float>(width), static_cast<float>(height), 1.0f, -1.0f, 1.0f), {1.0f, -1.0f, 1.0f});
         const FMatrix4f mvp = projection * m_LocalToWorldMatrix;
-        cmdBuffer->beginDebugGroup("Renderer2D", FColor::Cyan);
+        cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
         cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
         cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::Uint32);
@@ -186,18 +152,18 @@ namespace Luma
         cmdBuffer->bindBindingSet(m_BindingSet, m_Shader);
         cmdBuffer->setViewport(FViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f));
         cmdBuffer->setScissor(FScissor(0, 0, width, height));
-        cmdBuffer->drawIndexed(QuadIndices.count(), 1, 0, 0, 0);
+        cmdBuffer->drawIndexed(m_QuadIndices.count(), 1, 0, 0, 0);
         cmdBuffer->endDebugGroup();
-        ReadyToRender = false;
+        m_ReadyToRender = false;
     }
 
-    static void addQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color, const QuadMode quadMode, const uint32_t textureId)
+    void FRenderer2D::addQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color, const QuadMode quadMode, const uint32_t textureId)
     {
         FMatrix3f transform;
         transform = rotate(transform, FAxisAnglef(FVector3f::Forward, rotation));
         transform = translate(transform, position);
 
-        const uint32_t lastVertexCount = QuadVertices.count();
+        const uint32_t lastVertexCount = m_QuadVertices.count();
 
         const QuadVertex quadVertices[]
         {
@@ -206,43 +172,43 @@ namespace Luma
             /* TR */{ transform * FVector2f(size.x, size.y), FVector2f(1.0f, 0.0f), color, quadMode, textureId },
             /* BR */{ transform * FVector2f(size.x, 0.0f), FVector2f(0.0f, 0.0f), color, quadMode, textureId },
         };
-        QuadVertices.addRange(quadVertices);
+        m_QuadVertices.addRange(quadVertices);
 
         const uint32_t quadIndices[]
         {
             0 + lastVertexCount, 2 + lastVertexCount, 1 + lastVertexCount,
             0 + lastVertexCount, 3 + lastVertexCount, 2 + lastVertexCount
         };
-        QuadIndices.addRange(quadIndices);
+        m_QuadIndices.addRange(quadIndices);
     }
 
-    static uint32_t getOrAddTexture(const ITexture* texture)
+    uint32_t FRenderer2D::getOrAddTexture(const ITexture* texture)
     {
         LUMA_ASSERT(texture, "ITexture should be valid!");
-        if (Textures.contains(texture))
-            return Textures.find(texture);
-        Textures.add(texture);
-        return Textures.count() - 1;
+        if (m_Textures.contains(texture))
+            return m_Textures.find(texture);
+        m_Textures.add(texture);
+        return m_Textures.count() - 1;
     }
 
-    void FRenderer2D::drawQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color) const
+    void FRenderer2D::drawQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color)
     {
         addQuad(position, size, rotation, color, QuadMode::Quad, 0);
     }
 
-    void FRenderer2D::drawQuad(const FRect2f& rect, const float rotation, const FColor& color) const
+    void FRenderer2D::drawQuad(const FRect2f& rect, const float rotation, const FColor& color)
     {
         const FVector2f position = { rect.x, rect.y };
         const FVector2f size = { rect.width, rect.height };
         drawQuad(position, size, rotation, color);
     }
 
-    void FRenderer2D::drawEllipse(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color) const
+    void FRenderer2D::drawEllipse(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color)
     {
         addQuad(position, size, rotation, color, QuadMode::Ellipse, 0);
     }
 
-    void FRenderer2D::drawEllipse(const FRect2f& rect, const float rotation, const FColor& color) const
+    void FRenderer2D::drawEllipse(const FRect2f& rect, const float rotation, const FColor& color)
     {
         const FVector2f position = { rect.x, rect.y };
         const FVector2f size = { rect.width, rect.height };
@@ -250,24 +216,24 @@ namespace Luma
     }
 
     void FRenderer2D::drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation,
-        const FColor& color) const
+        const FColor& color)
     {
         const FVector2f newPos = { position.x - size.x * 0.5f, position.y - size.y * 0.5f };
         drawEllipse(newPos, size, rotation, color);
     }
 
-    void FRenderer2D::drawCircleCentered(const FVector2f& position, float radius, const FColor& color) const
+    void FRenderer2D::drawCircleCentered(const FVector2f& position, float radius, const FColor& color)
     {
         const FVector2f newPos = { position.x - radius, position.y - radius };
         drawCircle(newPos, radius, color);
     }
 
-    void FRenderer2D::drawCircle(const FVector2f& position, float radius, const FColor& color) const
+    void FRenderer2D::drawCircle(const FVector2f& position, float radius, const FColor& color)
     {
         drawEllipse(position, {radius * 2.0f, radius * 2.0f}, 0.0f, color);
     }
 
-    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float fontSize, const FColor& color) const
+    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float fontSize, const FColor& color)
     {
         const TextParams params
         {
@@ -281,7 +247,7 @@ namespace Luma
         drawText(text, position, 0.0f, color, params);
     }
 
-    void FRenderer2D::drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const FColor& color) const
+    void FRenderer2D::drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const FColor& color)
     {
         const float width = m_Font->getTextWidth(text, fontSize);
         const float height = m_Font->getTextHeight(text, fontSize);
@@ -290,7 +256,7 @@ namespace Luma
         drawText(text, {x, y}, fontSize, color);
     }
 
-    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float rotation, const FColor& color, TextParams params) const
+    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float rotation, const FColor& color, TextParams params)
     {
         if (!m_Font) return;
         WeakRef<ITexture> atlasTexture = m_Font->getAtlasTexture();
@@ -336,7 +302,7 @@ namespace Luma
             double pl, pb, pr, pt;
             m_Font->getPlaneBounds(character, pl, pr, pt, pb);
 
-            const uint32_t lastVertexCount = QuadVertices.count();
+            const uint32_t lastVertexCount = m_QuadVertices.count();
 
             const QuadVertex quadVertices[]
             {
@@ -345,14 +311,14 @@ namespace Luma
                 {transform * FVector2f(posX + fsScale * pr, posY - fsScale * pt), FVector2f(tcr, tct), color, QuadMode::Text, textureId},
                 {transform * FVector2f(posX + fsScale * pr, posY - fsScale * pb), FVector2f(tcr, tcb), color, QuadMode::Text, textureId},
             };
-            QuadVertices.addRange(quadVertices);
+            m_QuadVertices.addRange(quadVertices);
 
             const uint32_t quadIndices[]
             {
                 0 + lastVertexCount, 2 + lastVertexCount, 1 + lastVertexCount,
                 0 + lastVertexCount, 3 + lastVertexCount, 2 + lastVertexCount
             };
-            QuadIndices.addRange(quadIndices);
+            m_QuadIndices.addRange(quadIndices);
 
             if (index != text.count() - 1)
             {
@@ -363,7 +329,7 @@ namespace Luma
         }
     }
 
-    void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const FColor& color) const
+    void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const FColor& color)
     {
         if (!sprite.texture) return;
         const uint32_t textureId = getOrAddTexture(sprite.texture);
@@ -377,7 +343,7 @@ namespace Luma
         const FVector2f bottomLeft  = FVector2f(0.0f, 0.0f);
         const FVector2f bottomRight = FVector2f(sprite.width, 0.0f);
 
-        const uint32_t lastVertexCount = QuadVertices.count();
+        const uint32_t lastVertexCount = m_QuadVertices.count();
 
         const QuadVertex quadVertices[]
         {
@@ -386,21 +352,21 @@ namespace Luma
             { transform * topRight,    FVector2f((sprite.x + sprite.width) / sprite.width, sprite.y / sprite.height), color, QuadMode::Sprite, textureId },
             { transform * bottomRight, FVector2f(sprite.x / sprite.width, sprite.y / sprite.height), color, QuadMode::Sprite, textureId },
         };
-        QuadVertices.addRange(quadVertices);
+        m_QuadVertices.addRange(quadVertices);
 
         const uint32_t quadIndices[]
         {
             0 + lastVertexCount, 2 + lastVertexCount, 1 + lastVertexCount,
             0 + lastVertexCount, 3 + lastVertexCount, 2 + lastVertexCount
         };
-        QuadIndices.addRange(quadIndices);
+        m_QuadIndices.addRange(quadIndices);
     }
 
     void FRenderer2D::setFont(Ref<FFont> font)
     {
         if (!font)
         {
-            m_Font = DefaultFont;
+            m_Font = m_DefaultFont;
             return;
         }
         m_Font = font;
@@ -409,5 +375,15 @@ namespace Luma
     void FRenderer2D::setLocalToWorldMatrix(const FMatrix4f& localToWorld)
     {
         m_LocalToWorldMatrix = localToWorld;
+    }
+
+    void FRenderer2D::setDebugName(const FString& debugName)
+    {
+        m_DebugName = debugName;
+    }
+
+    void FRenderer2D::setDebugColor(const FColor& debugColor)
+    {
+        m_DebugColor = debugColor;
     }
 }
