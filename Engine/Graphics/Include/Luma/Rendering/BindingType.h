@@ -1,9 +1,10 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
     enum class EBindingType
     {
+        None,
         Sampler,
         CombinedTextureSampler,
         SampledTexture,

@@ -1,6 +1,27 @@
 ﻿
 
 set(LUMA_CORE_SRC
+        Include/Luma/Containers/Array.h
+        Include/Luma/Containers/Character.h
+        Include/Luma/Containers/Lazy.h
+        Include/Luma/Containers/String.h
+        Include/Luma/Containers/StringConversion.h
+        Include/Luma/Containers/StringFormat.h
+        Include/Luma/Containers/StringView.h
+        Include/Luma/Containers/BufferView.h
+        Include/Luma/Containers/HashMap.h
+        Include/Luma/Containers/Pair.h
+        Include/Luma/Containers/Event.h
+        Include/Luma/Containers/Fifo.h
+
+        Source/Components/TransformComponent.cpp
+        Source/Components/CameraComponent.cpp
+
+        Source/IO/ArrayStream.cpp
+        Source/IO/FileStream.cpp
+        Source/IO/MemoryStream.cpp
+        Source/IO/Stream.cpp
+
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
         Source/Math/Matrix.cpp
@@ -9,17 +30,74 @@ set(LUMA_CORE_SRC
         Source/Math/Rect.cpp
         Source/Math/Transform.cpp
         Source/Math/Vector.cpp
-        Source/Math/MatrixTransform.cpp
+        Include/Luma/Math/MatrixTransform.hxx
+        Include/Luma/Math/MatrixProjection.hxx
         Source/Modules/ModuleManager.cpp
         Source/Runtime/RTTI.cpp
+        Source/Runtime/Path.cpp
+        Source/Runtime/DialogFilters.cpp
+        Source/Containers/StringFormat.cpp
+        Source/Memory/Memory.cpp
+        Source/Memory/Allocator.cpp
+        Source/Runtime/Application.cpp
+        Source/Runtime/Window.cpp
+        Source/Runtime/Scene.cpp
+        Source/Runtime/Entity.cpp
+        Source/Runtime/EntityHandle.cpp
+        Source/Runtime/Component.cpp
+        Source/Runtime/Sprite.cpp
+        Source/Runtime/FileUtils.cpp
+        Source/Runtime/EntryPoint.cpp
+
+        Source/Asset/Font.cpp
+
+        Source/BinaryData/RobotoFont.cpp
 )
 
+set(LUMA_CORE_WINDOWS_SRC
+        Source/Runtime/DesktopWindow.cpp
+        Source/Platform/Windows/StringConversion.cpp
+        Source/Platform/Windows/FileDialog.cpp
+        Source/Platform/Windows/Time.cpp
+        Source/Platform/Windows/FileSystem.cpp
+)
+
+
 add_library(luma-core ${LUMA_CORE_SRC})
-target_include_directories(luma-core PRIVATE Source PUBLIC Include)
-target_compile_definitions(luma-core PRIVATE LUMA_CORE INTERFACE LUMA_CLIENT)
-set_target_properties(luma-core PROPERTIES CXX_STANDARD 26)
+add_library(luma::core ALIAS luma-core)
+target_link_libraries(luma-core PUBLIC luma-natvis msdf-atlas-gen::msdf-atlas-gen luma::graphics luma::ui luma::audio luma::input)
+target_include_directories(luma-core PRIVATE Source PUBLIC Include External)
+target_compile_definitions(luma-core PRIVATE LUMA_CORE $<$<BOOL:${BUILD_SHARED_LIBS}>:LUMA_BUILD_DLL> PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
+set_target_properties(luma-core PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
 luma_generate_export_header(TARGET luma-core MODULE_NAME CORE)
 
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(luma-core PRIVATE LUMA_BUILD_DLL)
+endif ()
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_definitions(luma-core PUBLIC LUMA_DEBUG)
+elseif (CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
+    target_compile_definitions(luma-core PUBLIC LUMA_DEV)
+elseif (CMAKE_BUILD_TYPE MATCHES Release OR CMAKE_BUILD_TYPE MATCHES MinSizeRel)
+    target_compile_definitions(luma-core PUBLIC LUMA_RELEASE)
+endif ()
+
+if (WIN32)
+    target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_WINDOWS UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
+    target_sources(luma-core PRIVATE ${LUMA_CORE_WINDOWS_SRC})
+    target_link_libraries(luma-core PRIVATE luma::rgfw)
+elseif (LINUX)
+    target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_LINUX)
+    target_link_libraries(luma-core PRIVATE luma::rgfw)
+elseif (MACOS)
+    target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_MACOS)
+    target_link_libraries(luma-core PRIVATE luma::rgfw)
+elseif(SWITCH)
+    target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_SWITCH)
+    target_link_libraries(luma-core PUBLIC libnx)
+endif ()
+
+if(LUMA_ENGINE_BUILD_VULKAN)
+    target_compile_definitions(luma-core PUBLIC LUMA_BUILD_VULKAN)
 endif ()

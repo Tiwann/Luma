@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-namespace luma
+namespace Luma
 {
     struct IModule;
 

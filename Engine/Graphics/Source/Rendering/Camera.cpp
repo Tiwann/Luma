@@ -1,30 +1,61 @@
 ﻿#include "Luma/Rendering/Camera.h"
+#include "Luma/Math/MatrixProjection.hxx"
+#include "Luma/Math/MatrixTransform.hxx"
 
-namespace luma
+namespace Luma
 {
-    const FMatrix4f& FCamera::getViewMatrix()
+    template<FloatType F>
+    const TCamera<F>::Matrix& TCamera<F>::getViewMatrix()
     {
-        const auto computeView = [&]() -> FMatrix4f
+        const auto computeView = [&]()
         {
-            const Transform* transform = GetTransform();
-            Matrix4 view = Matrix4::Identity;
-            view.Translate(-transform->GetPosition());
-            view.RotateDegrees(-transform->GetRotation().ToEulerDegrees());
+            Matrix view = Matrix::Identity;
+            view = translate(view, -m_Position);
+            view = rotate(view, m_Rotation.inverted());
             return view;
         };
-
-        return m_ViewMatrix.Get(computeView);
+        return m_ViewMatrix.get(computeView);
     }
 
-    const FMatrix4f& FCamera::getProjectionMatrix()
+    template<FloatType F>
+    const TCamera<F>::Matrix& TCamera<F>::getProjectionMatrix()
     {
+        const auto computeProjection = [&]()
+        {
+            const F aspectRatio = (F)m_Width / m_Height;
+            
+            const Matrix projection = m_ProjectionMode == ECameraProjectionMode::Perspective ?
+                perspective(
+                m_FieldOfView,
+                aspectRatio,
+                m_Near,
+                m_Far)
+
+            : orthoCentered(
+                (F)m_Width,
+                (F)m_Height,
+                m_OrthoSize,
+                m_Near,
+                m_Far);
+
+            return projection;
+        };
+        
+        return m_ProjectionMatrix.get(computeProjection);
     }
 
-    const FMatrix4f& FCamera::getViewProjectionMatrix()
+    template<FloatType F>
+    const TCamera<F>::Matrix& TCamera<F>::getViewProjectionMatrix()
     {
+        const auto computeViewProjection = [&]()
+        {
+            return getProjectionMatrix() *getViewMatrix();
+        };
+        return m_ViewProjectionMatrix.get(computeViewProjection);
     }
 
-    void FCamera::setDimensions(uint32_t width, uint32_t height)
+    template<FloatType F>
+    void TCamera<F>::setDimensions(const uint32_t width, const uint32_t height)
     {
         m_Width = width;
         m_Height = height;
@@ -32,21 +63,24 @@ namespace luma
         m_ViewProjectionMatrix.setDirty();
     }
 
-    void FCamera::setProjectionMode(CameraProjectionMode mode)
+    template<FloatType F>
+    void TCamera<F>::setProjectionMode(const ECameraProjectionMode mode)
     {
         m_ProjectionMode = mode;
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
 
-    void FCamera::setFieldOfView(float fov)
+    template<FloatType F>
+    void TCamera<F>::setFieldOfView(F fov)
     {
         m_FieldOfView = fov;
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
 
-    void FCamera::setClipPlanes(float near, float far)
+    template<FloatType F>
+    void TCamera<F>::setClipPlanes(F near, F far)
     {
         m_Near = near;
         m_Far = far;
@@ -54,66 +88,80 @@ namespace luma
         m_ViewProjectionMatrix.setDirty();
     }
 
-    void FCamera::setOrthographicSize(float orthoSize)
+    template<FloatType F>
+    void TCamera<F>::setOrthographicSize(F orthoSize)
     {
         m_OrthoSize = orthoSize;
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
 
-    uint32_t FCamera::getWidth() const
+    template<FloatType F>
+    uint32_t TCamera<F>::getWidth() const
     {
         return m_Width;
     }
 
-    uint32_t FCamera::getHeight() const
+    template<FloatType F>
+    uint32_t TCamera<F>::getHeight() const
     {
         return m_Height;
     }
 
-    float FCamera::getNearClipPlane() const
+    template<FloatType F>
+    F TCamera<F>::getNearClipPlane() const
     {
         return m_Near;
     }
 
-    float FCamera::getFarClipPlane() const
+    template<FloatType F>
+    F TCamera<F>::getFarClipPlane() const
     {
         return m_Far;
     }
 
-    CameraProjectionMode FCamera::getProjectionMode() const
+    template<FloatType F>
+    ECameraProjectionMode TCamera<F>::getProjectionMode() const
     {
         return m_ProjectionMode;
     }
 
-    float FCamera::getOrthographicSize() const
+    template<FloatType F>
+    F TCamera<F>::getOrthographicSize() const
     {
         return m_OrthoSize;
     }
-
-    float FCamera::getFieldOfView() const
+    
+    template<FloatType F>
+    F TCamera<F>::getFieldOfView() const
     {
         return m_FieldOfView;
     }
 
-    void FCamera::setPosition(const FVector3f& position)
+    template<FloatType F>
+    void TCamera<F>::setPosition(const Vector& position)
     {
         m_Position = position;
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
 
-    void FCamera::setRotation(const FQuatf& rotation)
+    template<FloatType F>
+    void TCamera<F>::setRotation(const Quat& rotation)
     {
         m_Rotation = rotation;
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
 
-    void FCamera::setRotation(const FAxisAngle2f& axisAngle)
+    template<FloatType F>
+    void TCamera<F>::setRotation(const AxisAngle& axisAngle)
     {
-        m_Rotation = FQuatf::fromAxisAngle(axisAngle);
+        m_Rotation = Quat::fromAxisAngle(axisAngle);
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
+
+    template struct TCamera<float>;
+    template struct TCamera<double>;
 }

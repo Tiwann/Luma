@@ -2,9 +2,8 @@
 #include "Concepts.h"
 #include "Vector.h"
 #include "AxisAngle.h"
-#include <cmath>
 
-namespace luma
+namespace Luma
 {
     template<NumberType T, uint32_t I, uint32_t J> requires(I >= 2 && J >= 2)
     struct TMatrix;

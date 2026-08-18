@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
-    enum class ELoadOperation
+    enum class ELoadOp
     {
         Load,
         Clear,

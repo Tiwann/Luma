@@ -2,7 +2,7 @@
 #include "ColorChannel.h"
 #include "ComponentSwizzle.h"
 
-namespace luma
+namespace Luma
 {
     struct FComponentMapping
     {
@@ -11,8 +11,6 @@ namespace luma
         EComponentSwizzle b = EComponentSwizzle::Identity;
         EComponentSwizzle a = EComponentSwizzle::Identity;
 
-        static const FComponentMapping Identity;
-
-        static FComponentMapping FromColorChannelFlags(ColorChannelFlags channelFlags);
+        static FComponentMapping FromColorChannelFlags(FColorChannelFlags channelFlags);
     };
 }

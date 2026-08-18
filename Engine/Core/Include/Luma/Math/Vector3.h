@@ -3,19 +3,21 @@
 #include <limits>
 #include <cmath>
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TVector<T, 3>
     {
         union
         {
-            struct { T x{0}, y{0}, z{0}; };
+            struct { T x, y, z; };
             T data[3];
         };
 
+        constexpr TVector() : x(T(0)), y(T(0)), z(T(0)){}
         constexpr TVector(T x, T y, T z) : x(x), y(y), z(z) {}
         constexpr TVector(T n) : x(n), y(n), z(n) {}
+        constexpr TVector(const TVector<T, 2>& v, T z) : x(v.x), y(v.y), z(z) {}
         constexpr explicit TVector(const TVector<T, 4>& other) : x(other.x), y(other.y), z(other.z) {}
 
 

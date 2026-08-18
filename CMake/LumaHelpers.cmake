@@ -23,3 +23,18 @@
 
     message(STATUS "[Luma] Generated export header for module ${MODULE_NAME} → ${OUTPUT_FILE}")
 endfunction()
+
+function(luma_compile_shader TARGET INPUT OUTPUT PROFILE ENTRY)
+    add_custom_command(
+            OUTPUT ${OUTPUT}
+            COMMAND slangc
+            ${INPUT}
+            -o ${OUTPUT}
+            -profile ${PROFILE}
+            -entry ${ENTRY}
+            DEPENDS ${INPUT}
+            COMMENT "Compiling Slang shader: ${INPUT}"
+    )
+
+    add_custom_target(${TARGET} ALL DEPENDS ${OUTPUT})
+endfunction()

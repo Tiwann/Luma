@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 
-namespace luma
+namespace Luma
 {
     enum class EColorSpace
     {
-        Srgb,
+        SRGB,
         Linear,
     };
 }

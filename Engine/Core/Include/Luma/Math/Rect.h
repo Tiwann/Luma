@@ -1,20 +1,26 @@
 ﻿#pragma once
 #include "Concepts.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T, uint32_t N>
     struct TRect;
 
-    using FRect2f = TRect<float, 2>;
-    using FRect2d = TRect<double, 2>;
-    using FRect2i = TRect<int32_t, 2>;
-    using FRect2u = TRect<uint32_t, 2>;
+    template<NumberType T>
+    using FRect2 = TRect<T, 2>;
 
-    using FRect3f = TRect<float, 3>;
-    using FRect3d = TRect<double, 3>;
-    using FRect3i = TRect<int32_t, 3>;
-    using FRect3u = TRect<uint32_t, 3>;
+    template<NumberType T>
+    using FRect3 = TRect<T, 3>;
+
+    using FRect2f = FRect2<float>;
+    using FRect2d = FRect2<double>;
+    using FRect2i = FRect2<int32_t>;
+    using FRect2u = FRect2<uint32_t>;
+
+    using FRect3f = FRect3<float>;
+    using FRect3d = FRect3<double>;
+    using FRect3i = FRect3<int32_t>;
+    using FRect3u = FRect3<uint32_t>;
 
     using FRect2D = FRect2f;
     using FRect3D = FRect3f;

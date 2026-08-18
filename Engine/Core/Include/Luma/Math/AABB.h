@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Concepts.h"
 
-namespace luma
+namespace Luma
 {
     template <NumberType T, uint32_t N>
     struct TAABB;

@@ -1,0 +1,19 @@
+[submodule "Engine/Vendor/spirv-reflect"]
+	path = Vendor/spirv-reflect
+	url = git@github.com:KhronosGroup/SPIRV-Reflect.git
+[submodule "Engine/Vendor/assimp"]
+	path = Vendor/assimp
+	url = git@github.com:assimp/assimp.git
+[submodule "Vendor/imgui"]
+	path = Vendor/imgui
+	url = git@github.com:ocornut/imgui.git
+	branch = docking
+[submodule "Vendor/freetype"]
+	path = Vendor/freetype
+	url = git@github.com:freetype/freetype.git
+[submodule "Vendor/msdf-atlas-gen"]
+	path = Vendor/msdf-atlas-gen
+	url = git@github.com:Chlumsky/msdf-atlas-gen.git
+[submodule "Vendor/box3d"]
+	path = Vendor/box3d
+	url = https://github.com/erincatto/box3d.git

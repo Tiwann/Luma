@@ -1,65 +1,104 @@
 ﻿#pragma once
 #include "Luma/Graphics/Export.h"
+#include "SwpchainBuffering.h"
+#include "RenderDeviceType.h"
+#include "Luma/Memory/RefCounted.h"
+#include "Luma/Containers/HashMap.h"
+#include "Sampler.h"
+#include <cstdint>
 
-namespace luma
+#include "BindingType.h"
+#include "BufferBinding.h"
+#include "TextureBinding.h"
+
+
+namespace Luma
 {
+    class FMaterial;
+    struct FMaterialDesc;
     struct FBufferDesc;
     struct FTextureDesc;
+    struct FTextureViewDesc;
     struct FShaderDesc;
     struct FCommandBufferDesc;
     struct FFenceDesc;
+    struct FSemaphoreDesc;
     struct FSamplerDesc;
+    struct FGraphicsPipelineDesc;
+    struct FComputePipelineDesc;
 
+
+    struct IWindow;
     struct IBuffer;
     struct ITexture;
+    struct ITextureView;
     struct IShader;
-    struct ISampler;
     struct ICommandBuffer;
+    struct IRenderCommandBuffer;
+    struct IComputeCommandBuffer;
+    struct ICopyCommandBuffer;
     struct IFence;
+    struct ISemaphore;
+    struct ISampler;
+    struct IGraphicsPipeline;
+    struct IComputePipeline;
+    struct ISwapchain;
+    struct IQueue;
 
-    enum class ERenderDeviceType
-    {
-        None,
-#ifdef LUMA_BUILD_VULKAN
-        Vulkan,
-#endif
-#ifdef LUMA_BUILD_D3D12
-        D3D12,
-#endif
-#ifdef LUMA_BUILD_OPENGL
-        OpenGL,
-#endif
-#ifdef LUMA_BUILD_WEBGPU
-        WebGPU,
-#endif
-#ifdef LUMA_BUILD_NVN
-        NVN,
-#endif
-#ifdef LUMA_BUILD_DEKO3D
-        Deko3D,
-#endif
-#ifdef LUMA_BUILD_GNM
-        GNM,
-#endif
-    };
 
     struct FRenderDeviceDesc
     {
-        ERenderDeviceType deviceType;
+        IWindow* window = nullptr;
+        ERenderDeviceType deviceType = ERenderDeviceType::None;
+        ESwapchainBuffering buffering = ESwapchainBuffering::None;
+        bool vSync = false;
     };
 
-    struct LUMA_GRAPHICS_API IRenderDevice
+    struct LUMA_GRAPHICS_API IRenderDevice : IRefCounted<IRenderDevice>
     {
-        virtual ~IRenderDevice() = default;
+        ~IRenderDevice() override = default;
         virtual ERenderDeviceType getDeviceType() = 0;
         virtual bool initialize(const FRenderDeviceDesc& deviceDesc) = 0;
-        virtual void destroy();
+        virtual void destroy() = 0;
+
+        virtual bool beginFrame() = 0;
+        virtual void endFrame() = 0;
+        virtual void present() = 0;
+        virtual void waitIdle() = 0;
+        virtual uint32_t getFrameCount() = 0;
+        virtual uint32_t getCurrentFrameIndex() = 0;
+        virtual bool hasVSync() { return false; }
+
+        virtual ISwapchain* getSwapchain() { return nullptr; }
+        virtual IQueue* getRenderQueue() { return nullptr; }
+        virtual IQueue* getComputeQueue() { return nullptr; }
+        virtual IQueue* getCopyQueue() { return nullptr; }
 
         virtual IBuffer* createBuffer(const FBufferDesc& bufferDesc) = 0;
         virtual ITexture* createTexture(const FTextureDesc& textureDesc) = 0;
+        virtual ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) = 0;
         virtual IShader* createShader(const FShaderDesc& shaderDesc) = 0;
-        virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& commandBufferDesc) = 0;
+        virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
+        virtual ICommandBuffer* getCommandBuffer() = 0;
+        ICommandBuffer* createRenderCommandBuffer();
+        ICommandBuffer* createComputeCommandBuffer();
+        ICommandBuffer* createCopyCommandBuffer();
         virtual ISampler* createSampler(const FSamplerDesc& samplerDesc) = 0;
+        ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc);
+        virtual IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) = 0;
+        virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) = 0;
+        virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
+        virtual ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) = 0;
+        virtual ITextureView* getAcquiredSwapchainTextureView() = 0;
+        ISemaphore* createBinarySemaphore();
+        ISemaphore* createTimelineSemaphore(uint64_t initialValue);
+        FMaterial* createMaterial(const FMaterialDesc& materialDesc);
+
+        virtual void writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler){ LUMA_ASSERT(false, "Feature not available on this device"); };
+        virtual void writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType){ LUMA_ASSERT(false, "Feature not available on this device"); };
+        virtual void writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource, uint64_t resourceOffset, uint64_t resourceSize, EBufferBindingType bindingType){ LUMA_ASSERT(false, "Feature not available on this device"); };
+    protected:
+        THashMap<FSamplerDesc, ISampler*, FSamplerDescHasher> m_PerDescSamplers;
     };
 
     LUMA_GRAPHICS_API IRenderDevice* createRenderDevice(const FRenderDeviceDesc& deviceDesc);

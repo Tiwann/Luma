@@ -4,24 +4,58 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/Camera.cpp
         Source/Rendering/RenderDevice.cpp
         Source/Rendering/CommandBuffer.cpp
+        Source/Rendering/Swapchain.cpp
+        Source/Rendering/Sampler.cpp
+        Source/Rendering/ComponentMapping.cpp
+        Source/Rendering/BufferUtils.cpp
+        Source/Rendering/ShaderCompileRequest.cpp
+        Source/Rendering/ShaderCompiler.cpp
+        Source/Rendering/InputLayout.cpp
+        Source/Rendering/GraphicsPipelineCache.cpp
+        Source/Rendering/Renderer2D.cpp
+        Source/Rendering/TextureUtils.cpp
+        Source/Rendering/ResourceBarrier.cpp
+        Source/Rendering/SceneRenderer.cpp
+        Source/Utility/SlangCommon.cpp
+        Source/Utility/SpirvReflectCommon.cpp
+        Source/Asset/StaticMesh.cpp
+        Source/Asset/Material.cpp
+        Source/Components/StaticMeshRenderer.cpp
 )
 
+set(LUMA_VULKAN_SRC
+        Source/Vulkan/VulkanMemoryAllocator.cpp
+        Source/Vulkan/VulkanUtils.cpp
+        Source/Vulkan/RenderDeviceImpl.cpp
+        Source/Vulkan/SamplerImpl.cpp
+        Source/Vulkan/SwapchainImpl.cpp
+        Source/Vulkan/CommandBufferImpl.cpp
+        Source/Vulkan/QueueImpl.cpp
+        Source/Vulkan/SemaphoreImpl.cpp
+        Source/Vulkan/FenceImpl.cpp
+        Source/Vulkan/BufferImpl.cpp
+        Source/Vulkan/TextureImpl.cpp
+        Source/Vulkan/TextureViewImpl.cpp
+        Source/Vulkan/ImmediateExecutorImpl.cpp
+        Source/Vulkan/BindingSetLayoutImpl.cpp
+        Source/Vulkan/BindingSetImpl.cpp
+        Source/Vulkan/ShaderImpl.cpp
+        Source/Vulkan/ComputePipelineImpl.cpp
+        Source/Vulkan/GraphicsPipelineImpl.cpp
+)
 
 set(LUMA_WEBGPU_SRC
         External/webgpu/webgpu.c
         Source/WebGPU/Device.cpp
 )
 
-add_library(luma-graphics SHARED ${LUMA_GRAPHICS_SRC})
-target_link_libraries(luma-graphics PRIVATE luma-core luma-math)
+add_library(luma-graphics ${LUMA_GRAPHICS_SRC})
+add_library(luma::graphics ALIAS luma-graphics)
+target_link_libraries(luma-graphics PRIVATE luma::core luma::rgfw spirv-reflect-static assimp::assimp stb::image PUBLIC Vulkan::slang)
 target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
-target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS INTERFACE LUMA_CLIENT)
-set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26)
+target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS $<$<BOOL:${BUILD_SHARED_LIBS}>:LUMA_BUILD_DLL>)
+set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
 luma_generate_export_header(TARGET luma-graphics MODULE_NAME GRAPHICS)
-
-if(BUILD_SHARED_LIBS)
-    target_compile_definitions(luma-graphics PRIVATE LUMA_BUILD_DLL)
-endif ()
 
 if(LUMA_ENGINE_BUILD_WEBGPU)
     target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
@@ -29,6 +63,7 @@ if(LUMA_ENGINE_BUILD_WEBGPU)
 endif ()
 
 if(LUMA_ENGINE_BUILD_VULKAN)
-    target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
-    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY)
+    target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
+    target_link_directories(luma-graphics PRIVATE ${VULKAN_SDK_INC_DIR})
+    target_link_libraries(luma-graphics PRIVATE Vulkan::volk)
 endif ()

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
     enum class EBufferUsage
     {
@@ -10,6 +10,7 @@ namespace luma
         UniformBuffer,
         StorageBuffer,
         StagingBuffer,
-        IndirectBuffer
+        IndirectBuffer,
+        DescriptorBuffer
     };
 }

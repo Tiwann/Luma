@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <concepts>
 
-namespace luma
+namespace Luma
 {
     template <typename T>
     concept NumberType = std::integral<T> || std::floating_point<T>;

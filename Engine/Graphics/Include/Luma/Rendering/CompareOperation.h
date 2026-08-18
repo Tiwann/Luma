@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
-    enum class ECompareOperation
+    enum class ECompareOp
     {
         Always,
         Never,

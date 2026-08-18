@@ -4,7 +4,7 @@
 #include <cmath>
 #include <limits>
 
-namespace luma
+namespace Luma
 {
     template <NumberType T>
     struct TAABB<T, 2> : TRect<T, 2>

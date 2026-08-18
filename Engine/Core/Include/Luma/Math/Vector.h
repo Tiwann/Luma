@@ -1,7 +1,8 @@
 ﻿#pragma once
 #include "Concepts.h"
+#include "Luma/Runtime/Types.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T, uint32_t N> requires(N >= 2 && N <= 4)
     struct TVector;

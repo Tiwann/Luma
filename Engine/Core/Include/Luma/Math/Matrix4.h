@@ -1,9 +1,9 @@
 ﻿#pragma once
-#include "Vector.h"
+#include "Vector4.h"
 #include "Matrix.h"
 #include <cmath>
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TQuat;
@@ -18,15 +18,18 @@ namespace luma
         {
             struct
             {
-                T m00{T(1)}, m10{T(0)}, m20{T(0)}, m30{T(0)},
-                  m01{T(0)}, m11{T(1)}, m21{T(0)}, m31{T(0)},
-                  m02{T(0)}, m12{T(0)}, m22{T(1)}, m32{T(0)},
-                  m03{T(0)}, m13{T(0)}, m23{T(0)}, m33{T(1)};
+                T m00, m10, m20, m30,
+                  m01, m11, m21, m31,
+                  m02, m12, m22, m32,
+                  m03, m13, m23, m33;
             };
             Vector columns[4];
         };
 
-        constexpr TMatrix() = default;
+        constexpr TMatrix() : m00{T(1)}, m10{T(0)}, m20{T(0)}, m30{T(0)},
+                              m01{T(0)}, m11{T(1)}, m21{T(0)}, m31{T(0)},
+                              m02{T(0)}, m12{T(0)}, m22{T(1)}, m32{T(0)},
+                              m03{T(0)}, m13{T(0)}, m23{T(0)}, m33{T(1)} {}
 
         constexpr TMatrix(
             T m00, T m10, T m20, T m30,

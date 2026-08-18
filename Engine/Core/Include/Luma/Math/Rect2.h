@@ -2,7 +2,7 @@
 #include "Rect.h"
 #include "Vector.h"
 
-namespace luma
+namespace Luma
 {
     template<NumberType T>
     struct TRect<T, 2>
@@ -11,6 +11,9 @@ namespace luma
 
         constexpr TRect() : x((T)0), y((T)0), width((T)0), height((T)0) {}
         constexpr TRect(T x, T y, T width, T height) : x(x), y(y), width(width), height(height) {}
+
+        template<typename U>
+        constexpr operator TRect<U, 2>() const { return TRect<U, 2>(U(x), U(y), U(width), U(height)); }
 
         constexpr T top() const { return y; }
         constexpr T bottom() const { return y + height; }
@@ -24,7 +27,7 @@ namespace luma
         constexpr T centerY() const { return y + height / (T)2; }
         constexpr TVector<T, 2> center() const { return TVector<T, 2>(centerX(), centerY()); }
 
-        constexpr bool contains(T x, T u) const
+        constexpr bool contains(T x, T y) const
         {
             return x >= left() && x <= right() &&
                 y >= top() && y <= bottom();

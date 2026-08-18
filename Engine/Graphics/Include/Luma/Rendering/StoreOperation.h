@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace luma
+namespace Luma
 {
-    enum class EStoreOperation
+    enum class EStoreOp
     {
         Store,
         DontCare

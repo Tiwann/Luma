@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
-namespace luma
+namespace Luma
 {
     struct FBlitRegion
     {
