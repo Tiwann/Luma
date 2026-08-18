@@ -8,7 +8,7 @@ option(LUMA_ENGINE_BUILD_EXAMPLES "Build the example targets" ON)
 option(LUMA_ENGINE_BUILD_EDITOR "Build the editor application" ON)
 
 cmake_dependent_option(LUMA_ENGINE_BUILD_D3D12 "Build the engine with D3D12 backend" ON WIN32 OFF)
-option(LUMA_ENGINE_BUILD_VULKAN "Build the engine with Vulkan backend" ON)
+cmake_dependent_option(LUMA_ENGINE_BUILD_VULKAN "Build the engine with Vulkan backend" ON "WIN32;LINUX" OFF)
 option(LUMA_ENGINE_BUILD_OPENGL "Build the engine with OpenGL backend" OFF)
 option(LUMA_ENGINE_BUILD_WEBGPU "Build the engine with WebGPU backend" OFF)
 cmake_dependent_option(LUMA_ENGINE_BUILD_NVN "Build the engine with NVN backend" ON SWITCH OFF)
