@@ -2,8 +2,8 @@
 #include "Luma/Audio/AudioDevice.h"
 #include "Luma/Containers/StringConversion.h"
 
-#define STB_VORBIS_HEADER_ONLY
-#include <stb_vorbis.c>
+//#define STB_VORBIS_HEADER_ONLY
+//#include <stb_vorbis.c>
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
 
@@ -29,7 +29,7 @@ namespace Luma
         ma_result result = ma_decoder_init_file_w(*stringConvert<wchar_t, char>(filepath), &decoderConfig, m_Decoder);
         if (result != MA_SUCCESS) return false;
 
-        result = ma_sound_init_from_data_source(audioDevice->get, &m_Decoder, 0, nullptr, &m_Handle);
+        //result = ma_sound_init_from_data_source(audioDevice->get, &m_Decoder, 0, nullptr, &m_Handle);
         if (result != MA_SUCCESS) return false;
     }
 

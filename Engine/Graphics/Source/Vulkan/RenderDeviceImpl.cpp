@@ -480,6 +480,8 @@ namespace Luma::Vulkan
     bool FRenderDeviceImpl::beginFrame()
     {
         const FDesktopWindow* window = dynamic_cast<FDesktopWindow*>(m_Window);
+        if (!window) return false;
+
         if (window->isMinimized())
             return false;
 

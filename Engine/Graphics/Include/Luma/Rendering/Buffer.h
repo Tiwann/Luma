@@ -42,6 +42,6 @@ namespace Luma
         EBufferUsage m_Usage = EBufferUsage::None;
         EResourceState m_State = EResourceState::Undefined;
         bool m_AlwaysMapped = false;
-        void* m_MappedData = nullptr;
+        void* m_MappedAddress = nullptr;
     };
 }

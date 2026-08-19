@@ -49,9 +49,17 @@ set(LUMA_WEBGPU_SRC
         Source/WebGPU/Device.cpp
 )
 
+set(LUMA_DEKO3D_SRC
+    Source/Deko3D/RenderDeviceImpl.cpp
+    Source/Deko3D/SwapchainImpl.cpp
+    Source/Deko3D/QueueImpl.cpp
+    Source/Deko3D/CommandBufferImpl.cpp
+    Source/Deko3D/BufferImpl.cpp
+)
+
 add_library(luma-graphics ${LUMA_GRAPHICS_SRC})
 add_library(luma::graphics ALIAS luma-graphics)
-target_link_libraries(luma-graphics PRIVATE luma::core luma::rgfw spirv-reflect-static assimp::assimp stb::image PUBLIC Vulkan::slang)
+target_link_libraries(luma-graphics PRIVATE luma::core spirv-reflect-static assimp::assimp stb::image)
 target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS $<$<BOOL:${BUILD_SHARED_LIBS}>:LUMA_BUILD_DLL>)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
@@ -65,5 +73,10 @@ endif ()
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
     target_link_directories(luma-graphics PRIVATE ${VULKAN_SDK_INC_DIR})
-    target_link_libraries(luma-graphics PRIVATE Vulkan::volk)
+    target_link_libraries(luma-graphics PRIVATE luma::rgfw Vulkan::volk PUBLIC Vulkan::slang)
+endif ()
+
+if(LUMA_ENGINE_BUILD_DEKO3D)
+    target_sources(luma-graphics PRIVATE ${LUMA_DEKO3D_SRC})
+    target_link_libraries(luma-graphics PRIVATE deko3d)
 endif ()

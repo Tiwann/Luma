@@ -6,8 +6,12 @@
 #ifndef LUMA_DBG_BREAK
 #ifdef LUMA_PLATFORM_WINDOWS
 #define LUMA_DBG_BREAK() __debugbreak()
-#else
+#elifdef LUMA_PLATFORM_LINUX
 #define LUMA_DBG_BREAK __builtin_trap()
+#elifdef LUMA_PLATFORM_SWITCH
+#define LUMA_DBG_BREAK()
+#else
+
 #endif
 #endif
 

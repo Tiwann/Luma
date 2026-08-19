@@ -17,7 +17,7 @@ set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
 set(ASSIMP_BUILD_FBX_IMPORTER ON)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON)
 add_subdirectory(assimp)
-set_target_properties(assimp zlibstatic PROPERTIES FOLDER luma-vendor)
+set_target_properties(assimp PROPERTIES FOLDER luma-vendor)
 
 add_subdirectory(stb)
 

@@ -13,8 +13,6 @@
 #include <Luma/Rendering/Swapchain.h>
 #include <Luma/Rendering/Texture.h>
 
-#include "Luma/Asset/StaticMesh.h"
-
 using namespace Luma;
 
 int main()
@@ -29,7 +27,7 @@ int main()
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
     FRenderDeviceDesc renderDeviceDesc;
-    renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
+    renderDeviceDesc.deviceType = ERenderDeviceType::None;
     renderDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
     renderDeviceDesc.window = window;
     renderDeviceDesc.vSync = false;
