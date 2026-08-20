@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <cstdint>
 
 namespace Luma
 {
@@ -112,7 +113,7 @@ namespace Luma
         Float4 = Vector4,
     };
 
-    static size_t getFormatSize(const EFormat format)
+    static uint64_t getFormatSize(const EFormat format)
     {
         switch (format)
         {
@@ -168,10 +169,10 @@ namespace Luma
             break;
         default:                           return 0ULL;
         }
-        return size_t(0);
+        return 0;
     }
 
-    static size_t getFormatBytesPerChannel(const EFormat format)
+    static uint64_t getFormatBytesPerChannel(const EFormat format)
     {
         switch (format)
         {
@@ -213,7 +214,7 @@ namespace Luma
         }
     }
 
-    static size_t getFormatComponentCount(const EFormat format)
+    static uint64_t getFormatComponentCount(const EFormat format)
     {
         switch (format)
         {

@@ -1,9 +1,13 @@
 ﻿#pragma once
 #include "Character.h"
+#include "Luma/Memory/Memory.h"
 #include "Luma/Runtime/Assertion.h"
 #include "Array.h"
 #include <string_view>
 #include <iostream>
+#include <cstring>
+
+
 
 namespace Luma
 {
@@ -43,7 +47,7 @@ namespace Luma
             LUMA_ASSERT(data, "Cannot construct string with nullptr!");
             m_Count = strlen(data);
             m_Data = new CharacterType[m_Count + 1]{};
-            memcpy(m_Data, data, m_Count * CharacterSize);
+            Memory::memcpy(m_Data, data, m_Count * CharacterSize);
         }
 
         explicit TString(const SizeType count) : m_Count(count)
@@ -56,14 +60,14 @@ namespace Luma
             LUMA_ASSERT(data, "Cannot construct string with nullptr!");
             m_Count = count;
             m_Data = new CharacterType[m_Count + 1]{};
-            memcpy(m_Data, data, m_Count * CharacterSize);
+            Memory::memcpy(m_Data, data, m_Count * CharacterSize);
         }
 
         TString(const TString& other)
         {
             delete[] m_Data;
             m_Data = new CharacterType[other.m_Count + 1]{};
-            memcpy(m_Data, other.m_Data, other.m_Count * CharacterSize);
+            Memory::memcpy(m_Data, other.m_Data, other.m_Count * CharacterSize);
             m_Count = other.m_Count;
         }
 
@@ -82,7 +86,7 @@ namespace Luma
 
             if(m_Data) delete[] m_Data;
             m_Data = new CharacterType[other.m_Count + 1]{};
-            memcpy(m_Data, other.m_Data, other.m_Count * CharacterSize);
+            Memory::memcpy(m_Data, other.m_Data, other.m_Count * CharacterSize);
             m_Count = other.m_Count;
             return *this;
         }
@@ -111,7 +115,7 @@ namespace Luma
                 m_Data = new CharacterType[count];
             }
 
-            ::memmove(m_Data, buffer, count * CharacterSize);
+            Memory::memmove(m_Data, buffer, count * CharacterSize);
             m_Data[m_Count] = 0;
             m_Count = count;
             return *this;
@@ -159,7 +163,7 @@ namespace Luma
             if (m_Count > newCount)
             {
                 CharacterType* newData = new CharacterType [newCount + 1]{0};
-                ::memcpy(newData, m_Data, m_Count * CharacterSize);
+                Memory::memcpy(newData, m_Data, m_Count * CharacterSize);
                 delete [] m_Data;
                 m_Data = newData;
                 m_Count = newCount;
@@ -169,7 +173,7 @@ namespace Luma
             if (m_Count < newCount)
             {
                 CharacterType* newData = new CharacterType [newCount + 1]{0};
-                ::memcpy(newData, m_Data, newCount * CharacterSize);
+                Memory::memcpy(newData, m_Data, newCount * CharacterSize);
                 delete [] m_Data;
                 m_Data = newData;
                 m_Count = newCount;
@@ -185,8 +189,8 @@ namespace Luma
             const SizeType dataCount = strlen(data);
             const SizeType newCount = m_Count + dataCount;
             CharacterType* newData = new CharacterType[newCount + 1]{};
-            memcpy(newData, m_Data, m_Count * CharacterSize);
-            memcpy(newData + m_Count, data, dataCount * CharacterSize);
+            Memory::memcpy(newData, m_Data, m_Count * CharacterSize);
+            Memory::memcpy(newData + m_Count, data, dataCount * CharacterSize);
             delete [] m_Data;
             m_Data = newData;
             m_Count = newCount;
@@ -198,8 +202,8 @@ namespace Luma
         {
             const SizeType newCount = m_Count + 1;
             CharacterType* newData = new CharacterType[newCount + 1]{};
-            memcpy(newData, m_Data, m_Count * CharacterSize);
-            memcpy(newData + m_Count, &character, CharacterSize);
+            Memory::memcpy(newData, m_Data, m_Count * CharacterSize);
+            Memory::memcpy(newData + m_Count, &character, CharacterSize);
             delete [] m_Data;
             m_Data = newData;
             m_Count = newCount;
@@ -211,8 +215,8 @@ namespace Luma
             const SizeType dataCount = string.count();
             const SizeType newCount = m_Count + dataCount;
             CharacterType* newData = new CharacterType[newCount + 1]{};
-            memcpy(newData, m_Data, m_Count * CharacterSize);
-            memcpy(newData + m_Count, string.data(), dataCount * CharacterSize);
+            Memory::memcpy(newData, m_Data, m_Count * CharacterSize);
+            Memory::memcpy(newData + m_Count, string.data(), dataCount * CharacterSize);
             delete [] m_Data;
             m_Data = newData;
             m_Count = newCount;
@@ -224,7 +228,7 @@ namespace Luma
             LUMA_ASSERT(begin < m_Count && begin + (end - begin) <= m_Count, "Indices out of bounds!");
             const SizeType newCount = end - begin + 1;
             CharacterType* newData = new CharacterType[newCount + 1]{};
-            memcpy(newData, m_Data + begin, newCount * CharacterSize);
+            Memory::memcpy(newData, m_Data + begin, newCount * CharacterSize);
             return {newData, newCount};
         }
 
@@ -293,7 +297,7 @@ namespace Luma
 
             if (to.count() <= from.count())
             {
-                memcpy(m_Data + index, *to, to.size());
+                Memory::memcpy(m_Data + index, *to, to.size());
                 return *this;
             }
 
@@ -304,17 +308,17 @@ namespace Luma
             CharacterType* dest = newData;
             CharacterType* src = m_Data;
             SizeType size = index * CharacterSize;
-            memcpy(dest, src, size);
+            Memory::memcpy(dest, src, size);
 
             dest = newData + index * CharacterSize;
             src = const_cast<CharacterType*>(*to);
             size = to.size();
-            memcpy(dest, src, size);
+            Memory::memcpy(dest, src, size);
 
             dest = newData + index * CharacterSize + to.size();
             src = m_Data + index * CharacterSize + from.size();
             size = m_Count * CharacterSize - (index * CharacterSize + from.size());
-            memcpy(dest, src, size);
+            Memory::memcpy(dest, src, size);
 
             delete [] m_Data;
             m_Data = newData;
@@ -329,7 +333,7 @@ namespace Luma
 
             if (to.count() <= count)
             {
-                memcpy(m_Data + index, *to, to.size());
+                Memory::memcpy(m_Data + index, *to, to.size());
                 return *this;
             }
 
@@ -340,17 +344,17 @@ namespace Luma
             CharacterType* dest = newData;
             CharacterType* src = m_Data;
             SizeType size = index * CharacterSize;
-            memcpy(dest, src, size);
+            Memory::memcpy(dest, src, size);
 
             dest = newData + index * CharacterSize;
             src = const_cast<CharacterType*>(*to);
             size = to.size();
-            memcpy(dest, src, size);
+            Memory::memcpy(dest, src, size);
 
             dest = newData + index * CharacterSize + to.size();
             src = m_Data + index * CharacterSize + count * CharacterSize;
             size = m_Count * CharacterSize - (index * CharacterSize + count * CharacterSize);
-            memcpy(dest, src, size);
+            Memory::memcpy(dest, src, size);
 
             delete [] m_Data;
             m_Data = newData;

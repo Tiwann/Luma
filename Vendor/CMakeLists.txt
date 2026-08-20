@@ -17,7 +17,7 @@ set(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT OFF)
 set(ASSIMP_BUILD_FBX_IMPORTER ON)
 set(ASSIMP_BUILD_GLTF_IMPORTER ON)
 add_subdirectory(assimp)
-set_target_properties(assimp zlibstatic PROPERTIES FOLDER luma-vendor)
+set_target_properties(assimp PROPERTIES FOLDER luma-vendor)
 
 add_subdirectory(stb)
 
@@ -26,7 +26,7 @@ add_library(luma::imgui ALIAS luma-imgui)
 target_include_directories(luma-imgui PUBLIC imgui imgui/backends)
 set_target_properties(luma-imgui PROPERTIES CXX_STANDARD 17 FOLDER luma-engine)
 if(LUMA_ENGINE_BUILD_VULKAN)
-    target_link_libraries(luma-imgui PRIVATE Vulkan::volk)
+    target_link_libraries(luma-imgui PRIVATE volk::volk)
     target_sources(luma-imgui PRIVATE imgui/backends/imgui_impl_vulkan.cpp)
     target_compile_definitions(luma-imgui PRIVATE IMGUI_IMPL_VULKAN_USE_VOLK IMGUI_IMPL_VULKAN_VOLK_FILENAME=<Volk/volk.h>)
 endif ()
@@ -45,6 +45,14 @@ set(FREETYPE_LIBRARY Freetype::Freetype)
 set(FREETYPE_INCLUDE_DIRS ${freetype_SOURCE_DIR}/include)
 add_subdirectory(msdf-atlas-gen)
 set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER luma-vendor)
+
+
+set(VOLK_PULL_IN_VULKAN OFF)
+add_subdirectory(volk)
+set_target_properties(volk PROPERTIES FOLDER luma-vendor)
+
+add_subdirectory(Vulkan-Headers)
+set_target_properties(Vulkan-Headers PROPERTIES FOLDER luma-vendor)
 
 
 add_subdirectory(box3d)

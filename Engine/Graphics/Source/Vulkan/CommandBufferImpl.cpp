@@ -156,7 +156,7 @@ namespace Luma::Vulkan
         vkCmdBindVertexBuffers(m_Handle, 0, 1, buffers, offsets);
     }
 
-    void FCommandBufferImpl::bindIndexBuffer(const IBuffer* buffer, const uint64_t offset, const EIndexFormat format)
+    void FCommandBufferImpl::bindIndexBuffer(const IBuffer* buffer, int64_t offset, const EIndexFormat format)
     {
         if (!buffer) return;
         const FBufferImpl* bufferImpl = static_cast<const FBufferImpl*>(buffer);

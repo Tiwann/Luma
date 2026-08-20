@@ -1,9 +1,9 @@
 #pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/CommandBuffer.h"
-#include "VulkanFwd.h"
+#include "DekoFwd.h"
 
-namespace Luma::Vulkan
+namespace Luma::Deko3d
 {
     class FRenderDeviceImpl;
 
@@ -47,14 +47,17 @@ namespace Luma::Vulkan
         void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex,uint32_t mipLevel) override;
         void textureBarrier(const FTextureBarrier& barrier) override;
         void bufferBarrier(const FBufferBarrier& barrier) override;
-        void bindDescriptorBuffer(const IBuffer* buffer) override;
         void setName(FStringView name) override;
-        VkCommandBuffer getHandle() const { return m_Handle; }
 
+        DkCmdBuf getHandle() const { return m_Handle; }
+    protected:
+        friend class FQueueImpl;
+        DkCmdList getListHandle() const { return m_ListHandle; };
     private:
         FRenderDeviceImpl* m_Device = nullptr;
-        EQueueType m_CmdBufferType = EQueueType::Render;
-        VkCommandBuffer m_Handle = nullptr;
-        VkCommandPool m_PoolHandle = nullptr;
+        EQueueType m_CmdBufferType = EQueueType::None;
+        DkCmdBuf m_Handle = nullptr;
+        DkMemBlock m_MemBlock = nullptr;
+        DkCmdList m_ListHandle = 0;
     };
 }

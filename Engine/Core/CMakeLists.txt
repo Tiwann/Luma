@@ -62,10 +62,14 @@ set(LUMA_CORE_WINDOWS_SRC
         Source/Platform/Windows/FileSystem.cpp
 )
 
+set(LUMA_CORE_SWITCH_SRC
+        Source/Platform/Switch/SwitchWindow.cpp
+)
+
 
 add_library(luma-core ${LUMA_CORE_SRC})
 add_library(luma::core ALIAS luma-core)
-target_link_libraries(luma-core PUBLIC luma-natvis msdf-atlas-gen::msdf-atlas-gen luma::graphics luma::ui luma::audio luma::input)
+target_link_libraries(luma-core PUBLIC luma::natvis msdf-atlas-gen::msdf-atlas-gen luma::graphics luma::ui luma::audio luma::input)
 target_include_directories(luma-core PRIVATE Source PUBLIC Include External)
 target_compile_definitions(luma-core PRIVATE LUMA_CORE $<$<BOOL:${BUILD_SHARED_LIBS}>:LUMA_BUILD_DLL> PUBLIC LUMA_ENGINE_ROOT_DIR=\"${LUMA_ENGINE_ROOT_DIR}\")
 set_target_properties(luma-core PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
@@ -87,17 +91,22 @@ if (WIN32)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_WINDOWS UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
     target_sources(luma-core PRIVATE ${LUMA_CORE_WINDOWS_SRC})
     target_link_libraries(luma-core PRIVATE luma::rgfw)
-elseif (LINUX)
+elseif (LINUX AND NOT SWITCH)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_LINUX)
     target_link_libraries(luma-core PRIVATE luma::rgfw)
 elseif (MACOS)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_MACOS)
     target_link_libraries(luma-core PRIVATE luma::rgfw)
 elseif(SWITCH)
+    target_sources(luma-core PRIVATE ${LUMA_CORE_SWITCH_SRC})
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_SWITCH)
-    target_link_libraries(luma-core PUBLIC libnx)
+    target_link_libraries(luma-core PUBLIC nx)
 endif ()
 
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_compile_definitions(luma-core PUBLIC LUMA_BUILD_VULKAN)
+endif ()
+
+if(LUMA_ENGINE_BUILD_DEKO3D)
+    target_compile_definitions(luma-core PUBLIC LUMA_BUILD_DEKO3D)
 endif ()

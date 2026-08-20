@@ -77,7 +77,7 @@ namespace Luma::Vulkan
         m_Size = bufferDesc.size;
         m_Usage = bufferDesc.usage;
         m_AlwaysMapped = bufferDesc.alwaysMapped;
-        m_MappedData = m_AlwaysMapped ? allocationInfo.pMappedData : nullptr;
+        m_MappedAddess = m_AlwaysMapped ? allocationInfo.pMappedData : nullptr;
         return true;
     }
 
@@ -91,7 +91,7 @@ namespace Luma::Vulkan
 
     void* FBufferImpl::map()
     {
-        if (m_AlwaysMapped) return m_MappedData;
+        if (m_AlwaysMapped) return m_MappedAddess;
         const VmaAllocator allocatorHandle = m_Device->getAllocator();
         void* mappedMemory = nullptr;
         vmaMapMemory(allocatorHandle, m_Allocation, &mappedMemory);
@@ -102,7 +102,7 @@ namespace Luma::Vulkan
     {
         if (m_AlwaysMapped)
         {
-            LUMA_ASSERT(ptr == m_MappedData, "Pointer is a not mapped data!");
+            LUMA_ASSERT(ptr == m_MappedAddess, "Pointer is a not mapped data!");
             return;
         }
         const VmaAllocator allocatorHandle = m_Device->getAllocator();

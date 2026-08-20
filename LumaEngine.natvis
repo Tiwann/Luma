@@ -34,4 +34,7 @@
         </Expand>
     </Type>
 
+    <Type Name="Luma::Ref&lt;*&gt;">
+        <DisplayString>{Ref Count [{m_RefCount}]</DisplayString>
+    </Type>
 </AutoVisualizer>

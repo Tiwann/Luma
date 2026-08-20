@@ -17,3 +17,12 @@
 [submodule "Vendor/box3d"]
 	path = Vendor/box3d
 	url = https://github.com/erincatto/box3d.git
+[submodule "Vendor/volk"]
+	path = Vendor/volk
+	url = git@github.com:zeux/volk.git
+[submodule "Vendor/Vulkan-Headers"]
+	path = Vendor/Vulkan-Headers
+	url = git@github.com:KhronosGroup/Vulkan-Headers.git
+[submodule "Vendor/DirectX-Headers"]
+	path = Vendor/DirectX-Headers
+	url = git@github.com:microsoft/DirectX-Headers.git

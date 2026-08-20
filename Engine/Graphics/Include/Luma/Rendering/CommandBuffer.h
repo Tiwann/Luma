@@ -77,7 +77,7 @@ namespace Luma
         virtual void clearColorTexture(ITexture* texture, const FColor& color, const FTextureSubresourceRange& subresourceRange) = 0;
         virtual void clearColorTexture(ITexture* texture, const FColor& color) = 0;
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
-        virtual void bindIndexBuffer(const IBuffer* buffer, uint64_t offset, EIndexFormat format) = 0;
+        virtual void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) = 0;
         virtual void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
         virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
         virtual void beginRenderPass(const FRenderPassDesc& renderPassDesc) = 0;
