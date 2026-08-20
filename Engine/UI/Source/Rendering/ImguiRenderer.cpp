@@ -3,7 +3,7 @@
 #include <imgui.h>
 
 #ifdef LUMA_BUILD_VULKAN
-#include "Luma/Vulkan/ImGuiRendererImpl.h"
+#include "Luma/Vulkan/ImguiRendererImpl.h"
 #endif
 
 namespace Luma

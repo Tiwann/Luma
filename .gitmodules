@@ -26,3 +26,6 @@
 [submodule "Vendor/DirectX-Headers"]
 	path = Vendor/DirectX-Headers
 	url = git@github.com:microsoft/DirectX-Headers.git
+[submodule "Vendor/VulkanMemoryAllocator"]
+	path = Vendor/VulkanMemoryAllocator
+	url = git@github.com:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git

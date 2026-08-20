@@ -2549,7 +2549,7 @@ RGFWDEF RGFW_bool RGFW_extensionSupportedPlatform_EGL(const char* extension, siz
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 #else
-#include <Volk/volk.h>
+#include <volk.h>
 #endif
 
 /* if you don't want to use the above macros */

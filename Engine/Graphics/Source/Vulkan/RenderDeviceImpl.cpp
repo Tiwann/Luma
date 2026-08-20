@@ -14,10 +14,10 @@
 #include "Luma/Containers/StringFormat.h"
 
 #include <iostream>
-#include <Volk/volk.h>
+#include <volk.h>
 #include <rgfw/rgfw.h>
 #include <slang/slang.h>
-#include <vma/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 
 #include "Luma/Vulkan/GraphicsPipelineImpl.h"
 #include "Luma/Rendering/GraphicsPipeline.h"

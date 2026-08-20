@@ -25,12 +25,11 @@
 #include "Luma/Runtime/Format.h"
 #include "Luma/Rendering/IndexFormat.h"
 #include "Luma/Rendering/ShaderDataType.h"
+#include "Luma/Rendering/RenderPassDesc.h"
+#include "Luma/Rendering/TextureSubresourceRange.h"
 
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
-
-#include "Luma/Rendering/RenderPassDesc.h"
-#include "Luma/Rendering/TextureSubresourceRange.h"
 
 namespace Luma::Vulkan
 {

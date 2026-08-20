@@ -4,7 +4,7 @@
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 
-#include <Volk/volk.h>
+#include <volk.h>
 
 
 namespace Luma::Vulkan

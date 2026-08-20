@@ -28,7 +28,7 @@ set_target_properties(luma-imgui PROPERTIES CXX_STANDARD 17 FOLDER luma-engine)
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_link_libraries(luma-imgui PRIVATE volk::volk)
     target_sources(luma-imgui PRIVATE imgui/backends/imgui_impl_vulkan.cpp)
-    target_compile_definitions(luma-imgui PRIVATE IMGUI_IMPL_VULKAN_USE_VOLK IMGUI_IMPL_VULKAN_VOLK_FILENAME=<Volk/volk.h>)
+    target_compile_definitions(luma-imgui PRIVATE IMGUI_IMPL_VULKAN_USE_VOLK IMGUI_IMPL_VULKAN_VOLK_FILENAME=<volk.h>)
 endif ()
 
 add_subdirectory(freetype)
@@ -56,3 +56,7 @@ set_target_properties(Vulkan-Headers PROPERTIES FOLDER luma-vendor)
 
 
 add_subdirectory(box3d)
+set_target_properties(box3d PROPERTIES FOLDER luma-vendor)
+
+add_subdirectory(VulkanMemoryAllocator)
+set_target_properties(VulkanMemoryAllocator PROPERTIES FOLDER luma-vendor)

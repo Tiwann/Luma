@@ -5,7 +5,7 @@
 #include "Luma/Rendering/ShaderCompiler.h"
 #include "Luma/Runtime/Path.h"
 #include "Luma/Vulkan/Conversions.h"
-#include <Volk/volk.h>
+#include <volk.h>
 
 
 namespace Luma::Vulkan

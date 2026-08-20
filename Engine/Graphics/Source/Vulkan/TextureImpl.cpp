@@ -5,7 +5,7 @@
 #include "Luma/Vulkan/VulkanUtils.h"
 #include "Luma/Memory/Ref.h"
 
-#include <vma/vk_mem_alloc.h>
+#include <vk_mem_alloc.h>
 
 
 namespace Luma::Vulkan
