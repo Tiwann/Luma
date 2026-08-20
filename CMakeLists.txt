@@ -15,9 +15,6 @@ cmake_dependent_option(LUMA_ENGINE_BUILD_NVN "Build the engine with NVN backend"
 cmake_dependent_option(LUMA_ENGINE_BUILD_DEKO3D "Build the engine with Deko3D backend" ON SWITCH OFF)
 cmake_dependent_option(LUMA_ENGINE_BUILD_GNM "Build the engine with GNM backend" ON PS5 OFF)
 
-if(LUMA_ENGINE_BUILD_VULKAN)
-    include(CMake/Vulkan.cmake)
-endif ()
 
 add_library(luma-natvis INTERFACE LumaEngine.natvis)
 add_library(luma::natvis ALIAS luma-natvis)

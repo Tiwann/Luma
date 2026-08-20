@@ -50,3 +50,6 @@ set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER 
 set(VOLK_PULL_IN_VULKAN OFF)
 add_subdirectory(volk)
 set_target_properties(volk PROPERTIES FOLDER luma-vendor)
+
+add_subdirectory(Vulkan-Headers)
+set_target_properties(Vulkan-Headers PROPERTIES FOLDER luma-vendor)

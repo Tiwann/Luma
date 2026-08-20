@@ -17,3 +17,6 @@
 [submodule "Vendor/volk"]
 	path = Vendor/volk
 	url = git@github.com:zeux/volk.git
+[submodule "Vendor/Vulkan-Headers"]
+	path = Vendor/Vulkan-Headers
+	url = git@github.com:KhronosGroup/Vulkan-Headers.git
