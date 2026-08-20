@@ -73,7 +73,7 @@ endif ()
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
     target_link_directories(luma-graphics PRIVATE ${VULKAN_SDK_INC_DIR})
-    target_link_libraries(luma-graphics PRIVATE luma::rgfw Vulkan::volk PUBLIC Vulkan::slang)
+    target_link_libraries(luma-graphics PRIVATE luma::rgfw volk::volk PUBLIC Vulkan::slang)
 endif ()
 
 if(LUMA_ENGINE_BUILD_DEKO3D)

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 
 using uint8_t = std::uint8_t;
 using uint16_t = std::uint16_t;
