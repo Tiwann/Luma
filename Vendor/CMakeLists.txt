@@ -47,7 +47,7 @@ add_subdirectory(msdf-atlas-gen)
 set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER luma-vendor)
 
 
-set(VOLK_PULL_IN_VULKAN OFF)
+set(VOLK_PULL_IN_VULKAN ON)
 add_subdirectory(volk)
 set_target_properties(volk PROPERTIES FOLDER luma-vendor)
 
