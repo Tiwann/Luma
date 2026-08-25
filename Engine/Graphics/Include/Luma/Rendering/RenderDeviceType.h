@@ -17,14 +17,8 @@ namespace Luma
 #ifdef LUMA_BUILD_WEBGPU
         WebGPU,
 #endif
-#ifdef LUMA_BUILD_NVN
-        NVN,
-#endif
 #ifdef LUMA_BUILD_DEKO3D
         Deko3D,
-#endif
-#ifdef LUMA_BUILD_GNM
-        GNM,
 #endif
     };
 
@@ -54,21 +48,9 @@ namespace Luma
     static constexpr bool HasWebGPU = false;
 #endif
 
-#ifdef LUMA_BUILD_NVN
-    static constexpr bool HasNVN = true;
-#else
-    static constexpr bool HasNVN = false;
-#endif
-
 #ifdef LUMA_BUILD_DEKO3D
     static constexpr bool HasDeko3D = true;
 #else
     static constexpr bool HasDeko3D = false;
-#endif
-
-#ifdef LUMA_BUILD_GNM
-    static constexpr bool HasGNM = true;
-#else
-    static constexpr bool HasGNM = false;
 #endif
 }

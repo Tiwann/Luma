@@ -4,7 +4,7 @@
 #include "Luma/Components/StaticMeshRenderer.h"
 #include "Luma/Components/TransformComponent.h"
 #include "Luma/Rendering/CommandBuffer.h"
-#include "Luma/Rendering/GraphicsPipeline.h"
+#include "Luma/Rendering/RenderPipeline.h"
 #include "Luma/Rendering/InputLayout.h"
 #include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Rendering/RenderPassDesc.h"

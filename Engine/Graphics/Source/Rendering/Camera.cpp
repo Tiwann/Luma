@@ -49,9 +49,25 @@ namespace Luma
     {
         const auto computeViewProjection = [&]()
         {
-            return getProjectionMatrix() *getViewMatrix();
+            return getProjectionMatrix() * getViewMatrix();
         };
         return m_ViewProjectionMatrix.get(computeViewProjection);
+    }
+
+    template <FloatType F>
+    void TCamera<F>::setWidth(const uint32_t width)
+    {
+        m_Width = width;
+        m_ProjectionMatrix.setDirty();
+        m_ViewProjectionMatrix.setDirty();
+    }
+
+    template <FloatType F>
+    void TCamera<F>::setHeight(const uint32_t height)
+    {
+        m_Height = height;
+        m_ProjectionMatrix.setDirty();
+        m_ViewProjectionMatrix.setDirty();
     }
 
     template<FloatType F>

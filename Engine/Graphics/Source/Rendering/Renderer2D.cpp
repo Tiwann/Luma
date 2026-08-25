@@ -1,8 +1,8 @@
 ﻿#include "Luma/Rendering/Renderer2D.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
-#include "Luma/Rendering/GraphicsPipeline.h"
-#include "Luma/Rendering/Shader.h"
+#include "Luma/Rendering/RenderPipeline.h"
+#include "Luma/Rendering/ShaderProgram.h"
 #include "Luma/Rendering/BindingSet.h"
 #include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Rendering/Texture.h"
@@ -39,12 +39,8 @@ namespace Luma
         m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
         setFont(m_DefaultFont);
 
-        FShaderDesc shaderDesc;
-        shaderDesc.moduleName = "Renderer2D";
-        shaderDesc.stageFlags = EShaderStageBits::Vertex | EShaderStageBits::Fragment;
-        shaderDesc.filepath = FPath::getEngineShaderPath("Renderer2D.slang");
-        m_Shader = m_RenderDevice->createShader(shaderDesc);
-        if (!m_Shader) return false;
+        m_VertexShader = m_RenderDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.vert.spv"));
+        m_FragmentShader = m_RenderDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.frag.spv"));
 
         FVertexInputLayout vertexLayout;
         vertexLayout.addInputBinding(0, EVertexInputRate::Vertex);
@@ -54,18 +50,16 @@ namespace Luma
         vertexLayout.addInputAttribute({"MODE", EShaderDataType::UInt, 0});
         vertexLayout.addInputAttribute({"TEXID", EShaderDataType::UInt, 0});
 
-        FGraphicsPipelineDesc gpDesc;
+        FRenderPipelineDesc gpDesc;
         gpDesc.device = m_RenderDevice;
-        gpDesc.shaderProgram = m_Shader;
+        gpDesc.vertexShader = m_VertexShader;
+        gpDesc.fragmentShader = m_FragmentShader;
         gpDesc.rasterization.cullMode = ECullMode::None;
         gpDesc.colorFormatCount = 1;
         gpDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
         gpDesc.colorBlend[0] = FColorBlendState(true, FBlendFunction::alphaBlend());
         gpDesc.inputLayout = vertexLayout;
-        gpDesc.depthStencil.depthTestEnable = false;
-        gpDesc.depthStencil.depthWriteEnable = false;
-        gpDesc.depthStencil.stencilTestEnable = false;
-        m_Pipeline = m_RenderDevice->createGraphicsPipeline(gpDesc);
+        m_Pipeline = m_RenderDevice->createRenderPipeline(gpDesc);
         if (!m_Pipeline) return false;
 
         FBufferDesc vbDesc;
@@ -153,7 +147,7 @@ namespace Luma
         cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
         cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::Uint32);
-        cmdBuffer->bindGraphicsPipeline(m_Pipeline);
+        cmdBuffer->bindRenderPipeline(m_Pipeline);
         cmdBuffer->bindBindingSet(m_BindingSet, m_Shader);
         cmdBuffer->setViewport(FViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f));
         cmdBuffer->setScissor(FScissor(0, 0, width, height));

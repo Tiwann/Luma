@@ -4,14 +4,13 @@
 #include "Luma/Vulkan/RenderDeviceImpl.h"
 #include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/ComputePipelineImpl.h"
-#include "Luma/Vulkan/GraphicsPipelineImpl.h"
+#include "Luma/Vulkan/RenderPipelineImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include "Luma/Vulkan/BindingSetImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Asset/Material.h"
 #include "Luma/Asset/StaticMesh.h"
-
 
 #include <volk.h>
 
@@ -151,8 +150,8 @@ namespace Luma::Vulkan
     {
         if (!buffer) return;
         const VkDeviceSize offsets[] { static_cast<VkDeviceSize>(offset) };
-        const VkBuffer bufferImpl = static_cast<const FBufferImpl*>(buffer)->getHandle();
-        const VkBuffer buffers[] { bufferImpl };
+        const VkBuffer bufferHandle = static_cast<const FBufferImpl*>(buffer)->getHandle();
+        const VkBuffer buffers[] { bufferHandle };
         vkCmdBindVertexBuffers(m_Handle, 0, 1, buffers, offsets);
     }
 
@@ -166,16 +165,16 @@ namespace Luma::Vulkan
         vkCmdBindIndexBuffer2(m_Handle, bufferHandle, offset, size, convert<VkIndexType>(format));
     }
 
-    void FCommandBufferImpl::pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
+    void FCommandBufferImpl::pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
     {
         const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
         vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
     }
 
-    void FCommandBufferImpl::bindGraphicsPipeline(const IGraphicsPipeline* pipeline)
+    void FCommandBufferImpl::bindRenderPipeline(const IRenderPipeline* pipeline)
     {
         if (!pipeline) return;
-        const FGraphicsPipelineImpl* pipelineImpl = static_cast<const FGraphicsPipelineImpl*>(pipeline);
+        const FRenderPipelineImpl* pipelineImpl = static_cast<const FRenderPipelineImpl*>(pipeline);
         vkCmdBindPipeline(m_Handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineImpl->getHandle());
     }
 
@@ -248,6 +247,38 @@ namespace Luma::Vulkan
         m_CurrentRenderPassDesc = nullptr;
     }
 
+    void FCommandBufferImpl::setViewports(const TArray<FViewport>& viewports)
+    {
+        TArray<VkViewport> vulkanViewports = viewports.transform<VkViewport>([](const FViewport& v)
+        {
+            VkViewport vp { };
+            vp.x = v.x;
+            vp.y = v.y + v.height;
+            vp.width = v.width;
+            vp.height = -v.height;
+            vp.minDepth = v.minDepth;
+            vp.maxDepth = v.maxDepth;
+            return vp;
+        });
+
+        vkCmdSetViewport(m_Handle, 0, vulkanViewports.count(),  vulkanViewports.data());
+    }
+
+    void FCommandBufferImpl::setScissors(const TArray<FScissor>& scissors)
+    {
+        TArray<VkRect2D> vulkanScissors = scissors.transform<VkRect2D>([](const FScissor& s)
+        {
+            VkRect2D rect { };
+            rect.offset.x = s.x;
+            rect.offset.y = s.y;
+            rect.extent.width = s.width;
+            rect.extent.height = s.height;
+            return rect;
+        });
+
+        vkCmdSetScissor(m_Handle, 0, vulkanScissors.count(), vulkanScissors.data());
+    }
+
     void FCommandBufferImpl::setViewport(const FViewport& viewport)
     {
         VkViewport vp { };
@@ -316,7 +347,7 @@ namespace Luma::Vulkan
         bindBindingSet(material->getBindingSet(), material->getShader());
     }
 
-    void FCommandBufferImpl::bindBindingSet(const IBindingSet* bindingSet, const IShader* shader)
+    void FCommandBufferImpl::bindBindingSet(const IBindingSet* bindingSet, const IShaderProgram* shader)
     {
         LUMA_CHECK(bindingSet, "Invalid binding set handle!");
         LUMA_CHECK(shader, "Invalid shader handle!");
@@ -334,52 +365,6 @@ namespace Luma::Vulkan
         info.dynamicOffsetCount = 0;
         info.pDynamicOffsets = nullptr;
         vkCmdBindDescriptorSets2(m_Handle, &info);
-    }
-
-    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCamera& camera)
-    {
-        LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
-        LUMA_CHECK(material, "Invalid material handle!");
-
-        const auto vertexBuffer = staticMesh->getVertexBuffer();
-        const auto indexBuffer = staticMesh->getIndexBuffer();
-        LUMA_CHECK(vertexBuffer, "Invalid vertex buffer handle!");
-        LUMA_CHECK(indexBuffer, "Invalid index buffer handle!");
-
-        bindMaterial(material);
-        for (const auto& perMaterialMeshParts : staticMesh->getPerMaterialMeshParts())
-        {
-            for (const FMeshPart& meshPart : perMaterialMeshParts.value)
-            {
-                bindVertexBuffer(vertexBuffer, meshPart.vertexOffset);
-                bindIndexBuffer(indexBuffer, meshPart.indexOffset, EIndexFormat::Uint32);
-                drawIndexed(FDrawIndexedCommand(meshPart.indexSize / sizeof(uint32_t), 1, 0, 0, 0));
-            }
-        }
-    }
-
-    void FCommandBufferImpl::drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera)
-    {
-        LUMA_CHECK(staticMesh, "Invalid static mesh handle!");
-
-        const auto vertexBuffer = staticMesh->getVertexBuffer();
-        const auto indexBuffer = staticMesh->getIndexBuffer();
-        LUMA_CHECK(vertexBuffer, "Invalid vertex buffer handle!");
-        LUMA_CHECK(indexBuffer, "Invalid index buffer handle!");
-
-        const auto& perMaterialMeshParts = staticMesh->getPerMaterialMeshParts();
-
-        for (const auto& [index, slot] : staticMesh->getMaterialSlots())
-        {
-            const auto& meshParts = perMaterialMeshParts[index];
-
-            for (const FMeshPart& meshPart : meshParts)
-            {
-                bindVertexBuffer(vertexBuffer, meshPart.vertexOffset);
-                bindIndexBuffer(indexBuffer, meshPart.indexOffset, EIndexFormat::Uint32);
-                drawIndexed(FDrawIndexedCommand(meshPart.indexSize / sizeof(uint32_t), 1, 0, 0, 0));
-            }
-        }
     }
 
     void FCommandBufferImpl::dispatch(const uint32_t groupCountX, const uint32_t groupCountY, const uint32_t groupCountZ)

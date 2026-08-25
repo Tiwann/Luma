@@ -1,7 +1,7 @@
 #include "Luma/Asset/Material.h"
 #include "Luma/Rendering/BindingSet.h"
-#include "Luma/Rendering/GraphicsPipeline.h"
-#include "Luma/Rendering/Shader.h"
+#include "Luma/Rendering/RenderPipeline.h"
+#include "Luma/Rendering/ShaderProgram.h"
 
 namespace Luma
 {

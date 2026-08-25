@@ -549,17 +549,6 @@ namespace Luma::Vulkan
         }
     }
 
-    /*template<>
-    inline VkImageLayout convert(const RenderPassAttachmentType& value)
-    {
-        switch (value)
-        {
-        case RenderPassAttachmentType::Color: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        case RenderPassAttachmentType::Depth: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        default: return VK_IMAGE_LAYOUT_UNDEFINED;
-        }
-    }*/
-
     template<>
     inline VkImageType convert(const ETextureDimension& value)
     {
@@ -616,9 +605,9 @@ namespace Luma::Vulkan
     {
         switch (value)
         {
-        case EIndexFormat::Uint32: return VK_INDEX_TYPE_UINT32;
-        case EIndexFormat::Uint16: return VK_INDEX_TYPE_UINT16;
-        case EIndexFormat::Uint8: return VK_INDEX_TYPE_UINT8;
+        case EIndexFormat::UInt32: return VK_INDEX_TYPE_UINT32;
+        case EIndexFormat::UInt16: return VK_INDEX_TYPE_UINT16;
+        case EIndexFormat::UInt8: return VK_INDEX_TYPE_UINT8;
         default: return VK_INDEX_TYPE_UINT32;
         }
     }

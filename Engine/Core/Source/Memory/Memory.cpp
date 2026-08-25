@@ -4,12 +4,12 @@
 
 namespace Luma::Memory
 {
-    void* allocate(size_t size)
+    void* allocate(uint64_t size)
     {
         return malloc(size);
     }
 
-    void* reallocate(void* ptr, size_t size)
+    void* reallocate(void* ptr, uint64_t size)
     {
         return realloc(ptr, size);
     }
@@ -19,12 +19,12 @@ namespace Luma::Memory
         ::free(ptr);
     }
 
-    void* callocate(size_t size)
+    void* callocate(uint64_t size)
     {
         return ::calloc(size, size);
     }
 
-    void* alignedAllocate(size_t size, size_t alignment)
+    void* alignedAllocate(uint64_t size, uint64_t alignment)
     {
 #ifdef LUMA_PLATFORM_WINDOWS
         return _aligned_malloc(size, alignment);
@@ -33,7 +33,7 @@ namespace Luma::Memory
 #endif
     }
 
-    void* alignedReallocate(void* ptr, size_t size, size_t alignment)
+    void* alignedReallocate(void* ptr, uint64_t size, uint64_t alignment)
     {
 #ifdef LUMA_PLATFORM_WINDOWS
         return _aligned_realloc(ptr, size, alignment);
@@ -51,17 +51,17 @@ namespace Luma::Memory
 #endif
     }
 
-    void* memset(void* ptr, int value, size_t size)
+    void* memset(void* ptr, int value, uint64_t size)
     {
         return ::memset(ptr, value, size);
     }
 
-    void* memcpy(void* dest, const void* src, size_t size)
+    void* memcpy(void* dest, const void* src, uint64_t size)
     {
         return ::memcpy(dest, src, size);
     }
 
-    void* memmove(void* dest, const void* src, size_t size)
+    void* memmove(void* dest, const void* src, uint64_t size)
     {
         return ::memmove(dest, src, size);
     }

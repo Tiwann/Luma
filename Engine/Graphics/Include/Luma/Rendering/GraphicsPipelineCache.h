@@ -6,13 +6,13 @@
 
 namespace Luma
 {
-    struct IShader;
+    struct IShaderProgram;
     struct IGraphicsPipeline;
     struct IRenderDevice;
 
     struct FGraphicsPipelineKey
     {
-        IShader* shader;
+        IShaderProgram* shader;
         EMaterialType materialType;
         FVertexInputLayout vertexInputLayout;
         EFormat depthFormat;

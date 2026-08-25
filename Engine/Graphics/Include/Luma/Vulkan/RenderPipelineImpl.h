@@ -1,18 +1,18 @@
 #pragma once
-#include "Luma/Rendering/GraphicsPipeline.h"
+#include "Luma/Rendering/RenderPipeline.h"
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan
 {
     class FRenderDeviceImpl;
 
-    class FGraphicsPipelineImpl : public IGraphicsPipeline
+    class FRenderPipelineImpl : public IRenderPipeline
     {
     public:
-        FGraphicsPipelineImpl() = default;
-        ~FGraphicsPipelineImpl() override = default;
+        FRenderPipelineImpl() = default;
+        ~FRenderPipelineImpl() override = default;
 
-        bool initialize(const FGraphicsPipelineDesc& pipelineDesc) override;
+        bool initialize(const FRenderPipelineDesc& pipelineDesc) override;
         void destroy() override;
 
         VkPipeline getHandle() const { return m_Handle; }

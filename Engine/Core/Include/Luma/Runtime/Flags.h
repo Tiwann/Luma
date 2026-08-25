@@ -20,6 +20,10 @@ namespace Luma
         constexpr TFlags() = default;
         constexpr TFlags(Enum value) : m_Value(value) {}
         constexpr TFlags(IntegerType value) : m_Value((Enum)value) {}
+        constexpr TFlags(const TFlags&) = default;
+        constexpr TFlags(const TFlags&&) = default;
+        TFlags& operator=(const TFlags&) = default;
+        TFlags& operator=(TFlags&&) = default;
 
         static constexpr TFlags all() { return Flags(static_cast<Enum>(~static_cast<IntegerType>(0))); }
         static constexpr TFlags none(){ return Flags(static_cast<Enum>(0)); }

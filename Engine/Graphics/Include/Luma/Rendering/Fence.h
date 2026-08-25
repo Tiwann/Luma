@@ -2,7 +2,6 @@
 #include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
-#include "Luma/Containers/StringView.h"
 
 namespace Luma
 {

@@ -14,10 +14,10 @@
 #include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Rendering/Sampler.h"
 #include "Luma/Rendering/Buffer.h"
-#include "Luma/Rendering/Shader.h"
+#include "Luma/Rendering/ShaderProgram.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/BindingSet.h"
-#include "Luma/Rendering/GraphicsPipeline.h"
+#include "Luma/Rendering/RenderPipeline.h"
 
 namespace Luma
 {
@@ -146,8 +146,9 @@ namespace Luma
         uint32_t getOrAddTexture(const ITexture* texture);
 
         Ref<IRenderDevice> m_RenderDevice = nullptr;
-        Ref<IShader> m_Shader = nullptr;
-        Ref<IGraphicsPipeline> m_Pipeline = nullptr;
+        Ref<IShaderProgram> m_VertexShader = nullptr;
+        Ref<IShaderProgram> m_FragmentShader = nullptr;
+        Ref<IRenderPipeline> m_Pipeline = nullptr;
         Ref<ISampler> m_Sampler = nullptr;
         Ref<ISampler> m_SpriteSampler = nullptr;
         Ref<IBuffer> m_VertexBuffer = nullptr;

@@ -300,6 +300,11 @@ namespace Luma
         RGFW_window_setFullscreen(m_Handle, fullscreen);
     }
 
+    bool FDesktopWindow::isAvailable() const
+    {
+        return !isMinimized();
+    }
+
     bool FDesktopWindow::shouldClose() const
     {
         return RGFW_window_shouldClose(m_Handle);

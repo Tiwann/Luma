@@ -152,6 +152,7 @@ namespace Luma::Vulkan
         vmaDestroyImage(allocatorHandle, m_Image, m_Allocation);
         m_Device = nullptr;
         m_Image = nullptr;
+        m_Allocation = nullptr;
     }
 
     bool FTextureImpl::isValid()

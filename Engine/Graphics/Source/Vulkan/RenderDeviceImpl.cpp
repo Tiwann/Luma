@@ -8,20 +8,17 @@
 #include "Luma/Vulkan/SemaphoreImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Vulkan/ComputePipelineImpl.h"
+#include "Luma/Vulkan/RenderPipelineImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
-#include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Containers/Array.h"
 #include "Luma/Containers/StringFormat.h"
+#include "Luma/Vulkan/Conversions.h"
 
 #include <iostream>
 #include <volk.h>
 #include <rgfw/rgfw.h>
 #include <slang/slang.h>
 #include <vk_mem_alloc.h>
-
-#include "Luma/Vulkan/GraphicsPipelineImpl.h"
-#include "Luma/Rendering/GraphicsPipeline.h"
-#include "Luma/Vulkan/Conversions.h"
 
 
 #ifndef VK_LAYER_KHRONOS_VALIDATION_NAME
@@ -441,8 +438,8 @@ namespace Luma::Vulkan
 
 
         m_ImmediateExecutor.initialize({this, &m_RenderQueue});
-        if (SLANG_FAILED(slang::createGlobalSession(&m_SlangSession)))
-            return false;
+        //if (SLANG_FAILED(slang::createGlobalSession(&m_SlangSession)))
+        //    return false;
 
         m_Window = deviceDesc.window;
         m_Window->resizedEvent.bind([this](uint32_t, uint32_t) { m_Swapchain.invalidate(); });
@@ -471,7 +468,7 @@ namespace Luma::Vulkan
 
         vkDestroyDescriptorPool(m_Handle, m_DescriptorPool, nullptr);
         // I know this shouldn't be there
-        m_SlangSession->release();
+        //m_SlangSession->release();
         slang::shutdown();
         m_Window = nullptr;
         m_ImmediateExecutor.destroy();
@@ -504,16 +501,13 @@ namespace Luma::Vulkan
 
     bool FRenderDeviceImpl::beginFrame()
     {
-        const FDesktopWindow* window = dynamic_cast<FDesktopWindow*>(m_Window);
-        if (!window) return false;
-
-        if (window->isMinimized())
-            return false;
+        if (!m_Window) return false;
+        if (!m_Window->isAvailable()) return false;
 
         if (!m_Swapchain.isValid())
         {
             waitIdle();
-            m_Swapchain.resize(window->getWidth(), window->getHeight());
+            m_Swapchain.resize(m_Window->getWidth(), m_Window->getHeight());
             m_CurrentFrameIndex = 0;
             return false;
         }
@@ -683,7 +677,7 @@ namespace Luma::Vulkan
         return textureView;
     }
 
-    IShader* FRenderDeviceImpl::createShader(const FShaderDesc& shaderDesc)
+    IShaderProgram* FRenderDeviceImpl::createShader(const FShaderDesc& shaderDesc)
     {
         FShaderDesc desc(shaderDesc);
         desc.device = this;
@@ -722,11 +716,11 @@ namespace Luma::Vulkan
         return sampler;
     }
 
-    IGraphicsPipeline* FRenderDeviceImpl::createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc)
+    IRenderPipeline* FRenderDeviceImpl::createRenderPipeline(const FRenderPipelineDesc& pipelineDesc)
     {
-        FGraphicsPipelineDesc desc(pipelineDesc);
+        FRenderPipelineDesc desc(pipelineDesc);
         desc.device = this;
-        FGraphicsPipelineImpl* pipeline = new FGraphicsPipelineImpl();
+        FRenderPipelineImpl* pipeline = new FRenderPipelineImpl();
         if (!pipeline->initialize(desc))
         {
             delete pipeline;
@@ -883,8 +877,9 @@ namespace Luma::Vulkan
         return m_ImmediateExecutor;
     }
 
-    slang::IGlobalSession* FRenderDeviceImpl::getSlangSession() const
+    /*slang::IGlobalSession* FRenderDeviceImpl::getSlangSession() const
     {
-        return m_SlangSession;
-    }
+        return nullptr;
+        // return m_SlangSession;
+    }*/
 }

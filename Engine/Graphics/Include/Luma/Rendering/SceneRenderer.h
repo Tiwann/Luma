@@ -54,7 +54,7 @@ namespace Luma
 
         Ref<FGBuffer> getGBuffer() const { return m_GBuffer; }
         Ref<ITexture> getFinalTexture() const { return m_FinalTexture; }
-        Ref<IShader> getShader() const { return m_GeometryPassShader; }
+        Ref<IShaderProgram> getShader() const { return m_GeometryPassShader; }
     private:
         bool m_Begin = false;
         uint32_t m_Width = 0;
@@ -68,7 +68,7 @@ namespace Luma
         Ref<IBuffer> m_SceneBuffer = nullptr;
         Ref<IBindingSet> m_BindingSet1 = nullptr;
         Ref<IBindingSet> m_BindingSet2 = nullptr;
-        Ref<IGraphicsPipeline> m_GeometryPipeline = nullptr;
-        Ref<IShader> m_GeometryPassShader = nullptr;
+        Ref<IRenderPipeline> m_GeometryPipeline = nullptr;
+        Ref<IShaderProgram> m_GeometryPassShader = nullptr;
     };
 }

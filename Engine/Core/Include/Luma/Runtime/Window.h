@@ -42,6 +42,7 @@ namespace Luma
         virtual uint32_t getHeight() const = 0;
         FRect2<uint32_t> getBounds() const { return FRect2<uint32_t>{ 0, 0, getWidth(), getHeight() }; }
         virtual bool shouldClose() const = 0;
+        virtual bool isAvailable() const = 0;
 
         TEvent<void(uint32_t, uint32_t)> resizedEvent;
         TEvent<void(uint32_t, uint32_t)> movedEvent;

@@ -26,7 +26,7 @@ namespace Luma
         bool isMaximized() const;
         bool isMinimized() const;
         void setFullscreen(bool fullscreen);
-
+        bool isAvailable() const override;
 
         FString getTitle() const;
         void setTitle(const FString& title);

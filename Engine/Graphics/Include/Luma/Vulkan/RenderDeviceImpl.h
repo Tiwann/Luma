@@ -8,7 +8,7 @@
 #include "CommandBufferImpl.h"
 #include "ImmediateExecutorImpl.h"
 #include "VulkanFwd.h"
-#include "Luma/Utility/SlangFwd.h"
+//#include "Luma/Utility/SlangFwd.h"
 
 #define VK_FAILED(res) (res != VK_SUCCESS)
 
@@ -50,10 +50,10 @@ namespace Luma::Vulkan
         IBuffer* createBuffer(const FBufferDesc& bufferDesc) override;
         ITexture* createTexture(const FTextureDesc& textureDesc) override;
         ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) override;
-        IShader* createShader(const FShaderDesc& shaderDesc) override;
+        IShaderProgram* createShader(const FShaderDesc& shaderDesc) override;
         ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) override;
         ISampler* createSampler(const FSamplerDesc& samplerDesc) override;
-        IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) override;
+        IRenderPipeline* createRenderPipeline(const FRenderPipelineDesc& pipelineDesc) override;
         IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) override;
         IFence* createFence(const FFenceDesc& fenceDesc) override;
         ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) override;
@@ -77,7 +77,7 @@ namespace Luma::Vulkan
         VkDescriptorPool getDescriptorPool() const { return m_DescriptorPool; }
         FImmediateExecutorImpl& getExecutor();
 
-        slang::IGlobalSession* getSlangSession() const;
+        //slang::IGlobalSession* getSlangSession() const;
     private:
         static inline VkInstance s_Instance = nullptr;
         static inline uint32_t s_DeviceCount = 0;
@@ -109,6 +109,6 @@ namespace Luma::Vulkan
         uint32_t m_SwapchainImageIndex = 0;
         uint64_t m_WindowResizeEventId = UINT64_MAX;
         IWindow* m_Window = nullptr;
-        slang::IGlobalSession* m_SlangSession = nullptr;
+        //slang::IGlobalSession* m_SlangSession = nullptr;
     };
 }

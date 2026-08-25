@@ -7,14 +7,13 @@
 #include "PrimitiveTopology.h"
 #include "BlendFunction.h"
 #include "CompareOperation.h"
+#include "SampleCount.h"
 #include "Luma/Memory/RefCounted.h"
-#include "Luma/Runtime/Flags.h"
-
 
 namespace Luma
 {
     struct IRenderDevice;
-    struct IShader;
+    struct IShaderProgram;
 
     struct FInputAssemblyState
     {
@@ -40,7 +39,7 @@ namespace Luma
     {
         bool colorBlendEnable = false;
         FBlendFunction blendFunction = FBlendFunction::alphaBlend();
-        FColorChannelFlags colorWriteMask = TFlags(EColorChannelBits::Red) | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
+        FColorChannelFlags colorWriteMask = EColorChannelBits::Red | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
     };
 
     struct FDepthStencilState
@@ -53,7 +52,7 @@ namespace Luma
 
     struct FMultisampleState
     {
-        uint32_t sampleCount = 1;
+        ESampleCount sampleCount = ESampleCount::SampleCount1x;
         bool alphaToCoverageEnable = false;
         bool alphaToOneEnable = false;
         bool sampleShadingEnable = false;
@@ -77,10 +76,15 @@ namespace Luma
         uint32_t height = 0;
     };
 
-    struct FGraphicsPipelineDesc
+    struct FRenderPipelineDesc
     {
         IRenderDevice* device = nullptr;
-        IShader* shaderProgram = nullptr;
+        const IShaderProgram* vertexShader = nullptr;
+        const IShaderProgram* tessellationControlShader = nullptr;
+        const IShaderProgram* tessellationEvaluationShader = nullptr;
+        const IShaderProgram* geometryShader = nullptr;
+        const IShaderProgram* fragmentShader = nullptr;
+        const IShaderProgram* amplificationShader = nullptr;
         FInputAssemblyState inputAssembly{};
         FVertexInputLayout inputLayout{};
         FRasterizationState rasterization{};
@@ -92,11 +96,11 @@ namespace Luma
         EFormat depthFormat = EFormat::None;
     };
 
-    struct IGraphicsPipeline : IRefCounted<IGraphicsPipeline>
+    struct IRenderPipeline : IRefCounted<IRenderPipeline>
     {
-        ~IGraphicsPipeline() override = default;
+        ~IRenderPipeline() override = default;
 
-        virtual bool initialize(const FGraphicsPipelineDesc& pipelineDesc) = 0;
+        virtual bool initialize(const FRenderPipelineDesc& pipelineDesc) = 0;
         virtual void destroy() = 0;
     };
 }

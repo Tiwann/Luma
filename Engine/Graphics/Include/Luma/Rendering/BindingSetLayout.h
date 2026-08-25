@@ -2,7 +2,6 @@
 #include "ShaderBinding.h"
 #include <cstdint>
 
-
 namespace Luma
 {
     struct IRenderDevice;

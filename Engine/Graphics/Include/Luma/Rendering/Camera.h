@@ -28,6 +28,8 @@ namespace Luma
         const Matrix& getProjectionMatrix();
         const Matrix& getViewProjectionMatrix();
 
+        void setWidth(uint32_t width);
+        void setHeight(uint32_t height);
         void setDimensions(uint32_t width, uint32_t height);
         void setProjectionMode(ECameraProjectionMode mode);
         void setFieldOfView(F fov);

@@ -29,3 +29,6 @@ namespace slang
     enum class BindingType : uint32_t;
     struct PreprocessorMacroDesc;
 }
+
+enum SlangStage : uint32_t;
+enum SlangCompileTarget : int;

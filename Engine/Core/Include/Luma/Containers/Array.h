@@ -1,8 +1,6 @@
 #pragma once
-#include "Luma/Core/Export.h"
 #include "Luma/Memory/Allocator.h"
 #include "Luma/Runtime/Assertion.h"
-#include "Luma/Math/Concepts.h"
 #include <initializer_list>
 #include <algorithm>
 #include <functional>
@@ -47,7 +45,6 @@ namespace Luma
             m_Data = new T[m_Allocated]{};
             m_Count = count;
         }
-
 
         TArray(const std::initializer_list<T>& list) : m_Count(list.size()), m_Allocated(list.size())
         {
@@ -116,31 +113,31 @@ namespace Luma
 
         ReferenceType operator[](SizeType index)
         {
-            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index < m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         ConstReferenceType operator[](SizeType index) const
         {
-            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index < m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         void setAt(SizeType index, ConstReferenceType element)
         {
-            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index < m_Count && m_Count != 0, "Index out of bounds");
             m_Data[index] = element;
         }
 
         ReferenceType getAt(SizeType index)
         {
-            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index < m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
         ConstReferenceType getAt(SizeType index) const
         {
-            LUMA_ASSERT(index <= m_Count && m_Count != 0, "Index out of bounds");
+            LUMA_ASSERT(index < m_Count && m_Count != 0, "Index out of bounds");
             return m_Data[index];
         }
 
@@ -328,11 +325,11 @@ namespace Luma
             m_Data[m_Count++] = std::move(element);
         }
 
-        TArray Union(const TArray& other)
+        TArray unite(const TArray& other)
         {
             TArray result = *this;
             for (const T& element : other)
-                AddUnique(element);
+                result.addUnique(element);
             return result;
         }
 
@@ -348,7 +345,7 @@ namespace Luma
 
         void removeAt(SizeType index)
         {
-            LUMA_ASSERT(index <= m_Count, "Index out of bounds!");
+            LUMA_ASSERT(index < m_Count, "Index out of bounds!");
             std::move(m_Data + index + 1, m_Data + m_Count, m_Data + index);
             m_Count--;
         }
@@ -384,7 +381,7 @@ namespace Luma
 
         void popBack()
         {
-            removeAt(m_Count);
+            removeAt(m_Count - 1);
         }
 
         void popHead()

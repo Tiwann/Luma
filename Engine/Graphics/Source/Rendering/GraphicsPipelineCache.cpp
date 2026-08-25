@@ -24,7 +24,7 @@ namespace Luma
 
         FGraphicsPipelineDesc pipelineDesc;
         pipelineDesc.device = m_Device;
-        pipelineDesc.shaderProgram = key.shader;
+        //pipelineDesc.shaderProgram = key.shader;
         pipelineDesc.inputLayout = key.vertexInputLayout;
 
         pipelineDesc.depthStencil.depthTestEnable = true;

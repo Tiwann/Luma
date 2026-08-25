@@ -3,20 +3,6 @@
 
 namespace Luma
 {
-    SlangCompileTarget getCompileTarget(const EShaderCompileTarget target)
-    {
-        switch (target)
-        {
-        case EShaderCompileTarget::SPIRV: return SLANG_SPIRV;
-        case EShaderCompileTarget::GLSL: return SLANG_GLSL;
-        case EShaderCompileTarget::HLSL: return SLANG_HLSL;
-        case EShaderCompileTarget::DXBC: return SLANG_DXBC;
-        case EShaderCompileTarget::DXIL: return SLANG_DXIL;
-        case EShaderCompileTarget::Auto: return SLANG_SPIRV;
-        default: return SLANG_SPIRV;
-        }
-    }
-
     EShaderStageBits getStage(const SlangStage stage)
     {
         switch (stage)
@@ -54,13 +40,5 @@ namespace Luma
         default: break;
         }
         return EBindingType::PushConstant;
-    }
-
-    slang::PreprocessorMacroDesc toPreprocessorMacroDesc(const FShaderCompileDefine& define)
-    {
-        slang::PreprocessorMacroDesc desc;
-        desc.name = *define.key;
-        desc.value = *define.value;
-        return desc;
     }
 }

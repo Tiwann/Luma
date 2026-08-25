@@ -9,17 +9,15 @@ namespace Luma::Vulkan
     bool FComputePipelineImpl::initialize(const FComputePipelineDesc& pipelineDesc)
     {
         if (!pipelineDesc.device) return false;
-        if (!pipelineDesc.shader) return false;
+        if (!pipelineDesc.computeShader) return false;
+        if (pipelineDesc.computeShader->getStage() != EShaderStageBits::Compute) return false;
 
         FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(pipelineDesc.device);
-        FShaderImpl* shader = static_cast<FShaderImpl*>(pipelineDesc.shader);
-        const auto& modules = shader->getShaderModules();
-        if (modules.size() < 1) return false;
-        const FShaderModule module = modules[0];
+        FShaderImpl* shader = static_cast<FShaderImpl*>(pipelineDesc.computeShader);
 
         VkPipelineShaderStageCreateInfo stageCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
-        stageCreateInfo.module = module.handle;
-        stageCreateInfo.pName = "main";
+        stageCreateInfo.module = shader->getShaderModule();
+        stageCreateInfo.pName = shader->getEntryPointName();
         stageCreateInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
 
         VkComputePipelineCreateInfo createInfo = { VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO };

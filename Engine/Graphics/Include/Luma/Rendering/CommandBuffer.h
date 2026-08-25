@@ -2,22 +2,20 @@
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
-#include "Luma/Math/Matrix.h"
 #include "Luma/Containers/StringView.h"
 #include "IndexFormat.h"
 #include "QueueType.h"
 #include "Scissor.h"
 #include "Viewport.h"
 #include "Camera.h"
-#include <cstdint>
-
 #include "ShaderStage.h"
+#include <cstdint>
 
 
 namespace Luma
 {
     class FStaticMesh;
-    struct IShader;
+    struct IShaderProgram;
     struct IBindingSet;
     class FMaterial;
     struct FTextureSubresourceRange;
@@ -25,7 +23,7 @@ namespace Luma
     struct FTextureBarrier;
     struct IRenderDevice;
     struct IBuffer;
-    struct IGraphicsPipeline;
+    struct IRenderPipeline;
     struct IComputePipeline;
     struct ITexture;
     struct FRenderPassDesc;
@@ -78,11 +76,13 @@ namespace Luma
         virtual void clearColorTexture(ITexture* texture, const FColor& color) = 0;
         virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
         virtual void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) = 0;
-        virtual void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
-        virtual void bindGraphicsPipeline(const IGraphicsPipeline* pipeline) = 0;
+        virtual void pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
+        virtual void bindRenderPipeline(const IRenderPipeline* pipeline) = 0;
         virtual void beginRenderPass(const FRenderPassDesc& renderPassDesc) = 0;
         virtual void endRenderPass() = 0;
+        virtual void setScissors(const TArray<FScissor>& scissors) = 0;
         virtual void setScissor(const FScissor& scissor) = 0;
+        virtual void setViewports(const TArray<FViewport>& viewports) = 0;
         virtual void setViewport(const FViewport& viewport) = 0;
         virtual void draw(const FDrawCommand& drawCmd) = 0;
         void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
@@ -91,9 +91,7 @@ namespace Luma
         virtual void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void bindMaterial(const FMaterial* material) = 0;
-        virtual void bindBindingSet(const IBindingSet* bindingSet, const IShader* shader) = 0;
-        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMaterial* material, const FMatrix4f& transform, const FCamera& camera) = 0;
-        virtual void drawStaticMesh(const FStaticMesh* staticMesh, const FMatrix4f& transform, const FCamera& camera) = 0;
+        virtual void bindBindingSet(const IBindingSet* bindingSet, const IShaderProgram* shader) = 0;
         virtual void textureBarrier(const FTextureBarrier& barrier) = 0;
         virtual void bufferBarrier(const FBufferBarrier& barrier) = 0;
         virtual void bindDescriptorBuffer(const IBuffer* buffer){LUMA_ASSERT(false, "Not Implemented");}

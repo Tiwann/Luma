@@ -2,6 +2,7 @@
 #include "Pair.h"
 #include "Array.h"
 #include "Luma/Runtime/Assertion.h"
+#include "Luma/Math/Concepts.h"
 #include <cstdint>
 
 

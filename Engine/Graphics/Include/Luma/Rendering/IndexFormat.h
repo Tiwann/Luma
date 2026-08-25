@@ -4,8 +4,8 @@ namespace Luma
 {
     enum class EIndexFormat
     {
-        Uint32,
-        Uint16,
-        Uint8,
+        UInt32,
+        UInt16,
+        UInt8,
     };
 }

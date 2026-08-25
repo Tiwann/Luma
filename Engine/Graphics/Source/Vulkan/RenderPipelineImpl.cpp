@@ -1,4 +1,4 @@
-#include "Luma/Vulkan/GraphicsPipelineImpl.h"
+#include "Luma/Vulkan/RenderPipelineImpl.h"
 #include "Luma/Vulkan/RenderDeviceImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Vulkan/Conversions.h"
@@ -8,14 +8,23 @@
 
 namespace Luma::Vulkan
 {
-    bool FGraphicsPipelineImpl::initialize(const FGraphicsPipelineDesc& pipelineDesc)
+    bool FRenderPipelineImpl::initialize(const FRenderPipelineDesc& pipelineDesc)
     {
         if (!pipelineDesc.device) return false;
-        if (!pipelineDesc.shaderProgram) return false;
+        const TArray allShaders
+        {
+            pipelineDesc.vertexShader,
+            pipelineDesc.tessellationControlShader,
+            pipelineDesc.tessellationEvaluationShader,
+            pipelineDesc.geometryShader,
+            pipelineDesc.fragmentShader,
+            pipelineDesc.amplificationShader
+        };
+
+        if (!allShaders.any([](const auto* p) { return p;})) return false;
 
         FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(pipelineDesc.device);
-        FShaderImpl* shaderProgram = static_cast<FShaderImpl*>(pipelineDesc.shaderProgram);
-        
+
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyState { VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
         inputAssemblyState.primitiveRestartEnable = pipelineDesc.inputAssembly.primitiveRestartEnable;
         inputAssemblyState.topology = convert<VkPrimitiveTopology>(pipelineDesc.inputAssembly.topology);
@@ -120,15 +129,16 @@ namespace Luma::Vulkan
         renderingInfo.stencilAttachmentFormat = depthAttachmentFormat;
 
         TArray<VkPipelineShaderStageCreateInfo> shaderStages;
-        for (const auto& module : shaderProgram->getShaderModules())
+        for (const IShaderProgram* shader : allShaders)
         {
+            const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
             VkPipelineShaderStageCreateInfo shaderStage { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
-            shaderStage.module = module.handle;
-            shaderStage.pName = "main";
-            shaderStage.stage = convert<VkShaderStageFlagBits>(module.stage);
+            shaderStage.module = shaderImpl->getShaderModule();
+            shaderStage.pName = shaderImpl->getEntryPointName();
+            shaderStage.stage = convert<VkShaderStageFlagBits>(shaderImpl->getStage());
             shaderStages.add(shaderStage);
         }
-
+        
         TArray dynamicStates { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
         VkPipelineDynamicStateCreateInfo dynamicState { VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO };
         dynamicState.dynamicStateCount = dynamicStates.count();
@@ -156,7 +166,7 @@ namespace Luma::Vulkan
         return true;
     }
 
-    void FGraphicsPipelineImpl::destroy()
+    void FRenderPipelineImpl::destroy()
     {
         if (!m_Device) return;
         vkDestroyPipeline(m_Device->getHandle(), m_Handle, nullptr);

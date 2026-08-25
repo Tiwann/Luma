@@ -115,21 +115,29 @@ public vector<T, N> srgbToLinear<T, int N>(vector<T, N> srgb) where T : __Builti
     return select(mask, lower, higher);
 }
 
+#ifdef DECLARE_OBJECT_BUFFER
 public float4 localToWorldPosition(float4 position)
 {
 	return u_ObjectData.worldSpaceMatrix * position;
 }
+#endif
 
+#ifdef DECLARE_CAMERA_BUFFER
 public float4 localToViewPosition(float4 position)
 {
 	return u_CameraData.viewMatrix * localToWorldPosition(position);
 }
+#endif
 
+
+#ifdef DECLARE_CAMERA_BUFFER
 public float4 localToClipPosition(float4 position)
 {
 	return u_CameraData.viewProjectionMatrix * localToViewPosition(position);
 }
+#endif
 
+#ifdef DECLARE_OBJECT_BUFFER
 public float3 localToWorldNormal(float3 normal)
 {
     return float3x3(u_ObjectData.normalMatrix) * normal;
@@ -139,3 +147,4 @@ public float3 localToWorldDirection(float3 direction)
 {
     return float3x3(u_ObjectData.worldSpaceMatrix) * direction;
 }
+#endif

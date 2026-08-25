@@ -10,6 +10,7 @@
 #include "BindingType.h"
 #include "BufferBinding.h"
 #include "TextureBinding.h"
+#include "Luma/Containers/BufferView.h"
 
 
 namespace Luma
@@ -24,7 +25,7 @@ namespace Luma
     struct FFenceDesc;
     struct FSemaphoreDesc;
     struct FSamplerDesc;
-    struct FGraphicsPipelineDesc;
+    struct FRenderPipelineDesc;
     struct FComputePipelineDesc;
 
 
@@ -32,7 +33,7 @@ namespace Luma
     struct IBuffer;
     struct ITexture;
     struct ITextureView;
-    struct IShader;
+    struct IShaderProgram;
     struct ICommandBuffer;
     struct IRenderCommandBuffer;
     struct IComputeCommandBuffer;
@@ -40,7 +41,7 @@ namespace Luma
     struct IFence;
     struct ISemaphore;
     struct ISampler;
-    struct IGraphicsPipeline;
+    struct IRenderPipeline;
     struct IComputePipeline;
     struct ISwapchain;
     struct IQueue;
@@ -77,7 +78,9 @@ namespace Luma
         virtual IBuffer* createBuffer(const FBufferDesc& bufferDesc) = 0;
         virtual ITexture* createTexture(const FTextureDesc& textureDesc) = 0;
         virtual ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) = 0;
-        virtual IShader* createShader(const FShaderDesc& shaderDesc) = 0;
+        virtual IShaderProgram* createShader(const FShaderDesc& shaderDesc) = 0;
+        IShaderProgram* createShader(FStringView filepath);
+        IShaderProgram* createShader(TBufferView<uint8_t> shaderCode);
         virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
         virtual ICommandBuffer* getCommandBuffer() = 0;
         ICommandBuffer* createRenderCommandBuffer();
@@ -85,7 +88,7 @@ namespace Luma
         ICommandBuffer* createCopyCommandBuffer();
         virtual ISampler* createSampler(const FSamplerDesc& samplerDesc) = 0;
         ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc);
-        virtual IGraphicsPipeline* createGraphicsPipeline(const FGraphicsPipelineDesc& pipelineDesc) = 0;
+        virtual IRenderPipeline* createRenderPipeline(const FRenderPipelineDesc& pipelineDesc) = 0;
         virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) = 0;
         virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
         virtual ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) = 0;

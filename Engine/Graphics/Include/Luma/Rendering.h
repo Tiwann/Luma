@@ -1,6 +1,6 @@
 #pragma once
 #include <Luma/Rendering/RenderDevice.h>
-#include <Luma/Rendering/Shader.h>
+#include <Luma/Rendering/ShaderProgram.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/ComputePipeline.h>
 #include <Luma/Rendering/BindingSet.h>
@@ -11,7 +11,7 @@
 #include <Luma/Rendering/Sampler.h>
 #include <Luma/Rendering/Camera.h>
 #include <Luma/Rendering/Fence.h>
-#include <Luma/Rendering/GraphicsPipeline.h>
+#include <Luma/Rendering/RenderPipeline.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/Swapchain.h>
 #include <Luma/Rendering/TextureUtils.h>

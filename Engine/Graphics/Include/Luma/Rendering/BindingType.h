@@ -1,8 +1,9 @@
 ﻿#pragma once
+#include <cstdint>
 
 namespace Luma
 {
-    enum class EBindingType
+    enum class EBindingType : uint32_t
     {
         None,
         Sampler,

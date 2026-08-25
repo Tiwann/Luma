@@ -1,8 +1,8 @@
 ﻿#include "Luma/Rendering/RenderDevice.h"
-
 #include "Luma/Asset/Material.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Semaphore.h"
+#include "Luma/Runtime/FileUtils.h"
 
 #ifdef LUMA_BUILD_WEBGPU
 #include "WebGPU/RenderDevice.h"
@@ -14,12 +14,20 @@
 
 namespace Luma
 {
+    IShaderProgram* IRenderDevice::createShader(FStringView filepath)
+    {
+        TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
+        return createShader(TBufferView(fileContent.data(), fileContent.size()));
+    }
+
+    IShaderProgram* IRenderDevice::createShader(TBufferView<uint8_t> shaderCode)
+    {
+        return createShader(FShaderDesc(this, shaderCode));
+    }
+
     ICommandBuffer* IRenderDevice::createRenderCommandBuffer()
     {
-        FCommandBufferDesc desc;
-        desc.device = this;
-        desc.queueType = EQueueType::Render;
-        return createCommandBuffer(desc);
+        return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Render));
     }
 
     ICommandBuffer* IRenderDevice::createComputeCommandBuffer()
@@ -37,6 +45,7 @@ namespace Luma
         ISampler*& sampler = m_PerDescSamplers[samplerDesc];
         if (sampler) return sampler;
         sampler = createSampler(samplerDesc);
+        m_PerDescSamplers[samplerDesc] = sampler;
         return sampler;
     }
 

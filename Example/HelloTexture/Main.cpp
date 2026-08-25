@@ -54,10 +54,10 @@ int main(int argc, const char** argv)
     shaderDesc.moduleName = "HelloTexture";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTexture.slang");
 
-    Ref<IShader> shader = renderDevice->createShader(shaderDesc);
+    Ref<IShaderProgram> shader = renderDevice->createShader(shaderDesc);
     LUMA_ASSERT(shader, "Failed to create shader! Exiting application.");
 
-    FGraphicsPipelineDesc pipelineDesc;
+    FRenderPipelineDesc pipelineDesc;
     pipelineDesc.device = renderDevice;
     pipelineDesc.shaderProgram = shader;
     pipelineDesc.depthStencil.depthTestEnable = false;
@@ -67,7 +67,7 @@ int main(int argc, const char** argv)
     pipelineDesc.colorFormatCount = 1;
     pipelineDesc.multisample = {g_Samples};
 
-    Ref<IGraphicsPipeline> pipeline = renderDevice->createGraphicsPipeline(pipelineDesc);
+    Ref<IRenderPipeline> pipeline = renderDevice->createRenderPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
     FSamplerDesc samplerDesc;
@@ -121,7 +121,7 @@ int main(int argc, const char** argv)
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             cmdBuffer->bindMaterial(material);
-            cmdBuffer->bindGraphicsPipeline(pipeline);
+            cmdBuffer->bindRenderPipeline(pipeline);
             cmdBuffer->setViewport({0.0f, 0.0f, (float)WIDTH, (float)HEIGHT, 0.0f, 1.0f});
             cmdBuffer->setScissor({0, 0, WIDTH, HEIGHT});
             cmdBuffer->draw(6, 1, 0, 0);

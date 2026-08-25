@@ -8,14 +8,12 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/Sampler.cpp
         Source/Rendering/ComponentMapping.cpp
         Source/Rendering/BufferUtils.cpp
-        Source/Rendering/ShaderCompileRequest.cpp
-        Source/Rendering/ShaderCompiler.cpp
         Source/Rendering/InputLayout.cpp
-        Source/Rendering/GraphicsPipelineCache.cpp
+        #Source/Rendering/GraphicsPipelineCache.cpp
         Source/Rendering/Renderer2D.cpp
         Source/Rendering/TextureUtils.cpp
         Source/Rendering/ResourceBarrier.cpp
-        Source/Rendering/SceneRenderer.cpp
+        #Source/Rendering/SceneRenderer.cpp
         Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
         Source/Asset/StaticMesh.cpp
@@ -41,7 +39,7 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/BindingSetImpl.cpp
         Source/Vulkan/ShaderImpl.cpp
         Source/Vulkan/ComputePipelineImpl.cpp
-        Source/Vulkan/GraphicsPipelineImpl.cpp
+        Source/Vulkan/RenderPipelineImpl.cpp
 )
 
 set(LUMA_WEBGPU_SRC
