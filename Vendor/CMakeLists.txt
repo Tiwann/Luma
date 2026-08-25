@@ -32,7 +32,7 @@ if(LUMA_ENGINE_BUILD_VULKAN)
 endif ()
 
 add_subdirectory(freetype)
-set_target_properties(freetype PROPERTIES FOLDER luma-vendor)
+set_target_properties(freetype PROPERTIES FOLDER luma-vendor/msdfgen)
 if(NOT Freetype::Freetype)
     add_library(Freetype::Freetype ALIAS freetype)
 endif()
@@ -44,19 +44,25 @@ set(MSDF_ATLAS_DYNAMIC_RUNTIME ON)
 set(FREETYPE_LIBRARY Freetype::Freetype)
 set(FREETYPE_INCLUDE_DIRS ${freetype_SOURCE_DIR}/include)
 add_subdirectory(msdf-atlas-gen)
-set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER luma-vendor)
+set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER luma-vendor/msdfgen)
 
+
+if(LUMA_ENGINE_BUILD_VULKAN)
+add_subdirectory(Vulkan-Headers)
+add_subdirectory(VulkanMemoryAllocator)
+set_target_properties(VulkanMemoryAllocator Vulkan-Headers PROPERTIES FOLDER luma-vendor/vulkan)
 
 set(VOLK_PULL_IN_VULKAN ON)
 add_subdirectory(volk)
-set_target_properties(volk PROPERTIES FOLDER luma-vendor)
+set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
+endif ()
 
-add_subdirectory(Vulkan-Headers)
-set_target_properties(Vulkan-Headers PROPERTIES FOLDER luma-vendor)
-
+if(LUMA_ENGINE_BUILD_D3D12)
+add_subdirectory(DirectX-Headers)
+add_subdirectory(D3D12MemoryAllocator)
+set_target_properties(DirectX-Headers DirectX-Guids D3D12MemoryAllocator PROPERTIES FOLDER luma-vendor/d3d12)
+endif()
 
 add_subdirectory(box3d)
 set_target_properties(box3d PROPERTIES FOLDER luma-vendor)
 
-add_subdirectory(VulkanMemoryAllocator)
-set_target_properties(VulkanMemoryAllocator PROPERTIES FOLDER luma-vendor)

@@ -29,3 +29,6 @@
 [submodule "Vendor/VulkanMemoryAllocator"]
 	path = Vendor/VulkanMemoryAllocator
 	url = git@github.com:GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git
+[submodule "Vendor/D3D12MemoryAllocator"]
+	path = Vendor/D3D12MemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git

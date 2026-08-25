@@ -102,11 +102,3 @@ elseif(SWITCH)
     target_compile_definitions(luma-core PUBLIC LUMA_PLATFORM_SWITCH)
     target_link_libraries(luma-core PUBLIC nx)
 endif ()
-
-if(LUMA_ENGINE_BUILD_VULKAN)
-    target_compile_definitions(luma-core PUBLIC LUMA_BUILD_VULKAN)
-endif ()
-
-if(LUMA_ENGINE_BUILD_DEKO3D)
-    target_compile_definitions(luma-core PUBLIC LUMA_BUILD_DEKO3D)
-endif ()

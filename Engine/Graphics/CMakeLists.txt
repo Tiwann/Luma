@@ -42,6 +42,14 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/RenderPipelineImpl.cpp
 )
 
+
+set(LUMA_D3D12_SRC
+        Source/D3D12/RenderDeviceImpl.cpp
+        Source/D3D12/Buffer.cpp
+        Source/D3D12/SwapchainImpl.cpp
+        Source/D3D12/CommandBufferImpl.cpp
+)
+
 set(LUMA_WEBGPU_SRC
         External/webgpu/webgpu.c
         Source/WebGPU/Device.cpp
@@ -72,9 +80,17 @@ if(LUMA_ENGINE_BUILD_VULKAN)
     target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
     target_link_directories(luma-graphics PRIVATE ${VULKAN_SDK_INC_DIR})
     target_link_libraries(luma-graphics PRIVATE luma::rgfw volk::volk volk::volk_headers Vulkan::Headers GPUOpen::VulkanMemoryAllocator)
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_VULKAN)
 endif ()
 
 if(LUMA_ENGINE_BUILD_DEKO3D)
     target_sources(luma-graphics PRIVATE ${LUMA_DEKO3D_SRC})
     target_link_libraries(luma-graphics PRIVATE deko3d)
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_DEKO3D)
+endif ()
+
+if(LUMA_ENGINE_BUILD_D3D12)
+    target_sources(luma-graphics PRIVATE ${LUMA_D3D12_SRC})
+    target_link_libraries(luma-graphics PRIVATE luma::rgfw Microsoft::DirectX-Headers D3D12MemoryAllocator d3d12 dxgi dxguid)
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_D3D12)
 endif ()

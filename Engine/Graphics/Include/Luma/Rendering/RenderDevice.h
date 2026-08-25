@@ -66,7 +66,7 @@ namespace Luma
         virtual void endFrame() = 0;
         virtual void present() = 0;
         virtual void waitIdle() = 0;
-        virtual uint32_t getFrameCount() = 0;
+        virtual uint32_t getFrameCount() const = 0;
         virtual uint32_t getCurrentFrameIndex() = 0;
         virtual bool hasVSync() { return false; }
 

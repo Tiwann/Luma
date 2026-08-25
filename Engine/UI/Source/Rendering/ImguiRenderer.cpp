@@ -6,6 +6,10 @@
 #include "Luma/Vulkan/ImguiRendererImpl.h"
 #endif
 
+#ifdef LUMA_BUILD_D3D12
+#include "Luma/D3D12/ImguiRendererImpl.h"
+#endif
+
 namespace Luma
 {
     static void toLinear(ImVec4& color)
@@ -137,6 +141,17 @@ namespace Luma
         case ERenderDeviceType::Vulkan:
             {
                 renderer = new Vulkan::FImguiRendererImpl();
+                if (!renderer->initialize(rendererDesc))
+                {
+                    delete renderer;
+                    return nullptr;
+                }
+                return renderer;
+            }
+#elifdef LUMA_BUILD_D3D12
+        case ERenderDeviceType::D3D12:
+            {
+                renderer = new D3D12::FImguiRendererImpl();
                 if (!renderer->initialize(rendererDesc))
                 {
                     delete renderer;

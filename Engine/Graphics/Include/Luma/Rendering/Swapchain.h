@@ -29,8 +29,7 @@ namespace Luma
 
         virtual bool initialize(const FSwapchainDesc& swapchainDesc) = 0;
         virtual void destroy() = 0;
-
-        bool resize(uint32_t width, uint32_t height);
+        virtual bool resize(uint32_t width, uint32_t height);
         uint32_t getWidth() const;
         uint32_t getHeight() const;
         EFormat getFormat() const;
