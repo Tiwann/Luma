@@ -15,8 +15,6 @@ namespace Luma
         virtual bool initialize(IRenderDevice* device) = 0;
         virtual void destroy() = 0;
         virtual IBindingSet* createBindingSet(uint32_t setIndex) const = 0;
-
-
     protected:
         FShaderStageFlags m_Stage = EShaderStageBits::None;
     };
