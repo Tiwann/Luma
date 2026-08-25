@@ -2,6 +2,7 @@
 #include "Luma/D3D12/RenderDeviceImpl.h"
 #include <directx/d3d12.h>
 
+#include "Luma/Containers/StringConversion.h"
 #include "Luma/D3D12/Buffer.h"
 #include "Luma/D3D12/Conversions.h"
 #include "Luma/Rendering/RenderPassDesc.h"
@@ -71,12 +72,14 @@ namespace Luma::D3D12
 
     void FCommandBufferImpl::endDebugGroup()
     {
-        ICommandBuffer::endDebugGroup();
+
     }
 
     void FCommandBufferImpl::setName(FStringView name)
     {
-        ICommandBuffer::setName(name);
+        if (name.isEmpty()) return;
+        FWideString newName = stringConvert<wchar_t, char>(name);
+        m_Handle->SetName(*newName);
     }
 
     void FCommandBufferImpl::clearColor(uint32_t attachmentIndex, const FColor& color)
@@ -88,21 +91,25 @@ namespace Luma::D3D12
     {
     }
 
-    void FCommandBufferImpl::clearColorTexture(ITexture* texture, const FColor& color,
-        const FTextureSubresourceRange& subresourceRange)
+    void FCommandBufferImpl::clearColorTexture(ITexture* texture, const FColor& color, const FTextureSubresourceRange& subresourceRange)
     {
     }
 
     void FCommandBufferImpl::clearColorTexture(ITexture* texture, const FColor& color)
     {
+
     }
 
     void FCommandBufferImpl::bindVertexBuffer(const IBuffer* buffer, int64_t offset)
     {
+        const D3D12_VERTEX_BUFFER_VIEW view(buffer->getDeviceAddress() + offset, buffer->getSize() - offset, 0);
+        m_Handle->IASetVertexBuffers(0, 1, &view);
     }
 
     void FCommandBufferImpl::bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format)
     {
+        const D3D12_INDEX_BUFFER_VIEW view(buffer->getDeviceAddress() + offset, buffer->getSize() - offset, convert<DXGI_FORMAT>(format));
+        m_Handle->IASetIndexBuffer(&view);
     }
 
     void FCommandBufferImpl::pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data,
@@ -202,11 +209,12 @@ namespace Luma::D3D12
 
     void FCommandBufferImpl::bindDescriptorBuffer(const IBuffer* buffer)
     {
-        ICommandBuffer::bindDescriptorBuffer(buffer);
+
     }
 
     void FCommandBufferImpl::bindComputePipeline(const IComputePipeline* pipeline)
     {
+
     }
 
     void FCommandBufferImpl::dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ)
@@ -229,35 +237,6 @@ namespace Luma::D3D12
 
     void FCommandBufferImpl::copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice, uint32_t mipLevel)
     {
-        D3D12_RESOURCE_DESC texDesc = dstTexture->GetDesc();
 
-        D3D12_PLACED_SUBRESOURCE_FOOTPRINT footprint = {};
-        UINT numRows = 0;
-        UINT64 rowSizeInBytes = 0;
-        UINT64 totalBytes = 0;
-
-        D3D12CalcSubresource(mipLevel, arraySlice, 0, texture->getMipCount(), texture->getArrayCount());
-
-        device->GetCopyableFootprints(
-            &texDesc,
-            dstSubresourceIndex, // FirstSubresource
-            1,                    // NumSubresources
-            offset,            // BaseOffset (where data starts in srcBuffer)
-            &footprint,
-            &numRows,
-            &rowSizeInBytes,
-            &totalBytes);
-
-        D3D12_TEXTURE_COPY_LOCATION srcLoc = {};
-        srcLoc.pResource = srcBuffer;
-        srcLoc.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
-        srcLoc.PlacedFootprint = footprint;
-
-        D3D12_TEXTURE_COPY_LOCATION dstLoc = {};
-        dstLoc.pResource = dstTexture;
-        dstLoc.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
-        dstLoc.SubresourceIndex = dstSubresourceIndex;
-
-        cmdList->CopyTextureRegion(&dstLoc, 0, 0, 0, &srcLoc, nullptr);
     }
 }

@@ -146,7 +146,7 @@ namespace Luma
         cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
         cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
-        cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::Uint32);
+        cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::UInt32);
         cmdBuffer->bindRenderPipeline(m_Pipeline);
         cmdBuffer->bindBindingSet(m_BindingSet, m_Shader);
         cmdBuffer->setViewport(FViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f));

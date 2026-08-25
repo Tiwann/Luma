@@ -14,7 +14,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/TextureUtils.cpp
         Source/Rendering/ResourceBarrier.cpp
         #Source/Rendering/SceneRenderer.cpp
-        Source/Utility/SlangCommon.cpp
+        #Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
         Source/Asset/StaticMesh.cpp
         Source/Asset/Material.cpp
@@ -47,6 +47,7 @@ set(LUMA_D3D12_SRC
         Source/D3D12/RenderDeviceImpl.cpp
         Source/D3D12/Buffer.cpp
         Source/D3D12/SwapchainImpl.cpp
+        Source/D3D12/QueueImpl.cpp
         Source/D3D12/CommandBufferImpl.cpp
 )
 

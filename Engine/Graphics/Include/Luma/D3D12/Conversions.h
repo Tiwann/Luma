@@ -14,6 +14,8 @@
 #include <dxgi1_6.h>
 #include <directx/d3dx12.h>
 
+#include "Luma/Rendering/IndexFormat.h"
+
 namespace Luma::D3D12
 {
     template<typename OutType, typename InType>
@@ -283,6 +285,18 @@ namespace Luma::D3D12
         case ESamplerAddressMode::ClampToBorder:return D3D12_TEXTURE_ADDRESS_MODE_BORDER;
         case ESamplerAddressMode::MirrorClampToEdge:return D3D12_TEXTURE_ADDRESS_MODE_MIRROR_ONCE;
         default: return D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+        }
+    }
+
+    template <>
+    inline DXGI_FORMAT convert(const EIndexFormat& fmt)
+    {
+        switch (fmt)
+        {
+        case EIndexFormat::UInt32: return DXGI_FORMAT_R32_UINT;
+        case EIndexFormat::UInt16: return DXGI_FORMAT_R16_UINT;
+        case EIndexFormat::UInt8: return DXGI_FORMAT_R8_UINT;
+        default: throw;
         }
     }
 }

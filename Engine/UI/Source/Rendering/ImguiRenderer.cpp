@@ -7,7 +7,7 @@
 #endif
 
 #ifdef LUMA_BUILD_D3D12
-#include "Luma/D3D12/ImguiRendererImpl.h"
+#include "../../Include/Luma/D3D12/ImguiRendererImpl.h"
 #endif
 
 namespace Luma

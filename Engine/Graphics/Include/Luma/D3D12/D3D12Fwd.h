@@ -45,6 +45,7 @@ struct ID3D12Debug6;
 
 struct ID3D12CommandSignature;
 struct ID3D12CommandAllocator;
+struct ID3D12CommandQueue;
 
 struct ID3D12Resource;
 struct ID3D12Resource1;

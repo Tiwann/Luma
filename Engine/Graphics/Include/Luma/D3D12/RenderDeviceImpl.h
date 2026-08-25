@@ -2,6 +2,8 @@
 #include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Rendering/QueueType.h"
 #include "D3D12Fwd.h"
+#include "QueueImpl.h"
+#include "SwapchainImpl.h"
 
 #define DX_FAILED(result) (result) < 0
 
@@ -76,5 +78,10 @@ namespace Luma::D3D12
         ID3D12CommandAllocator* m_RenderCmdAllocator = nullptr;
         ID3D12CommandAllocator* m_ComputeCmdAllocator = nullptr;
         ID3D12CommandAllocator* m_CopyCmdAllocator = nullptr;
+
+        FSwapchainImpl m_Swapchain;
+        FQueueImpl m_RenderQueue;
+        FQueueImpl m_ComputeQueue;
+        FQueueImpl m_CopyQueue;
     };
 }

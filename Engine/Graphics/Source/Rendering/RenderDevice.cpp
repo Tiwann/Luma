@@ -22,7 +22,7 @@ namespace Luma
 
     IShaderProgram* IRenderDevice::createShader(TBufferView<uint8_t> shaderCode)
     {
-        return createShader(FShaderDesc(this, shaderCode));
+        //return createShader(FShaderDesc(this, shaderCode));
     }
 
     ICommandBuffer* IRenderDevice::createRenderCommandBuffer()

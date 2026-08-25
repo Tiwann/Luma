@@ -3,6 +3,8 @@
 #include <directx/d3d12.h>
 #include <dxgi1_6.h>
 
+#include "Luma/D3D12/Buffer.h"
+
 namespace Luma::D3D12
 {
 #if defined(LUMA_DEBUG) || defined(LUMA_DEV)
@@ -80,6 +82,47 @@ namespace Luma::D3D12
             return false;
 
         m_Window = static_cast<FDesktopWindow*>(deviceDesc.window);
+
+        const auto getPresentMode = [this](const bool vSync)
+        {
+            DXGI_SWAP_EFFECT result;
+
+            if (vSync)
+            {
+                result = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
+                BOOL mailboxSupported = false;
+                (void)m_Factory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &mailboxSupported,
+                                                     sizeof(mailboxSupported));
+                if (mailboxSupported)
+                    result = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+            }
+            else
+            {
+                result = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+            }
+
+            switch (result)
+            {
+            case DXGI_SWAP_EFFECT_DISCARD: return EPresentMode::Immediate;
+            case DXGI_SWAP_EFFECT_FLIP_DISCARD: return EPresentMode::Fifo;
+            default: return EPresentMode::Unknown;
+            }
+        };
+
+
+        m_RenderQueue.initialize(this, EQueueType::Render);
+        m_ComputeQueue.initialize(this, EQueueType::Compute);
+        m_CopyQueue.initialize(this, EQueueType::Copy);
+
+        FSwapchainDesc swapchainDesc;
+        swapchainDesc.device = this;
+        swapchainDesc.format = EFormat::R8G8B8A8_UNORM;
+        swapchainDesc.width = m_Window->getWidth();
+        swapchainDesc.height = m_Window->getHeight();
+        swapchainDesc.buffering = deviceDesc.buffering;
+        swapchainDesc.presentMode = getPresentMode(deviceDesc.vSync);
+        if (!m_Swapchain.initialize(swapchainDesc))
+            return false;
     }
 
     void FRenderDeviceImpl::destroy()
@@ -112,31 +155,42 @@ namespace Luma::D3D12
 
     bool FRenderDeviceImpl::hasVSync()
     {
-        return IRenderDevice::hasVSync();
+        return m_Swapchain.hasVSync();
     }
 
     ISwapchain* FRenderDeviceImpl::getSwapchain()
     {
-        return IRenderDevice::getSwapchain();
+        return &m_Swapchain;
     }
 
     IQueue* FRenderDeviceImpl::getRenderQueue()
     {
-        return IRenderDevice::getRenderQueue();
+        return &m_RenderQueue;
     }
 
     IQueue* FRenderDeviceImpl::getComputeQueue()
     {
-        return IRenderDevice::getComputeQueue();
+        return &m_ComputeQueue;
     }
 
     IQueue* FRenderDeviceImpl::getCopyQueue()
     {
-        return IRenderDevice::getCopyQueue();
+        return &m_CopyQueue;
     }
 
     IBuffer* FRenderDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
     {
+        FBufferImpl* buffer = new FBufferImpl();
+        FBufferDesc desc{bufferDesc};
+        desc.device = this;
+
+        if (!buffer->initialize(desc))
+        {
+            delete buffer;
+            return nullptr;
+        }
+
+        return buffer;
     }
 
     ITexture* FRenderDeviceImpl::createTexture(const FTextureDesc& textureDesc)

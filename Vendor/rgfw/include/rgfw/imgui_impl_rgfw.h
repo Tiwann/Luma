@@ -47,6 +47,7 @@ typedef struct RGFW_window RGFW_window;
 /* basic api */
 IMGUI_IMPL_API bool     ImGui_ImplRgfw_InitForOpenGL(RGFW_window* window, bool install_callbacks);
 IMGUI_IMPL_API bool     ImGui_ImplRgfw_InitForVulkan(RGFW_window* window, bool install_callbacks);
+IMGUI_IMPL_API bool     ImGui_ImplRgfw_InitForD3D12(RGFW_window* window, bool install_callbacks);
 IMGUI_IMPL_API bool     ImGui_ImplRgfw_InitForOther(RGFW_window* window, bool install_callbacks);
 IMGUI_IMPL_API void     ImGui_ImplRgfw_Shutdown();
 IMGUI_IMPL_API void     ImGui_ImplRgfw_NewFrame();
@@ -85,6 +86,7 @@ enum RgfwClientApi
     RgfwClientApi_Unknown,
     RgfwClientApi_OpenGL,
     RgfwClientApi_Vulkan,
+    RgfwClientApi_D3D12,
 };
 
 struct ImGui_ImplRgfw_Data
@@ -476,6 +478,11 @@ bool ImGui_ImplRgfw_InitForOpenGL(RGFW_window* window, bool install_callbacks)
 bool ImGui_ImplRgfw_InitForVulkan(RGFW_window* window, bool install_callbacks)
 {
     return ImGui_ImplRgfw_Init(window, install_callbacks, RgfwClientApi_Vulkan);
+}
+
+bool ImGui_ImplRgfw_InitForD3D12(RGFW_window* window, bool install_callbacks)
+{
+    return ImGui_ImplRgfw_Init(window, install_callbacks, RgfwClientApi_D3D12);
 }
 
 bool ImGui_ImplRgfw_InitForOther(RGFW_window* window, bool install_callbacks)

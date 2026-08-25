@@ -8,6 +8,10 @@ set(LUMA_UI_VULKAN_SRC
     Source/Vulkan/ImguiRendererImpl.cpp
 )
 
+set(LUMA_UI_D3D12_SRC
+    Source/D3D12/ImguiRendererImpl.cpp
+)
+
 add_library(luma-ui ${LUMA_UI_SRC})
 add_library(luma::ui ALIAS luma-ui)
 target_link_libraries(luma-ui PRIVATE luma::core luma::graphics PUBLIC luma::imgui)
@@ -19,4 +23,9 @@ luma_generate_export_header(TARGET luma-ui MODULE_NAME UI)
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_link_libraries(luma-ui PRIVATE luma::rgfw)
     target_sources(luma-ui PRIVATE ${LUMA_UI_VULKAN_SRC})
+endif ()
+
+if(LUMA_ENGINE_BUILD_D3D12)
+    target_link_libraries(luma-ui PRIVATE luma::rgfw DirectX-Headers)
+    target_sources(luma-ui PRIVATE ${LUMA_UI_D3D12_SRC})
 endif ()
