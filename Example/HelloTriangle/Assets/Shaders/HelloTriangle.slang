@@ -9,7 +9,7 @@ struct Vertex
 public struct VertexOutput
 {
     public float4 position : SV_Position;
-    public float4 color;
+    public float4 color : COLOR0;
 };
 
 static const Vertex vertices[3] =
