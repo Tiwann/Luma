@@ -525,31 +525,16 @@ namespace Luma::Vulkan
         fence.reset();
 
 
-        FCommandBufferImpl& commandBuffer = m_CmdBuffers[m_SwapchainImageIndex];
-        if (!commandBuffer.begin()) return false;
+        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_SwapchainImageIndex];
+        if (!cmdBuffer.begin()) return false;
 
-        VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
-        barrier.image = m_Swapchain.getImage(m_SwapchainImageIndex);
-        barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        barrier.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
-        barrier.srcStageMask = VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT;
-        barrier.dstStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
-        barrier.srcAccessMask = VK_ACCESS_2_NONE;
-        barrier.dstAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        FTextureBarrier barrier;
+        barrier.texture = m_Swapchain.getTexture(m_SwapchainImageIndex);
+        barrier.destState = EResourceState::ColorAttachment;
+        barrier.sourceAccess = EResourceAccessBits::None;
+        barrier.destAccess = EResourceAccessBits::ColorAttachmentWrite;
+        cmdBuffer.textureBarrier(barrier);
 
-        VkDependencyInfo dependency = { VK_STRUCTURE_TYPE_DEPENDENCY_INFO };
-        dependency.dependencyFlags = 0;
-        dependency.imageMemoryBarrierCount = 1;
-        dependency.pImageMemoryBarriers = &barrier;
-        vkCmdPipelineBarrier2(commandBuffer.getHandle(), &dependency);
         return true;
     }
 
@@ -557,28 +542,13 @@ namespace Luma::Vulkan
     {
         FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_SwapchainImageIndex];
 
-        VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2;
-        barrier.image = m_Swapchain.getImage(m_SwapchainImageIndex);
-        barrier.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        barrier.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
-        barrier.srcStageMask = VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
-        barrier.dstStageMask = VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT;
-        barrier.srcAccessMask = VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
-        barrier.dstAccessMask = VK_ACCESS_2_NONE;
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        FTextureBarrier barrier;
+        barrier.texture = m_Swapchain.getTexture(m_SwapchainImageIndex);
+        barrier.destState = EResourceState::Present;
+        barrier.sourceAccess = EResourceAccessBits::ColorAttachmentWrite;
+        barrier.destAccess = EResourceAccessBits::None;
+        cmdBuffer.textureBarrier(barrier);
 
-        VkDependencyInfo inDependency = { VK_STRUCTURE_TYPE_DEPENDENCY_INFO };
-        inDependency.dependencyFlags = 0;
-        inDependency.imageMemoryBarrierCount = 1;
-        inDependency.pImageMemoryBarriers = &barrier;
-        vkCmdPipelineBarrier2(cmdBuffer.getHandle(), &inDependency);
 
         FFenceImpl& fence = m_Fences[m_CurrentFrameIndex];
         const FSemaphoreImpl& presentSemaphore = m_PresentSemaphores[m_CurrentFrameIndex];
