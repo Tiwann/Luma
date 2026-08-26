@@ -17,7 +17,7 @@ int main()
 
     FRenderDeviceDesc renderDeviceDesc;
     renderDeviceDesc.window = window;
-    renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
+    renderDeviceDesc.deviceType = ERenderDeviceType::D3D12;
     renderDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
     renderDeviceDesc.vSync = false;
 

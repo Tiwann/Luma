@@ -1,9 +1,9 @@
 #pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Fence.h"
-#include "VulkanFwd.h"
+#include "D3D12Fwd.h"
 
-namespace Luma::Vulkan
+namespace Luma::D3D12
 {
     class FRenderDeviceImpl;
 
@@ -14,12 +14,11 @@ namespace Luma::Vulkan
         void destroy() override;
         void wait(uint64_t timeoutNs) override;
         void reset() override;
-
-        VkFence getHandle() const { return m_Handle; }
         void setName(FStringView name) override;
 
+        ID3D12Fence1* getHandle() const { return m_Handle; }
     private:
         FRenderDeviceImpl* m_Device = nullptr;
-        VkFence m_Handle = nullptr;
+        ID3D12Fence1* m_Handle = nullptr;
     };
 }

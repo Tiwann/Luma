@@ -73,6 +73,9 @@ struct ID3D12GraphicsCommandList8;
 struct ID3D12GraphicsCommandList9;
 struct ID3D12GraphicsCommandList10;
 
+struct ID3D12Fence;
+struct ID3D12Fence1;
+
 namespace D3D12MA
 {
     class Allocator;

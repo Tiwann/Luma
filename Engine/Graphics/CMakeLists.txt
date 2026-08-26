@@ -49,6 +49,7 @@ set(LUMA_D3D12_SRC
         Source/D3D12/SwapchainImpl.cpp
         Source/D3D12/QueueImpl.cpp
         Source/D3D12/CommandBufferImpl.cpp
+        Source/D3D12/FenceImpl.cpp
 )
 
 set(LUMA_WEBGPU_SRC

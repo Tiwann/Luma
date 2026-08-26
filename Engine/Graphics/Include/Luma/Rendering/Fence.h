@@ -1,4 +1,5 @@
 #pragma once
+#include "Luma/Containers/StringView.h"
 #include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
@@ -24,6 +25,7 @@ namespace Luma
         virtual void destroy() = 0;
         virtual void wait(uint64_t timeoutNs) = 0;
         virtual void reset() = 0;
+
         virtual void setName(FStringView name) {}
     };
 }

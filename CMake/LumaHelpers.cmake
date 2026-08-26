@@ -29,7 +29,7 @@ function(add_shader_target TARGET)
             ARG
             ""
             "PROFILE"
-            "SOURCES;OUTPUT_TYPE;VERTEX;FRAG;COMPUTE;HULL"
+            "SOURCES;OUTPUT_TYPE;VERTEX;FRAG;COMPUTE;HULL;INCLUDES;DEFINES"
             ${ARGN}
     )
 
@@ -65,6 +65,19 @@ function(add_shader_target TARGET)
 
         get_filename_component(SHADER_NAME "${SHADER}" NAME)
 
+        set(INCLUDE_FLAGS "")
+        foreach(_inc IN LISTS ARG_INCLUDES)
+            if(NOT IS_ABSOLUTE "${_inc}")
+                set(_inc "${CMAKE_CURRENT_SOURCE_DIR}/${_inc}")
+            endif ()
+            list(APPEND INCLUDE_FLAGS "-I" "${_inc}")
+        endforeach ()
+
+        set(DEFINE_FLAGS "")
+        foreach(_def IN LISTS ARG_DEFINES)
+            list(APPEND DEFINE_FLAGS "-D" "${_def}")
+        endforeach ()
+
         foreach(OUT_TYPE IN LISTS ARG_OUTPUT_TYPE)
             if("${OUT_TYPE}" STREQUAL "spirv")
                 set(OUTPUT_EXT "spv")
@@ -94,6 +107,8 @@ function(add_shader_target TARGET)
                         -stage vertex
                         -target "${OUT_TYPE}"
                         ${PROFILE_FLAG}
+                        ${INCLUDE_FLAGS}
+                        ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
                         COMMENT "Compiling vertex shader ${SHADER_NAME} (${OUT_TYPE})"
@@ -115,6 +130,8 @@ function(add_shader_target TARGET)
                         -stage fragment
                         -target "${OUT_TYPE}"
                         ${PROFILE_FLAG}
+                        ${INCLUDE_FLAGS}
+                        ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
                         COMMENT "Compiling fragment shader ${SHADER_NAME} (${OUT_TYPE})"
@@ -136,6 +153,8 @@ function(add_shader_target TARGET)
                         -stage compute
                         -target "${OUT_TYPE}"
                         ${PROFILE_FLAG}
+                        ${INCLUDE_FLAGS}
+                        ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
                         COMMENT "Compiling compute shader ${SHADER_NAME} (${OUT_TYPE})"
@@ -157,6 +176,8 @@ function(add_shader_target TARGET)
                         -stage hull
                         -target "${OUT_TYPE}"
                         ${PROFILE_FLAG}
+                        ${INCLUDE_FLAGS}
+                        ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
                         COMMENT "Compiling hull shader ${SHADER_NAME} (${OUT_TYPE})"
