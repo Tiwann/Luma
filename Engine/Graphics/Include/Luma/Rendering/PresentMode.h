@@ -7,8 +7,6 @@ namespace Luma
     {
         Unknown = 0,
         Immediate,
-        Mailbox,
         Fifo,
-        FifoRelaxed
     };
 }

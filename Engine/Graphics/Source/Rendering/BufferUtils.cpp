@@ -33,18 +33,28 @@ namespace Luma::BufferUtils
         IBuffer* vertexBuffer = device->createBuffer(bufferDesc);
         if (!vertexBuffer) return nullptr;
 
-        Ref<ICommandBuffer> cmdBuffer = Ref(device->createCopyCommandBuffer());
-        LUMA_ASSERT(cmdBuffer, "Failed to create command buffer! Maybe pool is full ?");
+        IQueue* copyQueue = device->getCopyQueue();
+        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
 
         if (cmdBuffer->begin())
         {
             cmdBuffer->copyBuffer(stagingBuffer, vertexBuffer, 0, 0, size);
             cmdBuffer->end();
 
-            Ref<IFence> fence = Ref(device->createFence(FFenceDesc()));
-            IQueue* copyQueue = device->getCopyQueue();
-            copyQueue->executeCommandBuffer(cmdBuffer, fence);
-            fence->wait(FENCE_WAIT_INFINITE);
+            Ref<IFence> fence = Ref(device->createFence(0));
+
+            FFenceSignal signal;
+            signal.fence = fence;
+            signal.value = 1;
+            signal.stages = EPipelineStageBits::Copy;
+
+            FQueueExecuteInfo execInfo;
+            execInfo.cmdBuffers = {cmdBuffer};
+            execInfo.signals = signal;
+
+            copyQueue->executeCommandBuffers(execInfo);
+            fence->waitOnCPU(1);
+
             return vertexBuffer;
         }
 
@@ -63,7 +73,8 @@ namespace Luma::BufferUtils
         IBuffer* indexBuffer = device->createBuffer(bufferDesc);
         if (!indexBuffer) return nullptr;
 
-        Ref<ICommandBuffer> cmdBuffer = Ref(device->createCopyCommandBuffer());
+        IQueue* copyQueue = device->getCopyQueue();
+        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
         LUMA_ASSERT(cmdBuffer, "Failed to create command buffer! Maybe pool is full ?");
 
         if (cmdBuffer->begin())
@@ -71,10 +82,19 @@ namespace Luma::BufferUtils
             cmdBuffer->copyBuffer(stagingBuffer, indexBuffer, 0, 0, size);
             cmdBuffer->end();
 
-            Ref<IFence> fence = Ref(device->createFence(FFenceDesc()));
-            IQueue* copyQueue = device->getCopyQueue();
-            copyQueue->executeCommandBuffer(cmdBuffer, fence);
-            fence->wait(FENCE_WAIT_INFINITE);
+            Ref<IFence> fence = Ref(device->createFence(0));
+
+            FFenceSignal signal;
+            signal.fence = fence;
+            signal.value = 1;
+            signal.stages = EPipelineStageBits::Copy;
+
+            FQueueExecuteInfo execInfo;
+            execInfo.cmdBuffers = {cmdBuffer};
+            execInfo.signals = signal;
+
+            copyQueue->executeCommandBuffers(execInfo);
+            fence->waitOnCPU(1);
             return indexBuffer;
         }
 

@@ -11,7 +11,7 @@ namespace Luma::Vulkan
     {
     public:
         ~FShaderImpl() override = default;
-        bool initialize(const FShaderDesc& shaderDesc) override;
+        //bool initialize(const FShaderDesc& shaderDesc) override;
         void destroy() override;
 
         IBindingSet* createBindingSet(uint32_t setIndex) const override;

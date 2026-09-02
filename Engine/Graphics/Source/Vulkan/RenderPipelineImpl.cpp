@@ -134,8 +134,8 @@ namespace Luma::Vulkan
             const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
             VkPipelineShaderStageCreateInfo shaderStage { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
             shaderStage.module = shaderImpl->getShaderModule();
-            shaderStage.pName = shaderImpl->getEntryPointName();
-            shaderStage.stage = convert<VkShaderStageFlagBits>(shaderImpl->getStage());
+            //shaderStage.pName = shaderImpl->getEntryPointName();
+            //shaderStage.stage = convert<VkShaderStageFlagBits>(shaderImpl->getStage());
             shaderStages.add(shaderStage);
         }
         
@@ -156,7 +156,7 @@ namespace Luma::Vulkan
         pipelineCreateInfo.pMultisampleState = &multisampleState;
         pipelineCreateInfo.pStages = shaderStages.data();
         pipelineCreateInfo.stageCount = shaderStages.count();
-        pipelineCreateInfo.layout = shaderProgram->getPipelineLayout();
+        //pipelineCreateInfo.layout = shaderProgram->getPipelineLayout();
         
         const VkDevice deviceHandle = device->getHandle();
         vkDestroyPipeline(deviceHandle, m_Handle, nullptr);

@@ -45,8 +45,8 @@ namespace Luma::Vulkan
         void dispatchIndirect(IBuffer* buffer, int64_t offset) override;
         void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) override;
         void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex,uint32_t mipLevel) override;
-        void textureBarrier(const FTextureBarrier& barrier) override;
-        void bufferBarrier(const FBufferBarrier& barrier) override;
+        void textureBarriers(TArrayView<FTextureBarrier> barriers) override;
+        void bufferBarriers(TArrayView<FBufferBarrier> barriers) override;
         void bindDescriptorBuffer(const IBuffer* buffer) override;
         void setName(FStringView name) override;
 

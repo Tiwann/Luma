@@ -5,7 +5,6 @@
 #include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/TextureImpl.h"
 #include "Luma/Vulkan/TextureViewImpl.h"
-#include "Luma/Vulkan/SemaphoreImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Vulkan/ComputePipelineImpl.h"
 #include "Luma/Vulkan/RenderPipelineImpl.h"
@@ -13,11 +12,11 @@
 #include "Luma/Containers/Array.h"
 #include "Luma/Containers/StringFormat.h"
 #include "Luma/Vulkan/Conversions.h"
+#include "Luma/Vulkan/VulkanUtils.h"
 
 #include <iostream>
 #include <volk.h>
 #include <rgfw/rgfw.h>
-#include <slang/slang.h>
 #include <vk_mem_alloc.h>
 
 
@@ -92,9 +91,9 @@ namespace Luma::Vulkan
             TArray<const char*> extensions;
             extensions.add(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
 
-            size_t rgfwExtensionCount = 0;
-            const auto** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(&rgfwExtensionCount);
-            extensions.addRange({rgfwExtensions, rgfwExtensionCount});
+            uint64_t rgfwExtensionCount = 0;
+            const char** rgfwExtensions = RGFW_getRequiredInstanceExtensions_Vulkan(reinterpret_cast<size_t*>(&rgfwExtensionCount));
+            extensions.addRange(rgfwExtensions, rgfwExtensionCount);
             extensions.add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
             VkInstanceCreateInfo instanceCreateInfo = { VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO };
@@ -116,10 +115,8 @@ namespace Luma::Vulkan
             if (!s_DebugMessenger)
             {
                 VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo = { VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT };
-                debugMessengerCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-                debugMessengerCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
+                debugMessengerCreateInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+                debugMessengerCreateInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT;
                 debugMessengerCreateInfo.pfnUserCallback = messageCallback;
                 if (vkCreateDebugUtilsMessengerEXT(s_Instance, &debugMessengerCreateInfo, nullptr, &s_DebugMessenger) != VK_SUCCESS)
                     return false;
@@ -237,8 +234,13 @@ namespace Luma::Vulkan
         deviceExtensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
+        deviceExtensions.add(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
+
+        VkPhysicalDeviceTimelineSemaphoreFeatures timelineSemFeatures = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES};
+        timelineSemFeatures.timelineSemaphore = true;
 
         VkPhysicalDeviceDescriptorBufferFeaturesEXT descriptorBufferFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT };
+        descriptorBufferFeatures.pNext = &timelineSemFeatures;
         descriptorBufferFeatures.descriptorBuffer = true;
         descriptorBufferFeatures.descriptorBufferPushDescriptors = true;
 
@@ -336,59 +338,9 @@ namespace Luma::Vulkan
             return false;
         }
 
-        VkCommandPoolCreateInfo commandPoolCreateInfo = { VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO };
-        commandPoolCreateInfo.queueFamilyIndex = m_RenderQueue.getIndex();
-        commandPoolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-        if (VK_FAILED(vkCreateCommandPool(m_Handle, &commandPoolCreateInfo, nullptr, &m_RenderPool)))
-        {
-            std::wcerr << L"Failed to create render command pool!\n";
-            return false;
-        }
-
-        commandPoolCreateInfo.queueFamilyIndex = m_ComputeQueue.getIndex();
-        if (VK_FAILED(vkCreateCommandPool(m_Handle, &commandPoolCreateInfo, nullptr, &m_ComputePool)))
-        {
-            std::wcerr << L"Failed to create compute command pool!\n";
-            return false;
-        }
-
-        commandPoolCreateInfo.queueFamilyIndex = m_CopyQueue.getIndex();
-        if (VK_FAILED(vkCreateCommandPool(m_Handle, &commandPoolCreateInfo, nullptr, &m_CopyPool)))
-        {
-            std::wcerr << L"Failed to create copy command pool!\n";
-            return false;
-        }
-
-
-        const auto GetPresentMode = [&](const bool vSync) -> EPresentMode
-        {
-            VkPresentModeKHR result;
-
-            if (vSync)
-            {
-                result = VK_PRESENT_MODE_FIFO_KHR;
-
-                uint32_t presentModeCount;
-                vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice, m_Surface, &presentModeCount, nullptr);
-                TArray<VkPresentModeKHR> presentModes(presentModeCount);
-                vkGetPhysicalDeviceSurfacePresentModesKHR(m_PhysicalDevice, m_Surface, &presentModeCount, presentModes.data());
-
-                if (presentModes.contains(VK_PRESENT_MODE_MAILBOX_KHR))
-                    result = VK_PRESENT_MODE_MAILBOX_KHR;
-            } else
-            {
-                result = VK_PRESENT_MODE_IMMEDIATE_KHR;
-            }
-
-            switch (result)
-            {
-            case VK_PRESENT_MODE_IMMEDIATE_KHR: return EPresentMode::Immediate;
-            case VK_PRESENT_MODE_MAILBOX_KHR: return EPresentMode::Mailbox;
-            case VK_PRESENT_MODE_FIFO_KHR: return EPresentMode::Fifo;
-            case VK_PRESENT_MODE_FIFO_RELAXED_KHR: return EPresentMode::FifoRelaxed;
-            default: return EPresentMode::Unknown;
-            };
-        };
+        m_RenderPool = m_RenderQueue.createCommandPool();
+        m_ComputePool = m_ComputeQueue.createCommandPool();
+        m_CopyPool = m_CopyQueue.createCommandPool();
 
         FSwapchainDesc swapchainDesc;
         swapchainDesc.device = this;
@@ -396,26 +348,26 @@ namespace Luma::Vulkan
         swapchainDesc.format = EFormat::R8G8B8A8_SRGB;
         swapchainDesc.width = deviceDesc.window->getWidth();
         swapchainDesc.height = deviceDesc.window->getHeight();
-        swapchainDesc.presentMode = GetPresentMode(deviceDesc.vSync);
+        swapchainDesc.presentMode = deviceDesc.vSync ? EPresentMode::Fifo : EPresentMode::Immediate;
         if (!m_Swapchain.initialize(swapchainDesc))
         {
             std::wcerr << L"Failed to initialize swapchain!\n";
             return false;
         }
 
-        for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
+        for (size_t imageIndex = 0; imageIndex < m_Swapchain.getTextureCount(); ++imageIndex)
         {
-            m_PresentSemaphores[imageIndex].initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
-            m_PresentSemaphores[imageIndex].setName(strfmt("Present semaphore (frame {})", imageIndex));
+            m_SubmitSemaphores[imageIndex] = createSemaphore(m_Handle);
+        }
 
-            m_SubmitSemaphores[imageIndex].initialize(FSemaphoreDesc(this, ESemaphoreType::Binary));
-            m_SubmitSemaphores[imageIndex].setName(strfmt("Submit semaphore (frame {})", imageIndex));
+        for (uint32_t i = 0; i < NUM_FRAMES_IN_FLIGHT; i++)
+        {
+            VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
+            vkCreateFence(m_Handle, &fenceCreateInfo, nullptr, &m_Fences[i]);
 
-            m_Fences[imageIndex].initialize(FFenceDesc(this, false));
-            m_Fences[imageIndex].setName(strfmt("Fence (frame {})", imageIndex));
-
-            m_CmdBuffers[imageIndex].initialize(FCommandBufferDesc(this, EQueueType::Render));
-            m_CmdBuffers[imageIndex].setName(strfmt("Command buffer (frame {})", imageIndex));
+            m_CmdBuffers[i].initialize({this, &m_RenderQueue});
+            m_CmdBuffers[i].setName(strfmt("Command buffer (frame {})", i));
+            m_TextureAvailableSemaphores[i] = createSemaphore(m_Handle);
         }
 
         VkDescriptorPoolSize poolSizes[]
@@ -453,11 +405,6 @@ namespace Luma::Vulkan
         infoString.append(strfmt("Successfully initialized render device!"));
         std::cout << infoString << std::endl;
 
-        deviceDesc.window->resizedEvent.bind([this](uint32_t, uint32_t)
-        {
-            m_Swapchain.invalidate();
-        });
-
         s_DeviceCount++;
         return true;
     }
@@ -469,15 +416,18 @@ namespace Luma::Vulkan
         vkDestroyDescriptorPool(m_Handle, m_DescriptorPool, nullptr);
         // I know this shouldn't be there
         //m_SlangSession->release();
-        slang::shutdown();
+        //slang::shutdown();
         m_Window = nullptr;
         m_ImmediateExecutor.destroy();
-        for (size_t imageIndex = 0; imageIndex < m_Swapchain.getImageCount(); ++imageIndex)
+
+        for (uint32_t i = 0; i < m_Swapchain.getTextureCount(); ++i)
+            vkDestroySemaphore(m_Handle, m_SubmitSemaphores[i], nullptr);
+
+        for (uint32_t i = 0; i < NUM_FRAMES_IN_FLIGHT; ++i)
         {
-            m_PresentSemaphores[imageIndex].destroy();
-            m_SubmitSemaphores[imageIndex].destroy();
-            m_Fences[imageIndex].destroy();
-            m_CmdBuffers[imageIndex].destroy();
+            vkDestroySemaphore(m_Handle, m_TextureAvailableSemaphores[i], nullptr);
+            vkDestroyFence(m_Handle, m_Fences[i], nullptr);
+            m_CmdBuffers[i].destroy();
         }
 
         vkDestroyCommandPool(m_Handle, m_CopyPool, nullptr);
@@ -507,65 +457,76 @@ namespace Luma::Vulkan
         if (!m_Swapchain.isValid())
         {
             waitIdle();
+
             m_Swapchain.resize(m_Window->getWidth(), m_Window->getHeight());
-            m_CurrentFrameIndex = 0;
+            m_FrameIndex = 0;
             return false;
         }
 
-        FFenceImpl& fence = m_Fences[m_CurrentFrameIndex];
-        fence.wait(FENCE_WAIT_INFINITE);
+        const VkFence fence = m_Fences[m_FrameIndex];
+        vkWaitForFences(m_Handle, 1, &fence, true, FENCE_WAIT_INFINITE);
+        vkResetFences(m_Handle, 1, &fence);
 
-        FSemaphoreImpl& presentSemaphore = m_PresentSemaphores[m_CurrentFrameIndex];
-        if (!m_Swapchain.acquireNextImage(&presentSemaphore, nullptr, m_SwapchainImageIndex))
+        if (!m_Swapchain.acquireNextTexture(m_SwapchainImageIndex, m_TextureAvailableSemaphores[m_FrameIndex]))
         {
             m_Swapchain.invalidate();
             return false;
         }
 
-        fence.reset();
-
-
-        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_SwapchainImageIndex];
-        if (!cmdBuffer.begin()) return false;
+        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_FrameIndex];
+        cmdBuffer.begin();
 
         FTextureBarrier barrier;
         barrier.texture = m_Swapchain.getTexture(m_SwapchainImageIndex);
-        barrier.destState = EResourceState::ColorAttachment;
+        barrier.destState = EResourceState::ColorTarget;
         barrier.sourceAccess = EResourceAccessBits::None;
-        barrier.destAccess = EResourceAccessBits::ColorAttachmentWrite;
-        cmdBuffer.textureBarrier(barrier);
-
+        barrier.destAccess = EResourceAccessBits::ColorTargetWrite;
+        cmdBuffer.textureBarriers(barrier);
         return true;
     }
 
     void FRenderDeviceImpl::endFrame()
     {
-        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_SwapchainImageIndex];
+        FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_FrameIndex];
 
         FTextureBarrier barrier;
         barrier.texture = m_Swapchain.getTexture(m_SwapchainImageIndex);
         barrier.destState = EResourceState::Present;
-        barrier.sourceAccess = EResourceAccessBits::ColorAttachmentWrite;
+        barrier.sourceAccess = EResourceAccessBits::ColorTargetWrite;
         barrier.destAccess = EResourceAccessBits::None;
-        cmdBuffer.textureBarrier(barrier);
-
-
-        FFenceImpl& fence = m_Fences[m_CurrentFrameIndex];
-        const FSemaphoreImpl& presentSemaphore = m_PresentSemaphores[m_CurrentFrameIndex];
-        const FSemaphoreImpl& submitSemaphore = m_SubmitSemaphores[m_CurrentFrameIndex];
+        cmdBuffer.textureBarriers(barrier);
         cmdBuffer.end();
 
-        m_RenderQueue.waitForSemaphore(&presentSemaphore);
-        m_RenderQueue.signalSemaphore(&submitSemaphore);
-        m_RenderQueue.executeCommandBuffer(&cmdBuffer, &fence, EPipelineStageBits::ColorTargetOutput);
+        const VkCommandBuffer cmdBuff[] = { cmdBuffer.getHandle() };
+        constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+        VkSubmitInfo submitInfo{VK_STRUCTURE_TYPE_SUBMIT_INFO};
+        submitInfo.pCommandBuffers = cmdBuff;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pSignalSemaphores = &m_SubmitSemaphores[m_SwapchainImageIndex];
+        submitInfo.signalSemaphoreCount = 1;
+        submitInfo.pWaitSemaphores = &m_TextureAvailableSemaphores[m_FrameIndex];
+        submitInfo.waitSemaphoreCount = 1;
+        submitInfo.pWaitDstStageMask = waitStages;
+
+        vkQueueSubmit(m_RenderQueue.getHandle(), 1, &submitInfo, m_Fences[m_FrameIndex]);
     }
 
     void FRenderDeviceImpl::present()
     {
-        FSemaphoreImpl& submitSemaphore = m_SubmitSemaphores[m_CurrentFrameIndex];
-        if (!m_RenderQueue.present(&m_Swapchain, &submitSemaphore, m_SwapchainImageIndex))
-            m_Swapchain.invalidate();
-        m_CurrentFrameIndex = (m_CurrentFrameIndex + 1) % m_Swapchain.getImageCount();
+        const uint32_t indices[] { m_SwapchainImageIndex };
+
+        VkPresentInfoKHR presentInfo {VK_STRUCTURE_TYPE_PRESENT_INFO_KHR};
+        presentInfo.pSwapchains = m_Swapchain.getHandlePtr();
+        presentInfo.swapchainCount = 1;
+        presentInfo.pWaitSemaphores = &m_SubmitSemaphores[m_SwapchainImageIndex];
+        presentInfo.waitSemaphoreCount = 1;
+        presentInfo.pImageIndices = indices;
+        presentInfo.pResults = nullptr;
+
+        vkQueuePresentKHR(m_RenderQueue.getHandle(), &presentInfo);
+
+        m_FrameIndex = (m_FrameIndex + 1) % NUM_FRAMES_IN_FLIGHT;
     }
 
     void FRenderDeviceImpl::waitIdle()
@@ -573,19 +534,14 @@ namespace Luma::Vulkan
         vkDeviceWaitIdle(m_Handle);
     }
 
-    uint32_t FRenderDeviceImpl::getFrameCount()
+    uint32_t FRenderDeviceImpl::getFrameCount() const
     {
-        return m_Swapchain.getImageCount();
+        return m_Swapchain.getTextureCount();
     }
 
-    uint32_t FRenderDeviceImpl::getCurrentFrameIndex()
+    uint32_t FRenderDeviceImpl::getFrameIndex() const
     {
-        return m_CurrentFrameIndex;
-    }
-
-    bool FRenderDeviceImpl::hasVSync()
-    {
-        return m_Swapchain.hasVSync();
+        return m_FrameIndex;
     }
 
     ISwapchain* FRenderDeviceImpl::getSwapchain()
@@ -649,15 +605,7 @@ namespace Luma::Vulkan
 
     IShaderProgram* FRenderDeviceImpl::createShader(const FShaderDesc& shaderDesc)
     {
-        FShaderDesc desc(shaderDesc);
-        desc.device = this;
-        FShaderImpl* shader = new FShaderImpl();
-        if (!shader->initialize(desc))
-        {
-            delete shader;
-            return nullptr;
-        }
-        return shader;
+        return nullptr;
     }
 
     ICommandBuffer* FRenderDeviceImpl::createCommandBuffer(const FCommandBufferDesc& commandBufferDesc)
@@ -723,19 +671,6 @@ namespace Luma::Vulkan
             return nullptr;
         }
         return fence;
-    }
-
-    ISemaphore* FRenderDeviceImpl::createSemaphore(const FSemaphoreDesc& semaphoreDesc)
-    {
-        FSemaphoreDesc desc(semaphoreDesc);
-        desc.device = this;
-        FSemaphoreImpl* semaphore = new FSemaphoreImpl();
-        if (!semaphore->initialize(desc))
-        {
-            delete semaphore;
-            return nullptr;
-        }
-        return semaphore;
     }
 
     ITextureView* FRenderDeviceImpl::getAcquiredSwapchainTextureView()

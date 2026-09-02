@@ -19,5 +19,6 @@ namespace Luma::Vulkan
         FCommandBufferImpl m_CmdBuffer;
         FFenceImpl m_Fence;
         bool m_IsValid = false;
+        uint64_t m_FenceValue = 0;
     };
 }

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "ResourceState.h"
+#include "Luma/Containers/ArrayView.h"
 #include "Luma/Runtime/Flags.h"
 
 namespace Luma
@@ -13,12 +14,12 @@ namespace Luma
         None = 0,
         ShaderRead = BIT(0),
         ShaderWrite = BIT(1),
-        ColorAttachmentRead = BIT(2),
-        ColorAttachmentWrite = BIT(3),
-        DepthStencilAttachmentRead = BIT(4),
-        DepthStencilAttachmentWrite = BIT(5),
-        TransferRead = BIT(6),
-        TransferWrite = BIT(7),
+        ColorTargetRead = BIT(2),
+        ColorTargetWrite = BIT(3),
+        DepthStencilTargetRead = BIT(4),
+        DepthStencilTargetWrite = BIT(5),
+        CopyRead = BIT(6),
+        CopyWrite = BIT(7),
         HostRead = BIT(8),
         HostWrite = BIT(9),
     };

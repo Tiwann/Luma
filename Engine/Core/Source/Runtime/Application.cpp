@@ -117,8 +117,8 @@ namespace Luma
             const ITextureView* swapchainTexture = m_RenderDevice->getAcquiredSwapchainTextureView();
             const FRect2<uint32_t> renderArea = {0, 0, m_Window->getWidth(), m_Window->getHeight()};
 
-            FRenderPassAttachment colorAttachment;
-            colorAttachment.type = ERenderPassAttachmentType::Color;
+            FRenderPassTarget colorAttachment;
+            colorAttachment.type = ERenderPassTargetType::Color;
             colorAttachment.loadOp = ELoadOp::Clear;
             colorAttachment.storeOp = EStoreOp::Store;
             colorAttachment.clearValue.color = FColor::Black;
@@ -126,7 +126,7 @@ namespace Luma
 
             FRenderPassDesc renderPassDesc;
             renderPassDesc.renderArea = renderArea;
-            renderPassDesc.colorAttachments.add(&colorAttachment);
+            renderPassDesc.colorTargets.add(&colorAttachment);
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             onRender(cmdBuffer);
@@ -134,15 +134,15 @@ namespace Luma
             cmdBuffer->endRenderPass();
 
 
-            FRenderPassAttachment imguiColorAttachment;
-            imguiColorAttachment.type = ERenderPassAttachmentType::Color;
+            FRenderPassTarget imguiColorAttachment;
+            imguiColorAttachment.type = ERenderPassTargetType::Color;
             imguiColorAttachment.loadOp = ELoadOp::Load;
             imguiColorAttachment.storeOp = EStoreOp::Store;
             imguiColorAttachment.textureView = swapchainTexture;
 
             FRenderPassDesc imguiRenderPassDesc;
             imguiRenderPassDesc.renderArea = renderArea;
-            imguiRenderPassDesc.colorAttachments.add(&imguiColorAttachment);
+            imguiRenderPassDesc.colorTargets.add(&imguiColorAttachment);
 
             cmdBuffer->beginDebugGroup("ImGui", FColor::Purple);
             cmdBuffer->beginRenderPass(imguiRenderPassDesc);

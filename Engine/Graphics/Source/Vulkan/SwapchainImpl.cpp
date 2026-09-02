@@ -45,10 +45,10 @@ namespace Luma::Vulkan
 
         m_Device = device;
         m_Buffering = swapchainDesc.buffering;
-        m_ImageWidth = swapchainDesc.width;
-        m_ImageHeight = swapchainDesc.height;
-        m_ImageFormat = swapchainDesc.format;
-        m_ImagePresentMode = swapchainDesc.presentMode;
+        m_Width = swapchainDesc.width;
+        m_Height = swapchainDesc.height;
+        m_Format = swapchainDesc.format;
+        m_PresentMode = swapchainDesc.presentMode;
 
         if (vkGetSwapchainImagesKHR(deviceHandle, m_Handle, (uint32_t*)&m_Buffering, m_Images) != VK_SUCCESS)
             return false;
@@ -57,12 +57,12 @@ namespace Luma::Vulkan
             setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_IMAGE, m_Images[i], strfmt("Swapchain Image [{}]", i));
 
         TArray<VkImageMemoryBarrier2> barriers;
-        for (size_t i = 0; i < getImageCount(); i++)
+        for (size_t i = 0; i < getTextureCount(); i++)
         {
             vkDestroyImageView(deviceHandle, m_ImageViews[i], nullptr);
             VkImageViewCreateInfo ImageViewCreateInfo = {VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
             ImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            ImageViewCreateInfo.format = convert<VkFormat>(m_ImageFormat);
+            ImageViewCreateInfo.format = convert<VkFormat>(m_Format);
             ImageViewCreateInfo.image = m_Images[i];
             ImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
             ImageViewCreateInfo.subresourceRange.layerCount = 1;
@@ -86,6 +86,7 @@ namespace Luma::Vulkan
             barrier.subresourceRange.layerCount = 1;
             barrier.srcStageMask = VK_PIPELINE_STAGE_2_NONE;
             barrier.dstStageMask = VK_PIPELINE_STAGE_2_NONE;
+            m_Textures[i].m_State = EResourceState::Undefined;
             barriers.add(barrier);
         }
 
@@ -108,24 +109,22 @@ namespace Luma::Vulkan
         const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
 
-        for (size_t i = 0; i < getImageCount(); i++)
+        for (size_t i = 0; i < getTextureCount(); i++)
         {
             vkDestroyImageView(deviceHandle, m_ImageViews[i], nullptr);
             m_ImageViews[i] = nullptr;
+            m_Images[i] = nullptr;
         }
 
         vkDestroySwapchainKHR(deviceHandle, m_Handle, nullptr);
         m_Handle = nullptr;
     }
-    
-    bool FSwapchainImpl::acquireNextImage(FSemaphoreImpl* semaphore, IFence* fence, uint32_t& frameIndex)
-    {
-        if (!semaphore) return false;
 
-        const VkFence fenceHandle = fence ? static_cast<FFenceImpl*>(fence)->getHandle() : nullptr;
+    bool FSwapchainImpl::acquireNextTexture(uint32_t& textureIndex, VkSemaphore textureAvailableSemaphore)
+    {
         const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
-        const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, semaphore->getHandle(), fenceHandle, &frameIndex);
+        const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, textureAvailableSemaphore, nullptr, &textureIndex);
         if (result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
         {
             if (result == VK_SUBOPTIMAL_KHR)
@@ -134,7 +133,7 @@ namespace Luma::Vulkan
         }
         return false;
     }
-    
+
     VkSwapchainKHR FSwapchainImpl::getHandle() const
     {
         return m_Handle;
@@ -167,15 +166,15 @@ namespace Luma::Vulkan
         FTextureImpl& texture = m_Textures[index];
         texture.m_Device = static_cast<FRenderDeviceImpl*>(m_Device);
         texture.m_Image = m_Images[index];
-        texture.m_Format = m_ImageFormat;
-        texture.m_Width = m_ImageWidth;
-        texture.m_Height = m_ImageHeight;
+        texture.m_Format = m_Format;
+        texture.m_Width = m_Width;
+        texture.m_Height = m_Height;
         texture.m_Depth = 1;
         texture.m_Dimension = ETextureDimension::Dim2D;
         texture.m_Mips = 1;
         texture.m_SampleCount = 1;
         texture.m_ArrayCount = 1;
-        texture.m_UsageFlags = ETextureUsageBits::ColorAttachment;
+        texture.m_UsageFlags = ETextureUsageBits::ColorTarget;
         texture.m_Allocation = nullptr;
         return &texture;
     }
@@ -188,13 +187,13 @@ namespace Luma::Vulkan
         const ITexture* texture = getTexture(index);
         if (!texture) return nullptr;
 
-        const uint32_t frameIndex = m_Device->getCurrentFrameIndex();
+        const uint32_t frameIndex = m_Device->getFrameIndex();
         FTextureViewImpl& view = m_TextureViews[frameIndex];
         view.m_Device = static_cast<FRenderDeviceImpl*>(m_Device);
         view.m_Handle = m_ImageViews[frameIndex];
-        view.m_Format = m_ImageFormat;
-        view.m_Width = m_ImageWidth;
-        view.m_Height = m_ImageHeight;
+        view.m_Format = m_Format;
+        view.m_Width = m_Width;
+        view.m_Height = m_Height;
         view.m_Depth = 1;
         view.m_BaseMipLevel = 0;
         view.m_MipCount = 1;
@@ -205,6 +204,6 @@ namespace Luma::Vulkan
 
     void FSwapchainImpl::setName(FStringView name)
     {
-        setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_DEVICE, m_Handle, name);
+        setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_SWAPCHAIN_KHR, m_Handle, name);
     }
 }

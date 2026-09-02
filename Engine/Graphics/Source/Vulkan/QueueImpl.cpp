@@ -1,6 +1,5 @@
 ﻿#include "Luma/Vulkan/QueueImpl.h"
 #include "Luma/Vulkan/RenderDeviceImpl.h"
-#include "Luma/Vulkan/SemaphoreImpl.h"
 #include "Luma/Vulkan/CommandBufferImpl.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include <volk.h>
@@ -8,66 +7,57 @@
 
 namespace Luma::Vulkan
 {
-    bool FQueueImpl::executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence, FPipelineStageFlags stageMask)
+    FQueueImpl::FQueueImpl(FRenderDeviceImpl* device) : m_Device(device)
     {
-        if (!cmdBuffer) return false;
 
-        const VkCommandBuffer cmdBuffers[] { static_cast<const FCommandBufferImpl*>(cmdBuffer)->getHandle() };
-        const auto toSemaphoreHandle = [](const FSemaphoreImpl* semaphore) -> VkSemaphore { return semaphore->getHandle(); };
-        TArray<VkSemaphore> waitSemaphores = m_WaitSemaphores.transform<VkSemaphore>(toSemaphoreHandle);
-        TArray<VkSemaphore> signalSemaphores = m_SignalSemaphores.transform<VkSemaphore>(toSemaphoreHandle);
+    }
 
-        const VkPipelineStageFlags vkStageMask = stageMask.as<VkPipelineStageFlags>();
-        VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = cmdBuffers;
-        submitInfo.pWaitSemaphores = waitSemaphores.data();
-        submitInfo.waitSemaphoreCount = waitSemaphores.count();
-        submitInfo.pSignalSemaphores = signalSemaphores.data();
-        submitInfo.signalSemaphoreCount = signalSemaphores.count();
-        submitInfo.pWaitDstStageMask = &vkStageMask;
+    void FQueueImpl::waitIdle()
+    {
+        vkQueueWaitIdle(m_Handle);
+    }
 
-        if (VK_FAILED(vkQueueSubmit(m_Handle, 1, &submitInfo, signalFence ? static_cast<FFenceImpl*>(signalFence)->getHandle() : nullptr)))
+    bool FQueueImpl::executeCommandBuffers(const FQueueExecuteInfo& executeInfo)
+    {
+        TArray<VkCommandBufferSubmitInfo> cmdBufferInfos;
+        for (const ICommandBuffer* cmdBuffer : executeInfo.cmdBuffers)
+        {
+            VkCommandBufferSubmitInfo submitInfo{VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO};
+            submitInfo.commandBuffer = static_cast<const FCommandBufferImpl*>(cmdBuffer)->getHandle();
+            cmdBufferInfos.add(submitInfo);
+        }
+
+        TArray<VkSemaphoreSubmitInfo> waitInfos;
+        for (const FFenceWait& wait : executeInfo.waits)
+        {
+            VkSemaphoreSubmitInfo semaphoreInfo{VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO};
+            semaphoreInfo.semaphore = static_cast<const FFenceImpl*>(wait.fence)->getHandle();
+            semaphoreInfo.value = wait.value;
+            waitInfos.add(semaphoreInfo);
+        }
+
+        TArray<VkSemaphoreSubmitInfo> signalInfos;
+        for (const FFenceWait& signal : executeInfo.signals)
+        {
+            VkSemaphoreSubmitInfo semaphoreInfo{VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO};
+            semaphoreInfo.semaphore = static_cast<const FFenceImpl*>(signal.fence)->getHandle();
+            semaphoreInfo.value = signal.value;
+            signalInfos.add(semaphoreInfo);
+        }
+
+        VkSubmitInfo2 submitInfo = {VK_STRUCTURE_TYPE_SUBMIT_INFO_2};
+        submitInfo.pCommandBufferInfos = cmdBufferInfos.data();
+        submitInfo.commandBufferInfoCount = cmdBufferInfos.count();
+        submitInfo.pWaitSemaphoreInfos = waitInfos.data();
+        submitInfo.waitSemaphoreInfoCount = waitInfos.count();
+        submitInfo.pSignalSemaphoreInfos = signalInfos.data();
+        submitInfo.signalSemaphoreInfoCount = signalInfos.count();
+
+        if (VK_FAILED(vkQueueSubmit2(m_Handle, 1, &submitInfo, nullptr)))
             return false;
-
-        m_WaitSemaphores.clear();
-        m_SignalSemaphores.clear();
         return true;
     }
 
-    bool FQueueImpl::present(ISwapchain* swapchain, ISemaphore* waitSemaphore, uint32_t imageIndex)
-    {
-        if (!swapchain) return false;
-
-        const VkSemaphore waitSemaphores[]{ static_cast<const FSemaphoreImpl*>(waitSemaphore)->getHandle() };
-
-        VkResult result = VK_SUCCESS;
-        VkPresentInfoKHR presentInfo = { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR };
-        presentInfo.pSwapchains = static_cast<FSwapchainImpl*>(swapchain)->getHandlePtr();
-        presentInfo.swapchainCount = 1;
-        presentInfo.pWaitSemaphores = waitSemaphores;
-        presentInfo.waitSemaphoreCount = std::size(waitSemaphores);
-        presentInfo.pImageIndices = &imageIndex;
-        presentInfo.pResults = &result;
-
-        if (VK_FAILED(vkQueuePresentKHR(m_Handle, &presentInfo)))
-            return false;
-
-        if (VK_FAILED(result))
-            return false;
-
-        return true;
-    }
-
-    void FQueueImpl::waitForSemaphore(const ISemaphore* semaphore)
-    {
-        m_WaitSemaphores.addUnique(static_cast<const FSemaphoreImpl*>(semaphore));
-    }
-
-    void FQueueImpl::signalSemaphore(const ISemaphore* semaphore)
-    {
-        m_SignalSemaphores.addUnique(static_cast<const FSemaphoreImpl*>(semaphore));
-    }
 
     VkQueue FQueueImpl::getHandle() const
     {
@@ -117,5 +107,17 @@ namespace Luma::Vulkan
     void FQueueImpl::setName(FStringView name)
     {
         setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_QUEUE, m_Handle, name);
+    }
+
+    VkCommandPool FQueueImpl::createCommandPool()
+    {
+        VkCommandPool commandPool = nullptr;
+
+        VkCommandPoolCreateInfo createInfo{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
+        createInfo.queueFamilyIndex = m_Index;
+        createInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        if (VK_FAILED(vkCreateCommandPool(m_Device->getHandle(), &createInfo, nullptr, &commandPool)))
+            return nullptr;
+        return commandPool;
     }
 }

@@ -1,7 +1,6 @@
 ﻿#include "Luma/Rendering/RenderDevice.h"
 #include "Luma/Asset/Material.h"
 #include "Luma/Rendering/CommandBuffer.h"
-#include "Luma/Rendering/Semaphore.h"
 #include "Luma/Runtime/FileUtils.h"
 
 #ifdef LUMA_BUILD_WEBGPU
@@ -22,23 +21,15 @@ namespace Luma
 
     IShaderProgram* IRenderDevice::createShader(TBufferView<uint8_t> shaderCode)
     {
+        return nullptr;
         //return createShader(FShaderDesc(this, shaderCode));
     }
 
-    ICommandBuffer* IRenderDevice::createRenderCommandBuffer()
+    ICommandBuffer* IRenderDevice::createCommandBuffer(IQueue* queue)
     {
-        return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Render));
+        return createCommandBuffer({this, queue});
     }
 
-    ICommandBuffer* IRenderDevice::createComputeCommandBuffer()
-    {
-        return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Compute));
-    }
-
-    ICommandBuffer* IRenderDevice::createCopyCommandBuffer()
-    {
-        return createCommandBuffer(FCommandBufferDesc(this, EQueueType::Copy));
-    }
 
     ISampler* IRenderDevice::getOrCreateSampler(const FSamplerDesc& samplerDesc)
     {
@@ -49,14 +40,9 @@ namespace Luma
         return sampler;
     }
 
-    ISemaphore* IRenderDevice::createBinarySemaphore()
+    IFence* IRenderDevice::createFence(uint64_t initialValue)
     {
-        return createSemaphore(FSemaphoreDesc(this, ESemaphoreType::Binary, 0));
-    }
-
-    ISemaphore* IRenderDevice::createTimelineSemaphore(const uint64_t initialValue)
-    {
-        return createSemaphore(FSemaphoreDesc(this, ESemaphoreType::Timeline, initialValue));
+        return createFence(FFenceDesc(this, initialValue));
     }
 
     FMaterial* IRenderDevice::createMaterial(const FMaterialDesc& materialDesc)
@@ -80,9 +66,51 @@ namespace Luma
         {
         case ERenderDeviceType::None:
             return nullptr;
+        case ERenderDeviceType::Auto:
+            {
+#ifdef LUMA_PLATFORM_WINDOWS
+    #ifdef LUMA_BUILD_D3D12 // D3D12 has priority on Windows
+                device = new D3D12::FRenderDeviceImpl();
+                break;
+    #elifdef LUMA_BUILD_VULKAN
+                device = new Vulkan::FRenderDeviceImpl();
+                break;
+    #elifdef LUMA_BUILD_OPENGL
+                device = new OpenGL::FRenderDeviceImpl();
+                break;
+    #else
+                return nullptr;
+    #endif
+#elifdef LUMA_PLATFORM_LINUX
+    #ifdef LUMA_BUILD_VULKAN // Vulkan has priority on Linux
+                device = new Vulkan::FRenderDeviceImpl();
+                break;
+    #elifdef LUMA_BUILD_OPENGL
+                device = new OpenGL::FRenderDeviceImpl();
+                break;
+    #else
+                return nullptr;
+    #endif
+                return nullptr;
+#elifdef LUMA_PLATFORM_SWITCH
+    #ifdef LUMA_BUILD_DEKO3D // Deko3D is the only supported API for Nintendo Switch
+                return new Deko3D::FRenderDeviceImpl();
+    #else
+                return nullptr;
+    #endif
+#endif
+            }
 #ifdef LUMA_BUILD_VULKAN
         case ERenderDeviceType::Vulkan:
             device = new Vulkan::FRenderDeviceImpl();
+            break;
+#elifdef LUMA_BUILD_D3D12
+        case ERenderDeviceType::D3D12:
+            device = new D3D12::FRenderDeviceImpl();
+            break;
+#elifdef LUMA_BUILD_OPENGL
+        case ERenderDeviceType::OpenGL:
+            device = new OpenGL::FRenderDeviceImpl();
             break;
 #endif
         default: return nullptr;

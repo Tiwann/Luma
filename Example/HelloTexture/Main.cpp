@@ -108,8 +108,8 @@ int main(int argc, const char** argv)
             ICommandBuffer* cmdBuffer = renderDevice->getCommandBuffer();
             const ITextureView* swapchainTexture = renderDevice->getAcquiredSwapchainTextureView();
 
-            FRenderPassAttachment colorAttachment;
-            colorAttachment.type = ERenderPassAttachmentType::Color;
+            FRenderPassTarget colorAttachment;
+            colorAttachment.type = ERenderPassTargetType::Color;
             colorAttachment.loadOp = ELoadOp::Clear;
             colorAttachment.storeOp = EStoreOp::Store;
             colorAttachment.clearValue.color = FColor::Black;
@@ -117,7 +117,7 @@ int main(int argc, const char** argv)
 
             FRenderPassDesc renderPassDesc;
             renderPassDesc.renderArea = {0, 0, WIDTH, HEIGHT};
-            renderPassDesc.colorAttachments.add(&colorAttachment);
+            renderPassDesc.colorTargets.add(&colorAttachment);
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             cmdBuffer->bindMaterial(material);

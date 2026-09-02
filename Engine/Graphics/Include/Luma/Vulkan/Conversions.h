@@ -158,7 +158,6 @@ namespace Luma::Vulkan
         {
         case EPresentMode::Unknown: throw;
         case EPresentMode::Immediate: return VK_PRESENT_MODE_IMMEDIATE_KHR;
-        case EPresentMode::Mailbox: return VK_PRESENT_MODE_MAILBOX_KHR;
         case EPresentMode::Fifo: return VK_PRESENT_MODE_FIFO_KHR;
         default: throw;
         }
@@ -422,32 +421,32 @@ namespace Luma::Vulkan
     }
 
     template<>
-    inline VkAccessFlags convert(const FResourceAccessFlags& value)
+    inline VkAccessFlags2 convert(const FResourceAccessFlags& value)
     {
-        VkAccessFlags result = VK_ACCESS_NONE;
+        VkAccessFlags2 result = VK_ACCESS_2_NONE;
         if (value == EResourceAccessBits::None)
-            return VK_ACCESS_NONE;
+            return VK_ACCESS_2_NONE;
 
         if (value & EResourceAccessBits::ShaderRead)
-            result |= VK_ACCESS_SHADER_READ_BIT;
+            result |= VK_ACCESS_2_SHADER_READ_BIT;
         if (value & EResourceAccessBits::ShaderWrite)
-            result |= VK_ACCESS_SHADER_WRITE_BIT;
-        if (value & EResourceAccessBits::ColorAttachmentRead)
-            result |= VK_ACCESS_COLOR_ATTACHMENT_READ_BIT;
-        if (value & EResourceAccessBits::ColorAttachmentWrite)
-            result |= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        if (value & EResourceAccessBits::DepthStencilAttachmentRead)
-            result |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
-        if (value & EResourceAccessBits::DepthStencilAttachmentWrite)
-            result |= VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-        if (value & EResourceAccessBits::TransferRead)
-            result |= VK_ACCESS_TRANSFER_READ_BIT;
-        if (value & EResourceAccessBits::TransferWrite)
-            result |= VK_ACCESS_TRANSFER_WRITE_BIT;
+            result |= VK_ACCESS_2_SHADER_WRITE_BIT;
+        if (value & EResourceAccessBits::ColorTargetRead)
+            result |= VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT;
+        if (value & EResourceAccessBits::ColorTargetWrite)
+            result |= VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
+        if (value & EResourceAccessBits::DepthStencilTargetRead)
+            result |= VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
+        if (value & EResourceAccessBits::DepthStencilTargetWrite)
+            result |= VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        if (value & EResourceAccessBits::CopyRead)
+            result |= VK_ACCESS_2_TRANSFER_READ_BIT;
+        if (value & EResourceAccessBits::CopyWrite)
+            result |= VK_ACCESS_2_TRANSFER_WRITE_BIT;
         if (value & EResourceAccessBits::HostRead)
-            result |= VK_ACCESS_HOST_READ_BIT;
+            result |= VK_ACCESS_2_HOST_READ_BIT;
         if (value & EResourceAccessBits::HostWrite)
-            result |= VK_ACCESS_HOST_WRITE_BIT;
+            result |= VK_ACCESS_2_HOST_WRITE_BIT;
 
         return result;
     }
@@ -461,8 +460,8 @@ namespace Luma::Vulkan
         case EResourceState::General: return VK_IMAGE_LAYOUT_GENERAL;
         case EResourceState::ShaderRead: return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         case EResourceState::ShaderWrite: return VK_IMAGE_LAYOUT_GENERAL;
-        case EResourceState::ColorAttachment: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        case EResourceState::DepthStencilAttachment: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        case EResourceState::ColorTarget: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        case EResourceState::DepthStencilTarget: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
         case EResourceState::CopySource: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
         case EResourceState::CopyDest: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
         case EResourceState::Present: return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
@@ -480,9 +479,9 @@ namespace Luma::Vulkan
             flags |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         if (value & ETextureUsageBits::Storage)
             flags |= VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsageBits::ColorAttachment)
+        if (value & ETextureUsageBits::ColorTarget)
             flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsageBits::DepthStencilAttachment)
+        if (value & ETextureUsageBits::DepthStencilTarget)
             flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         return flags;
     }
@@ -634,12 +633,12 @@ namespace Luma::Vulkan
     }
 
     template<>
-    inline VkImageLayout convert(const ERenderPassAttachmentType& value)
+    inline VkImageLayout convert(const ERenderPassTargetType& value)
     {
         switch (value)
         {
-        case ERenderPassAttachmentType::Color: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        case ERenderPassAttachmentType::DepthStencil: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        case ERenderPassTargetType::Color: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        case ERenderPassTargetType::DepthStencil: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
         default: return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }

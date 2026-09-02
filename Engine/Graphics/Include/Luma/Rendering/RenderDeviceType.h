@@ -5,6 +5,7 @@ namespace Luma
     enum class ERenderDeviceType
     {
         None,
+        Auto,
 #ifdef LUMA_BUILD_VULKAN
         Vulkan,
 #endif

@@ -12,14 +12,16 @@ namespace Luma::Vulkan
     public:
         bool initialize(const FFenceDesc& fenceDesc) override;
         void destroy() override;
-        void wait(uint64_t timeoutNs) override;
-        void reset() override;
 
-        VkFence getHandle() const { return m_Handle; }
+        uint64_t getCompletedValue() const override;
+        void signalOnCPU(uint64_t value) override;
+        bool waitOnCPU(uint64_t value, uint64_t timeoutNs = FENCE_WAIT_INFINITE) override;
+
         void setName(FStringView name) override;
 
+        VkSemaphore getHandle() const { return m_Handle; }
     private:
         FRenderDeviceImpl* m_Device = nullptr;
-        VkFence m_Handle = nullptr;
+        VkSemaphore m_Handle = nullptr;
     };
 }

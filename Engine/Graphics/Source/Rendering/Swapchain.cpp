@@ -6,8 +6,8 @@ namespace Luma
     {
         FSwapchainDesc swapchainDesc;
         swapchainDesc.device = m_Device;
-        swapchainDesc.format = m_ImageFormat;
-        swapchainDesc.presentMode = m_ImagePresentMode;
+        swapchainDesc.format = m_Format;
+        swapchainDesc.presentMode = m_PresentMode;
         swapchainDesc.width = width;
         swapchainDesc.height = height;
         swapchainDesc.buffering = m_Buffering;
@@ -16,25 +16,25 @@ namespace Luma
 
     uint32_t ISwapchain::getWidth() const
     {
-        return m_ImageWidth;
+        return m_Width;
     }
 
     uint32_t ISwapchain::getHeight() const
     {
-        return m_ImageHeight;
+        return m_Height;
     }
 
     EFormat ISwapchain::getFormat() const
     {
-        return m_ImageFormat;
+        return m_Format;
     }
 
     EPresentMode ISwapchain::getPresentMode() const
     {
-        return m_ImagePresentMode;
+        return m_PresentMode;
     }
 
-    uint32_t ISwapchain::getImageCount() const
+    uint32_t ISwapchain::getTextureCount() const
     {
         return (uint32_t)m_Buffering;
     }
@@ -56,6 +56,6 @@ namespace Luma
 
     bool ISwapchain::hasVSync() const
     {
-        return m_HasVSync;
+        return m_PresentMode == EPresentMode::Fifo;
     }
 }

@@ -21,7 +21,7 @@ set_target_properties(luma-ui PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
 luma_generate_export_header(TARGET luma-ui MODULE_NAME UI)
 
 if(LUMA_ENGINE_BUILD_VULKAN)
-    target_link_libraries(luma-ui PRIVATE luma::rgfw)
+    target_link_libraries(luma-ui PRIVATE luma::rgfw volk::volk)
     target_sources(luma-ui PRIVATE ${LUMA_UI_VULKAN_SRC})
 endif ()
 

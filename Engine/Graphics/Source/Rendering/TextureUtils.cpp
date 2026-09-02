@@ -24,32 +24,48 @@ namespace Luma::TextureUtils
 
         const EResourceState initialState = texture->getResourceState();
 
+        IQueue* copyQueue = device->getCopyQueue();
+        IQueue* renderQueue = device->getRenderQueue();
+
         FTextureBarrier toTransferBarrier;
         toTransferBarrier.texture = texture;
         toTransferBarrier.sourceAccess = getSourceAccessFlags(initialState);
         toTransferBarrier.destAccess = getDestAccessFlags(EResourceState::CopyDest);
         toTransferBarrier.destState = EResourceState::CopyDest;
+        toTransferBarrier.sourceQueue = renderQueue;
+        toTransferBarrier.destQueue = copyQueue;
 
         FTextureBarrier toInitialState;
         toInitialState.texture = texture;
         toInitialState.sourceAccess = getSourceAccessFlags(EResourceState::CopyDest);
         toInitialState.destAccess = getDestAccessFlags(initialState);
         toInitialState.destState = initialState;
+        toInitialState.sourceQueue = copyQueue;
+        toInitialState.destQueue = renderQueue;
 
-        Ref<ICommandBuffer> cmdBuffer = device->createRenderCommandBuffer();
-        Ref<IFence> fence = device->createFence(FFenceDesc());
+        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
+        Ref<IFence> fence = device->createFence(0);
 
         cmdBuffer->begin();
         cmdBuffer->beginDebugGroup("Texture Copy", FColor::Orange);
-        cmdBuffer->textureBarrier(toTransferBarrier);
+        cmdBuffer->textureBarriers(toTransferBarrier);
         cmdBuffer->copyBufferToTexture(stagingBuffer, 0, dataSize, texture, arrayIndex, mipLevel);
-        cmdBuffer->textureBarrier(toInitialState);
+        cmdBuffer->textureBarriers(toInitialState);
         cmdBuffer->endDebugGroup();
         cmdBuffer->end();
 
-        IQueue* queue = device->getRenderQueue();
-        queue->executeCommandBuffer(cmdBuffer, fence);
-        fence->wait(FENCE_WAIT_INFINITE);
+        FFenceSignal signal;
+        signal.fence = fence;
+        signal.value = 1;
+        signal.stages = EPipelineStageBits::Copy;
+
+        FQueueExecuteInfo execInfo;
+        execInfo.cmdBuffers = {cmdBuffer};
+        execInfo.signals = signal;
+
+        copyQueue->executeCommandBuffers(execInfo);
+
+        fence->waitOnCPU(1);
         return true;
     }
 

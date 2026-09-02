@@ -1,4 +1,4 @@
-#include "Luma/Vulkan/FenceImpl.h"
+﻿#include "Luma/Vulkan/FenceImpl.h"
 #include "Luma/Vulkan/RenderDeviceImpl.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include <volk.h>
@@ -8,43 +8,56 @@ namespace Luma::Vulkan
 {
     bool FFenceImpl::initialize(const FFenceDesc& fenceDesc)
     {
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(fenceDesc.device);
-        const VkDevice deviceHandle = device->getHandle();
+        if (!fenceDesc.device) return false;
 
-        VkFenceCreateInfo fenceCreateInfo = { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO };
-        fenceCreateInfo.flags = fenceDesc.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : 0;
-        vkDestroyFence(deviceHandle, m_Handle, nullptr);
+        VkSemaphoreTypeCreateInfo semaphoreExt = {VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO};
+        semaphoreExt.initialValue = fenceDesc.initialValue;
+        semaphoreExt.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
 
-        const VkResult result = vkCreateFence(deviceHandle, &fenceCreateInfo, nullptr, &m_Handle);
-        if (result != VK_SUCCESS)
+        VkSemaphoreCreateInfo createInfo = {VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+        createInfo.pNext = &semaphoreExt;
+        createInfo.flags = 0;
+
+        m_Device = static_cast<FRenderDeviceImpl*>(fenceDesc.device);
+        vkDestroySemaphore(m_Device->getHandle(), m_Handle, nullptr);
+        if (VK_FAILED(vkCreateSemaphore(m_Device->getHandle(), &createInfo, nullptr, &m_Handle)))
             return false;
-
-        m_Device = device;
         return true;
     }
 
     void FFenceImpl::destroy()
     {
-        const VkDevice deviceHandle = m_Device->getHandle();
-        vkDestroyFence(deviceHandle, m_Handle, nullptr);
-        m_Device = nullptr;
-        m_Handle = nullptr;
+        vkDestroySemaphore(m_Device->getHandle(), m_Handle, nullptr);
     }
 
-    void FFenceImpl::wait(const uint64_t timeoutNs)
+    uint64_t FFenceImpl::getCompletedValue() const
     {
-        const VkDevice deviceHandle = m_Device->getHandle();
-        vkWaitForFences(deviceHandle, 1, &m_Handle, true, timeoutNs);
+        uint64_t result = 0;
+        vkGetSemaphoreCounterValue(m_Device->getHandle(), m_Handle, &result);
+        return result;
     }
 
-    void FFenceImpl::reset()
+    void FFenceImpl::signalOnCPU(uint64_t value)
     {
-        const VkDevice deviceHandle = m_Device->getHandle();
-        vkResetFences(deviceHandle, 1, &m_Handle);
+        VkSemaphoreSignalInfo info = {VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO};
+        info.semaphore = m_Handle;
+        info.value = value;
+        vkSignalSemaphore(m_Device->getHandle(), &info);
+    }
+
+    bool FFenceImpl::waitOnCPU(uint64_t value, uint64_t timeoutNs)
+    {
+        if (getCompletedValue() >= value) return true;
+
+        VkSemaphoreWaitInfo info{VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO};
+        info.semaphoreCount = 1;
+        info.pSemaphores = &m_Handle;
+        info.pValues = &value;
+        return vkWaitSemaphores(m_Device->getHandle(), &info, timeoutNs) == VK_SUCCESS;
     }
 
     void FFenceImpl::setName(FStringView name)
     {
-        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_FENCE, m_Handle, name);
+        setVulkanObjectDebugName(m_Device, VK_OBJECT_TYPE_SEMAPHORE, m_Handle, name);
     }
 }

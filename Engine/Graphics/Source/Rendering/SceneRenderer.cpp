@@ -61,32 +61,32 @@ namespace Luma
         FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::None, 1, 8);
 
         textureDesc.format = EFormat::R8G8B8A8_UNORM;
-        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorAttachment;
+        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorTarget;
         m_Albedo = device->createTexture(textureDesc);
         if (!m_Albedo) return false;
 
         textureDesc.format = EFormat::R8G8B8A8_UNORM;
-        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorAttachment;
+        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorTarget;
         m_MetallicRoughness = device->createTexture(textureDesc);
         if (!m_MetallicRoughness) return false;
 
         textureDesc.format = EFormat::R32G32B32A32_FLOAT;
-        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorAttachment;
+        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorTarget;
         m_Normal = device->createTexture(textureDesc);
         if (!m_Normal) return false;
 
         textureDesc.format = EFormat::R8G8B8A8_UNORM;
-        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorAttachment;
+        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorTarget;
         m_Emission = device->createTexture(textureDesc);
         if (!m_Emission) return false;
 
         textureDesc.format = EFormat::R8G8B8A8_UNORM;
-        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorAttachment;
+        textureDesc.usageFlags = ETextureUsageBits::Sampled | ETextureUsageBits::ColorTarget;
         m_Position = device->createTexture(textureDesc);
         if (!m_Position) return false;
 
         textureDesc.format = EFormat::D32_FLOAT_S8_UINT;
-        textureDesc.usageFlags = ETextureUsageBits::DepthStencilAttachment;
+        textureDesc.usageFlags = ETextureUsageBits::DepthStencilTarget;
         m_DepthStencil = device->createTexture(textureDesc);
         if (!m_DepthStencil) return false;
         return true;

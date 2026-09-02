@@ -1,3 +1,12 @@
+if(LUMA_ENGINE_BUILD_VULKAN)
+set(VOLK_PULL_IN_VULKAN ON)
+if(WIN32)
+    set(VOLK_STATIC_DEFINES "VK_USE_PLATFORM_WIN32_KHR")
+endif()
+add_subdirectory(volk)
+set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
+endif ()
+
 add_subdirectory(rgfw)
 
 set(SPIRV_REFLECT_EXECUTABLE OFF)
@@ -51,10 +60,6 @@ if(LUMA_ENGINE_BUILD_VULKAN)
 add_subdirectory(Vulkan-Headers)
 add_subdirectory(VulkanMemoryAllocator)
 set_target_properties(VulkanMemoryAllocator Vulkan-Headers PROPERTIES FOLDER luma-vendor/vulkan)
-
-set(VOLK_PULL_IN_VULKAN ON)
-add_subdirectory(volk)
-set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
 endif ()
 
 if(LUMA_ENGINE_BUILD_D3D12)

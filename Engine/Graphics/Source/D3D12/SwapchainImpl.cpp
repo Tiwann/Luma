@@ -75,7 +75,7 @@ namespace Luma::D3D12
 
         m_Device = desc.device;
         m_Buffering = desc.buffering;
-        m_ImageWidth = desc.width;
+        m_Width = desc.width;
         m_ImageHeight = desc.height;
         m_ImageFormat = desc.format;
         m_ImagePresentMode = desc.presentMode;

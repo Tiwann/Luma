@@ -61,8 +61,8 @@ namespace Luma::Vulkan
             return false;
 
         const auto& usageFlags = textureDesc.usageFlags;
-        const bool isColorAttachment = usageFlags & ETextureUsageBits::ColorAttachment;
-        const bool isDepthAttachment = usageFlags & ETextureUsageBits::DepthStencilAttachment;
+        const bool isColorAttachment = usageFlags & ETextureUsageBits::ColorTarget;
+        const bool isDepthAttachment = usageFlags & ETextureUsageBits::DepthStencilTarget;
         const bool isSampled = usageFlags & ETextureUsageBits::Sampled;
 
         FTextureAspectFlags aspectFlags = 0;
@@ -96,12 +96,12 @@ namespace Luma::Vulkan
             return false;
 
         // DECIDED TO EXPLICITLY TRANSITION TO LAYOUT GENERAL BY DEFAULT
-        const EResourceAccessBits destAccess = isColorAttachment ? EResourceAccessBits::ColorAttachmentWrite :
-        isDepthAttachment ? EResourceAccessBits::DepthStencilAttachmentWrite :
+        const EResourceAccessBits destAccess = isColorAttachment ? EResourceAccessBits::ColorTargetWrite :
+        isDepthAttachment ? EResourceAccessBits::DepthStencilTargetWrite :
         isSampled ? EResourceAccessBits::ShaderRead : EResourceAccessBits::None;
 
-        const EResourceState destState = isColorAttachment ? EResourceState::ColorAttachment :
-        isDepthAttachment ? EResourceState::DepthStencilAttachment :
+        const EResourceState destState = isColorAttachment ? EResourceState::ColorTarget :
+        isDepthAttachment ? EResourceState::DepthStencilTarget :
         isSampled ? EResourceState::ShaderRead : EResourceState::General;
 
         FTextureBarrier barrier;
@@ -109,21 +109,26 @@ namespace Luma::Vulkan
         barrier.sourceAccess = EResourceAccessBits::None;
         barrier.destAccess = destAccess;
         barrier.destState = destState;
-        barrier.destQueue = nullptr;
-        barrier.destQueue = nullptr;
 
-        Ref<ICommandBuffer> cmdBuffer = device->createRenderCommandBuffer();
-        Ref<IFence> fence = device->createFence(FFenceDesc());
+        IQueue* renderQueue = device->getRenderQueue();
+        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(renderQueue);
+        Ref<IFence> fence = device->createFence(0);
 
         if (cmdBuffer->begin())
         {
-            cmdBuffer->textureBarrier(barrier);
+            cmdBuffer->textureBarriers(barrier);
             cmdBuffer->end();
 
-            FQueueImpl* queue = static_cast<FQueueImpl*>(device->getRenderQueue());
-            if (!queue) return false;
-            queue->executeCommandBuffer(cmdBuffer, fence);
-            fence->wait(FENCE_WAIT_INFINITE);
+            FFenceSignal signal;
+            signal.fence = fence;
+            signal.value = 1;
+
+            FQueueExecuteInfo execInfo;
+            execInfo.cmdBuffers = {cmdBuffer};
+            execInfo.signals = signal;
+
+            renderQueue->executeCommandBuffers(execInfo);
+            fence->waitOnCPU(1);
             return true;
         }
         return false;

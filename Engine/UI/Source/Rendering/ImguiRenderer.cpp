@@ -160,6 +160,7 @@ namespace Luma
                 return renderer;
             }
 #endif
+        default: return nullptr;
         }
         return renderer;
     }

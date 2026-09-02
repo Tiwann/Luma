@@ -86,7 +86,7 @@ namespace Luma
         samplerDesc.minFilter = EFilter::Nearest;
         m_SpriteSampler = m_RenderDevice->getOrCreateSampler(samplerDesc);
 
-        m_BindingSet = m_Shader->createBindingSet(0);
+        //m_BindingSet = m_Shader->createBindingSet(0);
         if (!m_BindingSet) return false;
 
         m_BindingSet->bindSampler(0, m_SpriteSampler);
@@ -101,7 +101,7 @@ namespace Luma
         m_RenderDevice = nullptr;
         m_DefaultFont = nullptr;
         m_Font = nullptr;
-        m_Shader = nullptr;
+        //m_Shader = nullptr;
         m_Pipeline = nullptr;
         m_VertexBuffer = nullptr;
         m_IndexBuffer = nullptr;
@@ -144,11 +144,11 @@ namespace Luma
         const FMatrix4f projection = scale(orthoTopLeft(static_cast<float>(width), static_cast<float>(height), 1.0f, -1.0f, 1.0f), {1.0f, -1.0f, 1.0f});
         const FMatrix4f mvp = projection * m_LocalToWorldMatrix;
         cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
-        cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
+        //cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
         cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::UInt32);
         cmdBuffer->bindRenderPipeline(m_Pipeline);
-        cmdBuffer->bindBindingSet(m_BindingSet, m_Shader);
+        //cmdBuffer->bindBindingSet(m_BindingSet, m_Shader);
         cmdBuffer->setViewport(FViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f));
         cmdBuffer->setScissor(FScissor(0, 0, width, height));
         cmdBuffer->drawIndexed(m_QuadIndices.count(), 1, 0, 0, 0);

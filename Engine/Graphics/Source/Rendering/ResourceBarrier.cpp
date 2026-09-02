@@ -7,10 +7,10 @@ namespace Luma
         switch (resourceState)
         {
         case EResourceState::Undefined: return EResourceAccessBits::None;
-        case EResourceState::ColorAttachment: return EResourceAccessBits::ColorAttachmentWrite;
-        case EResourceState::DepthStencilAttachment: return EResourceAccessBits::DepthStencilAttachmentWrite;
-        case EResourceState::CopySource: return EResourceAccessBits::TransferRead;
-        case EResourceState::CopyDest: return EResourceAccessBits::TransferWrite;
+        case EResourceState::ColorTarget: return EResourceAccessBits::ColorTargetWrite;
+        case EResourceState::DepthStencilTarget: return EResourceAccessBits::DepthStencilTargetWrite;
+        case EResourceState::CopySource: return EResourceAccessBits::CopyRead;
+        case EResourceState::CopyDest: return EResourceAccessBits::CopyWrite;
         case EResourceState::ShaderRead: return EResourceAccessBits::ShaderRead;
         case EResourceState::ShaderWrite: return EResourceAccessBits::ShaderWrite;
         case EResourceState::General: return EResourceAccessBits::None;
@@ -23,10 +23,10 @@ namespace Luma
         switch (resourceState)
         {
         case EResourceState::Undefined: return EResourceAccessBits::None;
-        case EResourceState::ColorAttachment: return EResourceAccessBits::ColorAttachmentRead;
-        case EResourceState::DepthStencilAttachment: return EResourceAccessBits::DepthStencilAttachmentRead;
-        case EResourceState::CopySource: return EResourceAccessBits::TransferRead;
-        case EResourceState::CopyDest: return EResourceAccessBits::TransferWrite;
+        case EResourceState::ColorTarget: return EResourceAccessBits::ColorTargetRead;
+        case EResourceState::DepthStencilTarget: return EResourceAccessBits::DepthStencilTargetRead;
+        case EResourceState::CopySource: return EResourceAccessBits::CopyRead;
+        case EResourceState::CopyDest: return EResourceAccessBits::CopyWrite;
         case EResourceState::ShaderRead: return EResourceAccessBits::ShaderRead;
         case EResourceState::ShaderWrite: return EResourceAccessBits::ShaderWrite;
         case EResourceState::General: return EResourceAccessBits::None;

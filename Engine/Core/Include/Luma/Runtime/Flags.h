@@ -68,26 +68,23 @@ namespace Luma
         Enum m_Value = (Enum)0;
     };
 
-    template<typename Enum>
+    template<typename Enum> requires std::is_scoped_enum_v<Enum>
     constexpr TFlags<Enum> operator|(const Enum lhs, const Enum rhs)
     {
-        static_assert(std::is_scoped_enum_v<Enum>);
         using IntegerType = std::underlying_type_t<Enum>;
         return TFlags((Enum)((IntegerType)lhs | (IntegerType)rhs));
     }
 
-    template<typename Enum>
+    template<typename Enum> requires std::is_scoped_enum_v<Enum>
     constexpr TFlags<Enum> operator&(const Enum lhs, const Enum rhs)
     {
-        static_assert(std::is_scoped_enum_v<Enum>);
         using IntegerType = std::underlying_type_t<Enum>;
         return TFlags((Enum)((IntegerType)lhs & (IntegerType)rhs));
     }
 
-    template<typename Enum>
+    template<typename Enum> requires std::is_scoped_enum_v<Enum>
     constexpr TFlags<Enum> operator^(const Enum lhs, const Enum rhs)
     {
-        static_assert(std::is_scoped_enum_v<Enum>);
         using IntegerType = std::underlying_type_t<Enum>;
         return TFlags((Enum)((IntegerType)lhs ^ (IntegerType)rhs));
     }

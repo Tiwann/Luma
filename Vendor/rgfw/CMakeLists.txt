@@ -3,6 +3,8 @@ if(NOT TARGET rgfw)
     add_library(luma::rgfw ALIAS rgfw)
     target_include_directories(rgfw PUBLIC include)
     set_target_properties(rgfw PROPERTIES FOLDER luma-vendor)
+    find_package(Vulkan QUIET)
+
     if(LUMA_ENGINE_BUILD_VULKAN)
         target_link_libraries(rgfw PUBLIC volk::volk)
         target_compile_definitions(rgfw PUBLIC RGFW_VULKAN RGFW_USE_VOLK)

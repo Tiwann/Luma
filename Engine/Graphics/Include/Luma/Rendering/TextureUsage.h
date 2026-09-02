@@ -8,8 +8,8 @@ namespace Luma
         None = 0,
         Sampled = BIT(0),
         Storage = BIT(1),
-        ColorAttachment = BIT(3),
-        DepthStencilAttachment = BIT(4),
+        ColorTarget = BIT(3),
+        DepthStencilTarget = BIT(4),
     };
 
     using FTextureUsageFlags = TFlags<ETextureUsageBits>;

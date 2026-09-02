@@ -17,15 +17,15 @@ namespace Luma
         uint32_t stencil = 0;
     };
 
-    enum class ERenderPassAttachmentType
+    enum class ERenderPassTargetType
     {
         Color,
         DepthStencil,
     };
 
-    struct FRenderPassAttachment
+    struct FRenderPassTarget
     {
-        ERenderPassAttachmentType type = ERenderPassAttachmentType::Color;
+        ERenderPassTargetType type = ERenderPassTargetType::Color;
         FClearValue clearValue = FClearValue();
         ELoadOp loadOp = ELoadOp::Load;
         EStoreOp storeOp = EStoreOp::Store;
@@ -36,8 +36,8 @@ namespace Luma
 
     struct FRenderPassDesc
     {
-        TArray<FRenderPassAttachment*> colorAttachments;
-        FRenderPassAttachment* depthStencilAttachment = nullptr;
+        TArray<FRenderPassTarget*> colorTargets;
+        FRenderPassTarget* depthStencilAttachment = nullptr;
         FRect2u renderArea;
     };
 }

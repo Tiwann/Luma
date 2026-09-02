@@ -148,8 +148,8 @@ namespace Luma::D3D12
         case EResourceState::General: return D3D12_RESOURCE_STATE_COMMON;
         case EResourceState::ShaderRead: return D3D12_RESOURCE_STATE_ALL_SHADER_RESOURCE;
         case EResourceState::ShaderWrite: return D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
-        case EResourceState::ColorAttachment: return D3D12_RESOURCE_STATE_RENDER_TARGET;
-        case EResourceState::DepthStencilAttachment: return D3D12_RESOURCE_STATE_DEPTH_WRITE;
+        case EResourceState::ColorTarget: return D3D12_RESOURCE_STATE_RENDER_TARGET;
+        case EResourceState::DepthStencilTarget: return D3D12_RESOURCE_STATE_DEPTH_WRITE;
         case EResourceState::CopySource: return D3D12_RESOURCE_STATE_COPY_SOURCE;
         case EResourceState::CopyDest: return D3D12_RESOURCE_STATE_COPY_DEST;
         case EResourceState::Present: return D3D12_RESOURCE_STATE_PRESENT;

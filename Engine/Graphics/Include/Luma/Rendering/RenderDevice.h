@@ -9,6 +9,8 @@
 
 #include "BindingType.h"
 #include "BufferBinding.h"
+#include "Fence.h"
+#include "Swapchain.h"
 #include "TextureBinding.h"
 #include "Luma/Containers/BufferView.h"
 
@@ -57,6 +59,8 @@ namespace Luma
 
     struct LUMA_GRAPHICS_API IRenderDevice : IRefCounted<IRenderDevice>
     {
+        static constexpr uint32_t NUM_FRAMES_IN_FLIGHT = 2;
+
         ~IRenderDevice() override = default;
         virtual ERenderDeviceType getDeviceType() = 0;
         virtual bool initialize(const FRenderDeviceDesc& deviceDesc) = 0;
@@ -67,8 +71,8 @@ namespace Luma
         virtual void present() = 0;
         virtual void waitIdle() = 0;
         virtual uint32_t getFrameCount() const = 0;
-        virtual uint32_t getCurrentFrameIndex() = 0;
-        virtual bool hasVSync() { return false; }
+        virtual uint32_t getFrameIndex() const = 0;
+        virtual bool hasVSync() { return getSwapchain()->hasVSync(); }
 
         virtual ISwapchain* getSwapchain() { return nullptr; }
         virtual IQueue* getRenderQueue() { return nullptr; }
@@ -82,19 +86,15 @@ namespace Luma
         IShaderProgram* createShader(FStringView filepath);
         IShaderProgram* createShader(TBufferView<uint8_t> shaderCode);
         virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
+        ICommandBuffer* createCommandBuffer(IQueue* queue);
         virtual ICommandBuffer* getCommandBuffer() = 0;
-        ICommandBuffer* createRenderCommandBuffer();
-        ICommandBuffer* createComputeCommandBuffer();
-        ICommandBuffer* createCopyCommandBuffer();
         virtual ISampler* createSampler(const FSamplerDesc& samplerDesc) = 0;
         ISampler* getOrCreateSampler(const FSamplerDesc& samplerDesc);
         virtual IRenderPipeline* createRenderPipeline(const FRenderPipelineDesc& pipelineDesc) = 0;
         virtual IComputePipeline* createComputePipeline(const FComputePipelineDesc& pipelineDesc) = 0;
         virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
-        virtual ISemaphore* createSemaphore(const FSemaphoreDesc& semaphoreDesc) = 0;
+        IFence* createFence(uint64_t initialValue = 0);
         virtual ITextureView* getAcquiredSwapchainTextureView() = 0;
-        ISemaphore* createBinarySemaphore();
-        ISemaphore* createTimelineSemaphore(uint64_t initialValue);
         FMaterial* createMaterial(const FMaterialDesc& materialDesc);
 
         virtual void writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler){ LUMA_ASSERT(false, "Feature not available on this device"); };

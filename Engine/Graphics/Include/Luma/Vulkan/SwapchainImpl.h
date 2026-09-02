@@ -3,9 +3,8 @@
 #include "TextureViewImpl.h"
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Swapchain.h"
+#include "Luma/Rendering/Constants.h"
 #include "VulkanFwd.h"
-#include "Luma/Rendering/Fence.h"
-#include "Luma/Rendering/Semaphore.h"
 
 namespace Luma::Vulkan
 {
@@ -17,7 +16,7 @@ namespace Luma::Vulkan
     public:
         bool initialize(const FSwapchainDesc& swapchainDesc) override;
         void destroy() override;
-        bool acquireNextImage(FSemaphoreImpl* semaphore, IFence* fence, uint32_t& frameIndex);
+        bool acquireNextTexture(uint32_t& textureIndex, VkSemaphore textureAvailableSemaphore);
 
         VkSwapchainKHR getHandle() const;
         const VkSwapchainKHR* getHandlePtr() const;
@@ -29,11 +28,12 @@ namespace Luma::Vulkan
         ITextureView* getTextureView(uint32_t index) override;
 
         void setName(FStringView name) override;
+
     private:
         VkSwapchainKHR m_Handle = nullptr;
-        VkImage m_Images[3] = { nullptr, nullptr, nullptr };
-        VkImageView m_ImageViews[3] = { nullptr, nullptr, nullptr };
-        FTextureImpl m_Textures[3];
-        FTextureViewImpl m_TextureViews[3];
+        VkImage m_Images[MAX_SWAPCHAIN_IMAGES] = { nullptr };
+        VkImageView m_ImageViews[MAX_SWAPCHAIN_IMAGES] = { nullptr };
+        FTextureImpl m_Textures[MAX_SWAPCHAIN_IMAGES];
+        FTextureViewImpl m_TextureViews[MAX_SWAPCHAIN_IMAGES];
     };
 }

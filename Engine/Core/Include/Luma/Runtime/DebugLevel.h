@@ -11,10 +11,10 @@ namespace Luma
     };
 
 #ifdef LUMA_DEBUG
-    static constexpr DebugLevel getDebugLevel() { return DebugLevel::Debug; }
+    static constexpr DebugLevel DEBUG_LEVEL = DebugLevel::Debug;
 #elifdef LUMA_DEV
-    static constexpr DebugLevel getDebugLevel() { return DebugLevel::Dev; }
+    static constexpr DebugLevel DEBUG_LEVEL = DebugLevel::Dev;
 #else
-    static constexpr DebugLevel getDebugLevel() { return DebugLevel::Release; }
+    static constexpr DebugLevel DEBUG_LEVEL = DebugLevel::Release;
 #endif
 }

@@ -29,7 +29,6 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/SwapchainImpl.cpp
         Source/Vulkan/CommandBufferImpl.cpp
         Source/Vulkan/QueueImpl.cpp
-        Source/Vulkan/SemaphoreImpl.cpp
         Source/Vulkan/FenceImpl.cpp
         Source/Vulkan/BufferImpl.cpp
         Source/Vulkan/TextureImpl.cpp

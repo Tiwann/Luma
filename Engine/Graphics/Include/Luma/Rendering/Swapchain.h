@@ -5,12 +5,12 @@
 #include "SwpchainBuffering.h"
 #include <cstdint>
 
-
 namespace Luma
 {
     struct IRenderDevice;
     struct ITexture;
     struct ITextureView;
+    struct IQueue;
 
     struct FSwapchainDesc
     {
@@ -30,11 +30,12 @@ namespace Luma
         virtual bool initialize(const FSwapchainDesc& swapchainDesc) = 0;
         virtual void destroy() = 0;
         virtual bool resize(uint32_t width, uint32_t height);
+
         uint32_t getWidth() const;
         uint32_t getHeight() const;
         EFormat getFormat() const;
         EPresentMode getPresentMode() const;
-        uint32_t getImageCount() const;
+        uint32_t getTextureCount() const;
 
         IRenderDevice* getDevice() const;
 
@@ -48,11 +49,10 @@ namespace Luma
         virtual void setName(FStringView name) {}
     protected:
         IRenderDevice* m_Device = nullptr;
-        EFormat m_ImageFormat = EFormat::None;
+        EFormat m_Format = EFormat::None;
         ESwapchainBuffering m_Buffering = ESwapchainBuffering::None;
-        EPresentMode m_ImagePresentMode = EPresentMode::Unknown;
-        uint32_t m_ImageWidth = 0, m_ImageHeight = 0;
-        bool m_HasVSync = false;
+        EPresentMode m_PresentMode = EPresentMode::Unknown;
+        uint32_t m_Width = 0, m_Height = 0;
         bool m_Valid = true;
     };
 }

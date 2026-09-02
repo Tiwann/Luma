@@ -11,7 +11,9 @@ namespace Luma
         constexpr TBufferView() = default;
 
         constexpr TBufferView(const T* data, uint64_t count) : m_Data(data), m_Count(count){}
+        constexpr TBufferView(const T& element) : m_Data(&element), m_Count(1){}
         TBufferView(const TBufferView& buffer) : m_Data(buffer.m_Data), m_Count(buffer.m_Count){}
+
 
         const T* begin() const { return m_Data; }
         const T* end() const { return m_Data + m_Count; }
@@ -31,7 +33,7 @@ namespace Luma
         const T& operator[](uint64_t Index) const { return m_Data[Index]; }
 
         bool isEmpty() const { return !m_Data || m_Count == 0; }
-    private:
+    protected:
         const T* m_Data = nullptr;
         uint64_t m_Count = 0;
     };

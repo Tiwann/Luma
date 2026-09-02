@@ -3,12 +3,14 @@
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
 #include "Luma/Containers/StringView.h"
+#include "Luma/Containers/ArrayView.h"
 #include "IndexFormat.h"
 #include "QueueType.h"
 #include "Scissor.h"
 #include "Viewport.h"
 #include "Camera.h"
 #include "ShaderStage.h"
+#include "ResourceBarrier.h"
 #include <cstdint>
 
 
@@ -32,7 +34,7 @@ namespace Luma
     struct FCommandBufferDesc
     {
         IRenderDevice* device = nullptr;
-        EQueueType queueType = EQueueType::Render;
+        IQueue* queue = nullptr;
     };
 
     struct FDrawCommand
@@ -92,8 +94,8 @@ namespace Luma
         virtual void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void bindMaterial(const FMaterial* material) = 0;
         virtual void bindBindingSet(const IBindingSet* bindingSet, const IShaderProgram* shader) = 0;
-        virtual void textureBarrier(const FTextureBarrier& barrier) = 0;
-        virtual void bufferBarrier(const FBufferBarrier& barrier) = 0;
+        virtual void textureBarriers(TArrayView<FTextureBarrier> barriers) = 0;
+        virtual void bufferBarriers(TArrayView<FBufferBarrier> barriers) = 0;
         virtual void bindDescriptorBuffer(const IBuffer* buffer){LUMA_ASSERT(false, "Not Implemented");}
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// COMPUTE CMDS

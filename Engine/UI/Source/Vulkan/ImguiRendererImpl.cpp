@@ -33,9 +33,9 @@ namespace Luma::Vulkan
         initInfo.PhysicalDevice = device->getPhysicalDevice();
         initInfo.Queue = renderQueue->getHandle();
         initInfo.Allocator = nullptr;
-        initInfo.ImageCount = swapchain->getImageCount();
+        initInfo.ImageCount = swapchain->getTextureCount();
         initInfo.QueueFamily = renderQueue->getIndex();
-        initInfo.MinImageCount = swapchain->getImageCount();
+        initInfo.MinImageCount = swapchain->getTextureCount();
         initInfo.DescriptorPool = nullptr;
         initInfo.DescriptorPoolSize = 32;
         initInfo.UseDynamicRendering = true;

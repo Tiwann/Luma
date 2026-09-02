@@ -7,7 +7,7 @@
 
 namespace Luma::Vulkan
 {
-    bool FShaderImpl::initialize(const FShaderDesc& shaderDesc)
+    /*bool FShaderImpl::initialize(const FShaderDesc& shaderDesc)
     {
         if (!shaderDesc.device) return false;
 
@@ -37,7 +37,7 @@ namespace Luma::Vulkan
         spvReflectDestroyShaderModule(&moduleReflect);
         m_Device = device;
         return true;
-    }
+    }*/
 
     void FShaderImpl::destroy()
     {

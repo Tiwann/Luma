@@ -10,10 +10,11 @@ namespace Luma::Vulkan
 
         FCommandBufferDesc cmdBufferDesc;
         cmdBufferDesc.device = executorDesc.device;
-        cmdBufferDesc.queueType = executorDesc.queue->getQueueType();
+        cmdBufferDesc.queue = executorDesc.queue;
+
         if (!m_CmdBuffer.initialize(cmdBufferDesc)) return false;
 
-        if (!m_Fence.initialize(FFenceDesc(executorDesc.device))) return false;
+        if (!m_Fence.initialize(FFenceDesc(executorDesc.device, 0))) return false;
         m_Queue = static_cast<FQueueImpl*>(executorDesc.queue);
         m_IsValid = true;
         return true;
@@ -34,14 +35,22 @@ namespace Luma::Vulkan
         if (!function) return;
 
         m_CmdBuffer.reset();
-        m_Fence.reset();
 
         if (m_CmdBuffer.begin())
         {
             function(&m_CmdBuffer);
             m_CmdBuffer.end();
-            m_Queue->executeCommandBuffer(&m_CmdBuffer, &m_Fence, EPipelineStageBits::ColorTargetOutput);
-            m_Fence.wait(FENCE_WAIT_INFINITE);
+
+            FFenceSignal signal;
+            signal.fence = &m_Fence;
+            signal.value = ++m_FenceValue;
+
+            FQueueExecuteInfo execInfo;
+            execInfo.cmdBuffers = &m_CmdBuffer;
+            execInfo.signals = signal;
+
+            m_Queue->executeCommandBuffers(execInfo);
+            m_Fence.waitOnCPU(m_FenceValue);
         }
     }
 

@@ -31,7 +31,7 @@ namespace Luma::Vulkan
         if (!cmdBufferDesc.device) return false;
 
         FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(cmdBufferDesc.device);
-        const VkCommandPool commandPool = device->getCommandPool(cmdBufferDesc.queueType);
+        const VkCommandPool commandPool = device->getCommandPool(cmdBufferDesc.queue->getQueueType());
         if (!commandPool) return false;
 
         VkCommandBufferAllocateInfo info { VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO };
@@ -168,7 +168,7 @@ namespace Luma::Vulkan
     void FCommandBufferImpl::pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
     {
         const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
-        vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
+        //vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
     }
 
     void FCommandBufferImpl::bindRenderPipeline(const IRenderPipeline* pipeline)
@@ -178,7 +178,7 @@ namespace Luma::Vulkan
         vkCmdBindPipeline(m_Handle, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineImpl->getHandle());
     }
 
-    static VkRenderingAttachmentInfo getVulkanRenderingAttachmentInfo(const FRenderPassAttachment& attachment)
+    static VkRenderingAttachmentInfo getVulkanRenderingAttachmentInfo(const FRenderPassTarget& attachment)
     {
         const auto* textureViewImpl = static_cast<const FTextureViewImpl*>(attachment.textureView);
         const auto* resolveTextureView = static_cast<const FTextureViewImpl*>(attachment.resolveTextureView);
@@ -191,13 +191,13 @@ namespace Luma::Vulkan
 
         switch (attachment.type)
         {
-        case ERenderPassAttachmentType::Color:
+        case ERenderPassTargetType::Color:
             {
                 const FColor& clearColor = attachment.clearValue.color;
                 info.clearValue.color = { clearColor.r, clearColor.g, clearColor.b, clearColor.a };
             }
             break;
-        case ERenderPassAttachmentType::DepthStencil:
+        case ERenderPassTargetType::DepthStencil:
             {
                 const FClearValue& clearValue = attachment.clearValue;
                 info.clearValue.depthStencil = { clearValue.depth, clearValue.stencil };
@@ -219,7 +219,7 @@ namespace Luma::Vulkan
     {
         TArray<VkRenderingAttachmentInfo> colorAttachments;
         VkRenderingAttachmentInfo depthStencilAttachment;
-        for (const auto* attachment : renderPassDesc.colorAttachments)
+        for (const auto* attachment : renderPassDesc.colorTargets)
             if (attachment) colorAttachments.add(getVulkanRenderingAttachmentInfo(*attachment));
 
         VkRenderingInfo renderingInfo { VK_STRUCTURE_TYPE_RENDERING_INFO };
@@ -357,11 +357,11 @@ namespace Luma::Vulkan
 
         const VkDescriptorSet descriptorSets[] { bindingSetImpl->getHandle() };
         VkBindDescriptorSetsInfo info = { VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO };
-        info.layout = shaderImpl->getPipelineLayout();
+        //info.layout = shaderImpl->getPipelineLayout();
         info.firstSet = bindingSetImpl->getSetIndex();
         info.descriptorSetCount = 1;
         info.pDescriptorSets = descriptorSets;
-        info.stageFlags = convert<VkShaderStageFlags>(shaderImpl->getStageFlags());
+        //info.stageFlags = convert<VkShaderStageFlags>(shaderImpl->getStageFlags());
         info.dynamicOffsetCount = 0;
         info.pDynamicOffsets = nullptr;
         vkCmdBindDescriptorSets2(m_Handle, &info);
@@ -432,28 +432,40 @@ namespace Luma::Vulkan
         vkCmdCopyBufferToImage2(m_Handle, &copyInfo);
     }
 
-    void FCommandBufferImpl::textureBarrier(const FTextureBarrier& barrier)
+    void FCommandBufferImpl::textureBarriers(TArrayView<FTextureBarrier> barriers)
     {
-        FTextureImpl* texture = static_cast<FTextureImpl*>(barrier.texture);
-        LUMA_CHECK(texture, "Invalid texture handle!");
+        TArray<VkImageMemoryBarrier2> imageBarriers;
+        for (const FTextureBarrier& barrier : barriers)
+            imageBarriers.add(makeTextureBarrier(barrier));
 
-        const VkImageMemoryBarrier vkBarrier = makeTextureBarrier(barrier);
-        const VkPipelineStageFlags srcStageFlags = getSourcePipelineStageFlags(barrier.sourceAccess);
-        const VkPipelineStageFlags dstStageFlags = getDestPipelineStageFlags(barrier.destAccess);
-        vkCmdPipelineBarrier(m_Handle, srcStageFlags, dstStageFlags, 0, 0, nullptr, 0, nullptr, 1, &vkBarrier);
-        texture->setResourceState(barrier.destState);
+        VkDependencyInfo dependencyInfo{VK_STRUCTURE_TYPE_DEPENDENCY_INFO};
+        dependencyInfo.pImageMemoryBarriers = imageBarriers.data();
+        dependencyInfo.imageMemoryBarrierCount = imageBarriers.count();
+        vkCmdPipelineBarrier2(m_Handle, &dependencyInfo);
+
+        for (const FTextureBarrier& barrier : barriers)
+        {
+            FTextureImpl* texture = static_cast<FTextureImpl*>(barrier.texture);
+            texture->setResourceState(barrier.destState);
+        }
     }
 
-    void FCommandBufferImpl::bufferBarrier(const FBufferBarrier& barrier)
+    void FCommandBufferImpl::bufferBarriers(TArrayView<FBufferBarrier> barriers)
     {
-        FBufferImpl* buffer = static_cast<FBufferImpl*>(barrier.buffer);
-        LUMA_CHECK(buffer, "Invalid buffer handle!");
+        TArray<VkBufferMemoryBarrier2> memoryBarriers;
+        for (const FBufferBarrier& barrier : barriers)
+            memoryBarriers.add(makeBufferBarrier(barrier));
 
-        const VkBufferMemoryBarrier vkBarrier = makeBufferBarrier(barrier);
-        const VkPipelineStageFlags srcStageFlags = getSourcePipelineStageFlags(barrier.sourceAccess);
-        const VkPipelineStageFlags dstStageFlags = getSourcePipelineStageFlags(barrier.destAccess);
-        vkCmdPipelineBarrier(m_Handle, srcStageFlags, dstStageFlags, 0, 0, nullptr, 1, &vkBarrier, 0, nullptr);
-        buffer->setResourceState(barrier.destState);
+        VkDependencyInfo dependencyInfo{VK_STRUCTURE_TYPE_DEPENDENCY_INFO};
+        dependencyInfo.pBufferMemoryBarriers = memoryBarriers.data();
+        dependencyInfo.bufferMemoryBarrierCount = memoryBarriers.count();
+        vkCmdPipelineBarrier2(m_Handle, &dependencyInfo);
+
+        for (const FBufferBarrier& barrier : barriers)
+        {
+            FBufferImpl* buffer = static_cast<FBufferImpl*>(barrier.buffer);
+            buffer->setResourceState(barrier.destState);
+        }
     }
 
     void FCommandBufferImpl::bindDescriptorBuffer(const IBuffer* buffer)
