@@ -26,6 +26,6 @@ if(LUMA_ENGINE_BUILD_VULKAN)
 endif ()
 
 if(LUMA_ENGINE_BUILD_D3D12)
-    target_link_libraries(luma-ui PRIVATE luma::rgfw DirectX-Headers)
+    target_link_libraries(luma-ui PRIVATE luma::rgfw Microsoft::DirectX-Headers)
     target_sources(luma-ui PRIVATE ${LUMA_UI_D3D12_SRC})
 endif ()

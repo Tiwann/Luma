@@ -1,8 +1,4 @@
 if(LUMA_ENGINE_BUILD_VULKAN)
-set(VOLK_PULL_IN_VULKAN ON)
-if(WIN32)
-    set(VOLK_STATIC_DEFINES "VK_USE_PLATFORM_WIN32_KHR")
-endif()
 add_subdirectory(volk)
 set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
 endif ()

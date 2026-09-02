@@ -111,8 +111,15 @@ namespace Luma::Vulkan
         barrier.destState = destState;
 
         IQueue* renderQueue = device->getRenderQueue();
-        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(renderQueue);
-        Ref<IFence> fence = device->createFence(0);
+
+        FCommandBufferDesc cmdBufferDesc;
+        cmdBufferDesc.device = device;
+        cmdBufferDesc.queue = renderQueue;
+        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(cmdBufferDesc);
+
+        FFenceDesc fenceDesc;
+        fenceDesc.device = device;
+        Ref<IFence> fence = device->createFence(fenceDesc);
 
         if (cmdBuffer->begin())
         {

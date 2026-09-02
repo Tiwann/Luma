@@ -5,6 +5,7 @@ include(CMakeDependentOption)
 include(CMake/LumaHelpers.cmake)
 
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" OFF)
+option(BUILD_TESTING "Build test targets" OFF)
 option(LUMA_ENGINE_BUILD_EXAMPLES "Build the example targets" ON)
 option(LUMA_ENGINE_BUILD_EDITOR "Build the editor application" ON)
 
