@@ -1,6 +1,0 @@
-if(NOT TARGET rgfw)
-    add_library(rgfw INTERFACE)
-    add_library(luma::rgfw ALIAS rgfw)
-    target_include_directories(rgfw INTERFACE include)
-    set_target_properties(rgfw PROPERTIES FOLDER luma-vendor)
-endif ()
