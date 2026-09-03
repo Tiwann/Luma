@@ -29,7 +29,7 @@ namespace Luma
 
         static void updateKeyState(EKey key, EInputState state);
         static void updateMouseButtonState(EMouseButton button, EInputState state);
-        static void updateMousePosition(FVector2d position);
+        static void updateMousePosition(const FVector2d& position);
         static void updateMouseWheel(double wheel);
     private:
         static constexpr uint32_t MAX_GAMEPADS = 8;

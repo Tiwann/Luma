@@ -1,9 +1,11 @@
 #pragma once
 #include "Luma/Containers/StringView.h"
 #include "Luma/Runtime/Format.h"
+#include "Luma/Math/Rect2.h"
 #include "PresentMode.h"
 #include "SwpchainBuffering.h"
 #include <cstdint>
+
 
 namespace Luma
 {
@@ -33,6 +35,7 @@ namespace Luma
 
         uint32_t getWidth() const;
         uint32_t getHeight() const;
+        FRect2u getBounds() const;
         EFormat getFormat() const;
         EPresentMode getPresentMode() const;
         uint32_t getTextureCount() const;

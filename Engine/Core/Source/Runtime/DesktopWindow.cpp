@@ -1,19 +1,15 @@
 ﻿#include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Math/Vector2.h"
-
-#define RGFW_WINDOWS
-#define RGFW_IMPLEMENTATION
-#include <rgfw/rgfw.h>
-
 #include "Luma/Input/Immediate.h"
 #include "Luma/Input/Keyboard.h"
 #include "Luma/Input/Mouse.h"
+#include <GLFW/glfw3.h>
 
-#define GET_WINDOW(event) static_cast<FDesktopWindow*>(RGFW_window_getUserPtr(event.win))
+#define GET_WINDOW(x) static_cast<FDesktopWindow*>(glfwGetWindowUserPointer(x))
 
 namespace Luma
 {
-    static RGFW_windowFlags getFlags(const FWindowCreateFlags flags)
+    /*static RGFW_windowFlags getFlags(const FWindowCreateFlags flags)
     {
         RGFW_windowFlags result = RGFW_windowNoResize | RGFW_windowAllowDND;
         if (flags & EWindowCreateBits::Centered) result |= RGFW_windowCenter;
@@ -23,224 +19,212 @@ namespace Luma
         if (flags & EWindowCreateBits::Transparent) result |= RGFW_windowTransparent;
         if (flags & EWindowCreateBits::NoDragAndDrop) result &= ~RGFW_windowAllowDND;
         return result;
-    }
+    }*/
 
-    static EKey getKeyFromRGFW(RGFW_key key)
+    static EKey getKeyFromGLFW(int key)
     {
         switch (key)
         {
-        case RGFW_keyNULL: return EKey::None;
-        case RGFW_keyEscape: return EKey::Escape;
-        case RGFW_keyBacktick: return EKey::None;
-        case RGFW_key0: return EKey::None;
-            case RGFW_key1: return EKey::None;
-            case RGFW_key2: return EKey::None;
-            case RGFW_key3: return EKey::None;
-            case RGFW_key4: return EKey::None;
-            case RGFW_key5: return EKey::None;
-            case RGFW_key6: return EKey::None;
-            case RGFW_key7: return EKey::None;
-            case RGFW_key8: return EKey::None;
-            case RGFW_key9: return EKey::None;
-            case RGFW_keyMinus: return EKey::Minus;
-            case RGFW_keyEqual: return EKey::Equals;
-            case RGFW_keyBackSpace: return EKey::Backspace;
-            case RGFW_keyTab: return EKey::Tab;
-            case RGFW_keySpace: return EKey::Space;
-            case RGFW_keyA: return EKey::A;
-            case RGFW_keyB: return EKey::B;
-            case RGFW_keyC: return EKey::C;
-            case RGFW_keyD: return EKey::D;
-            case RGFW_keyE: return EKey::E;
-            case RGFW_keyF: return EKey::F;
-            case RGFW_keyG: return EKey::G;
-            case RGFW_keyH: return EKey::H;
-            case RGFW_keyI: return EKey::I;
-            case RGFW_keyJ: return EKey::J;
-            case RGFW_keyK: return EKey::K;
-            case RGFW_keyL: return EKey::L;
-            case RGFW_keyM: return EKey::M;
-            case RGFW_keyN: return EKey::N;
-            case RGFW_keyO: return EKey::O;
-            case RGFW_keyP: return EKey::P;
-            case RGFW_keyQ: return EKey::Q;
-            case RGFW_keyR: return EKey::R;
-            case RGFW_keyS: return EKey::S;
-            case RGFW_keyT: return EKey::T;
-            case RGFW_keyU: return EKey::U;
-            case RGFW_keyV: return EKey::V;
-            case RGFW_keyW: return EKey::W;
-            case RGFW_keyX: return EKey::X;
-            case RGFW_keyY: return EKey::Y;
-            case RGFW_keyZ: return EKey::Z;
-            case RGFW_keyPeriod: return EKey::Period;
-            case RGFW_keyComma: return EKey::Comma;
-            case RGFW_keySlash: return EKey::Slash;
-            case RGFW_keyBracket: return EKey::LeftBracket;
-            case RGFW_keyCloseBracket: return EKey::Right;
-            case RGFW_keySemicolon: return EKey::Semicolon;
-            case RGFW_keyApostrophe: return EKey::Apostrophe;
-            case RGFW_keyBackSlash: return EKey::Backslash;
-            case RGFW_keyReturn: return EKey::Enter;
-            case RGFW_keyDelete: return EKey::Delete;
-            case RGFW_keyF1: return EKey::F1;
-            case RGFW_keyF2: return EKey::F2;
-            case RGFW_keyF3: return EKey::F3;
-            case RGFW_keyF4: return EKey::F4;
-            case RGFW_keyF5: return EKey::F5;
-            case RGFW_keyF6: return EKey::F6;
-            case RGFW_keyF7: return EKey::F7;
-            case RGFW_keyF8: return EKey::F8;
-            case RGFW_keyF9: return EKey::F9;
-            case RGFW_keyF10: return EKey::F10;
-            case RGFW_keyF11: return EKey::F11;
-            case RGFW_keyF12: return EKey::F12;
-            case RGFW_keyF13: return EKey::F13;
-            case RGFW_keyF14: return EKey::F14;
-            case RGFW_keyF15: return EKey::F15;
-            case RGFW_keyF16: return EKey::F16;
-            case RGFW_keyF17: return EKey::F17;
-            case RGFW_keyF18: return EKey::F18;
-            case RGFW_keyF19: return EKey::F19;
-            case RGFW_keyF20: return EKey::F20;
-            case RGFW_keyF21: return EKey::F21;
-            case RGFW_keyF22: return EKey::F22;
-            case RGFW_keyF23: return EKey::F23;
-            case RGFW_keyF24: return EKey::F24;
-            case RGFW_keyF25: return EKey::F25;
-            case RGFW_keyCapsLock: return EKey::CapsLock;
-            case RGFW_keyShiftL: return EKey::LeftShift;
-            case RGFW_keyControlL: return EKey::LeftCtrl;
-            case RGFW_keyAltL: return EKey::LeftAlt;
-            case RGFW_keySuperL: return EKey::LeftSuper;
-            case RGFW_keyShiftR: return EKey::RightShift;
-            case RGFW_keyControlR: return EKey::RightCtrl;
-            case RGFW_keyAltR: return EKey::RightAlt;
-            case RGFW_keySuperR: return EKey::RightSuper;
-            case RGFW_keyUp: return EKey::Up;
-            case RGFW_keyDown: return EKey::Down;
-            case RGFW_keyLeft: return EKey::Left;
-            case RGFW_keyRight: return EKey::Right;
-            case RGFW_keyInsert: return EKey::Insert;
-            case RGFW_keyMenu: return EKey::None;
-            case RGFW_keyEnd: return EKey::End;
-            case RGFW_keyHome: return EKey::Home;
-            case RGFW_keyPageUp: return EKey::PageUp;
-            case RGFW_keyPageDown: return EKey::PageDown;
-            case RGFW_keyNumLock: return EKey::NumLock;
-            case RGFW_keyPadSlash: return EKey::NumpadDiv;
-            case RGFW_keyPadMultiply: return EKey::NumpadMul;
-            case RGFW_keyPadPlus: return EKey::NumpadAdd;
-            case RGFW_keyPadMinus: return EKey::NumpadSub;
-            case RGFW_keyPadEqual: return EKey::NumpadEnter;
-            case RGFW_keyPad1: return EKey::Numpad1;
-            case RGFW_keyPad2: return EKey::Numpad2;
-            case RGFW_keyPad3: return EKey::Numpad3;
-            case RGFW_keyPad4: return EKey::Numpad4;
-            case RGFW_keyPad5: return EKey::Numpad5;
-            case RGFW_keyPad6: return EKey::Numpad6;
-            case RGFW_keyPad7: return EKey::Numpad7;
-            case RGFW_keyPad8: return EKey::Numpad8;
-            case RGFW_keyPad9: return EKey::Numpad9;
-            case RGFW_keyPad0: return EKey::Numpad0;
-            case RGFW_keyPadPeriod: return EKey::NumpadPeriod;
-            case RGFW_keyPadReturn: return EKey::None;
-            case RGFW_keyScrollLock: return EKey::ScrollLock;
-            case RGFW_keyPrintScreen: return EKey::PrintScreen;
-            case RGFW_keyPause: return EKey::Pause;
-            case RGFW_keyWorld1: return EKey::None;
-            case RGFW_keyWorld2: return EKey::None;
+        case GLFW_KEY_UNKNOWN: return EKey::None;
+        case GLFW_KEY_ESCAPE: return EKey::Escape;
+        case GLFW_KEY_0: return EKey::None;
+            case GLFW_KEY_1: return EKey::None;
+            case GLFW_KEY_2: return EKey::None;
+            case GLFW_KEY_3: return EKey::None;
+            case GLFW_KEY_4: return EKey::None;
+            case GLFW_KEY_5: return EKey::None;
+            case GLFW_KEY_6: return EKey::None;
+            case GLFW_KEY_7: return EKey::None;
+            case GLFW_KEY_8: return EKey::None;
+            case GLFW_KEY_9: return EKey::None;
+            case GLFW_KEY_MINUS: return EKey::Minus;
+            case GLFW_KEY_EQUAL: return EKey::Equals;
+            case GLFW_KEY_BACKSPACE: return EKey::Backspace;
+            case GLFW_KEY_TAB: return EKey::Tab;
+            case GLFW_KEY_SPACE: return EKey::Space;
+            case GLFW_KEY_A: return EKey::A;
+            case GLFW_KEY_B: return EKey::B;
+            case GLFW_KEY_C: return EKey::C;
+            case GLFW_KEY_D: return EKey::D;
+            case GLFW_KEY_E: return EKey::E;
+            case GLFW_KEY_F: return EKey::F;
+            case GLFW_KEY_G: return EKey::G;
+            case GLFW_KEY_H: return EKey::H;
+            case GLFW_KEY_I: return EKey::I;
+            case GLFW_KEY_J: return EKey::J;
+            case GLFW_KEY_K: return EKey::K;
+            case GLFW_KEY_L: return EKey::L;
+            case GLFW_KEY_M: return EKey::M;
+            case GLFW_KEY_N: return EKey::N;
+            case GLFW_KEY_O: return EKey::O;
+            case GLFW_KEY_P: return EKey::P;
+            case GLFW_KEY_Q: return EKey::Q;
+            case GLFW_KEY_R: return EKey::R;
+            case GLFW_KEY_S: return EKey::S;
+            case GLFW_KEY_T: return EKey::T;
+            case GLFW_KEY_U: return EKey::U;
+            case GLFW_KEY_V: return EKey::V;
+            case GLFW_KEY_W: return EKey::W;
+            case GLFW_KEY_X: return EKey::X;
+            case GLFW_KEY_Y: return EKey::Y;
+            case GLFW_KEY_Z: return EKey::Z;
+            case GLFW_KEY_PERIOD: return EKey::Period;
+            case GLFW_KEY_COMMA: return EKey::Comma;
+            case GLFW_KEY_SLASH: return EKey::Slash;
+            case GLFW_KEY_LEFT_BRACKET: return EKey::LeftBracket;
+            case GLFW_KEY_RIGHT_BRACKET: return EKey::Right;
+            case GLFW_KEY_SEMICOLON: return EKey::Semicolon;
+            case GLFW_KEY_APOSTROPHE: return EKey::Apostrophe;
+            case GLFW_KEY_BACKSLASH: return EKey::Backslash;
+            case GLFW_KEY_ENTER: return EKey::Enter;
+            case GLFW_KEY_DELETE: return EKey::Delete;
+            case GLFW_KEY_F1: return EKey::F1;
+            case GLFW_KEY_F2: return EKey::F2;
+            case GLFW_KEY_F3: return EKey::F3;
+            case GLFW_KEY_F4: return EKey::F4;
+            case GLFW_KEY_F5: return EKey::F5;
+            case GLFW_KEY_F6: return EKey::F6;
+            case GLFW_KEY_F7: return EKey::F7;
+            case GLFW_KEY_F8: return EKey::F8;
+            case GLFW_KEY_F9: return EKey::F9;
+            case GLFW_KEY_F10: return EKey::F10;
+            case GLFW_KEY_F11: return EKey::F11;
+            case GLFW_KEY_F12: return EKey::F12;
+            case GLFW_KEY_F13: return EKey::F13;
+            case GLFW_KEY_F14: return EKey::F14;
+            case GLFW_KEY_F15: return EKey::F15;
+            case GLFW_KEY_F16: return EKey::F16;
+            case GLFW_KEY_F17: return EKey::F17;
+            case GLFW_KEY_F18: return EKey::F18;
+            case GLFW_KEY_F19: return EKey::F19;
+            case GLFW_KEY_F20: return EKey::F20;
+            case GLFW_KEY_F21: return EKey::F21;
+            case GLFW_KEY_F22: return EKey::F22;
+            case GLFW_KEY_F23: return EKey::F23;
+            case GLFW_KEY_F24: return EKey::F24;
+            case GLFW_KEY_F25: return EKey::F25;
+            case GLFW_KEY_CAPS_LOCK: return EKey::CapsLock;
+            case GLFW_KEY_LEFT_SHIFT: return EKey::LeftShift;
+            case GLFW_KEY_LEFT_CONTROL: return EKey::LeftCtrl;
+            case GLFW_KEY_LEFT_ALT: return EKey::LeftAlt;
+            case GLFW_KEY_LEFT_SUPER: return EKey::LeftSuper;
+            case GLFW_KEY_RIGHT_SHIFT: return EKey::RightShift;
+            case GLFW_KEY_RIGHT_CONTROL: return EKey::RightCtrl;
+            case GLFW_KEY_RIGHT_ALT: return EKey::RightAlt;
+            case GLFW_KEY_RIGHT_SUPER: return EKey::RightSuper;
+            case GLFW_KEY_UP: return EKey::Up;
+            case GLFW_KEY_DOWN: return EKey::Down;
+            case GLFW_KEY_LEFT: return EKey::Left;
+            case GLFW_KEY_RIGHT: return EKey::Right;
+            case GLFW_KEY_INSERT: return EKey::Insert;
+            case GLFW_KEY_MENU: return EKey::None;
+            case GLFW_KEY_END: return EKey::End;
+            case GLFW_KEY_HOME: return EKey::Home;
+            case GLFW_KEY_PAGE_UP: return EKey::PageUp;
+            case GLFW_KEY_PAGE_DOWN: return EKey::PageDown;
+            case GLFW_KEY_NUM_LOCK: return EKey::NumLock;
+            case GLFW_KEY_KP_DIVIDE: return EKey::NumpadDiv;
+            case GLFW_KEY_KP_MULTIPLY: return EKey::NumpadMul;
+            case GLFW_KEY_KP_ADD: return EKey::NumpadAdd;
+            case GLFW_KEY_KP_SUBTRACT: return EKey::NumpadSub;
+            case GLFW_KEY_KP_1: return EKey::Numpad1;
+            case GLFW_KEY_KP_2: return EKey::Numpad2;
+            case GLFW_KEY_KP_3: return EKey::Numpad3;
+            case GLFW_KEY_KP_4: return EKey::Numpad4;
+            case GLFW_KEY_KP_5: return EKey::Numpad5;
+            case GLFW_KEY_KP_6: return EKey::Numpad6;
+            case GLFW_KEY_KP_7: return EKey::Numpad7;
+            case GLFW_KEY_KP_8: return EKey::Numpad8;
+            case GLFW_KEY_KP_9: return EKey::Numpad9;
+            case GLFW_KEY_KP_0: return EKey::Numpad0;
+            case GLFW_KEY_KP_DECIMAL: return EKey::NumpadPeriod;
+            case GLFW_KEY_KP_ENTER: return EKey::NumpadEnter;
+            case GLFW_KEY_SCROLL_LOCK: return EKey::ScrollLock;
+            case GLFW_KEY_PRINT_SCREEN: return EKey::PrintScreen;
+            case GLFW_KEY_PAUSE: return EKey::Pause;
+            case GLFW_KEY_WORLD_1: return EKey::None;
+            case GLFW_KEY_WORLD_2: return EKey::None;
             default: return EKey::None;
         }
     }
 
-    static EMouseButton getMouseButtonFromRGFW(RGFW_mouseButton button)
+    static EMouseButton getMouseButtonFromGLFW(int button)
     {
         switch (button)
         {
-            case RGFW_mouseLeft: return EMouseButton::Left;
-            case RGFW_mouseMiddle: return EMouseButton::Middle;
-            case RGFW_mouseRight: return EMouseButton::Right;
+            case GLFW_MOUSE_BUTTON_LEFT: return EMouseButton::Left;
+            case GLFW_MOUSE_BUTTON_MIDDLE: return EMouseButton::Middle;
+            case GLFW_MOUSE_BUTTON_RIGHT: return EMouseButton::Right;
             default: return EMouseButton::None;
         }
     }
 
     bool FDesktopWindow::initialize(const FWindowDesc& windowDesc)
     {
-        if (m_Handle) RGFW_window_close(m_Handle);
-        m_Handle = RGFW_createWindow(windowDesc.title.data(), 0, 0, windowDesc.width, windowDesc.height, getFlags(windowDesc.flags));
-        RGFW_window_setUserPtr(m_Handle, this);
+        glfwInit();
+        if (m_Handle) glfwDestroyWindow(m_Handle);
 
-        RGFW_setEventCallback(RGFW_windowResized, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->update);
-            window->resizedEvent(event->update.w, event->update.h);
-        });
-
-        RGFW_setEventCallback(RGFW_windowMoved, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->update);
-            window->movedEvent(event->update.x, event->update.y);
-        });
-
-        RGFW_setEventCallback(RGFW_windowFocusIn, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->focus);
-            window->focusedEvent(true);
-        });
-
-        RGFW_setEventCallback(RGFW_windowFocusOut, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->focus);
-            window->focusedEvent(false);
-        });
-
-        RGFW_setEventCallback(RGFW_windowClose, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->common);
-            window->closedEvent();
-        });
-
-        RGFW_setEventCallback(RGFW_windowMaximized, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->common);
-            window->maximizedEvent();
-        });
-
-        RGFW_setEventCallback(RGFW_windowMinimized, [](const RGFW_event* event)
-        {
-            const auto* window = GET_WINDOW(event->common);
-            window->minimizedEvent();
-        });
-
-        RGFW_setEventCallback(RGFW_keyPressed, [](const RGFW_event* event)
-        {
-            FInput::updateKeyState(getKeyFromRGFW(event->key.value), EInputState::Pressed);
-        });
-
-        RGFW_setEventCallback(RGFW_keyReleased, [](const RGFW_event* event)
-        {
-            FInput::updateKeyState(getKeyFromRGFW(event->key.value), EInputState::Released);
-        });
-
-        RGFW_setEventCallback(RGFW_mouseButtonPressed, [](const RGFW_event* event)
-        {
-            FInput::updateMouseButtonState(getMouseButtonFromRGFW(event->button.value), EInputState::Pressed);
-        });
-
-        RGFW_setEventCallback(RGFW_mouseButtonReleased, [](const RGFW_event* event)
-        {
-            FInput::updateMouseButtonState(getMouseButtonFromRGFW(event->button.value), EInputState::Released);
-        });
-
-        RGFW_setEventCallback(RGFW_mousePosChanged, [](const RGFW_event* event)
-        {
-            FInput::updateMousePosition(FVector2d(event->mouse.x, event->mouse.y));
-        });
-
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        m_Handle = glfwCreateWindow(windowDesc.width, windowDesc.height, *windowDesc.title, nullptr, nullptr);
         if (!m_Handle) return false;
-        RGFW_window_show(m_Handle);
+        glfwSetWindowUserPointer(m_Handle, this);
 
+        glfwSetWindowSizeCallback(m_Handle, [](GLFWwindow* w, const int width, const int height)
+        {
+            auto* window = GET_WINDOW(w);
+            window->resizedEvent(width, height);
+        });
+
+        glfwSetWindowPosCallback(m_Handle, [](GLFWwindow* w, const int x, const int y)
+        {
+            auto* window = GET_WINDOW(w);
+            window->movedEvent(x, y);
+        });
+
+        glfwSetWindowFocusCallback(m_Handle, [](GLFWwindow* w, int focused)
+        {
+            auto* window = GET_WINDOW(w);
+            window->m_Focused = focused;
+            window->focusedEvent(static_cast<bool>(focused));
+        });
+        
+        glfwSetWindowMaximizeCallback(m_Handle, [](GLFWwindow* w, int maximized)
+        {
+            auto* window = GET_WINDOW(w);
+            window->m_Maximized = maximized;
+            if (maximized) window->maximizedEvent();
+        });
+
+        glfwSetWindowIconifyCallback(m_Handle, [](GLFWwindow* w, int iconified)
+        {
+            auto* window = GET_WINDOW(w);
+            window->m_Minimized = iconified;
+            if (iconified) window->minimizedEvent();
+        });
+
+        glfwSetKeyCallback(m_Handle, [](GLFWwindow*, int key, int, int action, int)
+        {
+            if (action == GLFW_PRESS)
+                FInput::updateKeyState(getKeyFromGLFW(key), EInputState::Pressed);
+
+            if (action == GLFW_RELEASE)
+                FInput::updateKeyState(getKeyFromGLFW(key), EInputState::Released);
+        });
+
+        glfwSetMouseButtonCallback(m_Handle, [](GLFWwindow*, int button, int action, int)
+        {
+            if (action == GLFW_PRESS)
+                FInput::updateMouseButtonState(getMouseButtonFromGLFW(button), EInputState::Pressed);
+            if (action == GLFW_RELEASE)
+                FInput::updateMouseButtonState(getMouseButtonFromGLFW(button), EInputState::Released);
+        });
+
+        glfwSetCursorPosCallback(m_Handle, [](GLFWwindow*, double x, double y)
+        {
+            FInput::updateMousePosition(FVector2d(x, y));
+        });
+
+        glfwShowWindow(m_Handle);
         m_Title = windowDesc.title;
         return true;
     }
@@ -248,59 +232,59 @@ namespace Luma
     void FDesktopWindow::destroy()
     {
         if (!m_Handle) return;
-        RGFW_window_close(m_Handle);
+        glfwDestroyWindow(m_Handle);
         m_Handle = nullptr;
     }
 
     void FDesktopWindow::pollEvents()
     {
-        RGFW_pollEvents();
+        glfwPollEvents();
     }
 
     uint32_t FDesktopWindow::getWidth() const
     {
         int32_t width = 0;
-        RGFW_window_getSize(m_Handle, &width, nullptr);
+        glfwGetWindowSize(m_Handle, &width, nullptr);
         return static_cast<uint32_t>(width);
     }
 
     uint32_t FDesktopWindow::getHeight() const
     {
         int32_t height = 0;
-        RGFW_window_getSize(m_Handle, nullptr, &height);
+        glfwGetWindowSize(m_Handle, nullptr, &height);
         return static_cast<uint32_t>(height);
     }
 
     FVector2u FDesktopWindow::getPosition() const
     {
         FVector2<int32_t> result;
-        RGFW_window_getPosition(m_Handle, &result.x, &result.y);
+        glfwGetWindowPos(m_Handle, &result.x, &result.y);
         return result.as<uint32_t>();
     }
 
     void FDesktopWindow::setPosition(const FVector2u& position)
     {
-
+        glfwSetWindowPos(m_Handle, position.x, position.y);
     }
 
     bool FDesktopWindow::hasFocus() const
     {
-        return RGFW_window_isInFocus(m_Handle);
+        return m_Focused;
     }
 
     bool FDesktopWindow::isMaximized() const
     {
-        return RGFW_window_isMaximized(m_Handle);
+        return m_Maximized;
     }
 
     bool FDesktopWindow::isMinimized() const
     {
-        return RGFW_window_isMinimized(m_Handle);
+        return m_Minimized;
     }
 
     void FDesktopWindow::setFullscreen(bool fullscreen)
     {
-        RGFW_window_setFullscreen(m_Handle, fullscreen);
+
     }
 
     bool FDesktopWindow::isAvailable() const
@@ -310,10 +294,10 @@ namespace Luma
 
     bool FDesktopWindow::shouldClose() const
     {
-        return RGFW_window_shouldClose(m_Handle);
+        return glfwWindowShouldClose(m_Handle);
     }
 
-    RGFW_window* FDesktopWindow::getHandle() const
+    GLFWwindow* FDesktopWindow::getHandle() const
     {
         return m_Handle;
     }
@@ -325,7 +309,7 @@ namespace Luma
 
     void FDesktopWindow::setTitle(const FString& title)
     {
-        RGFW_window_setName(m_Handle, *title);
+        glfwSetWindowTitle(m_Handle, *title);
         m_Title = title;
     }
 }

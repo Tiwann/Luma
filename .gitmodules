@@ -32,3 +32,6 @@
 [submodule "Vendor/D3D12MemoryAllocator"]
 	path = Vendor/D3D12MemoryAllocator
 	url = https://github.com/GPUOpen-LibrariesAndSDKs/D3D12MemoryAllocator.git
+[submodule "Vendor/glfw"]
+	path = Vendor/glfw
+	url = git@github.com:glfw/glfw.git

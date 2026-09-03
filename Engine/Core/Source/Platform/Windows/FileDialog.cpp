@@ -2,19 +2,16 @@
 #include "Luma/Runtime/Path.h"
 #include "Luma/Runtime/DesktopWindow.h"
 
-#define RGFW_WINDOWS
-#define RGFW_IMPLEMENTATION
-#include <rgfw/rgfw.h>
-
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include <Windows.h>
-#include <filesystem>
-
 
 namespace Luma
 {
     FString FPath::openFileDialog(const FStringView title, const FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow)
     {
-        HWND hwnd = static_cast<HWND>(RGFW_window_getHWND(((FDesktopWindow&)owningWindow).getHandle()));
+        HWND hwnd = glfwGetWin32Window(static_cast<FDesktopWindow&>(owningWindow).getHandle());
         if (!hwnd) return {};
 
         OPENFILENAMEW openFilename = { };
@@ -45,7 +42,7 @@ namespace Luma
 
     FString FPath::saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow)
     {
-        HWND hwnd = static_cast<HWND>(RGFW_window_getHWND(((FDesktopWindow&)owningWindow).getHandle()));
+        HWND hwnd = glfwGetWin32Window(static_cast<FDesktopWindow&>(owningWindow).getHandle());
         if (!hwnd) return {};
 
         OPENFILENAME openFilename = { };

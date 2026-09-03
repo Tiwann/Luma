@@ -90,7 +90,7 @@ namespace Luma
         m_MouseState.currentButtons[(uint32_t)button] = state;
     }
 
-    void FInput::updateMousePosition(FVector2d position)
+    void FInput::updateMousePosition(const FVector2d& position)
     {
         m_MouseState.previousPosition = m_MouseState.currentPosition;
         m_MouseState.currentPosition = position;

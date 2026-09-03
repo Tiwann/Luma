@@ -4,7 +4,7 @@
 #include "Luma/Core/Export.h"
 #include "Luma/Math/Vector.h"
 
-struct RGFW_window;
+struct GLFWwindow;
 
 namespace Luma
 {
@@ -31,9 +31,12 @@ namespace Luma
         FString getTitle() const;
         void setTitle(const FString& title);
 
-        RGFW_window* getHandle() const;
+        GLFWwindow* getHandle() const;
     private:
-        RGFW_window* m_Handle = nullptr;
+        GLFWwindow* m_Handle = nullptr;
         FString m_Title;
+        bool m_Focused = false;
+        bool m_Maximized = false;
+        bool m_Minimized = false;
     };
 }

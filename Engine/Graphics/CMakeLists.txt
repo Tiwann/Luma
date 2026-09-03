@@ -13,6 +13,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/Renderer2D.cpp
         Source/Rendering/TextureUtils.cpp
         Source/Rendering/ResourceBarrier.cpp
+        Source/Rendering/Viewport.cpp
         #Source/Rendering/SceneRenderer.cpp
         #Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
@@ -80,7 +81,7 @@ endif ()
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
     target_link_directories(luma-graphics PRIVATE ${VULKAN_SDK_INC_DIR})
-    target_link_libraries(luma-graphics PRIVATE luma::rgfw volk::volk volk::volk_headers Vulkan::Headers GPUOpen::VulkanMemoryAllocator)
+    target_link_libraries(luma-graphics PRIVATE glfw volk::volk volk::volk_headers Vulkan::Headers GPUOpen::VulkanMemoryAllocator)
     target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_VULKAN)
 endif ()
 

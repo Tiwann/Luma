@@ -3,7 +3,11 @@ add_subdirectory(volk)
 set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
 endif ()
 
-add_subdirectory(rgfw)
+set(GLFW_BUILD_DOCS OFF)
+set(GLFW_INSTALL OFF)
+set(GLFW_LIBRARY_TYPE STATIC)
+add_subdirectory(glfw)
+set_target_properties(glfw PROPERTIES FOLDER luma-vendor)
 
 set(SPIRV_REFLECT_EXECUTABLE OFF)
 set(SPIRV_REFLECT_STATIC_LIB ON)

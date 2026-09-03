@@ -24,6 +24,11 @@ namespace Luma
         return m_Height;
     }
 
+    FRect2u ISwapchain::getBounds() const
+    {
+        return {0, 0, m_Width, m_Height};
+    }
+
     EFormat ISwapchain::getFormat() const
     {
         return m_Format;

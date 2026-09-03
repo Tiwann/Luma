@@ -6,23 +6,9 @@
 #include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 
-#ifdef LUMA_PLATFORM_WINDOWS
-#define VK_USE_PLATFORM_WIN32_KHR
-#elifdef LUMA_PLATFORM_LINUX
-#define VK_USE_PLATFORM_WAYLAND_KHR
-#endif
-#include <volk.h>
-#define RGFW_VULKAN
-#define RGFW_IMPLEMENTATION
-#define RGFW_NO_INCLUDE_VULKAN
-#define RGFW_WINDOWS
-#define RGFW_VULKAN
-#define RGFW_IMPLEMENTATION
-#include <rgfw/rgfw.h>
+#include <GLFW/glfw3.h>
 #include <imgui_impl_vulkan.h>
-
-#define RGFW_IMGUI_IMPLEMENTATION
-#include <rgfw/imgui_impl_rgfw.h>
+#include <imgui_impl_glfw.h>
 
 namespace Luma::Vulkan
 {
@@ -32,7 +18,7 @@ namespace Luma::Vulkan
 
         if (FDesktopWindow* desktopWindow = dynamic_cast<FDesktopWindow*>(rendererDesc.window))
         {
-            if(!ImGui_ImplRgfw_InitForVulkan(desktopWindow->getHandle(), true))
+            if(!ImGui_ImplGlfw_InitForVulkan(desktopWindow->getHandle(), true))
                 return false;
         }
 
@@ -92,7 +78,7 @@ namespace Luma::Vulkan
             ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(id));
 
         ImGui_ImplVulkan_Shutdown();
-        ImGui_ImplRgfw_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext(m_Context);
         if (m_Sampler) m_Sampler->destroy();
     }
@@ -100,7 +86,7 @@ namespace Luma::Vulkan
     void FImguiRendererImpl::beginFrame()
     {
         ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplRgfw_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
@@ -116,10 +102,9 @@ namespace Luma::Vulkan
         if (!drawData) return;
 
         const FCommandBufferImpl* cmdBufferImpl = static_cast<FCommandBufferImpl*>(cmdBuffer);
-        const uint32_t width = m_Device->getSwapchain()->getWidth();
-        const uint32_t height = m_Device->getSwapchain()->getHeight();
-        cmdBuffer->setViewport(FViewport(0, 0, width, height, 0.0f, 1.0f));
-        cmdBuffer->setScissor(FScissor(0, 0, width, height));
+        const ISwapchain* swapchain = m_Device->getSwapchain();
+        cmdBuffer->setViewport(FViewport(swapchain->getBounds().as<float>()));
+        cmdBuffer->setScissor(FScissor(swapchain->getBounds()));
         ImGui_ImplVulkan_RenderDrawData(drawData, cmdBufferImpl->getHandle());
     }
 

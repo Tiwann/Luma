@@ -7,5 +7,7 @@ namespace Luma
     {
         FScissor(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height)
         : FRect2u(x, y, width, height) {};
+
+        FScissor(const FRect2u& rect) : FRect2u(rect){}
     };
 }
