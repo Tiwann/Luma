@@ -1,14 +1,14 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Memory/RefCounted.h"
 
 namespace Luma
 {
     struct IShaderProgram;
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     struct FComputePipelineDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         IShaderProgram* computeShader = nullptr;
     };
     

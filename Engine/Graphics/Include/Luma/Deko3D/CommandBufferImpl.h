@@ -5,7 +5,7 @@
 
 namespace Luma::Deko3d
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FCommandBufferImpl : public ICommandBuffer
     {
@@ -54,7 +54,7 @@ namespace Luma::Deko3d
         friend class FQueueImpl;
         DkCmdList getListHandle() const { return m_ListHandle; };
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         EQueueType m_CmdBufferType = EQueueType::None;
         DkCmdBuf m_Handle = nullptr;
         DkMemBlock m_MemBlock = nullptr;

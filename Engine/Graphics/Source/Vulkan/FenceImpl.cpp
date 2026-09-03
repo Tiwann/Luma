@@ -1,5 +1,5 @@
-﻿#include "Luma/Vulkan/FenceImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/FenceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include <volk.h>
 
@@ -18,7 +18,7 @@ namespace Luma::Vulkan
         createInfo.pNext = &semaphoreExt;
         createInfo.flags = 0;
 
-        m_Device = static_cast<FRenderDeviceImpl*>(fenceDesc.device);
+        m_Device = static_cast<FGpuDeviceImpl*>(fenceDesc.device);
         vkDestroySemaphore(m_Device->getHandle(), m_Handle, nullptr);
         if (VK_FAILED(vkCreateSemaphore(m_Device->getHandle(), &createInfo, nullptr, &m_Handle)))
             return false;

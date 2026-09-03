@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ColorChannel.h"
 #include "CullMode.h"
 #include "FrontFace.h"
@@ -12,7 +12,7 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct IShaderProgram;
 
     struct FInputAssemblyState
@@ -78,7 +78,7 @@ namespace Luma
 
     struct FRenderPipelineDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         const IShaderProgram* vertexShader = nullptr;
         const IShaderProgram* tessellationControlShader = nullptr;
         const IShaderProgram* tessellationEvaluationShader = nullptr;

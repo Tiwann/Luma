@@ -1,14 +1,14 @@
-﻿#include "Luma/Rendering/BufferUtils.h"
+#include "Luma/Rendering/BufferUtils.h"
 #include "Luma/Memory/Ref.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Fence.h"
 #include "Luma/Rendering/Queue.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 
 namespace Luma::BufferUtils
 {
-    IBuffer* createStagingBuffer(IRenderDevice* device, const void* data, size_t size)
+    IBuffer* createStagingBuffer(IGpuDevice* device, const void* data, size_t size)
     {
         FBufferDesc bufferDesc;
         bufferDesc.size = size;
@@ -22,7 +22,7 @@ namespace Luma::BufferUtils
         return stagingBuffer;
     }
 
-    IBuffer* createVertexBuffer(IRenderDevice* device, const void* data, const size_t size)
+    IBuffer* createVertexBuffer(IGpuDevice* device, const void* data, const size_t size)
     {
         Ref<IBuffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
         if (!stagingBuffer) return nullptr;
@@ -62,7 +62,7 @@ namespace Luma::BufferUtils
         return nullptr;
     }
 
-    IBuffer* createIndexBuffer(IRenderDevice* device, const void* data, const size_t size)
+    IBuffer* createIndexBuffer(IGpuDevice* device, const void* data, const size_t size)
     {
         Ref<IBuffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
         if (!stagingBuffer) return nullptr;

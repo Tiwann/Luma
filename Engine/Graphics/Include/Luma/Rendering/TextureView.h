@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "TextureAspect.h"
 #include "ComponentMapping.h"
 #include "Luma/Runtime/Format.h"
@@ -8,12 +8,12 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct ITexture;
 
     struct FTextureViewDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         const ITexture* texture = nullptr;
         EFormat format = EFormat::None;
         FTextureAspectFlags aspectFlags = ETextureAspectBits::None;

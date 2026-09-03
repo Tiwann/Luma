@@ -1,10 +1,10 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Rendering/ComputePipeline.h"
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class FComputePipelineImpl : public IComputePipeline
     {
@@ -14,7 +14,7 @@ namespace Luma::Vulkan
 
         VkPipeline getHandle() const { return m_Handle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkPipeline m_Handle = nullptr;
     };
 }

@@ -2,7 +2,7 @@
 #include <Luma/Runtime/DesktopWindow.h>
 #include <Luma/Runtime/Flags.h>
 #include <Luma/Runtime/Time.h>
-#include <Luma/Rendering/RenderDevice.h>
+#include <Luma/Rendering/GpuDevice.h>
 #include <Luma/Rendering/ShaderCompiler.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/RenderPassDesc.h>
@@ -20,14 +20,14 @@ int main()
     const FWindowDesc windowDesc { "Hello Triangle", WIDTH, HEIGHT, EWindowCreateBits::Centered };
     Ref<FDesktopWindow> window = createWindow(windowDesc);
 
-    FRenderDeviceDesc renderDeviceDesc;
-    renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
-    renderDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
-    renderDeviceDesc.window = window;
-    renderDeviceDesc.vSync = true;
-    Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
+    FGpuDeviceDesc gpuDeviceDesc;
+    gpuDeviceDesc.deviceType = EGpuDeviceType::Vulkan;
+    gpuDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
+    gpuDeviceDesc.window = window;
+    gpuDeviceDesc.vSync = true;
+    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
 
-    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(renderDevice);
+    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(gpuDevice);
 
     FTime::initialize();
 
@@ -43,10 +43,10 @@ int main()
         renderer->drawText(strfmt("DeltaTime: {:.3f}ms", deltaTime), {0, 0}, 20, FColor::Cyan);
         renderer->end();
 
-        if (renderDevice->beginFrame())
+        if (gpuDevice->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = renderDevice->getCommandBuffer();
-            const ITextureView* swapchainTexture = renderDevice->getAcquiredSwapchainTextureView();
+            ICommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
+            const ITextureView* swapchainTexture = gpuDevice->getAcquiredSwapchainTextureView();
 
             FRenderPassTarget colorAttachment;
             colorAttachment.type = ERenderPassTargetType::Color;
@@ -63,8 +63,8 @@ int main()
             renderer->render(cmdBuffer, WIDTH, HEIGHT);
             cmdBuffer->endRenderPass();
 
-            renderDevice->endFrame();
-            renderDevice->present();
+            gpuDevice->endFrame();
+            gpuDevice->present();
         }
     }
 

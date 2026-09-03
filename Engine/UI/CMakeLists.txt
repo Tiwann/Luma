@@ -22,6 +22,7 @@ luma_generate_export_header(TARGET luma-ui MODULE_NAME UI)
 
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_link_libraries(luma-ui PRIVATE luma::rgfw volk::volk)
+    target_compile_definitions(luma-ui PRIVATE VK_USE_PLATFORM_WIN32_KHR)
     target_sources(luma-ui PRIVATE ${LUMA_UI_VULKAN_SRC})
 endif ()
 

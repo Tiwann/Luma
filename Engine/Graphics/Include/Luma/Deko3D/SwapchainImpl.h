@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Rendering/Swapchain.h"
 #include "Luma/Graphics/Export.h"
 #include "DekoFwd.h"
@@ -10,7 +10,7 @@ namespace Luma
 
 namespace Luma::Deko3d
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FSwapchainImpl final : public ISwapchain
     {
@@ -34,7 +34,7 @@ namespace Luma::Deko3d
     private:
         struct Private;
         Private* m_Private = nullptr;
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         DkSwapchain m_Handle = nullptr;
         bool m_IsValid = false;
     };

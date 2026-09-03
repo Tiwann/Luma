@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FFenceImpl : public IFence
     {
@@ -21,7 +21,7 @@ namespace Luma::Vulkan
 
         VkSemaphore getHandle() const { return m_Handle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkSemaphore m_Handle = nullptr;
     };
 }

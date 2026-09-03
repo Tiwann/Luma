@@ -1,9 +1,9 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Audio/AudioDevice.h"
 #include "Luma/Containers/String.h"
 #include "Luma/Math/Vector.h"
 #include "Luma/Memory/Ref.h"
-#include "Luma/Rendering/RenderDeviceType.h"
+#include "Luma/Rendering/GpuDeviceType.h"
 #include "Luma/Rendering/Renderer2D.h"
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Window.h"
@@ -31,7 +31,7 @@ namespace Luma
         void exit();
 
         virtual FApplicationConfig getConfiguration() const = 0;
-        virtual ERenderDeviceType getRenderDeviceType() const = 0;
+        virtual EGpuDeviceType getGpuDeviceType() const = 0;
 
         virtual void onInit(){}
         virtual void onUpdate(float deltaTime){}
@@ -45,7 +45,7 @@ namespace Luma
         float getDeltaTime() const;
         Ref<IWindow> getWindow() const;
         Ref<IAudioDevice> getAudioDevice() const;
-        Ref<IRenderDevice> getRenderDevice() const;
+        Ref<IGpuDevice> getGpuDevice() const;
         Ref<FRenderer2D> getRenderer2D() const;
 
         FRect2<uint32_t> getWindowBounds() const;
@@ -57,7 +57,7 @@ namespace Luma
 
     private:
         Ref<IWindow> m_Window = nullptr;
-        Ref<IRenderDevice> m_RenderDevice = nullptr;
+        Ref<IGpuDevice> m_GpuDevice = nullptr;
         Ref<IImguiRenderer> m_ImguiRenderer = nullptr;
         Ref<FRenderer2D> m_Renderer2D = nullptr;
         Ref<IAudioDevice> m_AudioDevice = nullptr;

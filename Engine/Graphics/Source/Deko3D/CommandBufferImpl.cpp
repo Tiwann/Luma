@@ -1,5 +1,5 @@
 #include "Luma/Deko3D/CommandBufferImpl.h"
-#include "Luma/Deko3D/RenderDeviceImpl.h"
+#include "Luma/Deko3D/GpuDeviceImpl.h"
 #include "Luma/Deko3D/BufferImpl.h"
 #include "Luma/Deko3D/Conversions.h"
 #include "Luma/Memory/Memory.h"
@@ -20,7 +20,7 @@ namespace Luma::Deko3d
         if (!cmdBufferDesc.device) return false;
         if (cmdBufferDesc.queueType == EQueueType::None) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(cmdBufferDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(cmdBufferDesc.device);
         const DkDevice deviceHandle = device->getHandle();
 
         DkCmdBufMaker maker;

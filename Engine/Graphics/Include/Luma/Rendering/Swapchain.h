@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Containers/StringView.h"
 #include "Luma/Runtime/Format.h"
 #include "PresentMode.h"
@@ -7,14 +7,14 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct ITexture;
     struct ITextureView;
     struct IQueue;
 
     struct FSwapchainDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         EFormat format = EFormat::None;
         ESwapchainBuffering buffering = ESwapchainBuffering::None;
         EPresentMode presentMode = EPresentMode::Unknown;
@@ -37,7 +37,7 @@ namespace Luma
         EPresentMode getPresentMode() const;
         uint32_t getTextureCount() const;
 
-        IRenderDevice* getDevice() const;
+        IGpuDevice* getDevice() const;
 
         void invalidate();
         virtual bool isValid() const;
@@ -48,7 +48,7 @@ namespace Luma
 
         virtual void setName(FStringView name) {}
     protected:
-        IRenderDevice* m_Device = nullptr;
+        IGpuDevice* m_Device = nullptr;
         EFormat m_Format = EFormat::None;
         ESwapchainBuffering m_Buffering = ESwapchainBuffering::None;
         EPresentMode m_PresentMode = EPresentMode::Unknown;

@@ -7,11 +7,11 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     struct FFenceDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         uint64_t initialValue = 0;
     };
 

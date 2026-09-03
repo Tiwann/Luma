@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Queue.h"
 #include "VulkanFwd.h"
@@ -9,12 +9,12 @@ namespace Luma::Vulkan
     class FSwapchainImpl;
     class FCommandBufferImpl;
     class FFenceImpl;
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FQueueImpl final : public IQueue
     {
     public:
-        explicit FQueueImpl(FRenderDeviceImpl* device);
+        explicit FQueueImpl(FGpuDeviceImpl* device);
 
         void waitIdle() override;
         bool executeCommandBuffers(const FQueueExecuteInfo& executeInfo) override;
@@ -35,7 +35,7 @@ namespace Luma::Vulkan
 
         VkCommandPool createCommandPool();
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkQueue m_Handle = nullptr;
         uint32_t m_Index = uint32_t(-1);
     };

@@ -23,9 +23,9 @@ namespace Luma
         return config;
     }
 
-    ERenderDeviceType FEditorApplication::getRenderDeviceType() const
+    EGpuDeviceType FEditorApplication::getGpuDeviceType() const
     {
-        return ERenderDeviceType::Vulkan;
+        return EGpuDeviceType::Vulkan;
     }
 
     void FEditorApplication::onInit()

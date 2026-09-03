@@ -1,6 +1,6 @@
-﻿#include "Luma/Vulkan/ComputePipelineImpl.h"
+#include "Luma/Vulkan/ComputePipelineImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include <volk.h>
 
 
@@ -12,7 +12,7 @@ namespace Luma::Vulkan
         if (!pipelineDesc.computeShader) return false;
         //if (pipelineDesc.computeShader->getStage() != EShaderStageBits::Compute) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(pipelineDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(pipelineDesc.device);
         FShaderImpl* shader = static_cast<FShaderImpl*>(pipelineDesc.computeShader);
 
         VkPipelineShaderStageCreateInfo stageCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };

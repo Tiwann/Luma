@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Buffer.h"
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FBufferImpl final : public IBuffer
     {
@@ -26,7 +26,7 @@ namespace Luma::Vulkan
 
         void setName(FStringView name) override;
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkBuffer m_Handle = nullptr;
         VmaAllocation m_Allocation = nullptr;
     };

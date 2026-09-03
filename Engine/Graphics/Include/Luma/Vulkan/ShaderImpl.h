@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class FShaderImpl : public IShaderProgram
     {
@@ -18,7 +18,7 @@ namespace Luma::Vulkan
 
         VkShaderModule getShaderModule() const { return m_ShaderModule; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkShaderModule m_ShaderModule = nullptr;
     };
 }

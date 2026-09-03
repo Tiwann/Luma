@@ -1,10 +1,10 @@
-﻿#include "Luma/Rendering/TextureUtils.h"
+#include "Luma/Rendering/TextureUtils.h"
 #include "Luma/Rendering/BufferUtils.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Fence.h"
 #include "Luma/Rendering/Queue.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Memory/Ref.h"
 
@@ -12,7 +12,7 @@
 
 namespace Luma::TextureUtils
 {
-    bool uploadTextureData(IRenderDevice* device, ITexture* texture, uint32_t arrayIndex, uint32_t mipLevel,
+    bool uploadTextureData(IGpuDevice* device, ITexture* texture, uint32_t arrayIndex, uint32_t mipLevel,
                            const void* data, size_t dataSize)
     {
         if (!device) return false;
@@ -69,7 +69,7 @@ namespace Luma::TextureUtils
         return true;
     }
 
-    ITexture* loadTexture(IRenderDevice* device, FStringView filepath)
+    ITexture* loadTexture(IGpuDevice* device, FStringView filepath)
     {
         stbi_set_flip_vertically_on_load(true);
         int32_t width = 0, height = 0;
@@ -92,7 +92,7 @@ namespace Luma::TextureUtils
         return texture;
     }
 
-    ITexture* loadTexture(IRenderDevice* device, const void* data, uint64_t dataSize)
+    ITexture* loadTexture(IGpuDevice* device, const void* data, uint64_t dataSize)
     {
         stbi_set_flip_vertically_on_load(true);
         int32_t width = 0, height = 0;

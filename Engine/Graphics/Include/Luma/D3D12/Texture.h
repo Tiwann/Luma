@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Rendering/Texture.h"
 
 struct ID3D12Resource;
@@ -12,7 +12,7 @@ typedef void ID3D12ImageView;
 
 namespace Nova::D3D12
 {
-    class RenderDevice;
+    class GpuDevice;
     class RenderTarget;
     class SwapchainImpl;
 
@@ -29,7 +29,7 @@ namespace Nova::D3D12
         friend SwapchainImpl;
         friend RenderTarget;
 
-        RenderDevice* m_Device = nullptr;
+        GpuDevice* m_Device = nullptr;
         ID3D12Image* m_Image = nullptr;
         ID3D12ImageView* m_ImageView = nullptr;
         ID3D12Allocation* m_Allocation = nullptr;

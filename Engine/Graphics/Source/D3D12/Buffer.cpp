@@ -1,5 +1,5 @@
-﻿#include "Luma/D3D12/Buffer.h"
-#include "Luma/D3D12/RenderDeviceImpl.h"
+#include "Luma/D3D12/Buffer.h"
+#include "Luma/D3D12/GpuDeviceImpl.h"
 #include <D3D12MemAlloc.h>
 #include <directx/d3d12.h>
 
@@ -32,7 +32,7 @@ namespace Luma::D3D12
         resourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
         resourceDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(bufferDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(bufferDesc.device);
         ID3D12Allocator* allocator = device->getAllocator();
         if (!allocator) return false;
 

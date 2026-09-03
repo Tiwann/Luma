@@ -1,7 +1,10 @@
-﻿#include "Luma/D3D12/ImguiRendererImpl.h"
-#include "Luma/D3D12/RenderDeviceImpl.h"
+#include "Luma/D3D12/ImguiRendererImpl.h"
+#include "Luma/D3D12/GpuDeviceImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 
+#define RGFW_WINDOWS
+#define RGFW_VULKAN
+#define RGFW_IMPLEMENTATION
 #include <rgfw/rgfw.h>
 #include <imgui_impl_dx12.h>
 #define RGFW_IMGUI_IMPLEMENTATION
@@ -20,7 +23,7 @@ namespace Luma::D3D12
             ImGui_ImplRgfw_InitForD3D12(desktopWindow->getHandle(), true);
         }
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(rendererDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(rendererDesc.device);
         const FSwapchainImpl* swapchain = static_cast<FSwapchainImpl*>(device->getSwapchain());
         const FQueueImpl* renderQueue = static_cast<FQueueImpl*>(device->getRenderQueue());
 

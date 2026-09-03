@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/BindingSetLayoutImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Containers/Array.h"
 #include <volk.h>
@@ -46,7 +46,7 @@ namespace Luma::Vulkan
         layoutCreateInfo.bindingCount = bindings.count();
         layoutCreateInfo.pBindings = bindings.data();
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(layoutDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(layoutDesc.device);
         const VkDevice deviceHandle = device->getHandle();
 
         vkDestroyDescriptorSetLayout(deviceHandle, m_Handle, nullptr);

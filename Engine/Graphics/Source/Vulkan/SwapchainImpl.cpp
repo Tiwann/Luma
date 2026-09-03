@@ -1,5 +1,5 @@
-﻿#include "Luma/Vulkan/SwapchainImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/SwapchainImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/CommandBufferImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/ImmediateExecutorImpl.h"
@@ -13,7 +13,7 @@ namespace Luma::Vulkan
 {
     bool FSwapchainImpl::initialize(const FSwapchainDesc& swapchainDesc)
     {
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(swapchainDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(swapchainDesc.device);
         const VkSurfaceKHR surfaceHandle = device->getSurface();
         const VkDevice deviceHandle = device->getHandle();
         const FQueueImpl* graphicsQueue = static_cast<FQueueImpl*>(device->getRenderQueue());
@@ -54,7 +54,7 @@ namespace Luma::Vulkan
             return false;
 
         for (uint32_t i = 0; i < (uint32_t)m_Buffering; i++)
-            setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_IMAGE, m_Images[i], strfmt("Swapchain Image [{}]", i));
+            setVulkanObjectDebugName(static_cast<FGpuDeviceImpl*>(m_Device), VK_OBJECT_TYPE_IMAGE, m_Images[i], strfmt("Swapchain Image [{}]", i));
 
         TArray<VkImageMemoryBarrier2> barriers;
         for (size_t i = 0; i < getTextureCount(); i++)
@@ -106,7 +106,7 @@ namespace Luma::Vulkan
 
     void FSwapchainImpl::destroy()
     {
-        const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
+        const FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
 
         for (size_t i = 0; i < getTextureCount(); i++)
@@ -122,7 +122,7 @@ namespace Luma::Vulkan
 
     bool FSwapchainImpl::acquireNextTexture(uint32_t& textureIndex, VkSemaphore textureAvailableSemaphore)
     {
-        const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
+        const FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(m_Device);
         const VkDevice deviceHandle = device->getHandle();
         const VkResult result = vkAcquireNextImageKHR(deviceHandle, m_Handle, 1'000'000'000, textureAvailableSemaphore, nullptr, &textureIndex);
         if (result == VK_SUCCESS || result == VK_SUBOPTIMAL_KHR)
@@ -164,7 +164,7 @@ namespace Luma::Vulkan
         if (!m_Device) return nullptr;
         LUMA_ASSERT(index <= 3, "Index out of swapchain's image count range!");
         FTextureImpl& texture = m_Textures[index];
-        texture.m_Device = static_cast<FRenderDeviceImpl*>(m_Device);
+        texture.m_Device = static_cast<FGpuDeviceImpl*>(m_Device);
         texture.m_Image = m_Images[index];
         texture.m_Format = m_Format;
         texture.m_Width = m_Width;
@@ -189,7 +189,7 @@ namespace Luma::Vulkan
 
         const uint32_t frameIndex = m_Device->getFrameIndex();
         FTextureViewImpl& view = m_TextureViews[frameIndex];
-        view.m_Device = static_cast<FRenderDeviceImpl*>(m_Device);
+        view.m_Device = static_cast<FGpuDeviceImpl*>(m_Device);
         view.m_Handle = m_ImageViews[frameIndex];
         view.m_Format = m_Format;
         view.m_Width = m_Width;
@@ -204,6 +204,6 @@ namespace Luma::Vulkan
 
     void FSwapchainImpl::setName(FStringView name)
     {
-        setVulkanObjectDebugName(static_cast<FRenderDeviceImpl*>(m_Device), VK_OBJECT_TYPE_SWAPCHAIN_KHR, m_Handle, name);
+        setVulkanObjectDebugName(static_cast<FGpuDeviceImpl*>(m_Device), VK_OBJECT_TYPE_SWAPCHAIN_KHR, m_Handle, name);
     }
 }

@@ -1,8 +1,8 @@
-﻿
+
 
 set(LUMA_GRAPHICS_SRC
         Source/Rendering/Camera.cpp
-        Source/Rendering/RenderDevice.cpp
+        Source/Rendering/GpuDevice.cpp
         Source/Rendering/CommandBuffer.cpp
         Source/Rendering/Swapchain.cpp
         Source/Rendering/Sampler.cpp
@@ -24,7 +24,7 @@ set(LUMA_GRAPHICS_SRC
 set(LUMA_VULKAN_SRC
         Source/Vulkan/VulkanMemoryAllocator.cpp
         Source/Vulkan/VulkanUtils.cpp
-        Source/Vulkan/RenderDeviceImpl.cpp
+        Source/Vulkan/GpuDeviceImpl.cpp
         Source/Vulkan/SamplerImpl.cpp
         Source/Vulkan/SwapchainImpl.cpp
         Source/Vulkan/CommandBufferImpl.cpp
@@ -43,7 +43,7 @@ set(LUMA_VULKAN_SRC
 
 
 set(LUMA_D3D12_SRC
-        Source/D3D12/RenderDeviceImpl.cpp
+        Source/D3D12/GpuDeviceImpl.cpp
         Source/D3D12/Buffer.cpp
         Source/D3D12/SwapchainImpl.cpp
         Source/D3D12/QueueImpl.cpp
@@ -57,7 +57,7 @@ set(LUMA_WEBGPU_SRC
 )
 
 set(LUMA_DEKO3D_SRC
-    Source/Deko3D/RenderDeviceImpl.cpp
+    Source/Deko3D/GpuDeviceImpl.cpp
     Source/Deko3D/SwapchainImpl.cpp
     Source/Deko3D/QueueImpl.cpp
     Source/Deko3D/CommandBufferImpl.cpp
@@ -74,7 +74,7 @@ luma_generate_export_header(TARGET luma-graphics MODULE_NAME GRAPHICS)
 
 if(LUMA_ENGINE_BUILD_WEBGPU)
     target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
-    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY)
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY )
 endif ()
 
 if(LUMA_ENGINE_BUILD_VULKAN)

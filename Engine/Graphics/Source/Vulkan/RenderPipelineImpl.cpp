@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/RenderPipelineImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 
@@ -23,7 +23,7 @@ namespace Luma::Vulkan
 
         if (!allShaders.any([](const auto* p) { return p;})) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(pipelineDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(pipelineDesc.device);
 
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyState { VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
         inputAssemblyState.primitiveRestartEnable = pipelineDesc.inputAssembly.primitiveRestartEnable;

@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/TextureView.h"
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
     class FSwapchainImpl;
 
     class LUMA_GRAPHICS_API FTextureViewImpl final : public ITextureView
@@ -19,6 +19,6 @@ namespace Luma::Vulkan
     private:
         friend FSwapchainImpl;
         VkImageView m_Handle = nullptr;
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
     };
 }

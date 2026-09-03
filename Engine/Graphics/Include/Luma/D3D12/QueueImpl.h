@@ -1,15 +1,15 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Rendering/Queue.h"
 #include "D3D12Fwd.h"
 
 namespace Luma::D3D12
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class FQueueImpl final : public IQueue
     {
     public:
-        bool initialize(FRenderDeviceImpl* device, EQueueType queueType);
+        bool initialize(FGpuDeviceImpl* device, EQueueType queueType);
         void destroy();
 
         bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence, FPipelineStageFlags stageMask) override;
@@ -19,7 +19,7 @@ namespace Luma::D3D12
 
         ID3D12CommandQueue* getHandle() const { return m_Handle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         ID3D12CommandQueue* m_Handle = nullptr;
         TArray<const ISemaphore*> m_WaitSemaphores;
         TArray<const ISemaphore*> m_SignalSemaphores;

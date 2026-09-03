@@ -1,5 +1,5 @@
 #include "Luma/Deko3D/SwapchainImpl.h"
-#include "Luma/Deko3D/RenderDeviceImpl.h"
+#include "Luma/Deko3D/GpuDeviceImpl.h"
 #include "Luma/Deko3D/Conversions.h"
 #include "Luma/Deko3D/SwapchainPrivate.h"
 #include "Luma/Memory/Memory.h"
@@ -18,7 +18,7 @@ namespace Luma::Deko3d
         m_Private = new Private;
 
         if (!swapchainDesc.device) return false;
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(swapchainDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(swapchainDesc.device);
         const DkDevice deviceHandle = device->getHandle();
 
         DkImageLayoutMaker imageLayoutMaker;

@@ -1,7 +1,7 @@
-﻿#include <Luma/Memory/Ref.h>
+#include <Luma/Memory/Ref.h>
 #include <Luma/Runtime/Window.h>
 #include <Luma/Runtime/Path.h>
-#include <Luma/Rendering/RenderDevice.h>
+#include <Luma/Rendering/GpuDevice.h>
 #include <Luma/Rendering/ShaderProgram.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/RenderPipeline.h>
@@ -17,21 +17,21 @@ int main()
     Ref<IWindow> window = createWindow({"Hello Triangle!", 800, 600, EWindowCreateBits::Centered | EWindowCreateBits::Resizable});
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
-    FRenderDeviceDesc renderDeviceDesc;
-    renderDeviceDesc.window = window;
-    renderDeviceDesc.deviceType = ERenderDeviceType::Auto;
-    renderDeviceDesc.buffering = ESwapchainBuffering::TripleBuffering;
-    renderDeviceDesc.vSync = false;
+    FGpuDeviceDesc gpuDeviceDesc;
+    gpuDeviceDesc.window = window;
+    gpuDeviceDesc.deviceType = EGpuDeviceType::Auto;
+    gpuDeviceDesc.buffering = ESwapchainBuffering::TripleBuffering;
+    gpuDeviceDesc.vSync = false;
 
-    Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
-    LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
+    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
+    LUMA_ASSERT(gpuDevice, "Render device failed to create! Exiting application.");
 
-    /*Ref<IFence> fence = renderDevice->createFence();
+    /*Ref<IFence> fence = gpuDevice->createFence();
 
 
 
-    Ref<IShaderProgram> vertexShader = renderDevice->createShader(FPath::getAssetPath("Shaders/HelloTriangle.slang.vert.spv"));
-    Ref<IShaderProgram> fragmentShader = renderDevice->createShader(FPath::getAssetPath("Shaders/HelloTriangle.slang.frag.spv"));
+    Ref<IShaderProgram> vertexShader = gpuDevice->createShader(FPath::getAssetPath("Shaders/HelloTriangle.slang.vert.spv"));
+    Ref<IShaderProgram> fragmentShader = gpuDevice->createShader(FPath::getAssetPath("Shaders/HelloTriangle.slang.frag.spv"));
 
     FRenderPipelineDesc pipelineDesc;
     pipelineDesc.vertexShader = vertexShader;
@@ -39,17 +39,17 @@ int main()
     pipelineDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
     pipelineDesc.colorFormatCount = 1;
 
-    Ref<IRenderPipeline> pipeline = renderDevice->createRenderPipeline(pipelineDesc);
+    Ref<IRenderPipeline> pipeline = gpuDevice->createRenderPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");*/
 
     while (!window->shouldClose())
     {
         window->pollEvents();
 
-        if (renderDevice->beginFrame())
+        if (gpuDevice->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = renderDevice->getCommandBuffer();
-            const ITextureView* swapchainTexture = renderDevice->getAcquiredSwapchainTextureView();
+            ICommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
+            const ITextureView* swapchainTexture = gpuDevice->getAcquiredSwapchainTextureView();
 
             FRenderPassTarget colorTarget;
             colorTarget.type = ERenderPassTargetType::Color;
@@ -69,11 +69,11 @@ int main()
             cmdBuffer->draw(3, 1, 0, 0);
             cmdBuffer->endRenderPass();*/
 
-            renderDevice->endFrame();
-            renderDevice->present();
+            gpuDevice->endFrame();
+            gpuDevice->present();
         }
     }
 
-    renderDevice->waitIdle();
+    gpuDevice->waitIdle();
     return 0;
 }

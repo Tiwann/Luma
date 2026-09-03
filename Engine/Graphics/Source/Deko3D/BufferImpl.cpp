@@ -1,5 +1,5 @@
 #include "Luma/Deko3D/BufferImpl.h"
-#include "Luma/Deko3D/RenderDeviceImpl.h"
+#include "Luma/Deko3D/GpuDeviceImpl.h"
 #include "Luma/Deko3D/Conversions.h"
 #include <deko3d.h>
 
@@ -13,7 +13,7 @@ namespace Luma::Deko3d
         if (bufferDesc.usage == EBufferUsage::None) return false;
         if (bufferDesc.size == 0) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(bufferDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(bufferDesc.device);
         const DkDevice deviceHandle = device->getHandle();
 
         DkMemBlockMaker maker;

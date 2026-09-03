@@ -3,7 +3,7 @@
 #include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/SamplerImpl.h"
 #include "Luma/Vulkan/TextureViewImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Runtime/Assertion.h"
 #include <volk.h>
@@ -16,7 +16,7 @@ namespace Luma::Vulkan
         if (!bindingSetDesc.layout) return false;
 
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(bindingSetDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(bindingSetDesc.device);
         const VkDescriptorPool descriptorPool = device->getDescriptorPool();
 
         const FBindingSetLayoutImpl* bindingSetLayout = static_cast<const FBindingSetLayoutImpl*>(bindingSetDesc.layout);

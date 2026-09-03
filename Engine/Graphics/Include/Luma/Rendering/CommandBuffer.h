@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Math/Color.h"
 #include "Luma/Math/Vector3.h"
@@ -23,7 +23,7 @@ namespace Luma
     struct FTextureSubresourceRange;
     struct FBufferBarrier;
     struct FTextureBarrier;
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct IBuffer;
     struct IRenderPipeline;
     struct IComputePipeline;
@@ -33,7 +33,7 @@ namespace Luma
 
     struct FCommandBufferDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         IQueue* queue = nullptr;
     };
 

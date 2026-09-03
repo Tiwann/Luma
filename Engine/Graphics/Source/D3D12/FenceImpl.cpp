@@ -1,5 +1,5 @@
 #include "Luma/D3D12/FenceImpl.h"
-#include "Luma/D3D12/RenderDeviceImpl.h"
+#include "Luma/D3D12/GpuDeviceImpl.h"
 
 #include <directx/d3d12.h>
 
@@ -7,7 +7,7 @@ namespace Luma::D3D12
 {
     bool FFenceImpl::initialize(const FFenceDesc& fenceDesc)
     {
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(fenceDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(fenceDesc.device);
         ID3D12Device15* deviceHandle = device->getHandle();
 
         if (DX_FAILED(deviceHandle->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_Handle))))

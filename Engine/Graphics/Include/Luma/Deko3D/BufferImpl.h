@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Buffer.h"
 #include "DekoFwd.h"
 
 namespace Luma::Deko3d
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FBufferImpl final : public IBuffer
     {
@@ -22,7 +22,7 @@ namespace Luma::Deko3d
 
         DkMemBlock getHandle() const { return m_Handle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         DkMemBlock m_Handle = nullptr;
     };
 }

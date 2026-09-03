@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "TextureImpl.h"
 #include "TextureViewImpl.h"
 #include "Luma/Graphics/Export.h"
@@ -8,7 +8,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
     class FSemaphoreImpl;
 
     class LUMA_GRAPHICS_API FSwapchainImpl final : public ISwapchain

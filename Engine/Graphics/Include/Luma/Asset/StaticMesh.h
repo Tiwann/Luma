@@ -42,7 +42,7 @@ namespace Luma
         void destroy() override;
 
         EAssetType getAssetType() const override { return EAssetType::StaticMesh; }
-        bool loadFromFile(FStringView filepath, IRenderDevice* device);
+        bool loadFromFile(FStringView filepath, IGpuDevice* device);
 
         void setMaterial(uint32_t slot, Ref<FMaterial> material);
 

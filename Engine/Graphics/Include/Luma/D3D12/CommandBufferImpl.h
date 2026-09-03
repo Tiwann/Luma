@@ -1,11 +1,11 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Rendering/CommandBuffer.h"
 #include "D3D12Fwd.h"
 
 
 namespace Luma::D3D12
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class FCommandBufferImpl : public ICommandBuffer
     {
@@ -48,10 +48,10 @@ namespace Luma::D3D12
         void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset,uint64_t size) override;
         void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arraySlice,uint32_t mipLevel) override;
 
-        FRenderDeviceImpl* getDevice() const { return m_Device; }
+        FGpuDeviceImpl* getDevice() const { return m_Device; }
         ID3D12GraphicsCommandList10* getHandle() const { return m_Handle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         ID3D12GraphicsCommandList10* m_Handle = nullptr;
         EQueueType m_QueueType = EQueueType::None;
     };

@@ -1,5 +1,8 @@
 ﻿#include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Math/Vector2.h"
+
+#define RGFW_WINDOWS
+#define RGFW_IMPLEMENTATION
 #include <rgfw/rgfw.h>
 
 #include "Luma/Input/Immediate.h"

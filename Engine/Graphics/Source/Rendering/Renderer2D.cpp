@@ -1,10 +1,10 @@
-﻿#include "Luma/Rendering/Renderer2D.h"
+#include "Luma/Rendering/Renderer2D.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/RenderPipeline.h"
 #include "Luma/Rendering/ShaderProgram.h"
 #include "Luma/Rendering/BindingSet.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/Texture.h"
 #include "Luma/Containers/Array.h"
 #include "Luma/Containers/StringConversion.h"
@@ -25,22 +25,22 @@
 
 namespace Luma
 {
-    FRenderer2D::FRenderer2D(Ref<IRenderDevice> renderDevice)
+    FRenderer2D::FRenderer2D(Ref<IGpuDevice> gpuDevice)
     {
-        initialize(renderDevice);
+        initialize(gpuDevice);
     }
 
-    bool FRenderer2D::initialize(Ref<IRenderDevice> renderDevice)
+    bool FRenderer2D::initialize(Ref<IGpuDevice> gpuDevice)
     {
-        if (!renderDevice) return false;
-        m_RenderDevice = renderDevice;
+        if (!gpuDevice) return false;
+        m_GpuDevice = gpuDevice;
 
         m_DefaultFont = Ref<FFont>::create();
-        m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, renderDevice);
+        m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, gpuDevice);
         setFont(m_DefaultFont);
 
-        m_VertexShader = m_RenderDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.vert.spv"));
-        m_FragmentShader = m_RenderDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.frag.spv"));
+        m_VertexShader = m_GpuDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.vert.spv"));
+        m_FragmentShader = m_GpuDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.frag.spv"));
 
         FVertexInputLayout vertexLayout;
         vertexLayout.addInputBinding(0, EVertexInputRate::Vertex);
@@ -51,7 +51,7 @@ namespace Luma
         vertexLayout.addInputAttribute({"TEXID", EShaderDataType::UInt, 0});
 
         FRenderPipelineDesc gpDesc;
-        gpDesc.device = m_RenderDevice;
+        gpDesc.device = m_GpuDevice;
         gpDesc.vertexShader = m_VertexShader;
         gpDesc.fragmentShader = m_FragmentShader;
         gpDesc.rasterization.cullMode = ECullMode::None;
@@ -59,32 +59,32 @@ namespace Luma
         gpDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
         gpDesc.colorBlend[0] = FColorBlendState(true, FBlendFunction::alphaBlend());
         gpDesc.inputLayout = vertexLayout;
-        m_Pipeline = m_RenderDevice->createRenderPipeline(gpDesc);
+        m_Pipeline = m_GpuDevice->createRenderPipeline(gpDesc);
         if (!m_Pipeline) return false;
 
         FBufferDesc vbDesc;
         vbDesc.alwaysMapped = true;
         vbDesc.usage = EBufferUsage::VertexBuffer;
         vbDesc.size = MAX_QUAD * 4 * sizeof(QuadVertex);
-        m_VertexBuffer = m_RenderDevice->createBuffer(vbDesc);
+        m_VertexBuffer = m_GpuDevice->createBuffer(vbDesc);
         if (!m_VertexBuffer) return false;
 
         FBufferDesc ibDesc;
         ibDesc.alwaysMapped = true;
         ibDesc.usage = EBufferUsage::IndexBuffer;
         ibDesc.size = MAX_QUAD * 6 * sizeof(uint32_t);
-        m_IndexBuffer = m_RenderDevice->createBuffer(ibDesc);
+        m_IndexBuffer = m_GpuDevice->createBuffer(ibDesc);
         if (!m_IndexBuffer) return false;
 
         FSamplerDesc samplerDesc = FSamplerDesc();
         samplerDesc.magFilter = EFilter::Linear;
         samplerDesc.magFilter = EFilter::Linear;
-        m_Sampler = m_RenderDevice->getOrCreateSampler(samplerDesc);
+        m_Sampler = m_GpuDevice->getOrCreateSampler(samplerDesc);
         if (!m_Sampler) return false;
 
         samplerDesc.magFilter = EFilter::Nearest;
         samplerDesc.minFilter = EFilter::Nearest;
-        m_SpriteSampler = m_RenderDevice->getOrCreateSampler(samplerDesc);
+        m_SpriteSampler = m_GpuDevice->getOrCreateSampler(samplerDesc);
 
         //m_BindingSet = m_Shader->createBindingSet(0);
         if (!m_BindingSet) return false;
@@ -97,8 +97,8 @@ namespace Luma
 
     void FRenderer2D::destroy()
     {
-        m_RenderDevice->waitIdle();
-        m_RenderDevice = nullptr;
+        m_GpuDevice->waitIdle();
+        m_GpuDevice = nullptr;
         m_DefaultFont = nullptr;
         m_Font = nullptr;
         //m_Shader = nullptr;

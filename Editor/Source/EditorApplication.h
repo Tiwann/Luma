@@ -8,7 +8,7 @@ namespace Luma
     public:
         FEditorApplication(const int32_t argc, char** argv) : IApplication(argc, argv){}
         FApplicationConfig getConfiguration() const override;
-        ERenderDeviceType getRenderDeviceType() const override;
+        EGpuDeviceType getGpuDeviceType() const override;
 
         void onInit() override;
         void onDrawGui() override;

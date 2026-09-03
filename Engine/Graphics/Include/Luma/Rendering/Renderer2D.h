@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Asset/Font.h"
 #include "Luma/Containers/StringView.h"
 #include "Luma/Math/Color.h"
@@ -11,7 +11,7 @@
 #include "Luma/Runtime/Sprite.h"
 #include "Luma/Runtime/TextAlignment.h"
 #include "Luma/Runtime/TextStyle.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/Sampler.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/ShaderProgram.h"
@@ -35,10 +35,10 @@ namespace Luma
         static constexpr uint32_t MAX_QUAD = FMath::sqr(512);
     public:
         FRenderer2D() = default;
-        FRenderer2D(Ref<IRenderDevice> renderDevice);
+        FRenderer2D(Ref<IGpuDevice> gpuDevice);
         ~FRenderer2D() override = default;
 
-        bool initialize(Ref<IRenderDevice> renderDevice);
+        bool initialize(Ref<IGpuDevice> gpuDevice);
         void destroy();
 
         /// Begins a new batch
@@ -145,7 +145,7 @@ namespace Luma
         void addQuad(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color, QuadMode quadMode, uint32_t textureId);
         uint32_t getOrAddTexture(const ITexture* texture);
 
-        Ref<IRenderDevice> m_RenderDevice = nullptr;
+        Ref<IGpuDevice> m_GpuDevice = nullptr;
         Ref<IShaderProgram> m_VertexShader = nullptr;
         Ref<IShaderProgram> m_FragmentShader = nullptr;
         Ref<IRenderPipeline> m_Pipeline = nullptr;

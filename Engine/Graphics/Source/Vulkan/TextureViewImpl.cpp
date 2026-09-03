@@ -1,6 +1,6 @@
-﻿#include "Luma/Vulkan/TextureViewImpl.h"
+#include "Luma/Vulkan/TextureViewImpl.h"
 #include "Luma/Vulkan/TextureImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 
@@ -31,7 +31,7 @@ namespace Luma::Vulkan
         imageViewCreateInfo.subresourceRange.layerCount = 1;
         imageViewCreateInfo.components = convert<VkComponentMapping>(textureViewDesc.mapping);
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(textureViewDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(textureViewDesc.device);
         const VkDevice deviceHandle = device->getHandle();
         vkDestroyImageView(deviceHandle, m_Handle, nullptr);
         if (vkCreateImageView(deviceHandle, &imageViewCreateInfo, nullptr, &m_Handle) != VK_SUCCESS)

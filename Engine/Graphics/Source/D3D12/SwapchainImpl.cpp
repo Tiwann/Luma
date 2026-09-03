@@ -1,9 +1,12 @@
 ﻿#include "Luma/D3D12/SwapchainImpl.h"
 #include "Luma/D3D12/Conversions.h"
-#include "Luma/D3D12/RenderDeviceImpl.h"
+#include "Luma/D3D12/GpuDeviceImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include <dxgi1_6.h>
 #include <directx/d3d12.h>
+#define RGFW_WINDOWS
+#define RGFW_VULKAN
+#define RGFW_IMPLEMENTATION
 #include <rgfw/rgfw.h>
 
 namespace Luma::D3D12
@@ -12,7 +15,7 @@ namespace Luma::D3D12
     {
         if (!desc.device) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(desc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(desc.device);
         FDesktopWindow* window = device->getWindow();
         IDXGIFactory7* factory = device->getFactory();
 
@@ -87,7 +90,7 @@ namespace Luma::D3D12
     {
         if (m_Handle) m_Handle->Release();
 
-        for (size_t imageIndex = 0; imageIndex < m_Device->getFrameCount(); imageIndex++)
+        for (size_t imageIndex = 0; imageIndex < m_Device->getTextureCount(); imageIndex++)
             m_Images[imageIndex]->Release();
     }
 
@@ -96,8 +99,8 @@ namespace Luma::D3D12
         if (!m_Device) return false;
         m_Device->waitIdle();
 
-        const FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(m_Device);
-        const uint32_t bufferCount = device->getFrameCount();
+        const FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(m_Device);
+        const uint32_t bufferCount = device->getTextureCount();
         const DXGI_FORMAT format = convert<DXGI_FORMAT>(m_ImageFormat);
         if (DX_FAILED(m_Handle->ResizeBuffers(bufferCount, width, height, format, 0)))
             return false;

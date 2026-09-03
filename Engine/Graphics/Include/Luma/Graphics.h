@@ -1,2 +1,2 @@
-﻿#pragma once
-#include "Rendering/RenderDevice.h"
+#pragma once
+#include "Rendering/GpuDevice.h"

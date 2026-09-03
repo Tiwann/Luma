@@ -3,7 +3,7 @@
 #include "Luma/Containers/HashMap.h"
 #include "Luma/Memory/Ref.h"
 #include "Luma/Rendering/BindingType.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/BindingSet.h"
 #include "Luma/Rendering/ShaderProgram.h"
 #include "Luma/Runtime/Asset.h"
@@ -12,7 +12,7 @@ namespace Luma
 {
     struct FMaterialDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         IShaderProgram* shader = nullptr;
     };
 
@@ -35,7 +35,7 @@ namespace Luma
 
     private:
         EMaterialType m_MaterialType = EMaterialType::Opaque;
-        Ref<IRenderDevice> m_Device = nullptr;
+        Ref<IGpuDevice> m_Device = nullptr;
         Ref<IShaderProgram> m_Shader = nullptr;
         Ref<IBindingSet> m_BindingSet = nullptr;
         //THashMap<EMaterialType, Ref<IGraphicsPipeline>> m_Pipelines;

@@ -9,7 +9,7 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct IBuffer;
     struct ISampler;
     struct ITexture;
@@ -17,7 +17,7 @@ namespace Luma
 
     struct FBindingSetDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         const IBindingSetLayout* layout = nullptr;
     };
 

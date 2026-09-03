@@ -9,7 +9,7 @@ namespace msdfgen { class FontHandle; }
 namespace Luma
 {
     struct ITexture;
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     enum class EFontAtlasType
     {
@@ -46,8 +46,8 @@ namespace Luma
         static EAssetType getStaticAssetType() { return EAssetType::Font; }
         EAssetType getAssetType() const override { return getStaticAssetType(); }
 
-        bool loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device);
-        bool loadAndGenerate(FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device);
+        bool loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGpuDevice* device);
+        bool loadAndGenerate(FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGpuDevice* device);
         bool loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath);
         void destroy() override;
 

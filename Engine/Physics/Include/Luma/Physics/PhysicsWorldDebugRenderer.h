@@ -6,7 +6,7 @@
 namespace Luma
 {
     class FPhysicsWorld;
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     struct FPhysicsWorldDebugRendererDesc
     {
@@ -22,7 +22,7 @@ namespace Luma
     class FPhysicsWorldDebugRenderer : public IRefCounted<FPhysicsWorldDebugRenderer>
     {
     public:
-        explicit FPhysicsWorldDebugRenderer(const FPhysicsWorld* world, IRenderDevice* renderDevice,
+        explicit FPhysicsWorldDebugRenderer(const FPhysicsWorld* world, IGpuDevice* gpuDevice,
                                             const FPhysicsWorldDebugRendererDesc& desc =
                                                 FPhysicsWorldDebugRendererDesc());
 
@@ -31,7 +31,7 @@ namespace Luma
         void destroy();
 
         void setPhysicsWorld(const FPhysicsWorld* world);
-        IRenderDevice* getRenderDevice() const;
+        IGpuDevice* getGpuDevice() const;
         void drawWorld();
 
     private:
@@ -39,7 +39,7 @@ namespace Luma
         Impl* m_Pimpl = nullptr;
 
         const FPhysicsWorld* m_World = nullptr;
-        IRenderDevice* m_RenderDevice = nullptr;
+        IGpuDevice* m_GpuDevice = nullptr;
         Ref<ITexture> m_RenderTexture = nullptr;
     };
 }

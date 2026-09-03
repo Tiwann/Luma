@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Math/Vector2.h"
 #include <cstdint>
@@ -8,14 +8,14 @@ struct ImGuiContext;
 namespace Luma
 {
     struct IWindow;
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct ICommandBuffer;
     struct ITextureView;
 
     struct FImguiRendererDesc
     {
         IWindow* window = nullptr;
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         uint32_t sampleCount = 0;
     };
 

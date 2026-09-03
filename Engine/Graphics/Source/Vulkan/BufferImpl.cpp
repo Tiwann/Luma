@@ -1,5 +1,5 @@
-﻿#include "Luma/Vulkan/BufferImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include "Luma/Containers/StringFormat.h"
 #include <vk_mem_alloc.h>
@@ -62,7 +62,7 @@ namespace Luma::Vulkan
             break;
         }
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(bufferDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(bufferDesc.device);
         const VmaAllocator allocatorHandle = device->getAllocator();
 
         vmaDestroyBuffer(allocatorHandle, m_Handle, m_Allocation);

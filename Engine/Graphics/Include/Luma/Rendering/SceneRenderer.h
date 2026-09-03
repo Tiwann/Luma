@@ -13,7 +13,7 @@ namespace Luma
     class FGBuffer : public IRefCounted<FGBuffer>
     {
     public:
-        bool initialize(IRenderDevice* device, uint32_t width, uint32_t height);
+        bool initialize(IGpuDevice* device, uint32_t width, uint32_t height);
         void destroy();
 
         Ref<ITexture> getAlbedoTexture() const { return m_Albedo; }
@@ -33,7 +33,7 @@ namespace Luma
 
     struct FSceneRendererDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         uint32_t width = 0;
         uint32_t height = 0;
     };
@@ -59,7 +59,7 @@ namespace Luma
         bool m_Begin = false;
         uint32_t m_Width = 0;
         uint32_t m_Height = 0;
-        IRenderDevice* m_Device = nullptr;
+        IGpuDevice* m_Device = nullptr;
         FScene* m_Scene = nullptr;
         Ref<FGBuffer> m_GBuffer = nullptr;
         Ref<ITexture> m_FinalTexture = nullptr;

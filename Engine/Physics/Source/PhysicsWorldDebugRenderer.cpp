@@ -14,13 +14,13 @@ namespace Luma
     static void drawShape(void* userShape, b3WorldTransform transform, b3HexColor color, void* context)
     {
         FPhysicsWorldDebugRenderer* debugRenderer = static_cast<FPhysicsWorldDebugRenderer*>(context);
-        IRenderDevice* renderDevice = debugRenderer->getRenderDevice();
+        IGpuDevice* gpuDevice = debugRenderer->getGpuDevice();
 
     }
 
-    FPhysicsWorldDebugRenderer::FPhysicsWorldDebugRenderer(const FPhysicsWorld* world, IRenderDevice* renderDevice,
+    FPhysicsWorldDebugRenderer::FPhysicsWorldDebugRenderer(const FPhysicsWorld* world, IGpuDevice* gpuDevice,
         const FPhysicsWorldDebugRendererDesc& desc)
-            : m_World(world), m_RenderDevice(renderDevice)
+            : m_World(world), m_GpuDevice(gpuDevice)
     {
         m_Pimpl = new Impl;
         m_Pimpl->debugDraw.context = this;
@@ -38,9 +38,9 @@ namespace Luma
         m_World = world;
     }
 
-    IRenderDevice* FPhysicsWorldDebugRenderer::getRenderDevice() const
+    IGpuDevice* FPhysicsWorldDebugRenderer::getGpuDevice() const
     {
-        return m_RenderDevice;
+        return m_GpuDevice;
     }
 
     void FPhysicsWorldDebugRenderer::drawWorld()

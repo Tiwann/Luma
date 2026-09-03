@@ -1,5 +1,5 @@
-﻿#include "Luma/D3D12/CommandBufferImpl.h"
-#include "Luma/D3D12/RenderDeviceImpl.h"
+#include "Luma/D3D12/CommandBufferImpl.h"
+#include "Luma/D3D12/GpuDeviceImpl.h"
 #include <directx/d3d12.h>
 
 #include "Luma/Containers/StringConversion.h"
@@ -19,7 +19,7 @@ namespace Luma::D3D12
     {
         if (!cmdBufferDesc.device) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(cmdBufferDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(cmdBufferDesc.device);
         ID3D12Device13* deviceHandle = device->getHandle();
         ID3D12CommandAllocator* commandAllocator = device->getCommandAllocator(cmdBufferDesc.queueType);
 

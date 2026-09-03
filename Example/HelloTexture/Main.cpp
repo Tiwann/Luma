@@ -16,7 +16,7 @@ static constexpr uint32_t HEIGHT = 600;
 extern uint32_t g_Samples;
 extern bool g_Vsync;
 extern ESwapchainBuffering g_Buffering;
-extern ERenderDeviceType g_DeviceType;
+extern EGpuDeviceType g_DeviceType;
 bool parseArgs(int, const char**);
 
 
@@ -35,17 +35,17 @@ int main(int argc, const char** argv)
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
-    FRenderDeviceDesc renderDeviceDesc;
-    renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
-    renderDeviceDesc.buffering = g_Buffering;
-    renderDeviceDesc.window = window;
-    renderDeviceDesc.vSync = g_Vsync;
+    FGpuDeviceDesc gpuDeviceDesc;
+    gpuDeviceDesc.deviceType = EGpuDeviceType::Vulkan;
+    gpuDeviceDesc.buffering = g_Buffering;
+    gpuDeviceDesc.window = window;
+    gpuDeviceDesc.vSync = g_Vsync;
 
-    Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
-    LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
-    window->resizedEvent.bind([&renderDevice](uint32_t, uint32_t)
+    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
+    LUMA_ASSERT(gpuDevice, "Render device failed to create! Exiting application.");
+    window->resizedEvent.bind([&gpuDevice](uint32_t, uint32_t)
     {
-        ISwapchain* swapchain = renderDevice->getSwapchain();
+        ISwapchain* swapchain = gpuDevice->getSwapchain();
         swapchain->invalidate();
     });
 
@@ -54,11 +54,11 @@ int main(int argc, const char** argv)
     shaderDesc.moduleName = "HelloTexture";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTexture.slang");
 
-    Ref<IShaderProgram> shader = renderDevice->createShader(shaderDesc);
+    Ref<IShaderProgram> shader = gpuDevice->createShader(shaderDesc);
     LUMA_ASSERT(shader, "Failed to create shader! Exiting application.");
 
     FRenderPipelineDesc pipelineDesc;
-    pipelineDesc.device = renderDevice;
+    pipelineDesc.device = gpuDevice;
     pipelineDesc.shaderProgram = shader;
     pipelineDesc.depthStencil.depthTestEnable = false;
     pipelineDesc.depthStencil.stencilTestEnable = false;
@@ -67,21 +67,21 @@ int main(int argc, const char** argv)
     pipelineDesc.colorFormatCount = 1;
     pipelineDesc.multisample = {g_Samples};
 
-    Ref<IRenderPipeline> pipeline = renderDevice->createRenderPipeline(pipelineDesc);
+    Ref<IRenderPipeline> pipeline = gpuDevice->createRenderPipeline(pipelineDesc);
     LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
     FSamplerDesc samplerDesc;
     samplerDesc.minFilter = EFilter::Linear;
     samplerDesc.magFilter = EFilter::Linear;
-    Ref<ISampler> sampler = renderDevice->createSampler(samplerDesc);
+    Ref<ISampler> sampler = gpuDevice->createSampler(samplerDesc);
     LUMA_ASSERT(sampler, "Failed to create sampler! Exiting application.");
 
-    Ref<ITexture> texture = TextureUtils::loadTexture(renderDevice, FPath::getAssetPath("Textures/minecraft-grass.png"));
+    Ref<ITexture> texture = TextureUtils::loadTexture(gpuDevice, FPath::getAssetPath("Textures/minecraft-grass.png"));
     LUMA_ASSERT(texture, "Failed to load texture! Exiting application.");
 
     FMaterialDesc materialDesc;
     materialDesc.shader = shader;
-    Ref<FMaterial> material = renderDevice->createMaterial(materialDesc);
+    Ref<FMaterial> material = gpuDevice->createMaterial(materialDesc);
     LUMA_ASSERT(material, "Failed to create material! Exiting application.");
     material->setCombinedTextureSampler("texture", sampler, texture);
 
@@ -103,10 +103,10 @@ int main(int argc, const char** argv)
 
         window->pollEvents();
 
-        if (renderDevice->beginFrame())
+        if (gpuDevice->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = renderDevice->getCommandBuffer();
-            const ITextureView* swapchainTexture = renderDevice->getAcquiredSwapchainTextureView();
+            ICommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
+            const ITextureView* swapchainTexture = gpuDevice->getAcquiredSwapchainTextureView();
 
             FRenderPassTarget colorAttachment;
             colorAttachment.type = ERenderPassTargetType::Color;
@@ -127,11 +127,11 @@ int main(int argc, const char** argv)
             cmdBuffer->draw(6, 1, 0, 0);
             cmdBuffer->endRenderPass();
 
-            renderDevice->endFrame();
-            renderDevice->present();
+            gpuDevice->endFrame();
+            gpuDevice->present();
         }
     }
 
-    renderDevice->waitIdle();
+    gpuDevice->waitIdle();
     return 0;
 }

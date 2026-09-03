@@ -1,5 +1,5 @@
-﻿#include "Luma/D3D12/QueueImpl.h"
-#include "Luma/D3D12/RenderDeviceImpl.h"
+#include "Luma/D3D12/QueueImpl.h"
+#include "Luma/D3D12/GpuDeviceImpl.h"
 
 #include <directx/d3d12.h>
 #include <dxgi1_6.h>
@@ -8,7 +8,7 @@
 
 namespace Luma::D3D12
 {
-    bool FQueueImpl::initialize(FRenderDeviceImpl* device, EQueueType queueType)
+    bool FQueueImpl::initialize(FGpuDeviceImpl* device, EQueueType queueType)
     {
         if (!device) return false;
         auto* deviceHandle = device->getHandle();

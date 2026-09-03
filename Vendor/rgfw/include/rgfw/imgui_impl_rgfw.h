@@ -78,7 +78,6 @@ IMGUI_IMPL_API void     ImGui_ImplRgfw_CharCallback(RGFW_window* window, unsigne
 #ifdef RGFW_IMGUI_IMPLEMENTATION
 
 #include <chrono>
-#include "rgfw.h"
 
 // RGFW data
 enum RgfwClientApi
@@ -124,15 +123,16 @@ static const char* ImGui_ImplRgfw_GetClipboardText(ImGuiContext* ctx)
 {
     RGFW_UNUSED(ctx);
 
-    size_t size;
-    return RGFW_readClipboard(&size);
+    const RGFW_dataTransfer* transfer = RGFW_readClipboard(RGFW_dataText);
+    return transfer->data;
 }
 
 static void ImGui_ImplRgfw_SetClipboardText(ImGuiContext* ctx, const char* text)
 {
     RGFW_UNUSED(ctx);
     RGFW_UNUSED(text);
-    RGFW_writeClipboard(text, static_cast<u32>(strlen(text)));
+    RGFW_dataTransfer transfer{text, strlen(text), RGFW_dataText};
+    RGFW_writeClipboard(&transfer);
 }
 
 static ImGuiKey ImGui_ImplRgfw_KeyToImGuiKey(int key)

@@ -1,6 +1,6 @@
 #include <Luma/Containers/String.h>
 #include <Luma/Containers/StringView.h>
-#include <Luma/Rendering/RenderDeviceType.h>
+#include <Luma/Rendering/GpuDeviceType.h>
 #include <Luma/Rendering/SwpchainBuffering.h>
 
 using namespace Luma;
@@ -8,7 +8,7 @@ using namespace Luma;
 uint32_t g_Samples = 1;
 bool g_Vsync = false;
 ESwapchainBuffering g_Buffering = ESwapchainBuffering::DoubleBuffering;
-ERenderDeviceType g_DeviceType = ERenderDeviceType::Vulkan;
+EGpuDeviceType g_DeviceType = EGpuDeviceType::Vulkan;
 
 void printHelp()
 {
@@ -82,9 +82,9 @@ bool parseArgs(int argc, const char** argv)
 
         const auto& value = args[gapiIt + 1];
         if (value == "vulkan")
-            g_DeviceType = ERenderDeviceType::Vulkan;
+            g_DeviceType = EGpuDeviceType::Vulkan;
         else if (value == "d3d12")
-            g_DeviceType = ERenderDeviceType::Vulkan;
+            g_DeviceType = EGpuDeviceType::Vulkan;
         else
         {
             printHelp();

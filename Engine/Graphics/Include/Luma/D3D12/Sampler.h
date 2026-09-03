@@ -1,10 +1,10 @@
-﻿#pragma once
+#pragma once
 #include "DescriptorHeap.h"
 #include "Rendering/Sampler.h"
 
 namespace Nova::D3D12
 {
-    class RenderDevice;
+    class GpuDevice;
     class Sampler : public Nova::Sampler
     {
     public:
@@ -12,6 +12,6 @@ namespace Nova::D3D12
         void Destroy() override;
     private:
         DescriptorHandle m_Handle = nullptr;
-        RenderDevice* m_Device = nullptr;
+        GpuDevice* m_Device = nullptr;
     };
 }

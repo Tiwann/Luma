@@ -1,10 +1,10 @@
 #include "Luma/Rendering/GraphicsPipelineCache.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/GraphicsPipeline.h"
 
 namespace Luma
 {
-    FGraphicsPipelineCache::FGraphicsPipelineCache(Ref<IRenderDevice> renderDevice) : m_Device(renderDevice)
+    FGraphicsPipelineCache::FGraphicsPipelineCache(Ref<IGpuDevice> gpuDevice) : m_Device(gpuDevice)
     {
     }
 

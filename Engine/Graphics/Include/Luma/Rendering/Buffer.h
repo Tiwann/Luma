@@ -7,11 +7,11 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     struct FBufferDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         EBufferUsage usage = EBufferUsage::None;
         uint64_t size = 0;
         bool alwaysMapped = false;

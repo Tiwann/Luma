@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FCommandBufferImpl : public ICommandBuffer
     {
@@ -53,7 +53,7 @@ namespace Luma::Vulkan
         VkCommandBuffer getHandle() const { return m_Handle; }
         VkCommandPool getPool() const { return m_PoolHandle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         EQueueType m_CmdBufferType = EQueueType::None;
         VkCommandBuffer m_Handle = nullptr;
         VkCommandPool m_PoolHandle = nullptr;

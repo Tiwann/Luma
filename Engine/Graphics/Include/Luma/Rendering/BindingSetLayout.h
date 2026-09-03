@@ -4,11 +4,11 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     struct FBindingSetLayoutDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         uint32_t setIndex = 0;
         TArray<FShaderBinding> bindings;
     };

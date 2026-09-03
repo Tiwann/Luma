@@ -1,4 +1,4 @@
-﻿#include "Luma/Rendering/Swapchain.h"
+#include "Luma/Rendering/Swapchain.h"
 
 namespace Luma
 {
@@ -39,7 +39,7 @@ namespace Luma
         return (uint32_t)m_Buffering;
     }
 
-    IRenderDevice* ISwapchain::getDevice() const
+    IGpuDevice* ISwapchain::getDevice() const
     {
         return m_Device;
     }

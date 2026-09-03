@@ -27,20 +27,20 @@ int main()
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
-    FRenderDeviceDesc renderDeviceDesc;
-    renderDeviceDesc.deviceType = ERenderDeviceType::Vulkan;
-    renderDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
-    renderDeviceDesc.window = window;
-    renderDeviceDesc.vSync = false;
+    FGpuDeviceDesc gpuDeviceDesc;
+    gpuDeviceDesc.deviceType = EGpuDeviceType::Vulkan;
+    gpuDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
+    gpuDeviceDesc.window = window;
+    gpuDeviceDesc.vSync = false;
 
-    Ref<IRenderDevice> renderDevice = createRenderDevice(renderDeviceDesc);
-    LUMA_ASSERT(renderDevice, "Render device failed to create! Exiting application.");
+    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
+    LUMA_ASSERT(gpuDevice, "Render device failed to create! Exiting application.");
 
     FString filepath = FPath::openFileDialog("Open a model file.", FPath::getDesktopDirectory(), FDialogFilters::ModelFilters, *window);
     if (filepath.isEmpty()) return 1;
 
     Ref<FStaticMesh> staticMesh = new FStaticMesh();
-    if (!staticMesh->loadFromFile(filepath, renderDevice)) return 1;
+    if (!staticMesh->loadFromFile(filepath, gpuDevice)) return 1;
 
 
     Ref<FScene> scene = new FScene();
@@ -55,7 +55,7 @@ int main()
     window->resizedEvent.bindMember<FCameraComponent>(cameraComponent, &FCameraComponent::setDimensions);
 
     FSceneRendererDesc rendererDesc;
-    rendererDesc.device = renderDevice;
+    rendererDesc.device = gpuDevice;
     rendererDesc.width = WIDTH;
     rendererDesc.height = HEIGHT;
 
@@ -72,10 +72,10 @@ int main()
 
         sceneRenderer->end();
 
-        if (renderDevice->beginFrame())
+        if (gpuDevice->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = renderDevice->getCommandBuffer();
-            const ITextureView* swapchainTexture = renderDevice->getAcquiredSwapchainTextureView();
+            ICommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
+            const ITextureView* swapchainTexture = gpuDevice->getAcquiredSwapchainTextureView();
             sceneRenderer->render(cmdBuffer);
 
             /*FRenderPassAttachment colorAttachment;
@@ -93,11 +93,11 @@ int main()
             cmdBuffer->endRenderPass();
             */
 
-            renderDevice->endFrame();
-            renderDevice->present();
+            gpuDevice->endFrame();
+            gpuDevice->present();
         }
     }
 
-    renderDevice->waitIdle();
+    gpuDevice->waitIdle();
     return 0;
 }

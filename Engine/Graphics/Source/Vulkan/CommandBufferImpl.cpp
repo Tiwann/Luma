@@ -1,7 +1,7 @@
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Math/Functions.h"
 #include "Luma/Vulkan/CommandBufferImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/ComputePipelineImpl.h"
 #include "Luma/Vulkan/RenderPipelineImpl.h"
@@ -30,7 +30,7 @@ namespace Luma::Vulkan
     {
         if (!cmdBufferDesc.device) return false;
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(cmdBufferDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(cmdBufferDesc.device);
         const VkCommandPool commandPool = device->getCommandPool(cmdBufferDesc.queue->getQueueType());
         if (!commandPool) return false;
 

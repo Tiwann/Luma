@@ -13,7 +13,7 @@ using Luma::WeakRef;
 using Luma::IApplication;
 using Luma::ICommandBuffer;
 using Luma::FApplicationConfig;
-using Luma::ERenderDeviceType;
+using Luma::EGpuDeviceType;
 
 
 class FGameApplication : public IApplication
@@ -21,7 +21,7 @@ class FGameApplication : public IApplication
 public:
     FGameApplication(int32_t argc, char** argv);
     FApplicationConfig getConfiguration() const override;
-    ERenderDeviceType getRenderDeviceType() const override;
+    EGpuDeviceType getGpuDeviceType() const override;
 
     void onInit() override;
     void onUpdate(float deltaTime) override;

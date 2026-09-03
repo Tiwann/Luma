@@ -1,10 +1,10 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Rendering/Buffer.h"
 #include "D3D12Fwd.h"
 
 namespace Luma::D3D12
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class FBufferImpl final : public IBuffer
     {
@@ -18,7 +18,7 @@ namespace Luma::D3D12
         ID3D12Resource* getHandle() const { return m_Handle; }
         ID3D12Allocation* getAllocation() const { return m_Allocation; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         ID3D12Allocation* m_Allocation = nullptr;
         ID3D12Resource* m_Handle = nullptr;
     };

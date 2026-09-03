@@ -8,7 +8,7 @@ namespace Luma
 {
     struct IShaderProgram;
     struct IGraphicsPipeline;
-    struct IRenderDevice;
+    struct IGpuDevice;
 
     struct FGraphicsPipelineKey
     {
@@ -45,12 +45,12 @@ namespace Luma
     class FGraphicsPipelineCache
     {
     public:
-        FGraphicsPipelineCache(Ref<IRenderDevice> renderDevice);
+        FGraphicsPipelineCache(Ref<IGpuDevice> gpuDevice);
 
         void destroy();
         Ref<IGraphicsPipeline> getOrCreate(const FGraphicsPipelineKey& key);
     private:
-        Ref<IRenderDevice> m_Device = nullptr;
+        Ref<IGpuDevice> m_Device = nullptr;
         THashMap<FGraphicsPipelineKey, Ref<IGraphicsPipeline>> m_Cache;
     };
 }

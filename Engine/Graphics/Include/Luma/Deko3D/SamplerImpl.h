@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class LUMA_GRAPHICS_API FSamplerImpl : public ISampler
     {
@@ -16,7 +16,7 @@ namespace Luma::Vulkan
         EResourceState getResourceState() const final;
         void setName(FStringView name) override;
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkSampler m_Handle = nullptr;
     };
 }

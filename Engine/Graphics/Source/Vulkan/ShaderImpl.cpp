@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/ShaderImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Utility/SpirvReflectCommon.h"
 #include <volk.h>
@@ -12,7 +12,7 @@ namespace Luma::Vulkan
         if (!shaderDesc.device) return false;
 
         const auto& shaderCode = shaderDesc.shaderCode;
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(shaderDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(shaderDesc.device);
         const VkDevice deviceHandle = device->getHandle();
 
         SpvReflectShaderModule moduleReflect;

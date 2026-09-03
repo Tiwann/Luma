@@ -1,4 +1,4 @@
-﻿#include "Luma/Runtime/Application.h"
+#include "Luma/Runtime/Application.h"
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Renderer2D.h"
@@ -19,7 +19,7 @@ namespace Luma
     void IApplication::run()
     {
         const FApplicationConfig configuration = getConfiguration();
-        const ERenderDeviceType deviceType = getRenderDeviceType();
+        const EGpuDeviceType deviceType = getGpuDeviceType();
 
         FWindowDesc windowDesc;
         windowDesc.title = configuration.applicationName;
@@ -34,20 +34,20 @@ namespace Luma
         }
         m_Window->closedEvent.bindMember(this, &IApplication::exit);
 
-        FRenderDeviceDesc rdDesc;
+        FGpuDeviceDesc rdDesc;
         rdDesc.window = m_Window;
         rdDesc.buffering = ESwapchainBuffering::DoubleBuffering;
         rdDesc.vSync = configuration.vsync;
         rdDesc.deviceType = deviceType;
-        m_RenderDevice = createRenderDevice(rdDesc);
-        if (!m_RenderDevice)
+        m_GpuDevice = createGpuDevice(rdDesc);
+        if (!m_GpuDevice)
         {
             destroy();
             return;
         }
 
         FImguiRendererDesc imguiRendererDesc;
-        imguiRendererDesc.device = m_RenderDevice;
+        imguiRendererDesc.device = m_GpuDevice;
         imguiRendererDesc.sampleCount = 1;
         imguiRendererDesc.window = m_Window;
         m_ImguiRenderer = createImguiRenderer(imguiRendererDesc);
@@ -58,7 +58,7 @@ namespace Luma
         }
 
         m_Renderer2D = Ref<FRenderer2D>::create();
-        if (!m_Renderer2D->initialize(m_RenderDevice))
+        if (!m_Renderer2D->initialize(m_GpuDevice))
         {
             destroy();
             return;
@@ -109,12 +109,12 @@ namespace Luma
 
     void IApplication::render()
     {
-        if (m_RenderDevice->beginFrame())
+        if (m_GpuDevice->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = m_RenderDevice->getCommandBuffer();
+            ICommandBuffer* cmdBuffer = m_GpuDevice->getCommandBuffer();
             onPreRender(cmdBuffer);
 
-            const ITextureView* swapchainTexture = m_RenderDevice->getAcquiredSwapchainTextureView();
+            const ITextureView* swapchainTexture = m_GpuDevice->getAcquiredSwapchainTextureView();
             const FRect2<uint32_t> renderArea = {0, 0, m_Window->getWidth(), m_Window->getHeight()};
 
             FRenderPassTarget colorAttachment;
@@ -150,20 +150,20 @@ namespace Luma
             cmdBuffer->endRenderPass();
             cmdBuffer->endDebugGroup();
 
-            m_RenderDevice->endFrame();
-            m_RenderDevice->present();
+            m_GpuDevice->endFrame();
+            m_GpuDevice->present();
         }
     }
 
     void IApplication::destroy()
     {
-        if (m_RenderDevice) m_RenderDevice->waitIdle();
+        if (m_GpuDevice) m_GpuDevice->waitIdle();
         onDestroy();
         
         m_AudioDevice = nullptr;
         m_Renderer2D = nullptr;
         m_ImguiRenderer = nullptr;
-        m_RenderDevice = nullptr;
+        m_GpuDevice = nullptr;
         m_Window = nullptr;
     }
 
@@ -183,9 +183,9 @@ namespace Luma
         return m_AudioDevice;
     }
 
-    Ref<IRenderDevice> IApplication::getRenderDevice() const
+    Ref<IGpuDevice> IApplication::getGpuDevice() const
     {
-        return m_RenderDevice;
+        return m_GpuDevice;
     }
 
     Ref<FRenderer2D> IApplication::getRenderer2D() const

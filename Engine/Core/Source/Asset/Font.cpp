@@ -1,7 +1,7 @@
 #include "Luma/Asset/Font.h"
 #include "Luma/Runtime/Format.h"
 #include "Luma/Rendering/Texture.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/TextureUtils.h"
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
@@ -169,7 +169,7 @@ namespace Luma
 
 
     bool FFont::loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType,
-        const TArray<FCharacterSet>& charSets, IRenderDevice* device)
+        const TArray<FCharacterSet>& charSets, IGpuDevice* device)
     {
         msdfgen::FreetypeHandle* freetype = msdfgen::initializeFreetype();
         if (!freetype) return false;
@@ -268,7 +268,7 @@ namespace Luma
         return true;
     }
 
-    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IRenderDevice* device)
+    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGpuDevice* device)
     {
         const TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
         if (filepath.isEmpty()) return false;

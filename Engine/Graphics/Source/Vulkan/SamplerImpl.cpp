@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/SamplerImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include <volk.h>
@@ -31,8 +31,8 @@ namespace Luma::Vulkan
         samplerci.mipLodBias = 0.0f;
         samplerci.mipmapMode = convert<VkSamplerMipmapMode>(samplerDesc.mipmapFilter);
 
-        FRenderDeviceImpl* renderDevice = static_cast<FRenderDeviceImpl*>(samplerDesc.device);
-        const VkDevice deviceHandle = renderDevice->getHandle();
+        FGpuDeviceImpl* gpuDevice = static_cast<FGpuDeviceImpl*>(samplerDesc.device);
+        const VkDevice deviceHandle = gpuDevice->getHandle();
 
         vkDestroySampler(deviceHandle, m_Handle, nullptr);
         if (VK_FAILED(vkCreateSampler(deviceHandle, &samplerci, nullptr, &m_Handle)))
@@ -41,7 +41,7 @@ namespace Luma::Vulkan
             return false;
         }
 
-        m_Device = renderDevice;
+        m_Device = gpuDevice;
         m_AddressModeU = samplerDesc.addressModeU;
         m_AddressModeV = samplerDesc.addressModeV;
         m_AddressModeW = samplerDesc.addressModeW;

@@ -22,9 +22,9 @@ FApplicationConfig FGameApplication::getConfiguration() const
     return configuration;
 }
 
-ERenderDeviceType FGameApplication::getRenderDeviceType() const
+EGpuDeviceType FGameApplication::getGpuDeviceType() const
 {
-    return ERenderDeviceType::Vulkan;
+    return EGpuDeviceType::Vulkan;
 }
 
 void FGameApplication::onInit()
@@ -32,7 +32,7 @@ void FGameApplication::onInit()
     const auto& asciiCharSet = FCharacterSet::ascii();
     const auto jerseyFontFilepath = FPath::getAssetPath("Fonts/Jersey10-Regular.ttf");
     m_JerseyFont = Ref<FFont>::create();
-    m_JerseyFont->loadAndGenerate(jerseyFontFilepath, EFontAtlasType::MSDF, {asciiCharSet}, getRenderDevice());
+    m_JerseyFont->loadAndGenerate(jerseyFontFilepath, EFontAtlasType::MSDF, {asciiCharSet}, getGpuDevice());
     WeakRef<FRenderer2D> renderer = getRenderer2D();
     renderer->setFont(m_JerseyFont);
 

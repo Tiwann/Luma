@@ -64,7 +64,7 @@ namespace Luma
         m_IndexBuffer->destroy();
     }
 
-    bool FStaticMesh::loadFromFile(FStringView filepath, IRenderDevice* device)
+    bool FStaticMesh::loadFromFile(FStringView filepath, IGpuDevice* device)
     {
         if (filepath.isEmpty()) return false;
         if (!device) return false;

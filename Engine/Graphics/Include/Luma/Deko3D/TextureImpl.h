@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Graphics/Export.h"
 #include "Luma/Rendering/Texture.h"
 #include "TextureViewImpl.h"
@@ -6,7 +6,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
     class FSwapchainImpl;
 
     class LUMA_GRAPHICS_API FTextureImpl final : public ITexture
@@ -25,7 +25,7 @@ namespace Luma::Vulkan
         const ITextureView* getTextureView() const override;
     private:
         friend FSwapchainImpl;
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkImage m_Image = nullptr;
         VmaAllocation m_Allocation = nullptr;
         FTextureViewImpl m_View;

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "Luma/Runtime/Format.h"
 #include "Luma/Containers/StringView.h"
 #include "Resource.h"
@@ -9,7 +9,7 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct ITextureView;
 }
 
@@ -17,7 +17,7 @@ namespace Luma
 {
     struct FTextureDesc
     {
-        IRenderDevice* device = nullptr;
+        IGpuDevice* device = nullptr;
         FTextureUsageFlags usageFlags = ETextureUsageBits::None;
         EFormat format = EFormat::None;
         uint32_t width = 0;

@@ -2,7 +2,10 @@
 #include "Luma/Runtime/Path.h"
 #include "Luma/Runtime/DesktopWindow.h"
 
+#define RGFW_WINDOWS
+#define RGFW_IMPLEMENTATION
 #include <rgfw/rgfw.h>
+
 #include <Windows.h>
 #include <filesystem>
 

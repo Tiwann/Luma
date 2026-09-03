@@ -1,5 +1,5 @@
-﻿#include "Luma/Rendering/ImguiRenderer.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/ImguiRenderer.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include <imgui.h>
 
 #ifdef LUMA_BUILD_VULKAN
@@ -136,9 +136,9 @@ namespace Luma
         IImguiRenderer* renderer = nullptr;
         switch (rendererDesc.device->getDeviceType())
         {
-        case ERenderDeviceType::None: return nullptr;
+        case EGpuDeviceType::None: return nullptr;
 #ifdef LUMA_BUILD_VULKAN
-        case ERenderDeviceType::Vulkan:
+        case EGpuDeviceType::Vulkan:
             {
                 renderer = new Vulkan::FImguiRendererImpl();
                 if (!renderer->initialize(rendererDesc))
@@ -149,7 +149,7 @@ namespace Luma
                 return renderer;
             }
 #elifdef LUMA_BUILD_D3D12
-        case ERenderDeviceType::D3D12:
+        case EGpuDeviceType::D3D12:
             {
                 renderer = new D3D12::FImguiRendererImpl();
                 if (!renderer->initialize(rendererDesc))

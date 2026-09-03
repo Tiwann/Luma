@@ -3,11 +3,24 @@
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Luma/Rendering/Swapchain.h"
 #include "Luma/Vulkan/SamplerImpl.h"
-#include "Luma/Vulkan/RenderDeviceImpl.h"
+#include "Luma/Vulkan/GpuDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 
+#ifdef LUMA_PLATFORM_WINDOWS
+#define VK_USE_PLATFORM_WIN32_KHR
+#elifdef LUMA_PLATFORM_LINUX
+#define VK_USE_PLATFORM_WAYLAND_KHR
+#endif
+#include <volk.h>
+#define RGFW_VULKAN
+#define RGFW_IMPLEMENTATION
+#define RGFW_NO_INCLUDE_VULKAN
+#define RGFW_WINDOWS
+#define RGFW_VULKAN
+#define RGFW_IMPLEMENTATION
 #include <rgfw/rgfw.h>
 #include <imgui_impl_vulkan.h>
+
 #define RGFW_IMGUI_IMPLEMENTATION
 #include <rgfw/imgui_impl_rgfw.h>
 
@@ -23,7 +36,7 @@ namespace Luma::Vulkan
                 return false;
         }
 
-        FRenderDeviceImpl* device = static_cast<FRenderDeviceImpl*>(rendererDesc.device);
+        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(rendererDesc.device);
         const FSwapchainImpl* swapchain = static_cast<FSwapchainImpl*>(device->getSwapchain());
         const FQueueImpl* renderQueue = static_cast<FQueueImpl*>(device->getRenderQueue());
 

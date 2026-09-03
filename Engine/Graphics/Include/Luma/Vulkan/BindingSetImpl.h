@@ -4,7 +4,7 @@
 
 namespace Luma::Vulkan
 {
-    class FRenderDeviceImpl;
+    class FGpuDeviceImpl;
 
     class FBindingSetImpl : public IBindingSet
     {
@@ -25,7 +25,7 @@ namespace Luma::Vulkan
 
         VkDescriptorSet getHandle() const { return m_Handle; }
     private:
-        FRenderDeviceImpl* m_Device = nullptr;
+        FGpuDeviceImpl* m_Device = nullptr;
         VkDescriptorSet m_Handle = nullptr;
     };
 }

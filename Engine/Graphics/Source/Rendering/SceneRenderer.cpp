@@ -6,7 +6,7 @@
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/RenderPipeline.h"
 #include "Luma/Rendering/InputLayout.h"
-#include "Luma/Rendering/RenderDevice.h"
+#include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Runtime/Entity.h"
 #include "Luma/Runtime/Path.h"
@@ -53,7 +53,7 @@ namespace Luma
     };
 
 
-    bool FGBuffer::initialize(IRenderDevice* device, uint32_t width, uint32_t height)
+    bool FGBuffer::initialize(IGpuDevice* device, uint32_t width, uint32_t height)
     {
         if (!device) return false;
         if (width == 0 || height == 0) return false;
@@ -108,7 +108,7 @@ namespace Luma
         if (desc.height == 0) return false;
         if (desc.width == 0) return false;
 
-        IRenderDevice* device = desc.device;
+        IGpuDevice* device = desc.device;
 
         m_GBuffer = new FGBuffer();
         if (!m_GBuffer->initialize(device, desc.width, desc.height))

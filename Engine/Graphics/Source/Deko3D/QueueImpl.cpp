@@ -1,5 +1,5 @@
 #include "Luma/Deko3D/QueueImpl.h"
-#include "Luma/Deko3D/RenderDeviceImpl.h"
+#include "Luma/Deko3D/GpuDeviceImpl.h"
 #include "Luma/Deko3D/CommandBufferImpl.h"
 #include "Luma/Deko3D/SemaphoreImpl.h"
 #include "Luma/Deko3D/Conversions.h"
@@ -7,7 +7,7 @@
 
 namespace Luma::Deko3d
 {
-    bool FQueueImpl::initialize(FRenderDeviceImpl* device, EQueueType queueType)
+    bool FQueueImpl::initialize(FGpuDeviceImpl* device, EQueueType queueType)
     {
         const DkDevice deviceHandle = device->getHandle();
         if (!deviceHandle) return false;

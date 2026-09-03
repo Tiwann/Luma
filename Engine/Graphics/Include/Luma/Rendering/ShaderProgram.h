@@ -7,7 +7,7 @@
 
 namespace Luma
 {
-    struct IRenderDevice;
+    struct IGpuDevice;
     struct IBindingSet;
 
     struct IShaderProgram : IRefCounted<IShaderProgram>
@@ -15,7 +15,7 @@ namespace Luma
         IShaderProgram() = default;
         ~IShaderProgram() override = default;
 
-        virtual bool initialize(IRenderDevice* device) = 0;
+        virtual bool initialize(IGpuDevice* device) = 0;
         virtual void destroy() = 0;
         virtual IBindingSet* createBindingSet(uint32_t setIndex) const = 0;
 

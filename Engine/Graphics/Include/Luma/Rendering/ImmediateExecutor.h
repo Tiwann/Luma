@@ -5,7 +5,7 @@ namespace Luma
 {
     struct FImmediateExecutorDesc
     {
-        struct IRenderDevice* device = nullptr;
+        struct IGpuDevice* device = nullptr;
         struct IQueue* queue = nullptr;
     };
 
