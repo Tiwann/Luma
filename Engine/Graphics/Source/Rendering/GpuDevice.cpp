@@ -4,7 +4,7 @@
 #include "Luma/Runtime/FileUtils.h"
 
 #ifdef LUMA_BUILD_WEBGPU
-#include "WebGPU/GpuDevice.h"
+#include "Luma/WebGPU/GpuDeviceImpl.h"
 #endif
 
 #ifdef LUMA_BUILD_VULKAN
@@ -78,6 +78,8 @@ namespace Luma
     #elifdef LUMA_BUILD_OPENGL
                 device = new OpenGL::FGpuDeviceImpl();
                 break;
+    #elifdef LUMA_BUILD_WEBGPU
+                device = new WebGPU::FGpuDeviceImpl();
     #else
                 return nullptr;
     #endif
@@ -104,13 +106,20 @@ namespace Luma
         case EGpuDeviceType::Vulkan:
             device = new Vulkan::FGpuDeviceImpl();
             break;
-#elifdef LUMA_BUILD_D3D12
+#endif
+#ifdef LUMA_BUILD_D3D12
         case EGpuDeviceType::D3D12:
             device = new D3D12::FGpuDeviceImpl();
             break;
-#elifdef LUMA_BUILD_OPENGL
+#endif
+#ifdef LUMA_BUILD_OPENGL
         case EGpuDeviceType::OpenGL:
             device = new OpenGL::FGpuDeviceImpl();
+            break;
+#endif
+#ifdef LUMA_BUILD_WEBGPU
+        case EGpuDeviceType::WebGPU:
+            device = new WebGPU::FGpuDeviceImpl();
             break;
 #endif
         default: return nullptr;

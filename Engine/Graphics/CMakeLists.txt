@@ -53,8 +53,8 @@ set(LUMA_D3D12_SRC
 )
 
 set(LUMA_WEBGPU_SRC
-        External/webgpu/webgpu.c
-        Source/WebGPU/Device.cpp
+        Source/WebGPU/GpuDeviceImpl.cpp
+        Source/WebGPU/QueueImpl.cpp
 )
 
 set(LUMA_DEKO3D_SRC
@@ -75,7 +75,8 @@ luma_generate_export_header(TARGET luma-graphics MODULE_NAME GRAPHICS)
 
 if(LUMA_ENGINE_BUILD_WEBGPU)
     target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})
-    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU WGPU_SHARED_LIBRARY )
+    target_link_libraries(luma-graphics PRIVATE luma::webgpu)
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_WEBGPU)
 endif ()
 
 if(LUMA_ENGINE_BUILD_VULKAN)

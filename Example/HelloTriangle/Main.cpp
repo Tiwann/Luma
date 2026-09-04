@@ -19,17 +19,14 @@ int main()
 
     FGpuDeviceDesc gpuDeviceDesc;
     gpuDeviceDesc.window = window;
-    gpuDeviceDesc.deviceType = EGpuDeviceType::Auto;
+    gpuDeviceDesc.deviceType = EGpuDeviceType::WebGPU;
     gpuDeviceDesc.buffering = ESwapchainBuffering::TripleBuffering;
     gpuDeviceDesc.vSync = false;
 
     Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
     LUMA_ASSERT(gpuDevice, "Render device failed to create! Exiting application.");
 
-    /*Ref<IFence> fence = gpuDevice->createFence();
-
-
-
+    /*
     Ref<IShaderProgram> vertexShader = gpuDevice->createShader(FPath::getAssetPath("Shaders/HelloTriangle.slang.vert.spv"));
     Ref<IShaderProgram> fragmentShader = gpuDevice->createShader(FPath::getAssetPath("Shaders/HelloTriangle.slang.frag.spv"));
 

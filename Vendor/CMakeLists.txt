@@ -57,16 +57,22 @@ set_target_properties(msdf-atlas-gen msdfgen-core msdfgen-ext PROPERTIES FOLDER 
 
 
 if(LUMA_ENGINE_BUILD_VULKAN)
-add_subdirectory(Vulkan-Headers)
-add_subdirectory(VulkanMemoryAllocator)
-set_target_properties(VulkanMemoryAllocator Vulkan-Headers PROPERTIES FOLDER luma-vendor/vulkan)
+    add_subdirectory(Vulkan-Headers)
+    add_subdirectory(VulkanMemoryAllocator)
+    set_target_properties(VulkanMemoryAllocator Vulkan-Headers PROPERTIES FOLDER luma-vendor/vulkan)
 endif ()
 
 if(LUMA_ENGINE_BUILD_D3D12)
-add_subdirectory(DirectX-Headers)
-add_subdirectory(D3D12MemoryAllocator)
-set_target_properties(DirectX-Headers DirectX-Guids D3D12MemoryAllocator PROPERTIES FOLDER luma-vendor/d3d12)
+    add_subdirectory(DirectX-Headers)
+    add_subdirectory(D3D12MemoryAllocator)
+    set_target_properties(DirectX-Headers DirectX-Guids D3D12MemoryAllocator PROPERTIES FOLDER luma-vendor/d3d12)
 endif()
+
+if(LUMA_ENGINE_BUILD_WEBGPU)
+    add_subdirectory(glfw3webgpu)
+    add_subdirectory(webgpu)
+endif ()
+
 
 add_subdirectory(box3d)
 set_target_properties(box3d PROPERTIES FOLDER luma-vendor)
