@@ -55,6 +55,9 @@ set(LUMA_D3D12_SRC
 set(LUMA_WEBGPU_SRC
         Source/WebGPU/GpuDeviceImpl.cpp
         Source/WebGPU/QueueImpl.cpp
+        Source/WebGPU/SwapchainImpl.cpp
+        Source/WebGPU/TextureImpl.cpp
+        Source/WebGPU/TextureViewImpl.cpp
 )
 
 set(LUMA_DEKO3D_SRC

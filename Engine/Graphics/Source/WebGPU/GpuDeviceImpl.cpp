@@ -1,4 +1,8 @@
 ﻿#include "Luma/WebGPU/GpuDeviceImpl.h"
+#define GLFW_INCLUDE_NONE
+#define GLFW_EXPOSE_NATIVE_WIN32
+#include <GLFW/glfw3.h>
+#include <GLFW/glfw3native.h>
 #include <webgpu/webgpu.h>
 #include <glfw3webgpu.h>
 
@@ -88,20 +92,90 @@ namespace Luma::WebGPU
         m_DefaultQueue.initialize();
 
         GLFWwindow* window = static_cast<FDesktopWindow*>(deviceDesc.window)->getHandle();
-        m_Surface = glfwCreateWindowWGPUSurface(m_Instance, window);
-        if (!m_Surface) return false;
+        HWND hwnd = glfwGetWin32Window(window);
+        HINSTANCE hinstance = GetModuleHandle(NULL);
 
-        
+        WGPUSurfaceSourceWindowsHWND fromWindowsHWND;
+        fromWindowsHWND.chain.sType = WGPUSType_SurfaceSourceWindowsHWND;
+        fromWindowsHWND.chain.next = NULL;
+        fromWindowsHWND.hinstance = hinstance;
+        fromWindowsHWND.hwnd = hwnd;
+
+        WGPUSurfaceDescriptor surfaceDescriptor;
+        surfaceDescriptor.nextInChain = &fromWindowsHWND.chain;
+        surfaceDescriptor.label = (WGPUStringView){ NULL, WGPU_STRLEN };
+
+        m_Surface = wgpuInstanceCreateSurface(m_Instance, &surfaceDescriptor);
+
+        m_Window = deviceDesc.window;
+        m_Window->resizedEvent.bind([this](uint32_t, uint32_t) { m_Swapchain.invalidate(); });
+
+        FSwapchainDesc swapchainDesc;
+        swapchainDesc.device = this;
+        swapchainDesc.buffering = deviceDesc.buffering;
+        swapchainDesc.format = EFormat::R8G8B8A8_SRGB;
+        swapchainDesc.width = deviceDesc.window->getWidth();
+        swapchainDesc.height = deviceDesc.window->getHeight();
+        swapchainDesc.presentMode = deviceDesc.vSync ? EPresentMode::Fifo : EPresentMode::Immediate;
+        if (!m_Swapchain.initialize(swapchainDesc))
+        {
+            std::wcerr << L"Failed to initialize swapchain!\n";
+            return false;
+        }
+
         return true;
     }
 
     void FGpuDeviceImpl::destroy()
     {
+        m_Swapchain.destroy();
+
+        if (m_Surface)
+        {
+            wgpuSurfaceRelease(m_Surface);
+            m_Surface = nullptr;
+        }
+
+        if (m_Handle)
+        {
+            wgpuDeviceRelease(m_Handle);
+            m_Handle = nullptr;
+        }
+
+        if (m_Adapter)
+        {
+            wgpuAdapterRelease(m_Adapter);
+            m_Adapter = nullptr;
+        }
+
+        if (m_Instance)
+        {
+            wgpuInstanceRelease(m_Instance);
+            m_Instance = nullptr;
+        }
     }
 
     bool FGpuDeviceImpl::beginFrame()
     {
-        return false;
+        if (!m_Window) return false;
+        if (!m_Window->isAvailable()) return false;
+
+        if (!m_Swapchain.isValid())
+        {
+            waitIdle();
+
+            m_Swapchain.resize(m_Window->getWidth(), m_Window->getHeight());
+            m_FrameIndex = 0;
+            return false;
+        }
+
+        if (!m_Swapchain.acquireNextTexture(m_SwapchainImageIndex))
+        {
+            m_Swapchain.invalidate();
+            return false;
+        }
+
+        return true;
     }
 
     void FGpuDeviceImpl::endFrame()
@@ -110,6 +184,8 @@ namespace Luma::WebGPU
 
     void FGpuDeviceImpl::present()
     {
+        wgpuSurfacePresent(m_Swapchain.getHandle());
+        m_FrameIndex = (m_FrameIndex + 1) % NUM_FRAMES_IN_FLIGHT;
     }
 
     void FGpuDeviceImpl::waitIdle()
@@ -118,22 +194,22 @@ namespace Luma::WebGPU
 
     uint32_t FGpuDeviceImpl::getTextureCount() const
     {
-        return 0;
+        return m_Swapchain.getTextureCount();
     }
 
     uint32_t FGpuDeviceImpl::getFrameIndex() const
     {
-        return 0;
+        return m_FrameIndex;
     }
 
     bool FGpuDeviceImpl::hasVSync()
     {
-        return false;
+        return m_Swapchain.hasVSync();
     }
 
     ISwapchain* FGpuDeviceImpl::getSwapchain()
     {
-        return nullptr;
+        return &m_Swapchain;
     }
 
     IBuffer* FGpuDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
@@ -188,7 +264,7 @@ namespace Luma::WebGPU
 
     ITextureView* FGpuDeviceImpl::getAcquiredSwapchainTextureView()
     {
-        return nullptr;
+        return m_Swapchain.getTextureView(m_SwapchainImageIndex);
     }
 
     void FGpuDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)

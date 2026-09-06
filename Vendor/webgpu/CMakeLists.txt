@@ -2,6 +2,7 @@
 add_library(luma::webgpu ALIAS luma-webgpu)
 target_include_directories(luma-webgpu INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(luma-webgpu INTERFACE glfw3webgpu)
+target_compile_definitions(luma-webgpu INTERFACE GLFW_EXPOSE_NATIVE_WIN32)
 
 if(WIN32)
     target_link_libraries(luma-webgpu INTERFACE Ws2_32)

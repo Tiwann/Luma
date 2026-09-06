@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "QueueImpl.h"
+#include "SwapchainImpl.h"
 #include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/Constants.h"
 #include "WgpuFwd.h"
 
 namespace Luma::WebGPU
@@ -49,7 +51,11 @@ namespace Luma::WebGPU
         WGPUAdapter m_Adapter = nullptr;
         WGPUDevice m_Handle = nullptr;
         WGPUSurface m_Surface = nullptr;
+        IWindow* m_Window = nullptr;
 
         FQueueImpl m_DefaultQueue{this};
+        FSwapchainImpl m_Swapchain;
+        uint32_t m_SwapchainImageIndex = 0;
+        uint32_t m_FrameIndex = 0;
     };
 }
