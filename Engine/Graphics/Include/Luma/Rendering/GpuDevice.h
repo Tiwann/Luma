@@ -9,6 +9,7 @@
 
 #include "BindingType.h"
 #include "BufferBinding.h"
+#include "BufferUsage.h"
 #include "Fence.h"
 #include "Swapchain.h"
 #include "TextureBinding.h"
@@ -73,6 +74,7 @@ namespace Luma
         virtual uint32_t getTextureCount() const = 0;
         virtual uint32_t getFrameIndex() const = 0;
         virtual bool hasVSync() { return getSwapchain()->hasVSync(); }
+        virtual void setVSync(bool enabled);
 
         virtual ISwapchain* getSwapchain() { return nullptr; }
         virtual IQueue* getRenderQueue() { return nullptr; }
@@ -80,6 +82,8 @@ namespace Luma
         virtual IQueue* getCopyQueue() { return nullptr; }
 
         virtual IBuffer* createBuffer(const FBufferDesc& bufferDesc) = 0;
+        IBuffer* createBuffer(EBufferUsage usage, uint64_t size, bool alwaysMapped = false);
+
         virtual ITexture* createTexture(const FTextureDesc& textureDesc) = 0;
         virtual ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) = 0;
         virtual IShaderProgram* createShader(const FShaderDesc& shaderDesc) = 0;
@@ -105,4 +109,5 @@ namespace Luma
     };
 
     LUMA_GRAPHICS_API IGpuDevice* createGpuDevice(const FGpuDeviceDesc& deviceDesc);
+    LUMA_GRAPHICS_API IGpuDevice* createGpuDevice(IWindow* window, EGpuDeviceType deviceType = EGpuDeviceType::Auto, ESwapchainBuffering buffering = ESwapchainBuffering::TripleBuffering, bool vsync = true);
 }

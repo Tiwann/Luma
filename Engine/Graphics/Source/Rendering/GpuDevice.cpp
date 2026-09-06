@@ -1,18 +1,55 @@
 #include "Luma/Rendering/GpuDevice.h"
 #include "Luma/Asset/Material.h"
+#include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Runtime/FileUtils.h"
-
-#ifdef LUMA_BUILD_WEBGPU
-#include "Luma/WebGPU/GpuDeviceImpl.h"
-#endif
 
 #ifdef LUMA_BUILD_VULKAN
 #include "Luma/Vulkan/GpuDeviceImpl.h"
 #endif
 
+#ifdef LUMA_BUILD_D3D12
+#include "Luma/D3D12/GpuDeviceImpl.h"
+#endif
+
+#ifdef LUMA_BUILD_OPENGL
+#include "Luma/OpenGL/GpuDeviceImpl.h"
+#endif
+
+#ifdef LUMA_BUILD_WEBGPU
+#include "Luma/WebGPU/GpuDeviceImpl.h"
+#endif
+
+#ifdef LUMA_BUILD_DEKO3D
+#include "Luma/Deko3D/GpuDeviceImpl.h"
+#endif
+
+
 namespace Luma
 {
+    void IGpuDevice::setVSync(const bool enabled)
+    {
+        ISwapchain* swapchain = getSwapchain();
+        if (!swapchain) return;
+
+        waitIdle();
+
+        FSwapchainDesc swapchainDesc = swapchain->getDesc();
+        swapchainDesc.presentMode = enabled ? EPresentMode::Fifo : EPresentMode::Immediate;
+        swapchain->initialize(swapchainDesc);
+    }
+
+    IBuffer* IGpuDevice::createBuffer(EBufferUsage usage, uint64_t size, bool alwaysMapped)
+    {
+        FBufferDesc desc;
+        desc.device = this;
+        desc.size = size;
+        desc.usage = usage;
+        desc.alwaysMapped = alwaysMapped;
+
+        return createBuffer(desc);
+    }
+
     IShaderProgram* IGpuDevice::createShader(FStringView filepath)
     {
         TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
@@ -122,6 +159,11 @@ namespace Luma
             device = new WebGPU::FGpuDeviceImpl();
             break;
 #endif
+#ifdef LUMA_BUILD_DEKO3D
+        case EGpuDeviceType::Deko3D:
+            device = new Deko3D::FGpuDeviceImpl();
+            break;
+#endif
         default: return nullptr;
         }
 
@@ -131,5 +173,10 @@ namespace Luma
             return nullptr;
         }
         return device;
+    }
+
+    IGpuDevice* createGpuDevice(IWindow* window, EGpuDeviceType deviceType, ESwapchainBuffering buffering, bool vsync)
+    {
+        return createGpuDevice({window, deviceType, buffering, vsync});
     }
 }

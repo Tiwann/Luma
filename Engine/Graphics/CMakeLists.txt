@@ -85,7 +85,7 @@ endif ()
 if(LUMA_ENGINE_BUILD_VULKAN)
     target_sources(luma-graphics PRIVATE ${LUMA_VULKAN_SRC})
     target_link_directories(luma-graphics PRIVATE ${VULKAN_SDK_INC_DIR})
-    target_link_libraries(luma-graphics PRIVATE glfw volk::volk volk::volk_headers Vulkan::Headers GPUOpen::VulkanMemoryAllocator)
+    target_link_libraries(luma-graphics PRIVATE glfw volk::volk Vulkan::Headers GPUOpen::VulkanMemoryAllocator)
     target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_VULKAN)
 endif ()
 

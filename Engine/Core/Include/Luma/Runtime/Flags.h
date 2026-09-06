@@ -25,8 +25,8 @@ namespace Luma
         TFlags& operator=(const TFlags&) = default;
         TFlags& operator=(TFlags&&) = default;
 
-        static constexpr TFlags all() { return Flags(static_cast<Enum>(~static_cast<IntegerType>(0))); }
-        static constexpr TFlags none(){ return Flags(static_cast<Enum>(0)); }
+        static constexpr TFlags all() { return TFlags(static_cast<Enum>(~static_cast<IntegerType>(0))); }
+        static constexpr TFlags none(){ return TFlags(static_cast<Enum>(0)); }
 
         constexpr operator IntegerType() const { return (IntegerType)m_Value; }
         constexpr operator Enum() const { return (Enum)m_Value; }
@@ -35,7 +35,7 @@ namespace Luma
         constexpr bool operator==(const Enum other) const { return m_Value == other; }
         constexpr bool operator==(IntegerType other) const { return (IntegerType)m_Value == other; }
 
-        constexpr TFlags operator~() const {return Flags(static_cast<Enum>(~static_cast<IntegerType>(m_Value))); }
+        constexpr TFlags operator~() const {return TFlags(static_cast<Enum>(~static_cast<IntegerType>(m_Value))); }
         constexpr TFlags operator|(const Enum other) const { return TFlags((IntegerType)m_Value | (IntegerType)other); };
         constexpr TFlags operator&(const Enum other) const { return TFlags((IntegerType)m_Value & (IntegerType)other); };
         constexpr TFlags operator^(const Enum other) const { return TFlags((IntegerType)m_Value ^ (IntegerType)other); };
@@ -63,7 +63,11 @@ namespace Luma
             return *this;
         }
 
-        constexpr TFlags& toggle(const Enum value) { m_Value ^= static_cast<IntegerType>(value); return *this; }
+        constexpr TFlags& toggle(const Enum value)
+        {
+            m_Value = (Enum)((IntegerType)m_Value ^ (IntegerType)value);
+            return *this;
+        }
     private:
         Enum m_Value = (Enum)0;
     };

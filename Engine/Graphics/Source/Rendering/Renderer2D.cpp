@@ -55,9 +55,7 @@ namespace Luma
         gpDesc.vertexShader = m_VertexShader;
         gpDesc.fragmentShader = m_FragmentShader;
         gpDesc.rasterization.cullMode = ECullMode::None;
-        gpDesc.colorFormatCount = 1;
-        gpDesc.colorFormats[0] = EFormat::R8G8B8A8_SRGB;
-        gpDesc.colorBlend[0] = FColorBlendState(true, FBlendFunction::alphaBlend());
+        gpDesc.addColorConfig(EFormat::RGBA8_SRGB, FColorBlendState::alphaBlend());
         gpDesc.inputLayout = vertexLayout;
         m_Pipeline = m_GpuDevice->createRenderPipeline(gpDesc);
         if (!m_Pipeline) return false;

@@ -56,10 +56,10 @@ namespace Luma::Vulkan
         for (uint32_t i = 0; i < (uint32_t)m_Buffering; i++)
             setVulkanObjectDebugName(static_cast<FGpuDeviceImpl*>(m_Device), VK_OBJECT_TYPE_IMAGE, m_Images[i], strfmt("Swapchain Image [{}]", i));
 
-        TArray<VkImageMemoryBarrier2> barriers;
         for (size_t i = 0; i < getTextureCount(); i++)
         {
             vkDestroyImageView(deviceHandle, m_ImageViews[i], nullptr);
+
             VkImageViewCreateInfo ImageViewCreateInfo = {VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
             ImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
             ImageViewCreateInfo.format = convert<VkFormat>(m_Format);
@@ -71,34 +71,8 @@ namespace Luma::Vulkan
             ImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
             vkCreateImageView(deviceHandle, &ImageViewCreateInfo, nullptr, &m_ImageViews[i]);
 
-            VkImageMemoryBarrier2 barrier { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
-            barrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-            barrier.newLayout = VK_IMAGE_LAYOUT_GENERAL;
-            barrier.srcAccessMask = VK_ACCESS_2_NONE;
-            barrier.dstAccessMask = VK_ACCESS_2_NONE;
-            barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-            barrier.image = m_Images[i];
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            barrier.subresourceRange.baseMipLevel = 0;
-            barrier.subresourceRange.levelCount = 1;
-            barrier.subresourceRange.baseArrayLayer = 0;
-            barrier.subresourceRange.layerCount = 1;
-            barrier.srcStageMask = VK_PIPELINE_STAGE_2_NONE;
-            barrier.dstStageMask = VK_PIPELINE_STAGE_2_NONE;
             m_Textures[i].m_State = EResourceState::Undefined;
-            barriers.add(barrier);
         }
-
-        FImmediateExecutorImpl& executor = device->getExecutor();
-        executor.execute([barriers](const ICommandBuffer* cmdBuffer)
-        {
-            VkDependencyInfo inDependency = {VK_STRUCTURE_TYPE_DEPENDENCY_INFO};
-            inDependency.dependencyFlags = 0;
-            inDependency.imageMemoryBarrierCount = barriers.count();
-            inDependency.pImageMemoryBarriers = barriers.data();
-            vkCmdPipelineBarrier2(static_cast<const FCommandBufferImpl*>(cmdBuffer)->getHandle(), &inDependency);
-        });
 
         m_Valid = true;
         return true;
@@ -162,7 +136,7 @@ namespace Luma::Vulkan
     ITexture* FSwapchainImpl::getTexture(uint32_t index)
     {
         if (!m_Device) return nullptr;
-        LUMA_ASSERT(index <= 3, "Index out of swapchain's image count range!");
+        LUMA_ASSERT(index <= getTextureCount(), "Index out of swapchain's image count range!");
         FTextureImpl& texture = m_Textures[index];
         texture.m_Device = static_cast<FGpuDeviceImpl*>(m_Device);
         texture.m_Image = m_Images[index];
@@ -182,15 +156,14 @@ namespace Luma::Vulkan
     ITextureView* FSwapchainImpl::getTextureView(uint32_t index)
     {
         if (!m_Device) return nullptr;
-        LUMA_ASSERT(index <= 3, "Index out of swapchain's image count range!");
+        LUMA_ASSERT(index <= getTextureCount(), "Index out of swapchain's image count range!");
 
         const ITexture* texture = getTexture(index);
         if (!texture) return nullptr;
 
-        const uint32_t frameIndex = m_Device->getFrameIndex();
-        FTextureViewImpl& view = m_TextureViews[frameIndex];
+        FTextureViewImpl& view = m_TextureViews[index];
         view.m_Device = static_cast<FGpuDeviceImpl*>(m_Device);
-        view.m_Handle = m_ImageViews[frameIndex];
+        view.m_Handle = m_ImageViews[index];
         view.m_Format = m_Format;
         view.m_Width = m_Width;
         view.m_Height = m_Height;

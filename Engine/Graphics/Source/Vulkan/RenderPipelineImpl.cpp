@@ -76,27 +76,27 @@ namespace Luma::Vulkan
         VkPipelineColorBlendAttachmentState colorBlendStates[8];
         for (uint32_t i = 0; i < 8; i++)
         {
-            const auto& blendState = pipelineDesc.colorBlend[i];
+            const auto& blendState = pipelineDesc.colorConfigs.getAt(i);
 
-            colorBlendStates[i].blendEnable = blendState.colorBlendEnable;
-            colorBlendStates[i].colorWriteMask = convert<VkColorComponentFlags>(blendState.colorWriteMask);
-            colorBlendStates[i].alphaBlendOp = convert<VkBlendOp>(blendState.blendFunction.alphaOp);
-            colorBlendStates[i].colorBlendOp = convert<VkBlendOp>(blendState.blendFunction.colorOp);
-            colorBlendStates[i].dstAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaDest);
-            colorBlendStates[i].dstColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorDest);
-            colorBlendStates[i].srcAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaSource);
-            colorBlendStates[i].srcColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorSource);
+            colorBlendStates[i].blendEnable = blendState.state.colorBlendEnable;
+            colorBlendStates[i].colorWriteMask = convert<VkColorComponentFlags>(blendState.state.colorWriteMask);
+            colorBlendStates[i].alphaBlendOp = convert<VkBlendOp>(blendState.state.blendFunction.alphaOp);
+            colorBlendStates[i].colorBlendOp = convert<VkBlendOp>(blendState.state.blendFunction.colorOp);
+            colorBlendStates[i].dstAlphaBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.alphaDest);
+            colorBlendStates[i].dstColorBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.colorDest);
+            colorBlendStates[i].srcAlphaBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.alphaSource);
+            colorBlendStates[i].srcColorBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.colorSource);
         }
 
         VkPipelineColorBlendStateCreateInfo colorBlendState { VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO };
         colorBlendState.pAttachments = colorBlendStates;
-        colorBlendState.attachmentCount = pipelineDesc.colorFormatCount;
+        colorBlendState.attachmentCount = pipelineDesc.colorConfigs.count();
         
         VkPipelineDepthStencilStateCreateInfo depthStencilState { VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO };
-        depthStencilState.depthTestEnable = pipelineDesc.depthStencil.depthTestEnable;
-        depthStencilState.depthWriteEnable = pipelineDesc.depthStencil.depthWriteEnable;
-        depthStencilState.stencilTestEnable = pipelineDesc.depthStencil.stencilTestEnable;
-        depthStencilState.depthCompareOp = convert<VkCompareOp>(pipelineDesc.depthStencil.depthCompareOp);
+        depthStencilState.depthTestEnable = pipelineDesc.depthConfig.state.depthTestEnable;
+        depthStencilState.depthWriteEnable = pipelineDesc.depthConfig.state.depthWriteEnable;
+        depthStencilState.stencilTestEnable = pipelineDesc.depthConfig.state.stencilTestEnable;
+        depthStencilState.depthCompareOp = convert<VkCompareOp>(pipelineDesc.depthConfig.state.depthCompareOp);
         
         VkSampleMask SampleMask = 0xFFFFFFFF;
         VkPipelineMultisampleStateCreateInfo multisampleState { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
@@ -114,9 +114,9 @@ namespace Luma::Vulkan
         viewportState.pScissors = nullptr;
 
         TArray<VkFormat> colorFormats;
-        for (uint32_t i = 0; i < pipelineDesc.colorFormatCount && i < 8; i++)
+        for (uint32_t i = 0; i < pipelineDesc.colorConfigs.count() && i < 8; i++)
         {
-            EFormat format = pipelineDesc.colorFormats[i];
+            EFormat format = pipelineDesc.colorConfigs.getAt(i).format;
             colorFormats.add(convert<VkFormat>(format));
         }
 

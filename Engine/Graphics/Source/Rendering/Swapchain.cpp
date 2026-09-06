@@ -39,6 +39,11 @@ namespace Luma
         return m_PresentMode;
     }
 
+    ESwapchainBuffering ISwapchain::getBuffering() const
+    {
+        return m_Buffering;
+    }
+
     uint32_t ISwapchain::getTextureCount() const
     {
         return (uint32_t)m_Buffering;
@@ -62,5 +67,17 @@ namespace Luma
     bool ISwapchain::hasVSync() const
     {
         return m_PresentMode == EPresentMode::Fifo;
+    }
+
+    FSwapchainDesc ISwapchain::getDesc() const
+    {
+        FSwapchainDesc desc;
+        desc.device = m_Device;
+        desc.width = m_Width;
+        desc.height = m_Height;
+        desc.buffering = m_Buffering;
+        desc.format = m_Format;
+        desc.presentMode = m_PresentMode;
+        return desc;
     }
 }

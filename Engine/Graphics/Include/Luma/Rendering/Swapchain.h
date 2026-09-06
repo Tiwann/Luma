@@ -38,6 +38,7 @@ namespace Luma
         FRect2u getBounds() const;
         EFormat getFormat() const;
         EPresentMode getPresentMode() const;
+        ESwapchainBuffering getBuffering() const;
         uint32_t getTextureCount() const;
 
         IGpuDevice* getDevice() const;
@@ -50,6 +51,8 @@ namespace Luma
         virtual ITextureView* getTextureView(uint32_t index) { return nullptr; }
 
         virtual void setName(FStringView name) {}
+
+        FSwapchainDesc getDesc() const;
     protected:
         IGpuDevice* m_Device = nullptr;
         EFormat m_Format = EFormat::None;

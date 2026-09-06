@@ -111,6 +111,9 @@ namespace Luma
         Float2 = Vector2,
         Float3 = Vector3,
         Float4 = Vector4,
+
+        RGBA8_SRGB = R8G8B8A8_SRGB,
+        RGBA8_UNORM = R8G8B8A8_UNORM
     };
 
     static uint64_t getFormatSize(const EFormat format)

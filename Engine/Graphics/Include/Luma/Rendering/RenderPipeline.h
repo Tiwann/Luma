@@ -8,6 +8,7 @@
 #include "BlendFunction.h"
 #include "CompareOperation.h"
 #include "SampleCount.h"
+#include "Luma/Containers/StaticArray.h"
 #include "Luma/Memory/RefCounted.h"
 
 namespace Luma
@@ -40,6 +41,22 @@ namespace Luma
         bool colorBlendEnable = false;
         FBlendFunction blendFunction = FBlendFunction::alphaBlend();
         FColorChannelFlags colorWriteMask = EColorChannelBits::Red | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
+
+        static constexpr const FColorBlendState& alphaBlend()
+        {
+            static FColorBlendState state;
+            state.colorBlendEnable = true;
+            state.blendFunction = FBlendFunction::alphaBlend();
+            state.colorWriteMask = EColorChannelBits::Red | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
+            return state;
+        }
+
+        static constexpr const FColorBlendState& disabled()
+        {
+            static FColorBlendState state;
+            state.colorBlendEnable = false;
+            return state;
+        }
     };
 
     struct FDepthStencilState
@@ -76,6 +93,18 @@ namespace Luma
         uint32_t height = 0;
     };
 
+    struct FColorConfiguration
+    {
+        EFormat format;
+        FColorBlendState state;
+    };
+
+    struct FDepthConfiguration
+    {
+        EFormat format;
+        FDepthStencilState state;
+    };
+
     struct FRenderPipelineDesc
     {
         IGpuDevice* device = nullptr;
@@ -88,12 +117,15 @@ namespace Luma
         FInputAssemblyState inputAssembly{};
         FVertexInputLayout inputLayout{};
         FRasterizationState rasterization{};
-        FColorBlendState colorBlend[8]{};
-        FDepthStencilState depthStencil{};
+        TStaticArray<FColorConfiguration, 8> colorConfigs;
+        FDepthConfiguration depthConfig{};
         FMultisampleState multisample{};
-        EFormat colorFormats[8] { EFormat::None };
-        uint32_t colorFormatCount = 0;
         EFormat depthFormat = EFormat::None;
+
+        void addColorConfig(EFormat format, const FColorBlendState& blendState)
+        {
+            colorConfigs.add({format, blendState});
+        }
     };
 
     struct IRenderPipeline : IRefCounted<IRenderPipeline>
