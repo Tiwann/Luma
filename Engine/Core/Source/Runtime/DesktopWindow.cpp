@@ -164,7 +164,18 @@ namespace Luma
         glfwInit();
         if (m_Handle) glfwDestroyWindow(m_Handle);
 
+#ifdef LUMA_BUILD_OPENGL
+        if (windowDesc.deviceType == EGpuDeviceType::OpenGL)
+        {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        }
+#else
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+#endif
         m_Handle = glfwCreateWindow(windowDesc.width, windowDesc.height, *windowDesc.title, nullptr, nullptr);
         if (!m_Handle) return false;
         glfwSetWindowUserPointer(m_Handle, this);
