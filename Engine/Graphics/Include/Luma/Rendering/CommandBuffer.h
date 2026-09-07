@@ -54,6 +54,12 @@ namespace Luma
         uint32_t firstInstance;
     };
 
+    struct FVertexBufferBinding
+    {
+        const IBuffer* buffer = nullptr;
+        int64_t offset = 0;
+    };
+
     struct ICommandBuffer : IRefCounted<ICommandBuffer>
     {
         ICommandBuffer() = default;
@@ -76,7 +82,8 @@ namespace Luma
         virtual void clearDepthStencil(float depth, uint8_t stencil) = 0;
         virtual void clearColorTexture(ITexture* texture, const FColor& color, const FTextureSubresourceRange& subresourceRange) = 0;
         virtual void clearColorTexture(ITexture* texture, const FColor& color) = 0;
-        virtual void bindVertexBuffer(const IBuffer* buffer, int64_t offset) = 0;
+        virtual void bindVertexBuffers(TArrayView<FVertexBufferBinding> bindings) = 0;
+        void bindVertexBuffer(const IBuffer* buffer, int64_t offset);
         virtual void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) = 0;
         virtual void pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
         virtual void bindRenderPipeline(const IRenderPipeline* pipeline) = 0;

@@ -146,13 +146,18 @@ namespace Luma::Vulkan
         vkCmdClearColorImage(m_Handle, textureImpl->getImage(), convert<VkImageLayout>(texture->getResourceState()), &clearColor, 1, &range);
     }
 
-    void FCommandBufferImpl::bindVertexBuffer(const IBuffer* buffer, const int64_t offset)
+    void FCommandBufferImpl::bindVertexBuffers(TArrayView<FVertexBufferBinding> bindings)
     {
-        if (!buffer) return;
-        const VkDeviceSize offsets[] { static_cast<VkDeviceSize>(offset) };
-        const VkBuffer bufferHandle = static_cast<const FBufferImpl*>(buffer)->getHandle();
-        const VkBuffer buffers[] { bufferHandle };
-        vkCmdBindVertexBuffers(m_Handle, 0, 1, buffers, offsets);
+        if (bindings.isEmpty()) return;
+        TArray<VkBuffer> buffers;
+        TArray<VkDeviceSize> offsets;
+        for (const FVertexBufferBinding& binding : bindings)
+        {
+            buffers.add(static_cast<const FBufferImpl*>(binding.buffer)->getHandle());
+            offsets.add(binding.offset);
+        }
+
+        vkCmdBindVertexBuffers(m_Handle, 0, bindings.count(), buffers.data(), offsets.data());
     }
 
     void FCommandBufferImpl::bindIndexBuffer(const IBuffer* buffer, int64_t offset, const EIndexFormat format)

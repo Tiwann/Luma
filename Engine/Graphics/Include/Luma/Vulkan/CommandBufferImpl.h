@@ -24,7 +24,7 @@ namespace Luma::Vulkan
         void clearDepthStencil(float depth, uint8_t stencil) override;
         void clearColorTexture(ITexture* texture, const FColor& color, const FTextureSubresourceRange& subresourceRange) override;
         void clearColorTexture(ITexture* texture, const FColor& color) override;
-        void bindVertexBuffer(const IBuffer* buffer, int64_t offset) override;
+        void bindVertexBuffers(TArrayView<FVertexBufferBinding> bindings) override;
         void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) override;
         void bindRenderPipeline(const IRenderPipeline* pipeline) override;
         void pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) override;

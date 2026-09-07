@@ -2,6 +2,12 @@
 
 namespace Luma
 {
+    void ICommandBuffer::bindVertexBuffer(const IBuffer* buffer, int64_t offset)
+    {
+        const FVertexBufferBinding binding{buffer, offset};
+        bindVertexBuffers({binding});
+    }
+
     void ICommandBuffer::draw(const uint32_t vertexCount, const uint32_t instanceCount, const uint32_t firstVertex, const uint32_t firstInstance)
     {
         const FDrawCommand drawCmd{vertexCount, instanceCount, firstVertex, firstInstance};
