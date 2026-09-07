@@ -25,4 +25,9 @@ namespace Luma
         }
         return window;
     }
+
+    IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags)
+    {
+        return createWindow({title, width, height, flags});
+    }
 }

@@ -3,6 +3,7 @@
 #include "Luma/Containers/Event.h"
 #include "Luma/Containers/String.h"
 #include "Luma/Memory/RefCounted.h"
+#include "Luma/Rendering/GpuDeviceType.h"
 #include "Luma/Math/Rect2.h"
 #include "Flags.h"
 #include <cstdint>
@@ -27,9 +28,10 @@ namespace Luma
     struct FWindowDesc
     {
         FString title;
-        uint32_t width;
-        uint32_t height;
-        FWindowCreateFlags flags;
+        uint32_t width = 0;
+        uint32_t height = 0;
+        FWindowCreateFlags flags = 0;
+        EGpuDeviceType deviceType = EGpuDeviceType::None;
     };
 
     struct IWindow : IRefCounted<IWindow>
@@ -53,4 +55,5 @@ namespace Luma
     };
 
     LUMA_CORE_API IWindow* createWindow(const FWindowDesc& windowDesc);
+    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = 0, EGpuDeviceType deviceType = EGpuDeviceType::Auto);
 }
