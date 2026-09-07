@@ -2,10 +2,10 @@
 #include "DescriptorHeap.h"
 #include "Rendering/Sampler.h"
 
-namespace Nova::D3D12
+namespace Luma::D3D12
 {
     class GpuDevice;
-    class Sampler : public Nova::Sampler
+    class Sampler : public Luma::Sampler
     {
     public:
         bool Initialize(const SamplerCreateInfo& createInfo) override;

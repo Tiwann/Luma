@@ -74,6 +74,10 @@ if(LUMA_ENGINE_BUILD_WEBGPU)
     add_subdirectory(webgpu)
 endif ()
 
+if(LUMA_ENGINE_BUILD_OPENGL)
+    add_subdirectory(glad)
+endif ()
+
 
 add_subdirectory(box3d)
 set_target_properties(box3d PROPERTIES FOLDER luma-vendor)

@@ -68,6 +68,11 @@ set(LUMA_DEKO3D_SRC
     Source/Deko3D/BufferImpl.cpp
 )
 
+set(LUMA_OPENGL_SRC
+        Source/OpenGL/GpuDeviceImpl.cpp
+        Source/OpenGL/BufferImpl.cpp
+)
+
 add_library(luma-graphics ${LUMA_GRAPHICS_SRC})
 add_library(luma::graphics ALIAS luma-graphics)
 target_link_libraries(luma-graphics PRIVATE luma::core spirv-reflect-static assimp::assimp stb::image)
@@ -97,6 +102,12 @@ endif ()
 
 if(LUMA_ENGINE_BUILD_D3D12)
     target_sources(luma-graphics PRIVATE ${LUMA_D3D12_SRC})
-    target_link_libraries(luma-graphics PRIVATE luma::rgfw Microsoft::DirectX-Headers D3D12MemoryAllocator d3d12 dxgi dxguid)
+    target_link_libraries(luma-graphics PRIVATE glfw Microsoft::DirectX-Headers D3D12MemoryAllocator d3d12 dxgi dxguid)
     target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_D3D12)
+endif ()
+
+if(LUMA_ENGINE_BUILD_OPENGL)
+    target_sources(luma-graphics PRIVATE ${LUMA_OPENGL_SRC})
+    target_link_libraries(luma-graphics PRIVATE glfw luma::glad opengl32)
+    target_compile_definitions(luma-graphics PUBLIC LUMA_BUILD_OPENGL)
 endif ()
