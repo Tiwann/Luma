@@ -27,7 +27,7 @@ namespace Luma
     {
         ERenderPassTargetType type = ERenderPassTargetType::Color;
         FClearValue clearValue = FClearValue();
-        ELoadOp loadOp = ELoadOp::Load;
+        ELoadOp loadOp = ELoadOp::Clear;
         EStoreOp storeOp = EStoreOp::Store;
         EResolveMode resolveMode = EResolveMode::None;
         const ITextureView* textureView = nullptr;
