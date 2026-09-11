@@ -176,8 +176,26 @@ namespace Luma
 #else
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
+
+        if (windowDesc.flags & EWindowCreateBits::Centered)
+        {
+            GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
+            const uint32_t centerX = vidmode->width / 2;
+            const uint32_t centerY = vidmode->height / 2;
+            const uint32_t x = centerX - windowDesc.width / 2;
+            const uint32_t y = centerY - windowDesc.height / 2;
+
+            glfwWindowHint(GLFW_POSITION_X, x);
+            glfwWindowHint(GLFW_POSITION_Y, y);
+        }
+
+        glfwWindowHint(GLFW_RESIZABLE, windowDesc.flags & EWindowCreateBits::Resizable);
+        glfwWindowHint(GLFW_DECORATED, !(windowDesc.flags & EWindowCreateBits::NoDecoration));
+
         m_Handle = glfwCreateWindow(windowDesc.width, windowDesc.height, *windowDesc.title, nullptr, nullptr);
         if (!m_Handle) return false;
+
         glfwSetWindowUserPointer(m_Handle, this);
 
         glfwSetWindowSizeCallback(m_Handle, [](GLFWwindow* w, const int width, const int height)
