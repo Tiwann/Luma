@@ -35,9 +35,10 @@ add_library(luma-imgui STATIC imgui/imgui.cpp imgui/imgui_draw.cpp imgui/imgui_t
 add_library(luma::imgui ALIAS luma-imgui)
 target_include_directories(luma-imgui PUBLIC imgui imgui/backends)
 set_target_properties(luma-imgui PROPERTIES CXX_STANDARD 17 FOLDER luma-engine)
+
 if(LUMA_ENGINE_BUILD_VULKAN)
-    target_link_libraries(luma-imgui PRIVATE volk::volk)
-    target_sources(luma-imgui PRIVATE imgui/backends/imgui_impl_vulkan.cpp)
+    target_link_libraries(luma-imgui PRIVATE volk::volk glfw)
+    target_sources(luma-imgui PRIVATE imgui/backends/imgui_impl_vulkan.cpp imgui/backends/imgui_impl_glfw.cpp)
     target_compile_definitions(luma-imgui PRIVATE IMGUI_IMPL_VULKAN_USE_VOLK IMGUI_IMPL_VULKAN_VOLK_FILENAME=<volk.h>)
 endif ()
 
