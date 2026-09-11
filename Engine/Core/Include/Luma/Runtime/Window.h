@@ -42,6 +42,7 @@ namespace Luma
         virtual void pollEvents() = 0;
         virtual uint32_t getWidth() const = 0;
         virtual uint32_t getHeight() const = 0;
+        FVector2u getSize() const;
         FRect2<uint32_t> getBounds() const { return FRect2<uint32_t>{ 0, 0, getWidth(), getHeight() }; }
         virtual bool shouldClose() const = 0;
         virtual bool isAvailable() const = 0;
@@ -55,5 +56,5 @@ namespace Luma
     };
 
     LUMA_CORE_API IWindow* createWindow(const FWindowDesc& windowDesc);
-    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = 0, EGpuDeviceType deviceType = EGpuDeviceType::Auto);
+    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = EWindowCreateBits::None, EGpuDeviceType deviceType = EGpuDeviceType::Auto);
 }
