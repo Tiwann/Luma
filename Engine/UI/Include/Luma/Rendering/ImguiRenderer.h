@@ -8,14 +8,14 @@ struct ImGuiContext;
 namespace Luma
 {
     struct IWindow;
-    struct IGpuDevice;
+    struct IGPUDevice;
     struct ICommandBuffer;
     struct ITextureView;
 
     struct FImguiRendererDesc
     {
         IWindow* window = nullptr;
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         uint32_t sampleCount = 0;
     };
 

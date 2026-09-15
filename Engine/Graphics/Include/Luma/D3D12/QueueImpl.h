@@ -4,12 +4,12 @@
 
 namespace Luma::D3D12
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class FQueueImpl final : public IQueue
     {
     public:
-        bool initialize(FGpuDeviceImpl* device, EQueueType queueType);
+        bool initialize(FGPUDeviceImpl* device, EQueueType queueType);
         void destroy();
 
         bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence, FPipelineStageFlags stageMask) override;
@@ -19,7 +19,7 @@ namespace Luma::D3D12
 
         ID3D12CommandQueue* getHandle() const { return m_Handle; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         ID3D12CommandQueue* m_Handle = nullptr;
         TArray<const ISemaphore*> m_WaitSemaphores;
         TArray<const ISemaphore*> m_SignalSemaphores;

@@ -3,19 +3,19 @@
 
 namespace Luma
 {
-    EShaderStageBits getStage(const SlangStage stage)
+    EShaderStages getStage(const SlangStage stage)
     {
         switch (stage)
         {
-        case SLANG_STAGE_NONE: return EShaderStageBits::None;
-        case SLANG_STAGE_VERTEX: return EShaderStageBits::Vertex;
-        case SLANG_STAGE_GEOMETRY: return EShaderStageBits::Geometry;
-        case SLANG_STAGE_FRAGMENT: return EShaderStageBits::Fragment;
-        case SLANG_STAGE_COMPUTE: return EShaderStageBits::Compute;
-        case SLANG_STAGE_RAY_GENERATION: return EShaderStageBits::RayGeneration;
-        case SLANG_STAGE_HULL: return EShaderStageBits::TessellationControl;
-        case SLANG_STAGE_MESH: return EShaderStageBits::Mesh;
-        default: return EShaderStageBits::None;
+        case SLANG_STAGE_NONE: return EShaderStages::None;
+        case SLANG_STAGE_VERTEX: return EShaderStages::Vertex;
+        case SLANG_STAGE_GEOMETRY: return EShaderStages::Geometry;
+        case SLANG_STAGE_FRAGMENT: return EShaderStages::Fragment;
+        case SLANG_STAGE_COMPUTE: return EShaderStages::Compute;
+        case SLANG_STAGE_RAY_GENERATION: return EShaderStages::RayGeneration;
+        case SLANG_STAGE_HULL: return EShaderStages::TessellationControl;
+        case SLANG_STAGE_MESH: return EShaderStages::Mesh;
+        default: return EShaderStages::None;
         }
     }
 

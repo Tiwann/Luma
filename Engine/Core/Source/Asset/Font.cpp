@@ -1,7 +1,7 @@
 #include "Luma/Asset/Font.h"
 #include "Luma/Runtime/Format.h"
 #include "Luma/Rendering/Texture.h"
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "Luma/Rendering/TextureUtils.h"
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
@@ -169,7 +169,7 @@ namespace Luma
 
 
     bool FFont::loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType,
-        const TArray<FCharacterSet>& charSets, IGpuDevice* device)
+        const TArray<FCharacterSet>& charSets, IGPUDevice* device)
     {
         msdfgen::FreetypeHandle* freetype = msdfgen::initializeFreetype();
         if (!freetype) return false;
@@ -219,7 +219,7 @@ namespace Luma
 
                 FTextureDesc textureDesc = FTextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, EFormat::R8_UNORM);
                 m_AtlasTexture = device->createTexture(textureDesc);
-                if (!TextureUtils::uploadTextureData(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE))
+                if (!TextureUtils::uploadTextureDataSync(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE))
                     return false;
             }
             break;
@@ -238,7 +238,7 @@ namespace Luma
 
                 FTextureDesc textureDesc = FTextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, EFormat::R8_UNORM);
                 m_AtlasTexture = device->createTexture(textureDesc);
-                if (!TextureUtils::uploadTextureData(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE))
+                if (!TextureUtils::uploadTextureDataSync(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE))
                     return false;
             }
             break;
@@ -257,7 +257,7 @@ namespace Luma
 
                 FTextureDesc textureDesc = FTextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, EFormat::R8G8B8A8_UNORM);
                 m_AtlasTexture = device->createTexture(textureDesc);
-                if (!TextureUtils::uploadTextureData(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE * 4))
+                if (!TextureUtils::uploadTextureDataSync(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE * 4))
                     return false;
                 break;
             }
@@ -268,7 +268,7 @@ namespace Luma
         return true;
     }
 
-    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGpuDevice* device)
+    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGPUDevice* device)
     {
         const TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
         if (filepath.isEmpty()) return false;

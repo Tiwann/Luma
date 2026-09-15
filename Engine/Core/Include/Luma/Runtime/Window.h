@@ -3,7 +3,7 @@
 #include "Luma/Containers/Event.h"
 #include "Luma/Containers/String.h"
 #include "Luma/Memory/RefCounted.h"
-#include "Luma/Rendering/GpuDeviceType.h"
+#include "Luma/Rendering/GPUDeviceType.h"
 #include "Luma/Math/Rect2.h"
 #include "Flags.h"
 #include <cstdint>
@@ -31,7 +31,7 @@ namespace Luma
         uint32_t width = 0;
         uint32_t height = 0;
         FWindowCreateFlags flags = 0;
-        EGpuDeviceType deviceType = EGpuDeviceType::None;
+        EGPUDeviceType deviceType = EGPUDeviceType::None;
     };
 
     struct IWindow : IRefCounted<IWindow>
@@ -46,6 +46,7 @@ namespace Luma
         FRect2<uint32_t> getBounds() const { return FRect2<uint32_t>{ 0, 0, getWidth(), getHeight() }; }
         virtual bool shouldClose() const = 0;
         virtual bool isAvailable() const = 0;
+        virtual void setTitle(const FString& title){}
 
         TEvent<void(uint32_t, uint32_t)> resizedEvent;
         TEvent<void(uint32_t, uint32_t)> movedEvent;
@@ -56,5 +57,5 @@ namespace Luma
     };
 
     LUMA_CORE_API IWindow* createWindow(const FWindowDesc& windowDesc);
-    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = EWindowCreateBits::None, EGpuDeviceType deviceType = EGpuDeviceType::Auto);
+    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = EWindowCreateBits::None, EGPUDeviceType deviceType = EGPUDeviceType::Auto);
 }

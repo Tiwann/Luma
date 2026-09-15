@@ -1,4 +1,4 @@
-#include "Luma/Deko3D/GpuDeviceImpl.h"
+#include "Luma/Deko3D/GPUDeviceImpl.h"
 #include "Luma/Runtime/SwitchWindow.h"
 #include <deko3d.h>
 

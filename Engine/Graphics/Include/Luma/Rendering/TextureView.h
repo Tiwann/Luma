@@ -8,12 +8,12 @@
 
 namespace Luma
 {
-    struct IGpuDevice;
+    struct IGPUDevice;
     struct ITexture;
 
     struct FTextureViewDesc
     {
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         const ITexture* texture = nullptr;
         EFormat format = EFormat::None;
         FTextureAspectFlags aspectFlags = ETextureAspectBits::None;

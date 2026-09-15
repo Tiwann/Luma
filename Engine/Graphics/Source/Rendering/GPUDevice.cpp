@@ -1,33 +1,33 @@
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "Luma/Asset/Material.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Runtime/FileUtils.h"
 
 #ifdef LUMA_BUILD_VULKAN
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #endif
 
 #ifdef LUMA_BUILD_D3D12
-#include "Luma/D3D12/GpuDeviceImpl.h"
+#include "Luma/D3D12/GPUDeviceImpl.h"
 #endif
 
 #ifdef LUMA_BUILD_OPENGL
-#include "Luma/OpenGL/GpuDeviceImpl.h"
+#include "Luma/OpenGL/GPUDeviceImpl.h"
 #endif
 
 #ifdef LUMA_BUILD_WEBGPU
-#include "Luma/WebGPU/GpuDeviceImpl.h"
+#include "Luma/WebGPU/GPUDeviceImpl.h"
 #endif
 
 #ifdef LUMA_BUILD_DEKO3D
-#include "Luma/Deko3D/GpuDeviceImpl.h"
+#include "Luma/Deko3D/GPUDeviceImpl.h"
 #endif
 
 
 namespace Luma
 {
-    void IGpuDevice::setVSync(const bool enabled)
+    void IGPUDevice::setVSync(const bool enabled)
     {
         ISwapchain* swapchain = getSwapchain();
         if (!swapchain) return;
@@ -39,7 +39,7 @@ namespace Luma
         swapchain->initialize(swapchainDesc);
     }
 
-    IBuffer* IGpuDevice::createBuffer(EBufferUsage usage, uint64_t size, bool alwaysMapped)
+    IBuffer* IGPUDevice::createBuffer(EBufferUsage usage, uint64_t size, bool alwaysMapped)
     {
         FBufferDesc desc;
         desc.device = this;
@@ -50,25 +50,33 @@ namespace Luma
         return createBuffer(desc);
     }
 
-    IShaderProgram* IGpuDevice::createShader(FStringView filepath)
+    IShader* IGPUDevice::createShader(FStringView vertexPath, FStringView fragmentPath)
     {
-        TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
-        return createShader(TBufferView(fileContent.data(), fileContent.size()));
+        const TArray<uint8_t> vertexByteCode = FileUtils::readToBuffer(vertexPath);
+        const TArray<uint8_t> fragmentByteCode = FileUtils::readToBuffer(fragmentPath);
+
+        if (vertexByteCode.isEmpty() || fragmentByteCode.isEmpty())
+            return nullptr;
+
+        TArray<FShaderCode> shaderCodes
+        {
+            {EShaderStage::Vertex, vertexByteCode},
+            {EShaderStage::Fragment, fragmentByteCode}
+        };
+
+        FShaderDesc desc;
+        desc.device = this;
+        desc.shaderCodes = shaderCodes;
+        return createShader(desc);
     }
 
-    IShaderProgram* IGpuDevice::createShader(TBufferView<uint8_t> shaderCode)
-    {
-        return nullptr;
-        //return createShader(FShaderDesc(this, shaderCode));
-    }
-
-    ICommandBuffer* IGpuDevice::createCommandBuffer(IQueue* queue)
+    ICommandBuffer* IGPUDevice::createCommandBuffer(IQueue* queue)
     {
         return createCommandBuffer({this, queue});
     }
 
 
-    ISampler* IGpuDevice::getOrCreateSampler(const FSamplerDesc& samplerDesc)
+    ISampler* IGPUDevice::getOrCreateSampler(const FSamplerDesc& samplerDesc)
     {
         ISampler*& sampler = m_PerDescSamplers[samplerDesc];
         if (sampler) return sampler;
@@ -77,12 +85,12 @@ namespace Luma
         return sampler;
     }
 
-    IFence* IGpuDevice::createFence(uint64_t initialValue)
+    IFence* IGPUDevice::createFence(uint64_t initialValue)
     {
         return createFence(FFenceDesc(this, initialValue));
     }
 
-    FMaterial* IGpuDevice::createMaterial(const FMaterialDesc& materialDesc)
+    FMaterial* IGPUDevice::createMaterial(const FMaterialDesc& materialDesc)
     {
         FMaterialDesc desc(materialDesc);
         desc.device = this;
@@ -96,21 +104,21 @@ namespace Luma
         return material;
     }
 
-    IGpuDevice* createGpuDevice(const FGpuDeviceDesc& deviceDesc)
+    IGPUDevice* createGPUDevice(const FGPUDeviceDesc& deviceDesc)
     {
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         switch (deviceDesc.deviceType)
         {
-        case EGpuDeviceType::None:
+        case EGPUDeviceType::None:
             return nullptr;
-        case EGpuDeviceType::Auto:
+        case EGPUDeviceType::Auto:
             {
 #ifdef LUMA_PLATFORM_WINDOWS
     #ifdef LUMA_BUILD_D3D12 // D3D12 has priority on Windows
                 device = new D3D12::FGpuDeviceImpl();
                 break;
     #elifdef LUMA_BUILD_VULKAN
-                device = new Vulkan::FGpuDeviceImpl();
+                device = new Vulkan::FGPUDeviceImpl();
                 break;
     #elifdef LUMA_BUILD_OPENGL
                 device = new OpenGL::FGpuDeviceImpl();
@@ -122,7 +130,7 @@ namespace Luma
     #endif
 #elifdef LUMA_PLATFORM_LINUX
     #ifdef LUMA_BUILD_VULKAN // Vulkan has priority on Linux
-                device = new Vulkan::FGpuDeviceImpl();
+                device = new Vulkan::FGPUDeviceImpl();
                 break;
     #elifdef LUMA_BUILD_OPENGL
                 device = new OpenGL::FGpuDeviceImpl();
@@ -140,27 +148,27 @@ namespace Luma
 #endif
             }
 #ifdef LUMA_BUILD_VULKAN
-        case EGpuDeviceType::Vulkan:
-            device = new Vulkan::FGpuDeviceImpl();
+        case EGPUDeviceType::Vulkan:
+            device = new Vulkan::FGPUDeviceImpl();
             break;
 #endif
 #ifdef LUMA_BUILD_D3D12
-        case EGpuDeviceType::D3D12:
+        case EGPUDeviceType::D3D12:
             device = new D3D12::FGpuDeviceImpl();
             break;
 #endif
 #ifdef LUMA_BUILD_OPENGL
-        case EGpuDeviceType::OpenGL:
+        case EGPUDeviceType::OpenGL:
             device = new OpenGL::FGpuDeviceImpl();
             break;
 #endif
 #ifdef LUMA_BUILD_WEBGPU
-        case EGpuDeviceType::WebGPU:
+        case EGPUDeviceType::WebGPU:
             device = new WebGPU::FGpuDeviceImpl();
             break;
 #endif
 #ifdef LUMA_BUILD_DEKO3D
-        case EGpuDeviceType::Deko3D:
+        case EGPUDeviceType::Deko3D:
             device = new Deko3D::FGpuDeviceImpl();
             break;
 #endif
@@ -175,8 +183,8 @@ namespace Luma
         return device;
     }
 
-    IGpuDevice* createGpuDevice(IWindow* window, EGpuDeviceType deviceType, ESwapchainBuffering buffering, bool vsync)
+    IGPUDevice* createGPUDevice(IWindow* window, EGPUDeviceType deviceType, ESwapchainBuffering buffering, bool vsync)
     {
-        return createGpuDevice({window, deviceType, buffering, vsync});
+        return createGPUDevice({window, deviceType, buffering, vsync});
     }
 }

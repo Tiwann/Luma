@@ -1,18 +1,19 @@
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Math/Functions.h"
 #include "Luma/Vulkan/CommandBufferImpl.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/ComputePipelineImpl.h"
 #include "Luma/Vulkan/RenderPipelineImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
-#include "Luma/Vulkan/BindingSetImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Asset/Material.h"
 #include "Luma/Asset/StaticMesh.h"
 
 #include <volk.h>
+
+#include "Luma/Vulkan/BindingGroupImpl.h"
 
 
 #define LUMA_CHECK(x, msg) \
@@ -30,7 +31,7 @@ namespace Luma::Vulkan
     {
         if (!cmdBufferDesc.device) return false;
 
-        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(cmdBufferDesc.device);
+        FGPUDeviceImpl* device = static_cast<FGPUDeviceImpl*>(cmdBufferDesc.device);
         const VkCommandPool commandPool = device->getCommandPool(cmdBufferDesc.queue->getQueueType());
         if (!commandPool) return false;
 
@@ -170,10 +171,10 @@ namespace Luma::Vulkan
         vkCmdBindIndexBuffer2(m_Handle, bufferHandle, offset, size, convert<VkIndexType>(format));
     }
 
-    void FCommandBufferImpl::pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
+    void FCommandBufferImpl::pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size)
     {
         const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
-        //vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
+        vkCmdPushConstants(m_Handle, shaderImpl->getPipelineLayout(), convert<VkShaderStageFlags>(stageFlags), offset, size, data);
     }
 
     void FCommandBufferImpl::bindRenderPipeline(const IRenderPipeline* pipeline)
@@ -349,27 +350,6 @@ namespace Luma::Vulkan
     void FCommandBufferImpl::bindMaterial(const FMaterial* material)
     {
         LUMA_CHECK(material, "Invalid material handle!");
-        bindBindingSet(material->getBindingSet(), material->getShader());
-    }
-
-    void FCommandBufferImpl::bindBindingSet(const IBindingSet* bindingSet, const IShaderProgram* shader)
-    {
-        LUMA_CHECK(bindingSet, "Invalid binding set handle!");
-        LUMA_CHECK(shader, "Invalid shader handle!");
-
-        const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
-        const FBindingSetImpl* bindingSetImpl = static_cast<const FBindingSetImpl*>(bindingSet);
-
-        const VkDescriptorSet descriptorSets[] { bindingSetImpl->getHandle() };
-        VkBindDescriptorSetsInfo info = { VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO };
-        //info.layout = shaderImpl->getPipelineLayout();
-        info.firstSet = bindingSetImpl->getSetIndex();
-        info.descriptorSetCount = 1;
-        info.pDescriptorSets = descriptorSets;
-        //info.stageFlags = convert<VkShaderStageFlags>(shaderImpl->getStageFlags());
-        info.dynamicOffsetCount = 0;
-        info.pDynamicOffsets = nullptr;
-        vkCmdBindDescriptorSets2(m_Handle, &info);
     }
 
     void FCommandBufferImpl::dispatch(const uint32_t groupCountX, const uint32_t groupCountY, const uint32_t groupCountZ)
@@ -471,6 +451,24 @@ namespace Luma::Vulkan
             FBufferImpl* buffer = static_cast<FBufferImpl*>(barrier.buffer);
             buffer->setResourceState(barrier.destState);
         }
+    }
+
+    void FCommandBufferImpl::bindBindingGroup(const IBindingGroup* bindingGroup)
+    {
+        const FBindingGroupImpl* bindingGroupImpl = static_cast<const FBindingGroupImpl*>(bindingGroup);
+        const VkDescriptorSet descriptorSet = bindingGroupImpl->getDescriptorSet();
+        const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(bindingGroupImpl->getShader());
+        const FShaderStageFlags stageFlags = shaderImpl->getStages();
+        const VkPipelineLayout pipelineLayout = shaderImpl->getPipelineLayout();
+
+        VkBindDescriptorSetsInfo bindInfo{VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO};
+        bindInfo.layout = pipelineLayout;
+        bindInfo.firstSet = bindingGroupImpl->getGroupIndex();
+        bindInfo.descriptorSetCount = 1;
+        bindInfo.pDescriptorSets = &descriptorSet;
+        bindInfo.stageFlags = convert<VkShaderStageFlags>(stageFlags);
+
+        vkCmdBindDescriptorSets2(m_Handle, &bindInfo);
     }
 
     void FCommandBufferImpl::bindDescriptorBuffer(const IBuffer* buffer)

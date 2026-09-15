@@ -231,6 +231,7 @@ namespace Luma
         {
             for (auto& bucket : m_Buckets)
                 bucket.clear();
+            m_Count = 0;
         }
 
         bool isEmpty() const { return m_Count <= 0; }

@@ -4,11 +4,11 @@
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Fence.h"
 #include "Luma/Rendering/Queue.h"
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 
 namespace Luma::BufferUtils
 {
-    IBuffer* createStagingBuffer(IGpuDevice* device, const void* data, size_t size)
+    IBuffer* createStagingBuffer(IGPUDevice* device, const void* data, size_t size)
     {
         FBufferDesc bufferDesc;
         bufferDesc.size = size;
@@ -22,7 +22,7 @@ namespace Luma::BufferUtils
         return stagingBuffer;
     }
 
-    IBuffer* createVertexBuffer(IGpuDevice* device, const void* data, const size_t size)
+    IBuffer* createVertexBuffer(IGPUDevice* device, const void* data, const size_t size)
     {
         Ref<IBuffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
         if (!stagingBuffer) return nullptr;
@@ -62,7 +62,7 @@ namespace Luma::BufferUtils
         return nullptr;
     }
 
-    IBuffer* createIndexBuffer(IGpuDevice* device, const void* data, const size_t size)
+    IBuffer* createIndexBuffer(IGPUDevice* device, const void* data, const size_t size)
     {
         Ref<IBuffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
         if (!stagingBuffer) return nullptr;

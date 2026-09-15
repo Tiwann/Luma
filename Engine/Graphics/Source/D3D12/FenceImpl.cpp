@@ -1,5 +1,5 @@
 #include "Luma/D3D12/FenceImpl.h"
-#include "Luma/D3D12/GpuDeviceImpl.h"
+#include "Luma/D3D12/GPUDeviceImpl.h"
 
 #include <directx/d3d12.h>
 

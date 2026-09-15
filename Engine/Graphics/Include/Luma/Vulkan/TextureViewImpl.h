@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
     class FSwapchainImpl;
 
     class LUMA_GRAPHICS_API FTextureViewImpl final : public ITextureView
@@ -19,6 +19,6 @@ namespace Luma::Vulkan
     private:
         friend FSwapchainImpl;
         VkImageView m_Handle = nullptr;
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
     };
 }

@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/TextureImpl.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Rendering/TextureAspect.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
@@ -27,7 +27,7 @@ namespace Luma::Vulkan
         if (textureDesc.arrayCount <= 0) return false;
         if (textureDesc.depth == 0) return false;
 
-        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(textureDesc.device);
+        FGPUDeviceImpl* device = static_cast<FGPUDeviceImpl*>(textureDesc.device);
         const VmaAllocator allocatorHandle = device->getAllocator();
         vmaDestroyImage(allocatorHandle, m_Image, m_Allocation);
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "Luma/Graphics/Export.h"
 #include "SwpchainBuffering.h"
-#include "GpuDeviceType.h"
+#include "GPUDeviceType.h"
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Containers/HashMap.h"
 #include "Sampler.h"
@@ -36,7 +36,7 @@ namespace Luma
     struct IBuffer;
     struct ITexture;
     struct ITextureView;
-    struct IShaderProgram;
+    struct IShader;
     struct ICommandBuffer;
     struct IRenderCommandBuffer;
     struct IComputeCommandBuffer;
@@ -50,21 +50,21 @@ namespace Luma
     struct IQueue;
 
 
-    struct FGpuDeviceDesc
+    struct FGPUDeviceDesc
     {
         IWindow* window = nullptr;
-        EGpuDeviceType deviceType = EGpuDeviceType::None;
+        EGPUDeviceType deviceType = EGPUDeviceType::None;
         ESwapchainBuffering buffering = ESwapchainBuffering::None;
         bool vSync = false;
     };
 
-    struct LUMA_GRAPHICS_API IGpuDevice : IRefCounted<IGpuDevice>
+    struct LUMA_GRAPHICS_API IGPUDevice : IRefCounted<IGPUDevice>
     {
         static constexpr uint32_t NUM_FRAMES_IN_FLIGHT = 2;
 
-        ~IGpuDevice() override = default;
-        virtual EGpuDeviceType getDeviceType() = 0;
-        virtual bool initialize(const FGpuDeviceDesc& deviceDesc) = 0;
+        ~IGPUDevice() override = default;
+        virtual EGPUDeviceType getDeviceType() = 0;
+        virtual bool initialize(const FGPUDeviceDesc& deviceDesc) = 0;
         virtual void destroy() = 0;
 
         virtual bool beginFrame() = 0;
@@ -86,9 +86,8 @@ namespace Luma
 
         virtual ITexture* createTexture(const FTextureDesc& textureDesc) = 0;
         virtual ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) = 0;
-        virtual IShaderProgram* createShader(const FShaderDesc& shaderDesc) = 0;
-        IShaderProgram* createShader(FStringView filepath);
-        IShaderProgram* createShader(TBufferView<uint8_t> shaderCode);
+        virtual IShader* createShader(const FShaderDesc& shaderDesc) = 0;
+        IShader* createShader(FStringView vertexPath, FStringView fragmentPath);
         virtual ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) = 0;
         ICommandBuffer* createCommandBuffer(IQueue* queue);
         virtual ICommandBuffer* getCommandBuffer() = 0;
@@ -108,6 +107,6 @@ namespace Luma
         THashMap<FSamplerDesc, ISampler*, FSamplerDescHasher> m_PerDescSamplers;
     };
 
-    LUMA_GRAPHICS_API IGpuDevice* createGpuDevice(const FGpuDeviceDesc& deviceDesc);
-    LUMA_GRAPHICS_API IGpuDevice* createGpuDevice(IWindow* window, EGpuDeviceType deviceType = EGpuDeviceType::Auto, ESwapchainBuffering buffering = ESwapchainBuffering::TripleBuffering, bool vsync = true);
+    LUMA_GRAPHICS_API IGPUDevice* createGPUDevice(const FGPUDeviceDesc& deviceDesc);
+    LUMA_GRAPHICS_API IGPUDevice* createGPUDevice(IWindow* window, EGPUDeviceType deviceType = EGPUDeviceType::Auto, ESwapchainBuffering buffering = ESwapchainBuffering::TripleBuffering, bool vsync = true);
 }

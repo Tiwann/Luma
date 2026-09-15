@@ -3,7 +3,7 @@
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Luma/Rendering/Swapchain.h"
 #include "Luma/Vulkan/SamplerImpl.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 
 #include <GLFW/glfw3.h>
@@ -22,7 +22,7 @@ namespace Luma::Vulkan
                 return false;
         }
 
-        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(rendererDesc.device);
+        FGPUDeviceImpl* device = static_cast<FGPUDeviceImpl*>(rendererDesc.device);
         const FSwapchainImpl* swapchain = static_cast<FSwapchainImpl*>(device->getSwapchain());
         const FQueueImpl* renderQueue = static_cast<FQueueImpl*>(device->getRenderQueue());
 
@@ -93,6 +93,7 @@ namespace Luma::Vulkan
     void FImguiRendererImpl::endFrame()
     {
         ImGui::EndFrame();
+        ImGui::UpdatePlatformWindows();
     }
 
     void FImguiRendererImpl::render(ICommandBuffer* cmdBuffer)

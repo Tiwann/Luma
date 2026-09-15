@@ -1,24 +1,25 @@
 #pragma once
-#include "Luma/Rendering/ShaderProgram.h"
-#include "BindingSetLayoutImpl.h"
+#include "Luma/Rendering/Shader.h"
+#include "Luma/Containers/HashMap.h"
 #include "VulkanFwd.h"
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
-    class FShaderImpl : public IShaderProgram
+    class FShaderImpl : public IShader
     {
     public:
         ~FShaderImpl() override = default;
-        //bool initialize(const FShaderDesc& shaderDesc) override;
+        bool initialize(const FShaderDesc& desc) override;
         void destroy() override;
 
-        IBindingSet* createBindingSet(uint32_t setIndex) const override;
-
-        VkShaderModule getShaderModule() const { return m_ShaderModule; }
+        const THashMap<EShaderStage, VkShaderModule>& getShaderModules() const;
+        VkDescriptorSetLayout getDescriptorSetLayout(uint32_t set) const;
+        VkPipelineLayout getPipelineLayout() const;
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
-        VkShaderModule m_ShaderModule = nullptr;
+        VkPipelineLayout m_PipelineLayout = nullptr;
+        THashMap<EShaderStage, VkShaderModule> m_ShaderModules;
+        THashMap<uint32_t, VkDescriptorSetLayout> m_DescriptorSetLayouts;
     };
 }

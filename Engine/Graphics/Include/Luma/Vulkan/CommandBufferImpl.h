@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class LUMA_GRAPHICS_API FCommandBufferImpl : public ICommandBuffer
     {
@@ -27,7 +27,7 @@ namespace Luma::Vulkan
         void bindVertexBuffers(TArrayView<FVertexBufferBinding> bindings) override;
         void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) override;
         void bindRenderPipeline(const IRenderPipeline* pipeline) override;
-        void pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) override;
+        void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) override;
         void beginRenderPass(const FRenderPassDesc& renderPassDesc) override;
         void endRenderPass() override;
         void setViewports(const TArray<FViewport>& viewports) override;
@@ -40,20 +40,21 @@ namespace Luma::Vulkan
         void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) override;
         void bindComputePipeline(const IComputePipeline* pipeline) override;
         void bindMaterial(const FMaterial* material) override;
-        void bindBindingSet(const IBindingSet* bindingSet, const IShaderProgram* shader) override;
         void dispatch(uint32_t groupCountX, uint32_t groupCountY, uint32_t groupCountZ) override;
         void dispatchIndirect(IBuffer* buffer, int64_t offset) override;
         void copyBuffer(IBuffer* srcBuffer, IBuffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) override;
         void copyBufferToTexture(IBuffer* buffer, int64_t offset, uint64_t size, ITexture* texture, uint32_t arrayIndex,uint32_t mipLevel) override;
         void textureBarriers(TArrayView<FTextureBarrier> barriers) override;
         void bufferBarriers(TArrayView<FBufferBarrier> barriers) override;
+
+        void bindBindingGroup(const IBindingGroup* bindingGroup) override;
         void bindDescriptorBuffer(const IBuffer* buffer) override;
         void setName(FStringView name) override;
 
         VkCommandBuffer getHandle() const { return m_Handle; }
         VkCommandPool getPool() const { return m_PoolHandle; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         EQueueType m_CmdBufferType = EQueueType::None;
         VkCommandBuffer m_Handle = nullptr;
         VkCommandPool m_PoolHandle = nullptr;

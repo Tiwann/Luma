@@ -1,4 +1,4 @@
-﻿#include "Luma/WebGPU/GpuDeviceImpl.h"
+﻿#include "Luma/WebGPU/GPUDeviceImpl.h"
 #define GLFW_INCLUDE_NONE
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3.h>
@@ -12,7 +12,7 @@
 
 namespace Luma::WebGPU
 {
-    bool FGpuDeviceImpl::initialize(const FGpuDeviceDesc& deviceDesc)
+    bool FGPUDeviceImpl::initialize(const FGPUDeviceDesc& deviceDesc)
     {
         constexpr WGPUInstanceFeatureName requiredFeatures[] = { WGPUInstanceFeatureName_ShaderSourceSPIRV };
 
@@ -38,7 +38,7 @@ namespace Luma::WebGPU
                 return;
             }
 
-            FGpuDeviceImpl* thisDevice = static_cast<FGpuDeviceImpl*>(userdata1);
+            FGPUDeviceImpl* thisDevice = static_cast<FGPUDeviceImpl*>(userdata1);
             thisDevice->m_Adapter = adapter;
         };
         wgpuInstanceRequestAdapter(m_Instance, &options, callbackInfo);
@@ -83,7 +83,7 @@ namespace Luma::WebGPU
                 return;
             }
 
-            FGpuDeviceImpl* thisDevice = static_cast<FGpuDeviceImpl*>(userdata1);
+            FGPUDeviceImpl* thisDevice = static_cast<FGPUDeviceImpl*>(userdata1);
             thisDevice->m_Handle = device;
         };
         wgpuAdapterRequestDevice(m_Adapter, &deviceDescriptor, requestDeviceCallbackInfo);
@@ -126,7 +126,7 @@ namespace Luma::WebGPU
         return true;
     }
 
-    void FGpuDeviceImpl::destroy()
+    void FGPUDeviceImpl::destroy()
     {
         m_Swapchain.destroy();
 
@@ -155,7 +155,7 @@ namespace Luma::WebGPU
         }
     }
 
-    bool FGpuDeviceImpl::beginFrame()
+    bool FGPUDeviceImpl::beginFrame()
     {
         if (!m_Window) return false;
         if (!m_Window->isAvailable()) return false;
@@ -178,109 +178,109 @@ namespace Luma::WebGPU
         return true;
     }
 
-    void FGpuDeviceImpl::endFrame()
+    void FGPUDeviceImpl::endFrame()
     {
     }
 
-    void FGpuDeviceImpl::present()
+    void FGPUDeviceImpl::present()
     {
         wgpuSurfacePresent(m_Swapchain.getHandle());
         m_FrameIndex = (m_FrameIndex + 1) % NUM_FRAMES_IN_FLIGHT;
     }
 
-    void FGpuDeviceImpl::waitIdle()
+    void FGPUDeviceImpl::waitIdle()
     {
     }
 
-    uint32_t FGpuDeviceImpl::getTextureCount() const
+    uint32_t FGPUDeviceImpl::getTextureCount() const
     {
         return m_Swapchain.getTextureCount();
     }
 
-    uint32_t FGpuDeviceImpl::getFrameIndex() const
+    uint32_t FGPUDeviceImpl::getFrameIndex() const
     {
         return m_FrameIndex;
     }
 
-    bool FGpuDeviceImpl::hasVSync()
+    bool FGPUDeviceImpl::hasVSync()
     {
         return m_Swapchain.hasVSync();
     }
 
-    ISwapchain* FGpuDeviceImpl::getSwapchain()
+    ISwapchain* FGPUDeviceImpl::getSwapchain()
     {
         return &m_Swapchain;
     }
 
-    IBuffer* FGpuDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
+    IBuffer* FGPUDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
     {
         return nullptr;
     }
 
-    ITexture* FGpuDeviceImpl::createTexture(const FTextureDesc& textureDesc)
+    ITexture* FGPUDeviceImpl::createTexture(const FTextureDesc& textureDesc)
     {
         return nullptr;
     }
 
-    ITextureView* FGpuDeviceImpl::createTextureView(const FTextureViewDesc& textureViewDesc)
+    ITextureView* FGPUDeviceImpl::createTextureView(const FTextureViewDesc& textureViewDesc)
     {
         return nullptr;
     }
 
-    IShaderProgram* FGpuDeviceImpl::createShader(const FShaderDesc& shaderDesc)
+    IShader* FGPUDeviceImpl::createShader(const FShaderDesc& shaderDesc)
     {
         return nullptr;
     }
 
-    ICommandBuffer* FGpuDeviceImpl::createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc)
+    ICommandBuffer* FGPUDeviceImpl::createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc)
     {
         return nullptr;
     }
 
-    ICommandBuffer* FGpuDeviceImpl::getCommandBuffer()
+    ICommandBuffer* FGPUDeviceImpl::getCommandBuffer()
     {
         return nullptr;
     }
 
-    ISampler* FGpuDeviceImpl::createSampler(const FSamplerDesc& samplerDesc)
+    ISampler* FGPUDeviceImpl::createSampler(const FSamplerDesc& samplerDesc)
     {
         return nullptr;
     }
 
-    IRenderPipeline* FGpuDeviceImpl::createRenderPipeline(const FRenderPipelineDesc& pipelineDesc)
+    IRenderPipeline* FGPUDeviceImpl::createRenderPipeline(const FRenderPipelineDesc& pipelineDesc)
     {
         return nullptr;
     }
 
-    IComputePipeline* FGpuDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
+    IComputePipeline* FGPUDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
     {
         return nullptr;
     }
 
-    IFence* FGpuDeviceImpl::createFence(const FFenceDesc& fenceDesc)
+    IFence* FGPUDeviceImpl::createFence(const FFenceDesc& fenceDesc)
     {
         return nullptr;
     }
 
-    ITextureView* FGpuDeviceImpl::getAcquiredSwapchainTextureView()
+    ITextureView* FGPUDeviceImpl::getAcquiredSwapchainTextureView()
     {
         return m_Swapchain.getTextureView(m_SwapchainImageIndex);
     }
 
-    void FGpuDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)
+    void FGPUDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)
     {
-        IGpuDevice::writeSamplerDescriptor(buffer, offset, sampler);
+        IGPUDevice::writeSamplerDescriptor(buffer, offset, sampler);
     }
 
-    void FGpuDeviceImpl::writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture,
+    void FGPUDeviceImpl::writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture,
         ETextureBindingType bindingType)
     {
-        IGpuDevice::writeTextureDescriptor(buffer, offset, texture, bindingType);
+        IGPUDevice::writeTextureDescriptor(buffer, offset, texture, bindingType);
     }
 
-    void FGpuDeviceImpl::writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource,
+    void FGPUDeviceImpl::writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource,
         uint64_t resourceOffset, uint64_t resourceSize, EBufferBindingType bindingType)
     {
-        IGpuDevice::writeBufferDescriptor(buffer, offset, bufferResource, resourceOffset, resourceSize, bindingType);
+        IGPUDevice::writeBufferDescriptor(buffer, offset, bufferResource, resourceOffset, resourceSize, bindingType);
     }
 }

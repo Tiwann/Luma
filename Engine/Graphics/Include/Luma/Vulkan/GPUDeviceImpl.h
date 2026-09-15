@@ -1,6 +1,6 @@
 #pragma once
 #include "Luma/Graphics/Export.h"
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "SwapchainImpl.h"
 #include "QueueImpl.h"
 #include "CommandBufferImpl.h"
@@ -23,12 +23,12 @@ namespace Luma::Vulkan
         uint32_t combinedImageSamplerDescriptorSize = 0;
     };
 
-    class LUMA_GRAPHICS_API FGpuDeviceImpl final : public IGpuDevice
+    class LUMA_GRAPHICS_API FGPUDeviceImpl final : public IGPUDevice
     {
     public:
-        EGpuDeviceType getDeviceType() override;
+        EGPUDeviceType getDeviceType() override;
 
-        bool initialize(const FGpuDeviceDesc& deviceDesc) override;
+        bool initialize(const FGPUDeviceDesc& deviceDesc) override;
         void destroy() override;
 
         bool beginFrame() override;
@@ -46,7 +46,7 @@ namespace Luma::Vulkan
         IBuffer* createBuffer(const FBufferDesc& bufferDesc) override;
         ITexture* createTexture(const FTextureDesc& textureDesc) override;
         ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) override;
-        IShaderProgram* createShader(const FShaderDesc& shaderDesc) override;
+        IShader* createShader(const FShaderDesc& shaderDesc) override;
         ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) override;
         ISampler* createSampler(const FSamplerDesc& samplerDesc) override;
         IRenderPipeline* createRenderPipeline(const FRenderPipelineDesc& pipelineDesc) override;

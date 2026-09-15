@@ -10,7 +10,7 @@ namespace Luma
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class FImguiRendererImpl : public IImguiRenderer
     {
@@ -26,7 +26,7 @@ namespace Luma::Vulkan
         uint64_t getOrAddTexture(const ITextureView* texture);
 
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         THashMap<const ITextureView*, uint64_t> m_Textures;
         ISampler* m_Sampler = nullptr;
     };

@@ -9,12 +9,12 @@ namespace Luma::Vulkan
     class FSwapchainImpl;
     class FCommandBufferImpl;
     class FFenceImpl;
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class LUMA_GRAPHICS_API FQueueImpl final : public IQueue
     {
     public:
-        explicit FQueueImpl(FGpuDeviceImpl* device);
+        explicit FQueueImpl(FGPUDeviceImpl* device);
 
         void waitIdle() override;
         bool executeCommandBuffers(const FQueueExecuteInfo& executeInfo) override;
@@ -35,7 +35,7 @@ namespace Luma::Vulkan
 
         VkCommandPool createCommandPool();
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         VkQueue m_Handle = nullptr;
         uint32_t m_Index = uint32_t(-1);
     };

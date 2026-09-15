@@ -3,18 +3,21 @@
 
 namespace Luma
 {
-    enum class EShaderStageBits
+    enum class EShaderStage
     {
         None = 0,
         Vertex = BIT(0),
         Geometry = BIT(1),
         Fragment = BIT(2),
-        Compute = BIT(3),
-        RayGeneration = BIT(4),
-        TessellationControl = BIT(5),
-        TessellationEvaluation = BIT(6),
-        Mesh = BIT(7),
+        TessellationControl = BIT(3),
+        TessellationEvaluation = BIT(4),
+        Task = BIT(5),
+        Mesh = BIT(6),
+
+        Compute = BIT(7),
+
+        AllGraphics = Vertex | Geometry | Fragment | TessellationControl | TessellationEvaluation | Task | Mesh
     };
 
-    typedef TFlags<EShaderStageBits> FShaderStageFlags;
+    typedef TFlags<EShaderStage> FShaderStageFlags;
 }

@@ -5,7 +5,7 @@
 
 namespace Luma::Deko3d
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class LUMA_GRAPHICS_API FBufferImpl final : public IBuffer
     {
@@ -22,7 +22,7 @@ namespace Luma::Deko3d
 
         DkMemBlock getHandle() const { return m_Handle; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         DkMemBlock m_Handle = nullptr;
     };
 }

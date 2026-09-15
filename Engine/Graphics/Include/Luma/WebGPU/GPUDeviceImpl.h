@@ -1,18 +1,18 @@
 ﻿#pragma once
 #include "QueueImpl.h"
 #include "SwapchainImpl.h"
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "Luma/Rendering/Constants.h"
 #include "WgpuFwd.h"
 
 namespace Luma::WebGPU
 {
-    class FGpuDeviceImpl : public IGpuDevice
+    class FGPUDeviceImpl : public IGPUDevice
     {
     public:
         EGpuDeviceType getDeviceType() override { return EGpuDeviceType::WebGPU; }
 
-        bool initialize(const FGpuDeviceDesc& deviceDesc) override;
+        bool initialize(const FGPUDeviceDesc& deviceDesc) override;
         void destroy() override;
         bool beginFrame() override;
         void endFrame() override;
@@ -28,7 +28,7 @@ namespace Luma::WebGPU
         IBuffer* createBuffer(const FBufferDesc& bufferDesc) override;
         ITexture* createTexture(const FTextureDesc& textureDesc) override;
         ITextureView* createTextureView(const FTextureViewDesc& textureViewDesc) override;
-        IShaderProgram* createShader(const FShaderDesc& shaderDesc) override;
+        IShader* createShader(const FShaderDesc& shaderDesc) override;
         ICommandBuffer* createCommandBuffer(const FCommandBufferDesc& cmdBufferDesc) override;
         ICommandBuffer* getCommandBuffer() override;
         ISampler* createSampler(const FSamplerDesc& samplerDesc) override;

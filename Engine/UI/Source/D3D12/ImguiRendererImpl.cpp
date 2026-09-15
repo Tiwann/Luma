@@ -1,5 +1,5 @@
 #include "Luma/D3D12/ImguiRendererImpl.h"
-#include "Luma/D3D12/GpuDeviceImpl.h"
+#include "Luma/D3D12/GPUDeviceImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 
 #define RGFW_WINDOWS

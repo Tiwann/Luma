@@ -1,5 +1,5 @@
 #pragma once
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "Luma/Rendering/QueueType.h"
 #include "D3D12Fwd.h"
 #include "QueueImpl.h"
@@ -14,7 +14,7 @@ namespace Luma
 
 namespace Luma::D3D12
 {
-    class FGpuDeviceImpl : public IGpuDevice
+    class FGPUDeviceImpl : public IGPUDevice
     {
     public:
         EGpuDeviceType getDeviceType() override;

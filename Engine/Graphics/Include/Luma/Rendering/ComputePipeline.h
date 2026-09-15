@@ -3,13 +3,13 @@
 
 namespace Luma
 {
-    struct IShaderProgram;
-    struct IGpuDevice;
+    struct IShader;
+    struct IGPUDevice;
 
     struct FComputePipelineDesc
     {
-        IGpuDevice* device = nullptr;
-        IShaderProgram* computeShader = nullptr;
+        IGPUDevice* device = nullptr;
+        IShader* shaderProgram = nullptr;
     };
     
     struct IComputePipeline : IRefCounted<IComputePipeline>

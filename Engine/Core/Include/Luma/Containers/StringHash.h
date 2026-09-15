@@ -27,3 +27,15 @@ namespace Luma
         }
     };
 }
+
+namespace std
+{
+    template<>
+    struct hash<Luma::FString>
+    {
+        size_t operator()(const Luma::FString& string) const noexcept
+        {
+            return Luma::THasher<Luma::FString>()(string);
+        }
+    };
+}

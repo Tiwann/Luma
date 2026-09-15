@@ -49,7 +49,7 @@ namespace Luma
         return (uint32_t)m_Buffering;
     }
 
-    IGpuDevice* ISwapchain::getDevice() const
+    IGPUDevice* ISwapchain::getDevice() const
     {
         return m_Device;
     }

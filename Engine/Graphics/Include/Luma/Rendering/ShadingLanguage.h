@@ -7,6 +7,5 @@ namespace Luma
         Slang,
         GLSL,
         HLSL,
-        PSSL,
     };
 }

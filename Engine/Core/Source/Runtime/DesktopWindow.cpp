@@ -165,7 +165,7 @@ namespace Luma
         if (m_Handle) glfwDestroyWindow(m_Handle);
 
 #ifdef LUMA_BUILD_OPENGL
-        if (windowDesc.deviceType == EGpuDeviceType::OpenGL)
+        if (windowDesc.deviceType == EGPUDeviceType::OpenGL)
         {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);

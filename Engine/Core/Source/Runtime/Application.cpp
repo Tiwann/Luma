@@ -19,7 +19,7 @@ namespace Luma
     void IApplication::run()
     {
         const FApplicationConfig configuration = getConfiguration();
-        const EGpuDeviceType deviceType = getGpuDeviceType();
+        const EGPUDeviceType deviceType = getGpuDeviceType();
 
         FWindowDesc windowDesc;
         windowDesc.title = configuration.applicationName;
@@ -34,12 +34,12 @@ namespace Luma
         }
         m_Window->closedEvent.bindMember(this, &IApplication::exit);
 
-        FGpuDeviceDesc rdDesc;
+        FGPUDeviceDesc rdDesc;
         rdDesc.window = m_Window;
         rdDesc.buffering = ESwapchainBuffering::DoubleBuffering;
         rdDesc.vSync = configuration.vsync;
         rdDesc.deviceType = deviceType;
-        m_GpuDevice = createGpuDevice(rdDesc);
+        m_GpuDevice = createGPUDevice(rdDesc);
         if (!m_GpuDevice)
         {
             destroy();
@@ -183,7 +183,7 @@ namespace Luma
         return m_AudioDevice;
     }
 
-    Ref<IGpuDevice> IApplication::getGpuDevice() const
+    Ref<IGPUDevice> IApplication::getGpuDevice() const
     {
         return m_GpuDevice;
     }

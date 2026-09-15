@@ -4,7 +4,7 @@
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class FComputePipelineImpl : public IComputePipeline
     {
@@ -14,7 +14,7 @@ namespace Luma::Vulkan
 
         VkPipeline getHandle() const { return m_Handle; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         VkPipeline m_Handle = nullptr;
     };
 }

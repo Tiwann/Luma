@@ -1,11 +1,11 @@
 ﻿#include "Luma/WebGPU/QueueImpl.h"
-#include "Luma/WebGPU/GpuDeviceImpl.h"
+#include "Luma/WebGPU/GPUDeviceImpl.h"
 #include <webgpu/webgpu.h>
 
 
 namespace Luma::WebGPU
 {
-    FQueueImpl::FQueueImpl(FGpuDeviceImpl* device)
+    FQueueImpl::FQueueImpl(FGPUDeviceImpl* device)
         : m_Device(device)
     {
 

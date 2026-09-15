@@ -27,9 +27,15 @@
 #include "Luma/Rendering/ShaderDataType.h"
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Rendering/TextureSubresourceRange.h"
+#include "Luma/Rendering/TextureBinding.h"
+#include "Luma/Rendering/BufferBinding.h"
+#include "Luma/Rendering/ShaderBinding.h"
+#include "Luma/Rendering/ShaderPushConstantVariable.h"
 
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
+
+
 
 namespace Luma::Vulkan
 {
@@ -320,7 +326,7 @@ namespace Luma::Vulkan
         case EBindingType::StorageTexture: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
         case EBindingType::UniformBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         case EBindingType::StorageBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-        case EBindingType::InputAttachment: return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        case EBindingType::InputTarget: return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
         case EBindingType::InlineUniformBlock: return VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK;
         case EBindingType::AccelerationStructure: return VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
         case EBindingType::StorageTexelBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
@@ -369,39 +375,36 @@ namespace Luma::Vulkan
     {
         VkShaderStageFlags result = 0;
         const uint32_t val = value;
-        if (val & (uint32_t)EShaderStageBits::Vertex)
+        if (val & (uint32_t)EShaderStage::Vertex)
             result |= VK_SHADER_STAGE_VERTEX_BIT;
-        if (val & (uint32_t)EShaderStageBits::Fragment)
+        if (val & (uint32_t)EShaderStage::Fragment)
             result |= VK_SHADER_STAGE_FRAGMENT_BIT;
-        if (val & (uint32_t)EShaderStageBits::Geometry)
+        if (val & (uint32_t)EShaderStage::Geometry)
             result |= VK_SHADER_STAGE_GEOMETRY_BIT;
-        if (val & (uint32_t)EShaderStageBits::TessellationControl)
+        if (val & (uint32_t)EShaderStage::TessellationControl)
             result |= VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-        if (val & (uint32_t)EShaderStageBits::TessellationEvaluation)
+        if (val & (uint32_t)EShaderStage::TessellationEvaluation)
             result |= VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-        if (val & (uint32_t)EShaderStageBits::Mesh)
+        if (val & (uint32_t)EShaderStage::Mesh)
             result |= VK_SHADER_STAGE_MESH_BIT_EXT;
-        if (val & (uint32_t)EShaderStageBits::Compute)
+        if (val & (uint32_t)EShaderStage::Compute)
             result |= VK_SHADER_STAGE_COMPUTE_BIT;
-        if (val & (uint32_t)EShaderStageBits::RayGeneration)
-            result |= VK_SHADER_STAGE_RAYGEN_BIT_KHR;
         return result;
     }
 
     template<>
-    inline VkShaderStageFlagBits convert(const EShaderStageBits& value)
+    inline VkShaderStageFlagBits convert(const EShaderStage& value)
     {
         switch (value)
         {
-        case EShaderStageBits::None: return (VkShaderStageFlagBits)0;
-        case EShaderStageBits::Vertex: return VK_SHADER_STAGE_VERTEX_BIT;
-        case EShaderStageBits::Geometry: return VK_SHADER_STAGE_GEOMETRY_BIT;
-        case EShaderStageBits::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
-        case EShaderStageBits::Compute: return VK_SHADER_STAGE_COMPUTE_BIT;
-        case EShaderStageBits::RayGeneration: return VK_SHADER_STAGE_RAYGEN_BIT_KHR;
-        case EShaderStageBits::TessellationControl: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-        case EShaderStageBits::Mesh: return VK_SHADER_STAGE_MESH_BIT_EXT;
-        case EShaderStageBits::TessellationEvaluation: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+        case EShaderStage::None: return (VkShaderStageFlagBits)0;
+        case EShaderStage::Vertex: return VK_SHADER_STAGE_VERTEX_BIT;
+        case EShaderStage::Geometry: return VK_SHADER_STAGE_GEOMETRY_BIT;
+        case EShaderStage::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
+        case EShaderStage::Compute: return VK_SHADER_STAGE_COMPUTE_BIT;
+        case EShaderStage::TessellationControl: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+        case EShaderStage::Mesh: return VK_SHADER_STAGE_MESH_BIT_EXT;
+        case EShaderStage::TessellationEvaluation: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
         default: return (VkShaderStageFlagBits)0;
         }
     }
@@ -664,5 +667,61 @@ namespace Luma::Vulkan
         range.baseArrayLayer = value.baseArrayLayer;
         range.layerCount = value.layerCount;
         return range;
+    }
+
+
+    template<>
+    inline TArray<VkPushConstantRange> convert(const TArray<FShaderPushConstantVariable>& variables)
+    {
+        TArray<VkPushConstantRange> ranges;
+
+        for (const auto& var : variables)
+        {
+            VkPushConstantRange range;
+            range.offset = var.offset;
+            range.size = var.size;
+            range.stageFlags = convert<VkShaderStageFlags>(var.visibility);
+
+            ranges.add(range);
+        }
+
+        return ranges;
+    }
+
+
+    template<>
+    inline VkDescriptorSetLayoutBinding convert(const FShaderBinding& binding)
+    {
+        VkDescriptorSetLayoutBinding result{};
+        result.binding = binding.bindingIndex;
+        result.stageFlags = convert<VkShaderStageFlags>(binding.visibility);
+        result.descriptorCount = binding.arrayCount;
+        result.descriptorType = convert<VkDescriptorType>(binding.bindingType);
+        return result;
+    }
+
+
+    template<>
+    inline VkDescriptorType convert(const ETextureBindingType& value)
+    {
+        switch (value)
+        {
+        case ETextureBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+        case ETextureBindingType::Sampled: return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+        default: throw;
+        }
+    }
+
+    template<>
+    inline VkDescriptorType convert(const EBufferBindingType& value)
+    {
+        switch (value)
+        {
+        case EBufferBindingType::Uniform: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case EBufferBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        case EBufferBindingType::UniformTexel: return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+        case EBufferBindingType::StorageTexel: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+        default: throw;
+        }
     }
 }

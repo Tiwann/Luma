@@ -12,7 +12,7 @@ namespace Luma
 {
     struct FSamplerDesc
     {
-        struct IGpuDevice* device = nullptr;
+        struct IGPUDevice* device = nullptr;
         ESamplerAddressMode addressModeU = ESamplerAddressMode::Repeat;
         ESamplerAddressMode addressModeV = ESamplerAddressMode::Repeat;
         ESamplerAddressMode addressModeW = ESamplerAddressMode::Repeat;
@@ -26,7 +26,7 @@ namespace Luma
         float maxLod = 1.0f;
         EFilter mipmapFilter = EFilter::Nearest;
 
-        FSamplerDesc& withDevice(IGpuDevice* device);
+        FSamplerDesc& withDevice(IGPUDevice* device);
         FSamplerDesc& withAddressModeUVW(ESamplerAddressMode u, ESamplerAddressMode v, ESamplerAddressMode w);
         FSamplerDesc& withAddressMode(ESamplerAddressMode in);
         FSamplerDesc& withFilter(EFilter inMinFilter, EFilter inMagFilter);

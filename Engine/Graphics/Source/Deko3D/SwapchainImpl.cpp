@@ -1,5 +1,5 @@
 #include "Luma/Deko3D/SwapchainImpl.h"
-#include "Luma/Deko3D/GpuDeviceImpl.h"
+#include "Luma/Deko3D/GPUDeviceImpl.h"
 #include "Luma/Deko3D/Conversions.h"
 #include "Luma/Deko3D/SwapchainPrivate.h"
 #include "Luma/Memory/Memory.h"

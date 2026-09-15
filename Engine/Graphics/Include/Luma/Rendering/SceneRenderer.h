@@ -13,7 +13,7 @@ namespace Luma
     class FGBuffer : public IRefCounted<FGBuffer>
     {
     public:
-        bool initialize(IGpuDevice* device, uint32_t width, uint32_t height);
+        bool initialize(IGPUDevice* device, uint32_t width, uint32_t height);
         void destroy();
 
         Ref<ITexture> getAlbedoTexture() const { return m_Albedo; }
@@ -33,7 +33,7 @@ namespace Luma
 
     struct FSceneRendererDesc
     {
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         uint32_t width = 0;
         uint32_t height = 0;
     };
@@ -54,21 +54,21 @@ namespace Luma
 
         Ref<FGBuffer> getGBuffer() const { return m_GBuffer; }
         Ref<ITexture> getFinalTexture() const { return m_FinalTexture; }
-        Ref<IShaderProgram> getShader() const { return m_GeometryPassShader; }
+        Ref<IShader> getShader() const { return m_GeometryPassShader; }
     private:
         bool m_Begin = false;
         uint32_t m_Width = 0;
         uint32_t m_Height = 0;
-        IGpuDevice* m_Device = nullptr;
+        IGPUDevice* m_Device = nullptr;
         FScene* m_Scene = nullptr;
         Ref<FGBuffer> m_GBuffer = nullptr;
         Ref<ITexture> m_FinalTexture = nullptr;
         Ref<IBuffer> m_CameraBuffer = nullptr;
         Ref<IBuffer> m_ObjectBuffer = nullptr;
         Ref<IBuffer> m_SceneBuffer = nullptr;
-        Ref<IBindingSet> m_BindingSet1 = nullptr;
-        Ref<IBindingSet> m_BindingSet2 = nullptr;
+        Ref<IBindingGroup> m_BindingSet1 = nullptr;
+        Ref<IBindingGroup> m_BindingSet2 = nullptr;
         Ref<IRenderPipeline> m_GeometryPipeline = nullptr;
-        Ref<IShaderProgram> m_GeometryPassShader = nullptr;
+        Ref<IShader> m_GeometryPassShader = nullptr;
     };
 }

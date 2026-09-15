@@ -4,7 +4,7 @@ namespace Luma
 {
     bool FInput::getKeyDown(EKey key)
     {
-        return m_KeyboardState.currentState[(uint32_t)key] == EInputState::Pressed &&
+           return m_KeyboardState.currentState[(uint32_t)key] == EInputState::Pressed &&
             m_KeyboardState.previousState[(uint32_t)key] != EInputState::Pressed;
     }
 
@@ -101,4 +101,5 @@ namespace Luma
         m_MouseState.previousWheel = m_MouseState.currentWheel;
         m_MouseState.currentWheel = wheel;
     }
+
 }

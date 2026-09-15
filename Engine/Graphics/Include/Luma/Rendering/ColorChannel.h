@@ -10,6 +10,7 @@ namespace Luma
         Green = BIT(1),
         Blue = BIT(2),
         Alpha = BIT(3),
+        All = Red | Green | Blue | Alpha
     };
 
     typedef TFlags<EColorChannelBits> FColorChannelFlags;

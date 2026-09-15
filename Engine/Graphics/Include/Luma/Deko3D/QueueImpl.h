@@ -12,14 +12,14 @@ namespace Luma::Deko3d
     class FCommandBufferImpl;
     class FFenceImpl;
     class FSemaphoreImpl;
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class LUMA_GRAPHICS_API FQueueImpl final : public IQueue
     {
     public:
         FQueueImpl() = default;
 
-        bool initialize(FGpuDeviceImpl* device, EQueueType queueType);
+        bool initialize(FGPUDeviceImpl* device, EQueueType queueType);
         void destroy();
         bool executeCommandBuffer(const ICommandBuffer* cmdBuffer, IFence* signalFence = nullptr, FPipelineStageFlags stageMask = EPipelineStageBits::None) override;
         bool present(ISwapchain* swapchain, ISemaphore* waitSemaphore, uint32_t imageIndex) override;
@@ -32,7 +32,7 @@ namespace Luma::Deko3d
 
         void waitIdle();
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         DkQueue m_Handle = nullptr;
         TArray<const FSemaphoreImpl*> m_WaitSemaphores;
         TArray<const FSemaphoreImpl*> m_SignalSemaphores;

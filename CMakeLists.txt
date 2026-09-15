@@ -34,6 +34,13 @@ add_subdirectory(Engine/UI)
 add_subdirectory(Engine/Physics)
 
 if(LUMA_ENGINE_BUILD_EXAMPLES)
+    add_shader_target(luma-renderer2d-shaders
+            OUTPUT_TYPE spirv dxil
+            SOURCES Engine/Assets/Shaders/Source/Renderer2D.slang
+            VERTEX vert
+            FRAG frag
+    )
+
     add_subdirectory(Example/HelloTriangle)
     add_subdirectory(Example/HelloTexture)
     add_subdirectory(Example/HelloMesh)

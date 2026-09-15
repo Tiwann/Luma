@@ -1,5 +1,5 @@
 ﻿#include "Luma/OpenGL/BufferImpl.h"
-#include "Luma/OpenGL/GpuDeviceImpl.h"
+#include "Luma/OpenGL/GPUDeviceImpl.h"
 #include <glad/glad.h>
 
 namespace Luma::OpenGL

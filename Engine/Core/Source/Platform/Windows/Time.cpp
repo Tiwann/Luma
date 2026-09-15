@@ -4,22 +4,25 @@
 
 namespace Luma
 {
-    static bool s_Initialized = false;
-    static LARGE_INTEGER s_Frequency;
-    static LARGE_INTEGER s_Start;
-
-    void FTime::initialize()
-    {
-        QueryPerformanceFrequency(&s_Frequency);
-        QueryPerformanceCounter(&s_Start);
-        s_Initialized = true;
-    }
-
     double FTime::getTime()
     {
-        if (!s_Initialized) initialize();
+        static bool initialized = false;
+        static LARGE_INTEGER frequency;
+        static LARGE_INTEGER start;
+
+        []()
+        {
+            if (!initialized)
+            {
+                QueryPerformanceFrequency(&frequency);
+                QueryPerformanceCounter(&start);
+                initialized = true;
+            }
+        }();
+
+
         LARGE_INTEGER now;
         QueryPerformanceCounter(&now);
-        return static_cast<double>(now.QuadPart - s_Start.QuadPart) / static_cast<double>(s_Frequency.QuadPart);
+        return static_cast<double>(now.QuadPart - start.QuadPart) / static_cast<double>(frequency.QuadPart);
     }
 }

@@ -4,7 +4,7 @@
 
 namespace Luma::D3D12
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class FBufferImpl final : public IBuffer
     {
@@ -18,7 +18,7 @@ namespace Luma::D3D12
         ID3D12Resource* getHandle() const { return m_Handle; }
         ID3D12Allocation* getAllocation() const { return m_Allocation; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         ID3D12Allocation* m_Allocation = nullptr;
         ID3D12Resource* m_Handle = nullptr;
     };

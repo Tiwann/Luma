@@ -27,13 +27,13 @@ int main()
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
-    FGpuDeviceDesc gpuDeviceDesc;
-    gpuDeviceDesc.deviceType = EGpuDeviceType::Vulkan;
+    FGPUDeviceDesc gpuDeviceDesc;
+    gpuDeviceDesc.deviceType = EGPUDeviceType::Vulkan;
     gpuDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
     gpuDeviceDesc.window = window;
     gpuDeviceDesc.vSync = false;
 
-    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
+    Ref<IGPUDevice> gpuDevice = createGPUDevice(gpuDeviceDesc);
     LUMA_ASSERT(gpuDevice, "Render device failed to create! Exiting application.");
 
     FString filepath = FPath::openFileDialog("Open a model file.", FPath::getDesktopDirectory(), FDialogFilters::ModelFilters, *window);

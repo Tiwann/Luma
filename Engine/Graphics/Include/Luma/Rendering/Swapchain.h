@@ -9,14 +9,14 @@
 
 namespace Luma
 {
-    struct IGpuDevice;
+    struct IGPUDevice;
     struct ITexture;
     struct ITextureView;
     struct IQueue;
 
     struct FSwapchainDesc
     {
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         EFormat format = EFormat::None;
         ESwapchainBuffering buffering = ESwapchainBuffering::None;
         EPresentMode presentMode = EPresentMode::Unknown;
@@ -41,7 +41,7 @@ namespace Luma
         ESwapchainBuffering getBuffering() const;
         uint32_t getTextureCount() const;
 
-        IGpuDevice* getDevice() const;
+        IGPUDevice* getDevice() const;
 
         void invalidate();
         virtual bool isValid() const;
@@ -54,7 +54,7 @@ namespace Luma
 
         FSwapchainDesc getDesc() const;
     protected:
-        IGpuDevice* m_Device = nullptr;
+        IGPUDevice* m_Device = nullptr;
         EFormat m_Format = EFormat::None;
         ESwapchainBuffering m_Buffering = ESwapchainBuffering::None;
         EPresentMode m_PresentMode = EPresentMode::Unknown;

@@ -1,4 +1,4 @@
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Vulkan/CommandBufferImpl.h"
 #include "Luma/Vulkan/FenceImpl.h"
 #include "Luma/Vulkan/SamplerImpl.h"
@@ -49,12 +49,12 @@ namespace Luma::Vulkan
         return false;
     };
 
-    EGpuDeviceType FGpuDeviceImpl::getDeviceType()
+    EGPUDeviceType FGPUDeviceImpl::getDeviceType()
     {
-        return EGpuDeviceType::Vulkan;
+        return EGPUDeviceType::Vulkan;
     }
 
-    bool FGpuDeviceImpl::initialize(const FGpuDeviceDesc& deviceDesc)
+    bool FGPUDeviceImpl::initialize(const FGPUDeviceDesc& deviceDesc)
     {
         if (!deviceDesc.window)
         {
@@ -409,7 +409,7 @@ namespace Luma::Vulkan
         return true;
     }
 
-    void FGpuDeviceImpl::destroy()
+    void FGPUDeviceImpl::destroy()
     {
         waitIdle();
 
@@ -449,7 +449,7 @@ namespace Luma::Vulkan
         }
     }
 
-    bool FGpuDeviceImpl::beginFrame()
+    bool FGPUDeviceImpl::beginFrame()
     {
         if (!m_Window) return false;
         if (!m_Window->isAvailable()) return false;
@@ -485,7 +485,7 @@ namespace Luma::Vulkan
         return true;
     }
 
-    void FGpuDeviceImpl::endFrame()
+    void FGPUDeviceImpl::endFrame()
     {
         FCommandBufferImpl& cmdBuffer = m_CmdBuffers[m_FrameIndex];
 
@@ -512,7 +512,7 @@ namespace Luma::Vulkan
         vkQueueSubmit(m_RenderQueue.getHandle(), 1, &submitInfo, m_Fences[m_FrameIndex]);
     }
 
-    void FGpuDeviceImpl::present()
+    void FGPUDeviceImpl::present()
     {
         const uint32_t indices[] { m_SwapchainImageIndex };
 
@@ -529,42 +529,42 @@ namespace Luma::Vulkan
         m_FrameIndex = (m_FrameIndex + 1) % NUM_FRAMES_IN_FLIGHT;
     }
 
-    void FGpuDeviceImpl::waitIdle()
+    void FGPUDeviceImpl::waitIdle()
     {
         vkDeviceWaitIdle(m_Handle);
     }
 
-    uint32_t FGpuDeviceImpl::getTextureCount() const
+    uint32_t FGPUDeviceImpl::getTextureCount() const
     {
         return m_Swapchain.getTextureCount();
     }
 
-    uint32_t FGpuDeviceImpl::getFrameIndex() const
+    uint32_t FGPUDeviceImpl::getFrameIndex() const
     {
         return m_FrameIndex;
     }
 
-    ISwapchain* FGpuDeviceImpl::getSwapchain()
+    ISwapchain* FGPUDeviceImpl::getSwapchain()
     {
         return &m_Swapchain;
     }
 
-    IQueue* FGpuDeviceImpl::getRenderQueue()
+    IQueue* FGPUDeviceImpl::getRenderQueue()
     {
         return &m_RenderQueue;
     }
 
-    IQueue* FGpuDeviceImpl::getComputeQueue()
+    IQueue* FGPUDeviceImpl::getComputeQueue()
     {
         return &m_ComputeQueue;
     }
 
-    IQueue* FGpuDeviceImpl::getCopyQueue()
+    IQueue* FGPUDeviceImpl::getCopyQueue()
     {
         return &m_CopyQueue;
     }
 
-    IBuffer* FGpuDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
+    IBuffer* FGPUDeviceImpl::createBuffer(const FBufferDesc& bufferDesc)
     {
         FBufferDesc desc(bufferDesc);
         desc.device = this;
@@ -577,7 +577,7 @@ namespace Luma::Vulkan
         return buffer;
     }
 
-    ITexture* FGpuDeviceImpl::createTexture(const FTextureDesc& textureDesc)
+    ITexture* FGPUDeviceImpl::createTexture(const FTextureDesc& textureDesc)
     {
         FTextureDesc desc(textureDesc);
         desc.device = this;
@@ -590,7 +590,7 @@ namespace Luma::Vulkan
         return texture;
     }
 
-    ITextureView* FGpuDeviceImpl::createTextureView(const FTextureViewDesc& textureViewDesc)
+    ITextureView* FGPUDeviceImpl::createTextureView(const FTextureViewDesc& textureViewDesc)
     {
         FTextureViewDesc desc(textureViewDesc);
         desc.device = this;
@@ -603,12 +603,22 @@ namespace Luma::Vulkan
         return textureView;
     }
 
-    IShaderProgram* FGpuDeviceImpl::createShader(const FShaderDesc& shaderDesc)
+    IShader* FGPUDeviceImpl::createShader(const FShaderDesc& shaderDesc)
     {
-        return nullptr;
+        FShaderDesc desc(shaderDesc);
+        desc.device = this;
+
+        FShaderImpl* shader = new FShaderImpl();
+        if (!shader->initialize(desc))
+        {
+            delete shader;
+            return nullptr;
+        }
+
+        return shader;
     }
 
-    ICommandBuffer* FGpuDeviceImpl::createCommandBuffer(const FCommandBufferDesc& commandBufferDesc)
+    ICommandBuffer* FGPUDeviceImpl::createCommandBuffer(const FCommandBufferDesc& commandBufferDesc)
     {
         FCommandBufferDesc desc(commandBufferDesc);
         desc.device = this;
@@ -621,7 +631,7 @@ namespace Luma::Vulkan
         return cmdBuffer;
     }
 
-    ISampler* FGpuDeviceImpl::createSampler(const FSamplerDesc& samplerDesc)
+    ISampler* FGPUDeviceImpl::createSampler(const FSamplerDesc& samplerDesc)
     {
         FSamplerDesc desc(samplerDesc);
         desc.device = this;
@@ -634,7 +644,7 @@ namespace Luma::Vulkan
         return sampler;
     }
 
-    IRenderPipeline* FGpuDeviceImpl::createRenderPipeline(const FRenderPipelineDesc& pipelineDesc)
+    IRenderPipeline* FGPUDeviceImpl::createRenderPipeline(const FRenderPipelineDesc& pipelineDesc)
     {
         FRenderPipelineDesc desc(pipelineDesc);
         desc.device = this;
@@ -647,7 +657,7 @@ namespace Luma::Vulkan
         return pipeline;
     }
 
-    IComputePipeline* FGpuDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
+    IComputePipeline* FGPUDeviceImpl::createComputePipeline(const FComputePipelineDesc& pipelineDesc)
     {
         FComputePipelineDesc desc(pipelineDesc);
         desc.device = this;
@@ -660,7 +670,7 @@ namespace Luma::Vulkan
         return pipeline;
     }
 
-    IFence* FGpuDeviceImpl::createFence(const FFenceDesc& fenceDesc)
+    IFence* FGPUDeviceImpl::createFence(const FFenceDesc& fenceDesc)
     {
         FFenceDesc desc(fenceDesc);
         desc.device = this;
@@ -673,12 +683,12 @@ namespace Luma::Vulkan
         return fence;
     }
 
-    ITextureView* FGpuDeviceImpl::getAcquiredSwapchainTextureView()
+    ITextureView* FGPUDeviceImpl::getAcquiredSwapchainTextureView()
     {
         return m_Swapchain.getTextureView(m_SwapchainImageIndex);
     }
 
-    void FGpuDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)
+    void FGPUDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)
     {
         const FSamplerImpl* samplerImpl = static_cast<const FSamplerImpl*>(sampler);
         const VkSampler samplerHandle = samplerImpl->getHandle();
@@ -692,7 +702,7 @@ namespace Luma::Vulkan
         buffer->unmap(mappedPtr);
     }
 
-    void FGpuDeviceImpl::writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType)
+    void FGPUDeviceImpl::writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType)
     {
         const FTextureViewImpl* textureViewImpl = static_cast<const FTextureViewImpl*>(texture->getTextureView());
 
@@ -726,7 +736,7 @@ namespace Luma::Vulkan
         }
     }
 
-    void FGpuDeviceImpl::writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource,
+    void FGPUDeviceImpl::writeBufferDescriptor(IBuffer* buffer, uint64_t offset, const IBuffer* bufferResource,
         uint64_t resourceOffset, uint64_t resourceSize, EBufferBindingType bindingType)
     {
         LUMA_ASSERT(resourceOffset + resourceSize <= bufferResource->getSize(), "Size is too big!");
@@ -760,12 +770,12 @@ namespace Luma::Vulkan
         buffer->unmap(mappedPtr);
     }
 
-    VkInstance FGpuDeviceImpl::getInstance()
+    VkInstance FGPUDeviceImpl::getInstance()
     {
         return s_Instance;
     }
 
-    VkCommandPool FGpuDeviceImpl::getCommandPool(const EQueueType queueType) const
+    VkCommandPool FGPUDeviceImpl::getCommandPool(const EQueueType queueType) const
     {
         switch (queueType)
         {
@@ -777,7 +787,7 @@ namespace Luma::Vulkan
         }
     }
 
-    FImmediateExecutorImpl& FGpuDeviceImpl::getExecutor()
+    FImmediateExecutorImpl& FGPUDeviceImpl::getExecutor()
     {
         return m_ImmediateExecutor;
     }

@@ -1,12 +1,12 @@
 #include "Luma/Vulkan/VulkanUtils.h"
 #include "Luma/Vulkan/BufferImpl.h"
 #include "Luma/Vulkan/Conversions.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Runtime/DebugLevel.h"
 
 namespace Luma::Vulkan
 {
-    void setVulkanObjectDebugName(const FGpuDeviceImpl* device, VkObjectType objectType, void* handle, FStringView name)
+    void setVulkanObjectDebugName(const FGPUDeviceImpl* device, VkObjectType objectType, void* handle, FStringView name)
     {
         if constexpr (DEBUG_LEVEL < DebugLevel::Release)
         {

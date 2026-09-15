@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/RenderPipelineImpl.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Vulkan/ShaderImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 
@@ -11,19 +11,8 @@ namespace Luma::Vulkan
     bool FRenderPipelineImpl::initialize(const FRenderPipelineDesc& pipelineDesc)
     {
         if (!pipelineDesc.device) return false;
-        const TArray allShaders
-        {
-            pipelineDesc.vertexShader,
-            pipelineDesc.tessellationControlShader,
-            pipelineDesc.tessellationEvaluationShader,
-            pipelineDesc.geometryShader,
-            pipelineDesc.fragmentShader,
-            pipelineDesc.amplificationShader
-        };
-
-        if (!allShaders.any([](const auto* p) { return p;})) return false;
-
-        FGpuDeviceImpl* device = static_cast<FGpuDeviceImpl*>(pipelineDesc.device);
+        if (!pipelineDesc.shaderProgram) return false;
+        FGPUDeviceImpl* device = static_cast<FGPUDeviceImpl*>(pipelineDesc.device);
 
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyState { VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO };
         inputAssemblyState.primitiveRestartEnable = pipelineDesc.inputAssembly.primitiveRestartEnable;
@@ -76,27 +65,27 @@ namespace Luma::Vulkan
         VkPipelineColorBlendAttachmentState colorBlendStates[8];
         for (uint32_t i = 0; i < 8; i++)
         {
-            const auto& blendState = pipelineDesc.colorConfigs.getAt(i);
+            const auto& blendState = pipelineDesc.colorBlend[i];
 
-            colorBlendStates[i].blendEnable = blendState.state.colorBlendEnable;
-            colorBlendStates[i].colorWriteMask = convert<VkColorComponentFlags>(blendState.state.colorWriteMask);
-            colorBlendStates[i].alphaBlendOp = convert<VkBlendOp>(blendState.state.blendFunction.alphaOp);
-            colorBlendStates[i].colorBlendOp = convert<VkBlendOp>(blendState.state.blendFunction.colorOp);
-            colorBlendStates[i].dstAlphaBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.alphaDest);
-            colorBlendStates[i].dstColorBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.colorDest);
-            colorBlendStates[i].srcAlphaBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.alphaSource);
-            colorBlendStates[i].srcColorBlendFactor = convert<VkBlendFactor>(blendState.state.blendFunction.colorSource);
+            colorBlendStates[i].blendEnable = blendState.colorBlendEnable;
+            colorBlendStates[i].colorWriteMask = convert<VkColorComponentFlags>(blendState.colorWriteMask);
+            colorBlendStates[i].alphaBlendOp = convert<VkBlendOp>(blendState.blendFunction.alphaOp);
+            colorBlendStates[i].colorBlendOp = convert<VkBlendOp>(blendState.blendFunction.colorOp);
+            colorBlendStates[i].dstAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaDest);
+            colorBlendStates[i].dstColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorDest);
+            colorBlendStates[i].srcAlphaBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.alphaSource);
+            colorBlendStates[i].srcColorBlendFactor = convert<VkBlendFactor>(blendState.blendFunction.colorSource);
         }
 
         VkPipelineColorBlendStateCreateInfo colorBlendState { VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO };
         colorBlendState.pAttachments = colorBlendStates;
-        colorBlendState.attachmentCount = pipelineDesc.colorConfigs.count();
+        colorBlendState.attachmentCount = pipelineDesc.colorTargetCount;
         
         VkPipelineDepthStencilStateCreateInfo depthStencilState { VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO };
-        depthStencilState.depthTestEnable = pipelineDesc.depthConfig.state.depthTestEnable;
-        depthStencilState.depthWriteEnable = pipelineDesc.depthConfig.state.depthWriteEnable;
-        depthStencilState.stencilTestEnable = pipelineDesc.depthConfig.state.stencilTestEnable;
-        depthStencilState.depthCompareOp = convert<VkCompareOp>(pipelineDesc.depthConfig.state.depthCompareOp);
+        depthStencilState.depthTestEnable = pipelineDesc.depthStencil.depthTestEnable;
+        depthStencilState.depthWriteEnable = pipelineDesc.depthStencil.depthWriteEnable;
+        depthStencilState.stencilTestEnable = pipelineDesc.depthStencil.stencilTestEnable;
+        depthStencilState.depthCompareOp = convert<VkCompareOp>(pipelineDesc.depthStencil.depthCompareOp);
         
         VkSampleMask SampleMask = 0xFFFFFFFF;
         VkPipelineMultisampleStateCreateInfo multisampleState { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
@@ -114,9 +103,9 @@ namespace Luma::Vulkan
         viewportState.pScissors = nullptr;
 
         TArray<VkFormat> colorFormats;
-        for (uint32_t i = 0; i < pipelineDesc.colorConfigs.count() && i < 8; i++)
+        for (uint32_t i = 0; i < pipelineDesc.colorTargetCount && i < 8; i++)
         {
-            EFormat format = pipelineDesc.colorConfigs.getAt(i).format;
+            EFormat format = pipelineDesc.colorFormats[i];
             colorFormats.add(convert<VkFormat>(format));
         }
 
@@ -128,22 +117,23 @@ namespace Luma::Vulkan
         renderingInfo.depthAttachmentFormat = depthAttachmentFormat;
         renderingInfo.stencilAttachmentFormat = depthAttachmentFormat;
 
-        TArray<VkPipelineShaderStageCreateInfo> shaderStages;
-        for (const IShaderProgram* shader : allShaders)
-        {
-            const FShaderImpl* shaderImpl = static_cast<const FShaderImpl*>(shader);
-            VkPipelineShaderStageCreateInfo shaderStage { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
-            shaderStage.module = shaderImpl->getShaderModule();
-            //shaderStage.pName = shaderImpl->getEntryPointName();
-            //shaderStage.stage = convert<VkShaderStageFlagBits>(shaderImpl->getStage());
-            shaderStages.add(shaderStage);
-        }
-        
         TArray dynamicStates { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
         VkPipelineDynamicStateCreateInfo dynamicState { VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO };
         dynamicState.dynamicStateCount = dynamicStates.count();
         dynamicState.pDynamicStates =  dynamicStates.data();
-        
+
+        FShaderImpl* shader = static_cast<FShaderImpl*>(pipelineDesc.shaderProgram);
+
+        TArray<VkPipelineShaderStageCreateInfo> shaderStages;
+        for (const auto& [stage, module] : shader->getShaderModules())
+        {
+            VkPipelineShaderStageCreateInfo shaderStage { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
+            shaderStage.module = module;
+            shaderStage.pName = "main";
+            shaderStage.stage = convert<VkShaderStageFlagBits>(stage);
+            shaderStages.add(shaderStage);
+        }
+
         VkGraphicsPipelineCreateInfo pipelineCreateInfo { VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO };
         pipelineCreateInfo.pNext = &renderingInfo;
         pipelineCreateInfo.pInputAssemblyState = &inputAssemblyState;
@@ -156,7 +146,7 @@ namespace Luma::Vulkan
         pipelineCreateInfo.pMultisampleState = &multisampleState;
         pipelineCreateInfo.pStages = shaderStages.data();
         pipelineCreateInfo.stageCount = shaderStages.count();
-        //pipelineCreateInfo.layout = shaderProgram->getPipelineLayout();
+        pipelineCreateInfo.layout = shader->getPipelineLayout();
         
         const VkDevice deviceHandle = device->getHandle();
         vkDestroyPipeline(deviceHandle, m_Handle, nullptr);

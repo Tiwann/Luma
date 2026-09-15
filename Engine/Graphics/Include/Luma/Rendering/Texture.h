@@ -9,7 +9,7 @@
 
 namespace Luma
 {
-    struct IGpuDevice;
+    struct IGPUDevice;
     struct ITextureView;
 }
 
@@ -17,7 +17,7 @@ namespace Luma
 {
     struct FTextureDesc
     {
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         FTextureUsageFlags usageFlags = ETextureUsageBits::None;
         EFormat format = EFormat::None;
         uint32_t width = 0;

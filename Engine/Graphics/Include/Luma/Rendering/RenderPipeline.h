@@ -13,8 +13,8 @@
 
 namespace Luma
 {
-    struct IGpuDevice;
-    struct IShaderProgram;
+    struct IGPUDevice;
+    struct IShader;
 
     struct FInputAssemblyState
     {
@@ -40,14 +40,14 @@ namespace Luma
     {
         bool colorBlendEnable = false;
         FBlendFunction blendFunction = FBlendFunction::alphaBlend();
-        FColorChannelFlags colorWriteMask = EColorChannelBits::Red | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
+        FColorChannelFlags colorWriteMask = EColorChannelBits::All;
 
         static constexpr const FColorBlendState& alphaBlend()
         {
             static FColorBlendState state;
             state.colorBlendEnable = true;
             state.blendFunction = FBlendFunction::alphaBlend();
-            state.colorWriteMask = EColorChannelBits::Red | EColorChannelBits::Green | EColorChannelBits::Blue | EColorChannelBits::Alpha;
+            state.colorWriteMask = EColorChannelBits::All;
             return state;
         }
 
@@ -93,39 +93,19 @@ namespace Luma
         uint32_t height = 0;
     };
 
-    struct FColorConfiguration
-    {
-        EFormat format;
-        FColorBlendState state;
-    };
-
-    struct FDepthConfiguration
-    {
-        EFormat format;
-        FDepthStencilState state;
-    };
-
     struct FRenderPipelineDesc
     {
-        IGpuDevice* device = nullptr;
-        const IShaderProgram* vertexShader = nullptr;
-        const IShaderProgram* tessellationControlShader = nullptr;
-        const IShaderProgram* tessellationEvaluationShader = nullptr;
-        const IShaderProgram* geometryShader = nullptr;
-        const IShaderProgram* fragmentShader = nullptr;
-        const IShaderProgram* amplificationShader = nullptr;
+        IGPUDevice* device = nullptr;
+        IShader* shaderProgram = nullptr;
         FInputAssemblyState inputAssembly{};
         FVertexInputLayout inputLayout{};
         FRasterizationState rasterization{};
-        TStaticArray<FColorConfiguration, 8> colorConfigs;
-        FDepthConfiguration depthConfig{};
         FMultisampleState multisample{};
+        uint32_t colorTargetCount = 0;
+        EFormat colorFormats[8]{EFormat::None};
+        FColorBlendState colorBlend[8]{FColorBlendState::disabled()};
         EFormat depthFormat = EFormat::None;
-
-        void addColorConfig(EFormat format, const FColorBlendState& blendState)
-        {
-            colorConfigs.add({format, blendState});
-        }
+        FDepthStencilState depthStencil;
     };
 
     struct IRenderPipeline : IRefCounted<IRenderPipeline>

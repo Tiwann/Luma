@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EGpuDeviceType
+    enum class EGPUDeviceType
     {
         None,
         Auto,

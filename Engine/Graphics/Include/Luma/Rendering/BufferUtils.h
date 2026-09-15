@@ -4,22 +4,22 @@
 namespace Luma
 {
     struct IBuffer;
-    struct IGpuDevice;
+    struct IGPUDevice;
 
     namespace BufferUtils
     {
-        IBuffer* createStagingBuffer(IGpuDevice* device, const void* data, uint64_t size);
-        IBuffer* createVertexBuffer(IGpuDevice* device, const void* data, uint64_t size);
-        IBuffer* createIndexBuffer(IGpuDevice* device, const void* data, uint64_t size);
+        IBuffer* createStagingBuffer(IGPUDevice* device, const void* data, uint64_t size);
+        IBuffer* createVertexBuffer(IGPUDevice* device, const void* data, uint64_t size);
+        IBuffer* createIndexBuffer(IGPUDevice* device, const void* data, uint64_t size);
 
         template<typename T, uint64_t N>
-        IBuffer* createVertexBuffer(const IGpuDevice* device, const T(&data)[N])
+        IBuffer* createVertexBuffer(const IGPUDevice* device, const T(&data)[N])
         {
             return createVertexBuffer(device, data, sizeof(data[0]) * N);
         }
 
         template<typename T, uint64_t N>
-        IBuffer* createIndexBuffer(const IGpuDevice* device, const T(&data)[N])
+        IBuffer* createIndexBuffer(const IGPUDevice* device, const T(&data)[N])
         {
             return createIndexBuffer(device, data, sizeof(data[0]) * N);
         }

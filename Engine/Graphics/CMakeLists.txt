@@ -14,6 +14,8 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/TextureUtils.cpp
         Source/Rendering/ResourceBarrier.cpp
         Source/Rendering/Viewport.cpp
+        Source/Rendering/BindingGroup.cpp
+        Source/Rendering/Shader.cpp
         #Source/Rendering/SceneRenderer.cpp
         #Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
@@ -25,7 +27,7 @@ set(LUMA_GRAPHICS_SRC
 set(LUMA_VULKAN_SRC
         Source/Vulkan/VulkanMemoryAllocator.cpp
         Source/Vulkan/VulkanUtils.cpp
-        Source/Vulkan/GpuDeviceImpl.cpp
+        Source/Vulkan/GPUDeviceImpl.cpp
         Source/Vulkan/SamplerImpl.cpp
         Source/Vulkan/SwapchainImpl.cpp
         Source/Vulkan/CommandBufferImpl.cpp
@@ -35,16 +37,15 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/TextureImpl.cpp
         Source/Vulkan/TextureViewImpl.cpp
         Source/Vulkan/ImmediateExecutorImpl.cpp
-        Source/Vulkan/BindingSetLayoutImpl.cpp
-        Source/Vulkan/BindingSetImpl.cpp
         Source/Vulkan/ShaderImpl.cpp
         Source/Vulkan/ComputePipelineImpl.cpp
         Source/Vulkan/RenderPipelineImpl.cpp
+        Source/Vulkan/BindingGroupImpl.cpp
 )
 
 
 set(LUMA_D3D12_SRC
-        Source/D3D12/GpuDeviceImpl.cpp
+        Source/D3D12/GPUDeviceImpl.cpp
         Source/D3D12/Buffer.cpp
         Source/D3D12/SwapchainImpl.cpp
         Source/D3D12/QueueImpl.cpp
@@ -53,7 +54,7 @@ set(LUMA_D3D12_SRC
 )
 
 set(LUMA_WEBGPU_SRC
-        Source/WebGPU/GpuDeviceImpl.cpp
+        Source/WebGPU/GPUDeviceImpl.cpp
         Source/WebGPU/QueueImpl.cpp
         Source/WebGPU/SwapchainImpl.cpp
         Source/WebGPU/TextureImpl.cpp
@@ -61,7 +62,7 @@ set(LUMA_WEBGPU_SRC
 )
 
 set(LUMA_DEKO3D_SRC
-    Source/Deko3D/GpuDeviceImpl.cpp
+    Source/Deko3D/GPUDeviceImpl.cpp
     Source/Deko3D/SwapchainImpl.cpp
     Source/Deko3D/QueueImpl.cpp
     Source/Deko3D/CommandBufferImpl.cpp
@@ -69,7 +70,7 @@ set(LUMA_DEKO3D_SRC
 )
 
 set(LUMA_OPENGL_SRC
-        Source/OpenGL/GpuDeviceImpl.cpp
+        Source/OpenGL/GPUDeviceImpl.cpp
         Source/OpenGL/BufferImpl.cpp
 )
 
@@ -80,6 +81,7 @@ target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS $<$<BOOL:${BUILD_SHARED_LIBS}>:LUMA_BUILD_DLL>)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
 luma_generate_export_header(TARGET luma-graphics MODULE_NAME GRAPHICS)
+add_dependencies(luma-graphics luma-renderer2d-shaders)
 
 if(LUMA_ENGINE_BUILD_WEBGPU)
     target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})

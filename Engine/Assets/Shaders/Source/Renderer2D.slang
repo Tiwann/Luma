@@ -25,10 +25,10 @@ struct VertexInput
 struct VertexOutput
 {
 	float4 position : SV_POSITION;
-	float2 texCoord;
-	float4 color;
-	nointerpolation QuadMode mode;
-	nointerpolation uint32_t textureId;
+	float2 texCoord : TEXCOORD0;
+	float4 color : COLOR;
+	nointerpolation QuadMode mode : MODE;
+	nointerpolation uint32_t textureId : TEXID;
 }
 
 [vk::push_constant] ConstantBuffer<float4x4> modelViewProj;

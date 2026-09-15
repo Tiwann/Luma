@@ -1,9 +1,8 @@
 #include <Luma/Memory/Ref.h>
 #include <Luma/Runtime/DesktopWindow.h>
-#include <Luma/Runtime/Flags.h>
+
 #include <Luma/Runtime/Time.h>
-#include <Luma/Rendering/GpuDevice.h>
-#include <Luma/Rendering/ShaderCompiler.h>
+#include <Luma/Rendering/GPUDevice.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Containers/StringFormat.h>
@@ -17,19 +16,10 @@ static constexpr uint32_t HEIGHT = 600;
 
 int main()
 {
-    const FWindowDesc windowDesc { "Hello Triangle", WIDTH, HEIGHT, EWindowCreateBits::Centered };
-    Ref<FDesktopWindow> window = createWindow(windowDesc);
-
-    FGpuDeviceDesc gpuDeviceDesc;
-    gpuDeviceDesc.deviceType = EGpuDeviceType::Vulkan;
-    gpuDeviceDesc.buffering = ESwapchainBuffering::DoubleBuffering;
-    gpuDeviceDesc.window = window;
-    gpuDeviceDesc.vSync = true;
-    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
-
+    Ref<FDesktopWindow> window = createWindow("Hello Renderer2D", WIDTH, HEIGHT, EWindowCreateBits::Centered);
+    Ref<IGPUDevice> gpuDevice = createGPUDevice(window);
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(gpuDevice);
 
-    FTime::initialize();
 
     float lastTime = 0.0f;
     while (!window->shouldClose())

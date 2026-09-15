@@ -2,9 +2,9 @@
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/RenderPipeline.h"
-#include "Luma/Rendering/ShaderProgram.h"
-#include "Luma/Rendering/BindingSet.h"
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/Shader.h"
+#include "Luma/Rendering/BindingGroup.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "Luma/Rendering/Texture.h"
 #include "Luma/Containers/Array.h"
 #include "Luma/Containers/StringConversion.h"
@@ -25,12 +25,12 @@
 
 namespace Luma
 {
-    FRenderer2D::FRenderer2D(Ref<IGpuDevice> gpuDevice)
+    FRenderer2D::FRenderer2D(Ref<IGPUDevice> gpuDevice)
     {
         initialize(gpuDevice);
     }
 
-    bool FRenderer2D::initialize(Ref<IGpuDevice> gpuDevice)
+    bool FRenderer2D::initialize(Ref<IGPUDevice> gpuDevice)
     {
         if (!gpuDevice) return false;
         m_GpuDevice = gpuDevice;
@@ -39,8 +39,9 @@ namespace Luma
         m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, gpuDevice);
         setFont(m_DefaultFont);
 
-        m_VertexShader = m_GpuDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.vert.spv"));
-        m_FragmentShader = m_GpuDevice->createShader(FPath::getEngineShaderPath("Renderer2D.slang.frag.spv"));
+        FString vertexPath = FPath::getEngineShaderPath("Renderer2D.slang.vert.spv");
+        FString fragmentPath = FPath::getEngineShaderPath("Renderer2D.slang.frag.spv");
+        m_ShaderProgram = gpuDevice->createShader(vertexPath, fragmentPath);
 
         FVertexInputLayout vertexLayout;
         vertexLayout.addInputBinding(0, EVertexInputRate::Vertex);
@@ -50,14 +51,14 @@ namespace Luma
         vertexLayout.addInputAttribute({"MODE", EShaderDataType::UInt, 0});
         vertexLayout.addInputAttribute({"TEXID", EShaderDataType::UInt, 0});
 
-        FRenderPipelineDesc gpDesc;
-        gpDesc.device = m_GpuDevice;
-        gpDesc.vertexShader = m_VertexShader;
-        gpDesc.fragmentShader = m_FragmentShader;
-        gpDesc.rasterization.cullMode = ECullMode::None;
-        gpDesc.addColorConfig(EFormat::RGBA8_SRGB, FColorBlendState::alphaBlend());
-        gpDesc.inputLayout = vertexLayout;
-        m_Pipeline = m_GpuDevice->createRenderPipeline(gpDesc);
+        FRenderPipelineDesc rpDesc;
+        rpDesc.shaderProgram = m_ShaderProgram;
+        rpDesc.rasterization.cullMode = ECullMode::None;
+        rpDesc.colorTargetCount = 1;
+        rpDesc.colorBlend[0] = FColorBlendState::alphaBlend();
+        rpDesc.colorFormats[0] = EFormat::RGBA8_SRGB;
+        rpDesc.inputLayout = vertexLayout;
+        m_Pipeline = m_GpuDevice->createRenderPipeline(rpDesc);
         if (!m_Pipeline) return false;
 
         FBufferDesc vbDesc;
@@ -84,11 +85,11 @@ namespace Luma
         samplerDesc.minFilter = EFilter::Nearest;
         m_SpriteSampler = m_GpuDevice->getOrCreateSampler(samplerDesc);
 
-        //m_BindingSet = m_Shader->createBindingSet(0);
-        if (!m_BindingSet) return false;
+        m_BindingGroup = m_ShaderProgram->createBindingGroup(0);
+        if (!m_BindingGroup) return false;
 
-        m_BindingSet->bindSampler(0, m_SpriteSampler);
-        m_BindingSet->bindSampler(1, m_Sampler);
+        m_BindingGroup->bindSampler(0, m_SpriteSampler);
+        m_BindingGroup->bindSampler(1, m_Sampler);
         m_LocalToWorldMatrix = FMatrix4f::Identity;
         return true;
     }
@@ -130,7 +131,7 @@ namespace Luma
         Memory::memcpy(indexMapped, m_QuadIndices.data(), m_QuadIndices.size());
         m_IndexBuffer->unmap(indexMapped);
 
-        m_BindingSet->bindTextures(2, m_Textures, EBindingType::SampledTexture);
+        m_BindingGroup->bindTextures(2, m_Textures, ETextureBindingType::Sampled);
         m_BeginDrawing = false;
         m_ReadyToRender = true;
     }
@@ -142,11 +143,11 @@ namespace Luma
         const FMatrix4f projection = scale(orthoTopLeft(static_cast<float>(width), static_cast<float>(height), 1.0f, -1.0f, 1.0f), {1.0f, -1.0f, 1.0f});
         const FMatrix4f mvp = projection * m_LocalToWorldMatrix;
         cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
-        //cmdBuffer->pushConstants(m_Shader, EShaderStageBits::Vertex, &mvp, 0, sizeof(FMatrix4f));
+        cmdBuffer->pushConstants(m_ShaderProgram, EShaderStage::Vertex, &mvp, 0, sizeof(FMatrix4f));
         cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
         cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::UInt32);
         cmdBuffer->bindRenderPipeline(m_Pipeline);
-        //cmdBuffer->bindBindingSet(m_BindingSet, m_Shader);
+        cmdBuffer->bindBindingGroup(m_BindingGroup);
         cmdBuffer->setViewport(FViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f));
         cmdBuffer->setScissor(FScissor(0, 0, width, height));
         cmdBuffer->drawIndexed(m_QuadIndices.count(), 1, 0, 0, 0);

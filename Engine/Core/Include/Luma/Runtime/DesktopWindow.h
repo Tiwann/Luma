@@ -29,7 +29,7 @@ namespace Luma
         bool isAvailable() const override;
 
         FString getTitle() const;
-        void setTitle(const FString& title);
+        void setTitle(const FString& title) override;
 
         GLFWwindow* getHandle() const;
     private:

@@ -6,5 +6,5 @@
 namespace Luma
 {
     EBindingType getBindingType(SpvReflectDescriptorType type);
-    EShaderStageBits getShaderStage(SpvReflectShaderStageFlagBits bits);
+    EShaderStage getShaderStage(SpvReflectShaderStageFlagBits bits);
 }

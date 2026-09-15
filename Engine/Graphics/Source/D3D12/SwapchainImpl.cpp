@@ -1,6 +1,6 @@
 ﻿#include "Luma/D3D12/SwapchainImpl.h"
 #include "Luma/D3D12/Conversions.h"
-#include "Luma/D3D12/GpuDeviceImpl.h"
+#include "Luma/D3D12/GPUDeviceImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include <dxgi1_6.h>
 #include <directx/d3d12.h>

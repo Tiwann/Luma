@@ -22,9 +22,9 @@ FApplicationConfig FGameApplication::getConfiguration() const
     return configuration;
 }
 
-EGpuDeviceType FGameApplication::getGpuDeviceType() const
+EGPUDeviceType FGameApplication::getGpuDeviceType() const
 {
-    return EGpuDeviceType::Vulkan;
+    return EGPUDeviceType::Vulkan;
 }
 
 void FGameApplication::onInit()

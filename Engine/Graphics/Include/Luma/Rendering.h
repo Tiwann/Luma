@@ -1,9 +1,9 @@
 #pragma once
-#include <Luma/Rendering/GpuDevice.h>
-#include <Luma/Rendering/ShaderProgram.h>
+#include <Luma/Rendering/GPUDevice.h>
+#include <Luma/Rendering/Shader.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/ComputePipeline.h>
-#include <Luma/Rendering/BindingSet.h>
+#include <Luma/Rendering/BindingGroup.h>
 #include <Luma/Rendering/Buffer.h>
 #include <Luma/Rendering/Queue.h>
 #include <Luma/Rendering/Texture.h>

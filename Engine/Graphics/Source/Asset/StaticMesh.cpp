@@ -64,7 +64,7 @@ namespace Luma
         m_IndexBuffer->destroy();
     }
 
-    bool FStaticMesh::loadFromFile(FStringView filepath, IGpuDevice* device)
+    bool FStaticMesh::loadFromFile(FStringView filepath, IGPUDevice* device)
     {
         if (filepath.isEmpty()) return false;
         if (!device) return false;
@@ -138,7 +138,7 @@ namespace Luma
                     Ref<ITexture> texture = device->createTexture(textureDesc);
                     if (!texture) return nullptr;
 
-                    if (!TextureUtils::uploadTextureData(device, texture, 0, 0, data, width * height * 4))
+                    if (!TextureUtils::uploadTextureDataSync(device, texture, 0, 0, data, width * height * 4))
                     {
                         texture->destroy();
                         return nullptr;

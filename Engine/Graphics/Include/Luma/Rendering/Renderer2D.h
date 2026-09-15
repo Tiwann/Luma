@@ -11,13 +11,13 @@
 #include "Luma/Runtime/Sprite.h"
 #include "Luma/Runtime/TextAlignment.h"
 #include "Luma/Runtime/TextStyle.h"
-#include "Luma/Rendering/GpuDevice.h"
+#include "Luma/Rendering/GPUDevice.h"
 #include "Luma/Rendering/Sampler.h"
 #include "Luma/Rendering/Buffer.h"
-#include "Luma/Rendering/ShaderProgram.h"
+#include "Luma/Rendering/Shader.h"
 #include "Luma/Rendering/CommandBuffer.h"
-#include "Luma/Rendering/BindingSet.h"
 #include "Luma/Rendering/RenderPipeline.h"
+#include "Luma/Rendering/BindingGroup.h"
 
 namespace Luma
 {
@@ -35,10 +35,10 @@ namespace Luma
         static constexpr uint32_t MAX_QUAD = FMath::sqr(512);
     public:
         FRenderer2D() = default;
-        FRenderer2D(Ref<IGpuDevice> gpuDevice);
+        FRenderer2D(Ref<IGPUDevice> gpuDevice);
         ~FRenderer2D() override = default;
 
-        bool initialize(Ref<IGpuDevice> gpuDevice);
+        bool initialize(Ref<IGPUDevice> gpuDevice);
         void destroy();
 
         /// Begins a new batch
@@ -145,15 +145,14 @@ namespace Luma
         void addQuad(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color, QuadMode quadMode, uint32_t textureId);
         uint32_t getOrAddTexture(const ITexture* texture);
 
-        Ref<IGpuDevice> m_GpuDevice = nullptr;
-        Ref<IShaderProgram> m_VertexShader = nullptr;
-        Ref<IShaderProgram> m_FragmentShader = nullptr;
+        Ref<IGPUDevice> m_GpuDevice = nullptr;
+        Ref<IShader> m_ShaderProgram = nullptr;
         Ref<IRenderPipeline> m_Pipeline = nullptr;
         Ref<ISampler> m_Sampler = nullptr;
         Ref<ISampler> m_SpriteSampler = nullptr;
         Ref<IBuffer> m_VertexBuffer = nullptr;
         Ref<IBuffer> m_IndexBuffer = nullptr;
-        Ref<IBindingSet> m_BindingSet = nullptr;
+        Ref<IBindingGroup> m_BindingGroup = nullptr;
         Ref<FFont> m_Font = nullptr;
         FMatrix4f m_LocalToWorldMatrix;
         FString m_DebugName = "Renderer2D";

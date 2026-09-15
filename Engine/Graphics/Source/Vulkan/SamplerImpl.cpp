@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/SamplerImpl.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Vulkan/Conversions.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include <volk.h>
@@ -31,7 +31,7 @@ namespace Luma::Vulkan
         samplerci.mipLodBias = 0.0f;
         samplerci.mipmapMode = convert<VkSamplerMipmapMode>(samplerDesc.mipmapFilter);
 
-        FGpuDeviceImpl* gpuDevice = static_cast<FGpuDeviceImpl*>(samplerDesc.device);
+        FGPUDeviceImpl* gpuDevice = static_cast<FGPUDeviceImpl*>(samplerDesc.device);
         const VkDevice deviceHandle = gpuDevice->getHandle();
 
         vkDestroySampler(deviceHandle, m_Handle, nullptr);

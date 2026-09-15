@@ -16,7 +16,7 @@ static constexpr uint32_t HEIGHT = 600;
 extern uint32_t g_Samples;
 extern bool g_Vsync;
 extern ESwapchainBuffering g_Buffering;
-extern EGpuDeviceType g_DeviceType;
+extern EGPUDeviceType g_DeviceType;
 bool parseArgs(int, const char**);
 
 
@@ -35,13 +35,13 @@ int main(int argc, const char** argv)
     Ref<FDesktopWindow> window = createWindow(windowDesc);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
-    FGpuDeviceDesc gpuDeviceDesc;
-    gpuDeviceDesc.deviceType = EGpuDeviceType::Vulkan;
+    FGPUDeviceDesc gpuDeviceDesc;
+    gpuDeviceDesc.deviceType = EGPUDeviceType::Vulkan;
     gpuDeviceDesc.buffering = g_Buffering;
     gpuDeviceDesc.window = window;
     gpuDeviceDesc.vSync = g_Vsync;
 
-    Ref<IGpuDevice> gpuDevice = createGpuDevice(gpuDeviceDesc);
+    Ref<IGPUDevice> gpuDevice = createGPUDevice(gpuDeviceDesc);
     LUMA_ASSERT(gpuDevice, "Render device failed to create! Exiting application.");
     window->resizedEvent.bind([&gpuDevice](uint32_t, uint32_t)
     {
@@ -50,11 +50,11 @@ int main(int argc, const char** argv)
     });
 
     FShaderDesc shaderDesc;
-    shaderDesc.stageFlags = EShaderStageBits::Vertex | EShaderStageBits::Fragment;
+    shaderDesc.stageFlags = EShaderStage::Vertex | EShaderStage::Fragment;
     shaderDesc.moduleName = "HelloTexture";
     shaderDesc.filepath = FPath::getAssetPath("Shaders/HelloTexture.slang");
 
-    Ref<IShaderProgram> shader = gpuDevice->createShader(shaderDesc);
+    Ref<IShader> shader = gpuDevice->createShader(shaderDesc);
     LUMA_ASSERT(shader, "Failed to create shader! Exiting application.");
 
     FRenderPipelineDesc pipelineDesc;

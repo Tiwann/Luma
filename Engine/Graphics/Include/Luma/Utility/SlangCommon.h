@@ -5,7 +5,7 @@
 
 namespace Luma
 {
-    EShaderStageBits getStage(SlangStage stage);
+    EShaderStages getStage(SlangStage stage);
     EBindingType getBindingType(slang::BindingType bindingType);
 }
 

@@ -4,12 +4,12 @@
 
 namespace Luma::WebGPU
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class FQueueImpl : public IQueue
     {
     public:
-        FQueueImpl(FGpuDeviceImpl* device);
+        FQueueImpl(FGPUDeviceImpl* device);
         bool initialize();
         void waitIdle() override;
         bool executeCommandBuffers(const FQueueExecuteInfo& executeInfo) override;
@@ -17,7 +17,7 @@ namespace Luma::WebGPU
 
         WGPUQueue getHandle() const { return m_Handle; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         WGPUQueue m_Handle = nullptr;
     };
 }

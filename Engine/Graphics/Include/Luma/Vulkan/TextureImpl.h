@@ -6,7 +6,7 @@
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
     class FSwapchainImpl;
 
     class LUMA_GRAPHICS_API FTextureImpl final : public ITexture
@@ -25,7 +25,7 @@ namespace Luma::Vulkan
         const ITextureView* getTextureView() const override;
     private:
         friend FSwapchainImpl;
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         VkImage m_Image = nullptr;
         VmaAllocation m_Allocation = nullptr;
         FTextureViewImpl m_View;

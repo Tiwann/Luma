@@ -5,7 +5,7 @@
 
 namespace Luma::D3D12
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class LUMA_GRAPHICS_API FFenceImpl : public IFence
     {
@@ -18,7 +18,7 @@ namespace Luma::D3D12
 
         ID3D12Fence1* getHandle() const { return m_Handle; }
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         ID3D12Fence1* m_Handle = nullptr;
     };
 }

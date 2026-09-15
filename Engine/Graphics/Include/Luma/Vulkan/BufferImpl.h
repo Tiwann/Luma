@@ -5,7 +5,7 @@
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
 
     class LUMA_GRAPHICS_API FBufferImpl final : public IBuffer
     {
@@ -26,7 +26,7 @@ namespace Luma::Vulkan
 
         void setName(FStringView name) override;
     private:
-        FGpuDeviceImpl* m_Device = nullptr;
+        FGPUDeviceImpl* m_Device = nullptr;
         VkBuffer m_Handle = nullptr;
         VmaAllocation m_Allocation = nullptr;
     };

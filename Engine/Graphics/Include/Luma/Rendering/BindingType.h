@@ -12,7 +12,7 @@ namespace Luma
         StorageTexture,
         UniformBuffer,
         StorageBuffer,
-        InputAttachment,
+        InputTarget,
         InlineUniformBlock,
         AccelerationStructure,
         StorageTexelBuffer,

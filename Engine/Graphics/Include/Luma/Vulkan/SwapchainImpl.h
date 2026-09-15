@@ -8,7 +8,7 @@
 
 namespace Luma::Vulkan
 {
-    class FGpuDeviceImpl;
+    class FGPUDeviceImpl;
     class FSemaphoreImpl;
 
     class LUMA_GRAPHICS_API FSwapchainImpl final : public ISwapchain

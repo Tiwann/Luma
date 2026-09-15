@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    FSamplerDesc& FSamplerDesc::withDevice(IGpuDevice* device)
+    FSamplerDesc& FSamplerDesc::withDevice(IGPUDevice* device)
     {
         this->device = device;
         return *this;

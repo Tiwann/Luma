@@ -1,4 +1,4 @@
-﻿#include "Luma/OpenGL/GpuDeviceImpl.h"
+﻿#include "Luma/OpenGL/GPUDeviceImpl.h"
 #include "Luma/Runtime/DesktopWindow.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

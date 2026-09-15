@@ -1,5 +1,5 @@
 #include "Luma/Vulkan/QueueImpl.h"
-#include "Luma/Vulkan/GpuDeviceImpl.h"
+#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Vulkan/CommandBufferImpl.h"
 #include "Luma/Vulkan/VulkanUtils.h"
 #include <volk.h>
@@ -7,7 +7,7 @@
 
 namespace Luma::Vulkan
 {
-    FQueueImpl::FQueueImpl(FGpuDeviceImpl* device) : m_Device(device)
+    FQueueImpl::FQueueImpl(FGPUDeviceImpl* device) : m_Device(device)
     {
 
     }

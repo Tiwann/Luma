@@ -17,23 +17,23 @@
 namespace Luma
 {
     class FStaticMesh;
-    struct IShaderProgram;
-    struct IBindingSet;
+    struct IShader;
     class FMaterial;
     struct FTextureSubresourceRange;
     struct FBufferBarrier;
     struct FTextureBarrier;
-    struct IGpuDevice;
+    struct IGPUDevice;
     struct IBuffer;
     struct IRenderPipeline;
     struct IComputePipeline;
     struct ITexture;
     struct FRenderPassDesc;
+    struct IBindingGroup;
 
 
     struct FCommandBufferDesc
     {
-        IGpuDevice* device = nullptr;
+        IGPUDevice* device = nullptr;
         IQueue* queue = nullptr;
     };
 
@@ -85,7 +85,7 @@ namespace Luma
         virtual void bindVertexBuffers(TArrayView<FVertexBufferBinding> bindings) = 0;
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset);
         virtual void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) = 0;
-        virtual void pushConstants(const IShaderProgram* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
+        virtual void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
         virtual void bindRenderPipeline(const IRenderPipeline* pipeline) = 0;
         virtual void beginRenderPass(const FRenderPassDesc& renderPassDesc) = 0;
         virtual void endRenderPass() = 0;
@@ -100,9 +100,9 @@ namespace Luma
         virtual void drawIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void drawIndexedIndirect(const IBuffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void bindMaterial(const FMaterial* material) = 0;
-        virtual void bindBindingSet(const IBindingSet* bindingSet, const IShaderProgram* shader) = 0;
         virtual void textureBarriers(TArrayView<FTextureBarrier> barriers) = 0;
         virtual void bufferBarriers(TArrayView<FBufferBarrier> barriers) = 0;
+        virtual void bindBindingGroup(const IBindingGroup* bindingGroup) = 0;
         virtual void bindDescriptorBuffer(const IBuffer* buffer){LUMA_ASSERT(false, "Not Implemented");}
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// COMPUTE CMDS

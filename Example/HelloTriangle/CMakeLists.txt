@@ -10,3 +10,5 @@ add_shader_target(luma-triangle-shaders
         VERTEX vert
         FRAG frag
 )
+
+add_dependencies(luma-triangle luma-triangle-shaders)
