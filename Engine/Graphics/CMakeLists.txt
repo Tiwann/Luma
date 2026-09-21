@@ -81,7 +81,6 @@ target_include_directories(luma-graphics PRIVATE Source External PUBLIC Include)
 target_compile_definitions(luma-graphics PRIVATE LUMA_GRAPHICS $<$<BOOL:${BUILD_SHARED_LIBS}>:LUMA_BUILD_DLL>)
 set_target_properties(luma-graphics PROPERTIES CXX_STANDARD 26 FOLDER luma-engine)
 luma_generate_export_header(TARGET luma-graphics MODULE_NAME GRAPHICS)
-add_dependencies(luma-graphics luma-renderer2d-shaders)
 
 if(LUMA_ENGINE_BUILD_WEBGPU)
     target_sources(luma-graphics PRIVATE ${LUMA_WEBGPU_SRC})

@@ -56,6 +56,11 @@ namespace Luma
         TEvent<void(bool)> focusedEvent;
     };
 
+    /// Creates a window, choose the right implementation based on platform
+    /// @return A pointer to a IWindow object. Needs to be freed. Consider using Luma::Ref<>
     LUMA_CORE_API IWindow* createWindow(const FWindowDesc& windowDesc);
+
+    /// Creates a window, choose the right implementation based on platform
+    /// @return A pointer to a IWindow object. Needs to be freed. Consider using Luma::Ref<>
     LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = EWindowCreateBits::None, EGPUDeviceType deviceType = EGPUDeviceType::Auto);
 }

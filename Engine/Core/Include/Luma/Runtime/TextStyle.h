@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class ETextStyleBits
+    enum class ETextStyle
     {
         Regular = 0,
         Bold = BIT(0),
@@ -11,5 +11,5 @@ namespace Luma
         Underline = BIT(2),
     };
 
-    using FTextStyleFlags = TFlags<ETextStyleBits>;
+    using FTextStyleFlags = TFlags<ETextStyle>;
 }

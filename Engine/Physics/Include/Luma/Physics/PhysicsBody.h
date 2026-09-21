@@ -23,7 +23,7 @@ namespace Luma
         float linearDamping = 0.0f;
         float angularDamping = 0.0f;
         bool startsAwake = true;
-        FPhysicsConstraintsFlags constraints = EPhysicsConstraintsBits::None;
+        FPhysicsConstraintsFlags constraints = EPhysicsConstraints::None;
     };
 
     class LUMA_PHYSICS_API FPhysicsBody : public IRefCounted<FPhysicsBody>

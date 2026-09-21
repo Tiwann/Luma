@@ -65,4 +65,9 @@ namespace Luma
     {
         return m_Pimpl->timestep;
     }
+
+    FPhysicsWorld* createPhysicsWorld(const FPhysicsWorldDesc& desc)
+    {
+        return new FPhysicsWorld(desc);
+    }
 }

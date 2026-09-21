@@ -6,8 +6,8 @@
 
 namespace Luma
 {
-    template<>
-    struct THasher<FString>
+    template<typename T>
+    struct THasher<TString<T>>
     {
         static uint64_t hashBytes(const char* data, size_t size)
         {

@@ -185,7 +185,9 @@ namespace Luma
         ~WeakRef() = default;
 
 
+        WeakRef& operator=(decltype(nullptr)) { m_Pointer = nullptr; return *this; }
         WeakRef& operator=(PointerType ptr) { m_Pointer = ptr; return *this; }
+        WeakRef& operator=(const Ref<T>& ref) { m_Pointer = ref.m_Pointer; return *this; }
 
         operator PointerType() { return m_Pointer; }
         operator ConstPointerType() const { return m_Pointer; }

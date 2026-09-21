@@ -73,13 +73,14 @@ namespace Luma::TextureUtils
         const size_t pixelsSize = width * height * 4 * sizeof(stbi_uc);
         if (!pixels) return nullptr;
 
-        const FTextureDesc createInfo = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
-        ITexture* texture = device->createTexture(createInfo);
+        const FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
+        ITexture* texture = device->createTexture(textureDesc);
         if (!texture) return nullptr;
 
         if (!uploadTextureDataSync(device, texture, 0, 0, pixels, pixelsSize))
         {
             texture->destroy();
+            delete texture;
             stbi_image_free(pixels);
             return nullptr;
         }

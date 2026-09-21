@@ -57,12 +57,12 @@ namespace Luma
             return;
         }
 
-        m_Renderer2D = Ref<FRenderer2D>::create();
+        /*m_Renderer2D = Ref<FRenderer2D>::create();
         if (!m_Renderer2D->initialize(m_GpuDevice))
         {
             destroy();
             return;
-        }
+        }*/
 
         FAudioDeviceDesc audioDeviceDesc;
         audioDeviceDesc.sampleRate = 44100;
@@ -130,7 +130,7 @@ namespace Luma
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             onRender(cmdBuffer);
-            m_Renderer2D->render(cmdBuffer, m_Window->getWidth(), m_Window->getHeight());
+            m_Renderer2D->render();
             cmdBuffer->endRenderPass();
 
 

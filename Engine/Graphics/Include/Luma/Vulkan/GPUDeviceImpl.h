@@ -55,6 +55,7 @@ namespace Luma::Vulkan
 
         ICommandBuffer* getCommandBuffer() override { return &m_CmdBuffers[m_FrameIndex]; }
         ITextureView* getAcquiredSwapchainTextureView() override;
+        ITexture* getAcquiredSwapchainTexture() override;
 
         void writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler) override;
         void writeTextureDescriptor(IBuffer* buffer, uint64_t offset, const ITexture* texture, ETextureBindingType bindingType) override;

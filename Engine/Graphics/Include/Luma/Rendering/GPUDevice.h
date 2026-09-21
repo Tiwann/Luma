@@ -98,6 +98,7 @@ namespace Luma
         virtual IFence* createFence(const FFenceDesc& fenceDesc) = 0;
         IFence* createFence(uint64_t initialValue = 0);
         virtual ITextureView* getAcquiredSwapchainTextureView() = 0;
+        virtual ITexture* getAcquiredSwapchainTexture() = 0;
         FMaterial* createMaterial(const FMaterialDesc& materialDesc);
 
         virtual void writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler){ LUMA_ASSERT(false, "Feature not available on this device"); };

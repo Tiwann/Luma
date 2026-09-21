@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EPhysicsConstraintsBits
+    enum class EPhysicsConstraints
     {
         None = 0,
         PositionX = BIT(0),
@@ -17,5 +17,5 @@ namespace Luma
         Rotation = RotationX | RotationY | RotationZ,
     };
 
-    using FPhysicsConstraintsFlags = TFlags<EPhysicsConstraintsBits>;
+    using FPhysicsConstraintsFlags = TFlags<EPhysicsConstraints>;
 }

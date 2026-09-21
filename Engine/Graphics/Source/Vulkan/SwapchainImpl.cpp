@@ -137,6 +137,9 @@ namespace Luma::Vulkan
     {
         if (!m_Device) return nullptr;
         LUMA_ASSERT(index <= getTextureCount(), "Index out of swapchain's image count range!");
+
+        FTextureViewImpl& view = m_TextureViews[index];
+
         FTextureImpl& texture = m_Textures[index];
         texture.m_Device = static_cast<FGPUDeviceImpl*>(m_Device);
         texture.m_Image = m_Images[index];
@@ -148,8 +151,21 @@ namespace Luma::Vulkan
         texture.m_Mips = 1;
         texture.m_SampleCount = 1;
         texture.m_ArrayCount = 1;
-        texture.m_UsageFlags = ETextureUsageBits::ColorTarget;
+        texture.m_UsageFlags = ETextureUsage::ColorTarget;
         texture.m_Allocation = nullptr;
+        texture.m_View = view;
+
+
+        view.m_Device = static_cast<FGPUDeviceImpl*>(m_Device);
+        view.m_Handle = m_ImageViews[index];
+        view.m_Format = m_Format;
+        view.m_Width = m_Width;
+        view.m_Height = m_Height;
+        view.m_Depth = 1;
+        view.m_BaseMipLevel = 0;
+        view.m_MipCount = 1;
+        view.m_AspectFlags = ETextureAspectBits::Color;
+        view.m_Texture = &texture;
         return &texture;
     }
 

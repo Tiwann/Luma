@@ -40,4 +40,6 @@ namespace Luma
 
         Impl* m_Pimpl = nullptr;
     };
+
+    LUMA_PHYSICS_API FPhysicsWorld* createPhysicsWorld(const FPhysicsWorldDesc& desc = FPhysicsWorldDesc());
 }

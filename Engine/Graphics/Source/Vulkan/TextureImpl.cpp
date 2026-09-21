@@ -61,9 +61,9 @@ namespace Luma::Vulkan
             return false;
 
         const auto& usageFlags = textureDesc.usageFlags;
-        const bool isColorAttachment = usageFlags & ETextureUsageBits::ColorTarget;
-        const bool isDepthAttachment = usageFlags & ETextureUsageBits::DepthStencilTarget;
-        const bool isSampled = usageFlags & ETextureUsageBits::Sampled;
+        const bool isColorAttachment = usageFlags & ETextureUsage::ColorTarget;
+        const bool isDepthAttachment = usageFlags & ETextureUsage::DepthStencilTarget;
+        const bool isSampled = usageFlags & ETextureUsage::Sampled;
 
         FTextureAspectFlags aspectFlags = 0;
         if (isColorAttachment || isSampled) aspectFlags = ETextureAspectBits::Color;
@@ -95,20 +95,11 @@ namespace Luma::Vulkan
         if (!m_View.initialize(tvDesc))
             return false;
 
-        // DECIDED TO EXPLICITLY TRANSITION TO LAYOUT GENERAL BY DEFAULT
-        const EResourceAccessBits destAccess = isColorAttachment ? EResourceAccessBits::ColorTargetWrite :
-        isDepthAttachment ? EResourceAccessBits::DepthStencilTargetWrite :
-        isSampled ? EResourceAccessBits::ShaderRead : EResourceAccessBits::None;
-
-        const EResourceState destState = isColorAttachment ? EResourceState::ColorTarget :
-        isDepthAttachment ? EResourceState::DepthStencilTarget :
-        isSampled ? EResourceState::ShaderRead : EResourceState::General;
-
         FTextureBarrier barrier;
         barrier.texture = this;
         barrier.sourceAccess = EResourceAccessBits::None;
-        barrier.destAccess = destAccess;
-        barrier.destState = destState;
+        barrier.destAccess = EResourceAccessBits::None;
+        barrier.destState = EResourceState::General;
 
         IQueue* renderQueue = device->getRenderQueue();
 

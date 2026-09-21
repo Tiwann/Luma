@@ -5,7 +5,7 @@
 namespace Luma
 {
     template<FloatType F>
-    const TCamera<F>::Matrix& TCamera<F>::getViewMatrix()
+    const TCamera<F>::Matrix& TCamera<F>::getViewMatrix() const
     {
         const auto computeView = [&]()
         {
@@ -14,11 +14,12 @@ namespace Luma
             view = rotate(view, m_Rotation.inverted());
             return view;
         };
-        return m_ViewMatrix.get(computeView);
+        TCamera& thisCamera = const_cast<TCamera&>(*this);
+        return thisCamera.m_ViewMatrix.get(computeView);
     }
 
     template<FloatType F>
-    const TCamera<F>::Matrix& TCamera<F>::getProjectionMatrix()
+    const TCamera<F>::Matrix& TCamera<F>::getProjectionMatrix() const
     {
         const auto computeProjection = [&]()
         {
@@ -40,8 +41,9 @@ namespace Luma
 
             return projection;
         };
-        
-        return m_ProjectionMatrix.get(computeProjection);
+
+        TCamera& thisCamera = const_cast<TCamera&>(*this);
+        return thisCamera.m_ProjectionMatrix.get(computeProjection);
     }
 
     template<FloatType F>
@@ -71,7 +73,7 @@ namespace Luma
     }
 
     template<FloatType F>
-    void TCamera<F>::setDimensions(const uint32_t width, const uint32_t height)
+    void TCamera<F>::setSize(const uint32_t width, const uint32_t height)
     {
         m_Width = width;
         m_Height = height;
@@ -122,6 +124,12 @@ namespace Luma
     uint32_t TCamera<F>::getHeight() const
     {
         return m_Height;
+    }
+
+    template <FloatType F>
+    FRect2u TCamera<F>::getBounds() const
+    {
+        return {0, 0, m_Width, m_Height};
     }
 
     template<FloatType F>
@@ -176,6 +184,24 @@ namespace Luma
         m_Rotation = Quat::fromAxisAngle(axisAngle);
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
+    }
+
+    template <FloatType F>
+    FVector2<F> TCamera<F>::worldToScreen(const FVector3<F>& worldPos) const
+    {
+        FVector4<F> localPos = getViewMatrix() * FVector4<F>(worldPos, 1.0);
+        FVector4<F> clipPos = getProjectionMatrix() * localPos;
+
+        if (clipPos.w != 0.0f)
+        {
+            clipPos.x /= clipPos.w;
+            clipPos.y /= clipPos.w;
+            clipPos.z /= clipPos.w;
+        }
+
+        F screenX = (clipPos.x * 0.5 + 0.5) * m_Width;
+        F screenY = (1.0 - (clipPos.y * 0.5 + 0.5)) * m_Height;
+        return FVector2<F>(screenX, screenY);
     }
 
     template struct TCamera<float>;

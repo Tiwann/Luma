@@ -476,15 +476,15 @@ namespace Luma::Vulkan
     inline VkImageUsageFlags convert(const FTextureUsageFlags& value)
     {
         VkImageUsageFlags flags = 0;
-        if (value == ETextureUsageBits::None)
+        if (value == ETextureUsage::None)
             return 0;
-        if (value & ETextureUsageBits::Sampled)
+        if (value & ETextureUsage::Sampled)
             flags |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsageBits::Storage)
+        if (value & ETextureUsage::Storage)
             flags |= VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsageBits::ColorTarget)
+        if (value & ETextureUsage::ColorTarget)
             flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsageBits::DepthStencilTarget)
+        if (value & ETextureUsage::DepthStencilTarget)
             flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         return flags;
     }

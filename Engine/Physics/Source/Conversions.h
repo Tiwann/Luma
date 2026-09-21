@@ -38,13 +38,13 @@ namespace Luma
     inline b3MotionLocks convert(const FPhysicsConstraintsFlags& value)
     {
         b3MotionLocks locks;
-        locks.linearX = value & EPhysicsConstraintsBits::PositionX;
-        locks.linearY = value & EPhysicsConstraintsBits::PositionY;
-        locks.linearZ = value & EPhysicsConstraintsBits::PositionZ;
+        locks.linearX = value & EPhysicsConstraints::PositionX;
+        locks.linearY = value & EPhysicsConstraints::PositionY;
+        locks.linearZ = value & EPhysicsConstraints::PositionZ;
 
-        locks.angularX = value & EPhysicsConstraintsBits::RotationX;
-        locks.angularY = value & EPhysicsConstraintsBits::RotationY;
-        locks.angularZ = value & EPhysicsConstraintsBits::RotationZ;
+        locks.angularX = value & EPhysicsConstraints::RotationX;
+        locks.angularY = value & EPhysicsConstraints::RotationY;
+        locks.angularZ = value & EPhysicsConstraints::RotationZ;
         return locks;
     }
 
@@ -52,13 +52,13 @@ namespace Luma
     inline FPhysicsConstraintsFlags convert(const b3MotionLocks& value)
     {
         FPhysicsConstraintsFlags constraints;
-        if (value.linearX) constraints |= EPhysicsConstraintsBits::PositionX;
-        if (value.linearY) constraints |= EPhysicsConstraintsBits::PositionY;
-        if (value.linearZ) constraints |= EPhysicsConstraintsBits::PositionZ;
+        if (value.linearX) constraints |= EPhysicsConstraints::PositionX;
+        if (value.linearY) constraints |= EPhysicsConstraints::PositionY;
+        if (value.linearZ) constraints |= EPhysicsConstraints::PositionZ;
 
-        if (value.angularX) constraints |= EPhysicsConstraintsBits::RotationX;
-        if (value.angularY) constraints |= EPhysicsConstraintsBits::RotationY;
-        if (value.angularZ) constraints |= EPhysicsConstraintsBits::RotationZ;
+        if (value.angularX) constraints |= EPhysicsConstraints::RotationX;
+        if (value.angularY) constraints |= EPhysicsConstraints::RotationY;
+        if (value.angularZ) constraints |= EPhysicsConstraints::RotationZ;
         return constraints;
     }
 

@@ -24,8 +24,53 @@
 #define VK_LAYER_KHRONOS_VALIDATION_NAME "VK_LAYER_KHRONOS_validation"
 #endif
 
+#ifndef VK_LAYER_RENDERDOC_CAPTURE_NAME
+#define VK_LAYER_RENDERDOC_CAPTURE_NAME "VK_LAYER_RENDERDOC_Capture"
+#endif
+
+
+
 namespace Luma::Vulkan
 {
+    FStringView vkResultToString(VkResult result)
+    {
+        switch (result)
+        {
+        case VK_SUCCESS: return "VK_SUCCESS";
+        case VK_NOT_READY: return "VK_NOT_READY";
+        case VK_TIMEOUT: return "VK_TIMEOUT";
+        case VK_EVENT_SET: return "VK_EVENT_SET";
+        case VK_EVENT_RESET: return "VK_EVENT_RESET";
+        case VK_INCOMPLETE: return "VK_INCOMPLETE";
+        case VK_ERROR_OUT_OF_HOST_MEMORY: return "VK_ERROR_OUT_OF_HOST_MEMORY";
+        case VK_ERROR_OUT_OF_DEVICE_MEMORY: return "VK_ERROR_OUT_OF_DEVICE_MEMORY";
+        case VK_ERROR_INITIALIZATION_FAILED: return "VK_ERROR_INITIALIZATION_FAILED";
+        case VK_ERROR_DEVICE_LOST: return "VK_ERROR_DEVICE_LOST";
+        case VK_ERROR_MEMORY_MAP_FAILED: return "VK_ERROR_MEMORY_MAP_FAILED";
+        case VK_ERROR_LAYER_NOT_PRESENT: return "VK_ERROR_LAYER_NOT_PRESENT";
+        case VK_ERROR_EXTENSION_NOT_PRESENT: return "VK_ERROR_EXTENSION_NOT_PRESENT";
+        case VK_ERROR_FEATURE_NOT_PRESENT: return "VK_ERROR_FEATURE_NOT_PRESENT";
+        case VK_ERROR_INCOMPATIBLE_DRIVER: return "VK_ERROR_INCOMPATIBLE_DRIVER";
+        case VK_ERROR_TOO_MANY_OBJECTS: return "VK_ERROR_TOO_MANY_OBJECTS";
+        case VK_ERROR_FORMAT_NOT_SUPPORTED: return "VK_ERROR_FORMAT_NOT_SUPPORTED";
+        case VK_ERROR_FRAGMENTED_POOL: return "VK_ERROR_FRAGMENTED_POOL";
+        case VK_ERROR_OUT_OF_POOL_MEMORY: return "VK_ERROR_OUT_OF_POOL_MEMORY";
+        case VK_ERROR_INVALID_EXTERNAL_HANDLE: return "VK_ERROR_INVALID_EXTERNAL_HANDLE";
+        case VK_ERROR_SURFACE_LOST_KHR: return "VK_ERROR_SURFACE_LOST_KHR";
+        case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: return "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR";
+        case VK_SUBOPTIMAL_KHR: return "VK_SUBOPTIMAL_KHR";
+        case VK_ERROR_OUT_OF_DATE_KHR: return "VK_ERROR_OUT_OF_DATE_KHR";
+        case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: return "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
+        case VK_ERROR_VALIDATION_FAILED_EXT: return "VK_ERROR_VALIDATION_FAILED_EXT";
+        default: return "VK_UNKNOWN_RESULT";
+        }
+    }
+
+    void printVkResult(VkResult result)
+    {
+        std::cerr << "VkResult: " << vkResultToString(result) << " (" << result << ")";
+    }
+
     static VkBool32 messageCallback(const VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                                     const VkDebugUtilsMessageTypeFlagsEXT messageTypes,
                                     const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
@@ -233,7 +278,7 @@ namespace Luma::Vulkan
         TArray<const char*> deviceExtensions;
         deviceExtensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-        deviceExtensions.add(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
+        //deviceExtensions.add(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
         deviceExtensions.add(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
 
         VkPhysicalDeviceTimelineSemaphoreFeatures timelineSemFeatures = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES};
@@ -246,7 +291,7 @@ namespace Luma::Vulkan
 
         VkPhysicalDeviceShaderDrawParametersFeatures shaderDrawParametersFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETERS_FEATURES };
         shaderDrawParametersFeatures.shaderDrawParameters = true;
-        shaderDrawParametersFeatures.pNext = &descriptorBufferFeatures;
+        shaderDrawParametersFeatures.pNext = &timelineSemFeatures;
 
         VkPhysicalDeviceSynchronization2Features synchronization2Features = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES };
         synchronization2Features.synchronization2 = true;
@@ -282,7 +327,8 @@ namespace Luma::Vulkan
         deviceCreateInfo.ppEnabledLayerNames = nullptr;
         deviceCreateInfo.queueCreateInfoCount = queueCreateInfos.count();
         deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-        if (VK_FAILED(vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, nullptr, &m_Handle)))
+        VkResult deviceResult = vkCreateDevice(m_PhysicalDevice, &deviceCreateInfo, nullptr, &m_Handle);
+        if (VK_FAILED(deviceResult))
         {
             std::wcerr << L"Failed to create logical device!\n";
             return false;
@@ -400,9 +446,11 @@ namespace Luma::Vulkan
         vkGetPhysicalDeviceProperties(m_PhysicalDevice, &properties);
 
         FString infoString;
-        infoString.append(strfmt("Using Vulkan 1.4\n"));
-        infoString.append(strfmt("    Device: {}\n", properties.deviceName));
-        infoString.append(strfmt("Successfully initialized render device!"));
+        infoString.append(strfmt("Initialized GPUDevice (Vulkan Backend)\n"));
+        infoString.append(strfmt("Device: {}\n", properties.deviceName));
+        infoString.append(strfmt("Enabled extensions:\n", properties.deviceName));
+        for (const auto& extension : deviceExtensions)
+            infoString.append(strfmt("    {}\n", extension));
         std::cout << infoString << std::endl;
 
         s_DeviceCount++;
@@ -499,6 +547,7 @@ namespace Luma::Vulkan
 
         const VkCommandBuffer cmdBuff[] = { cmdBuffer.getHandle() };
         constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
 
         VkSubmitInfo submitInfo{VK_STRUCTURE_TYPE_SUBMIT_INFO};
         submitInfo.pCommandBuffers = cmdBuff;
@@ -686,6 +735,11 @@ namespace Luma::Vulkan
     ITextureView* FGPUDeviceImpl::getAcquiredSwapchainTextureView()
     {
         return m_Swapchain.getTextureView(m_SwapchainImageIndex);
+    }
+
+    ITexture* FGPUDeviceImpl::getAcquiredSwapchainTexture()
+    {
+        return m_Swapchain.getTexture(m_SwapchainImageIndex);
     }
 
     void FGPUDeviceImpl::writeSamplerDescriptor(IBuffer* buffer, uint64_t offset, const ISampler* sampler)

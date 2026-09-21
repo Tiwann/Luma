@@ -86,6 +86,11 @@ namespace Luma
         void bindVertexBuffer(const IBuffer* buffer, int64_t offset);
         virtual void bindIndexBuffer(const IBuffer* buffer, int64_t offset, EIndexFormat format) = 0;
         virtual void pushConstants(const IShader* shader, FShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
+        template<typename T>
+        void pushConstant(const IShader* shader, FShaderStageFlags stageFlags, const T& data, uint64_t offset = 0)
+        {
+            pushConstants(shader, stageFlags, &data, offset, sizeof(T));
+        }
         virtual void bindRenderPipeline(const IRenderPipeline* pipeline) = 0;
         virtual void beginRenderPass(const FRenderPassDesc& renderPassDesc) = 0;
         virtual void endRenderPass() = 0;

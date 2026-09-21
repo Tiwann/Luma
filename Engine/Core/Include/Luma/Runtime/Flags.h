@@ -21,7 +21,7 @@ namespace Luma
         constexpr TFlags(Enum value) : m_Value(value) {}
         constexpr TFlags(IntegerType value) : m_Value((Enum)value) {}
         constexpr TFlags(const TFlags&) = default;
-        constexpr TFlags(const TFlags&&) = default;
+        constexpr TFlags(TFlags&&) = default;
         TFlags& operator=(const TFlags&) = default;
         TFlags& operator=(TFlags&&) = default;
 

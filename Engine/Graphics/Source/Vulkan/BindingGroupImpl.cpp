@@ -37,6 +37,8 @@ namespace Luma::Vulkan
 
     void FBindingGroupImpl::bindTextures(uint32_t bindingIndex, TArrayView<const ITexture*> textures, ETextureBindingType bindingType)
     {
+        if (textures.isEmpty()) return;
+
         const FGPUDeviceImpl* device = static_cast<FGPUDeviceImpl*>(m_Shader->getDevice());
         const VkDevice deviceHandle = device->getHandle();
 

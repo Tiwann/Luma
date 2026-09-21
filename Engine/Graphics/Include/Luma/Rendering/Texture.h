@@ -18,7 +18,7 @@ namespace Luma
     struct FTextureDesc
     {
         IGPUDevice* device = nullptr;
-        FTextureUsageFlags usageFlags = ETextureUsageBits::None;
+        FTextureUsageFlags usageFlags = ETextureUsage::None;
         EFormat format = EFormat::None;
         uint32_t width = 0;
         uint32_t height = 0;
@@ -30,7 +30,7 @@ namespace Luma
         static FTextureDesc texture1D(const uint32_t width, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             FTextureDesc desc;
-            desc.usageFlags = ETextureUsageBits::Sampled;
+            desc.usageFlags = ETextureUsage::Sampled;
             desc.format = format;
             desc.width = width;
             desc.height = 1;
@@ -44,7 +44,7 @@ namespace Luma
         static FTextureDesc texture2D(const uint32_t width, const uint32_t height, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             FTextureDesc desc;
-            desc.usageFlags = ETextureUsageBits::Sampled;
+            desc.usageFlags = ETextureUsage::Sampled;
             desc.format = format;
             desc.width = width;
             desc.height = height;
@@ -58,7 +58,7 @@ namespace Luma
         static FTextureDesc texture3D(const uint32_t width, const uint32_t height, const uint32_t depth, const EFormat format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             FTextureDesc desc;
-            desc.usageFlags = ETextureUsageBits::Sampled;
+            desc.usageFlags = ETextureUsage::Sampled;
             desc.format = format;
             desc.width = width;
             desc.height = height;
@@ -103,7 +103,7 @@ namespace Luma
         uint32_t m_SampleCount = 0;
         uint32_t m_ArrayCount = 0;
         EResourceState m_State = EResourceState::Undefined;
-        FTextureUsageFlags m_UsageFlags = ETextureUsageBits::None;
+        FTextureUsageFlags m_UsageFlags = ETextureUsage::None;
         ETextureDimension m_Dimension = ETextureDimension::None;
     };
 }
