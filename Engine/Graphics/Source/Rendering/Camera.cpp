@@ -47,13 +47,15 @@ namespace Luma
     }
 
     template<FloatType F>
-    const TCamera<F>::Matrix& TCamera<F>::getViewProjectionMatrix()
+    const TCamera<F>::Matrix& TCamera<F>::getViewProjectionMatrix() const
     {
         const auto computeViewProjection = [&]()
         {
             return getProjectionMatrix() * getViewMatrix();
         };
-        return m_ViewProjectionMatrix.get(computeViewProjection);
+
+        TCamera& thisCamera = const_cast<TCamera&>(*this);
+        return thisCamera.m_ViewProjectionMatrix.get(computeViewProjection);
     }
 
     template <FloatType F>
