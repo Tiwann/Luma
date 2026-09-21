@@ -22,26 +22,21 @@
 #include "Luma/Runtime/Path.h"
 #include "Luma/BinaryData/RobotoFont.h"
 #include "Luma/Memory/Memory.h"
+#include "Luma/Rendering/Queue.h"
+#include "Luma/Rendering/RenderPassDesc.h"
 
 namespace Luma
 {
-    FRenderer2D::FRenderer2D(Ref<IGPUDevice> gpuDevice)
+    FRenderer2D::FRenderer2D(Ref<IGPUDevice> device, uint32_t width, uint32_t height)
+        : m_GpuDevice(device)
     {
-        initialize(gpuDevice);
-    }
-
-    bool FRenderer2D::initialize(Ref<IGPUDevice> gpuDevice)
-    {
-        if (!gpuDevice) return false;
-        m_GpuDevice = gpuDevice;
-
         m_DefaultFont = Ref<FFont>::create();
-        m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, gpuDevice);
+        m_DefaultFont->loadAndGenerate(robotoFontData, EFontAtlasType::MSDF, {FCharacterSet::ascii()}, m_GpuDevice);
         setFont(m_DefaultFont);
 
         FString vertexPath = FPath::getEngineShaderPath("Renderer2D.slang.vert.spv");
         FString fragmentPath = FPath::getEngineShaderPath("Renderer2D.slang.frag.spv");
-        m_ShaderProgram = gpuDevice->createShader(vertexPath, fragmentPath);
+        m_ShaderProgram = m_GpuDevice->createShader(vertexPath, fragmentPath);
 
         FVertexInputLayout vertexLayout;
         vertexLayout.addInputBinding(0, EVertexInputRate::Vertex);
@@ -59,51 +54,64 @@ namespace Luma
         rpDesc.colorFormats[0] = EFormat::RGBA8_SRGB;
         rpDesc.inputLayout = vertexLayout;
         m_Pipeline = m_GpuDevice->createRenderPipeline(rpDesc);
-        if (!m_Pipeline) return false;
 
         FBufferDesc vbDesc;
         vbDesc.alwaysMapped = true;
         vbDesc.usage = EBufferUsage::VertexBuffer;
         vbDesc.size = MAX_QUAD * 4 * sizeof(QuadVertex);
         m_VertexBuffer = m_GpuDevice->createBuffer(vbDesc);
-        if (!m_VertexBuffer) return false;
 
         FBufferDesc ibDesc;
         ibDesc.alwaysMapped = true;
         ibDesc.usage = EBufferUsage::IndexBuffer;
         ibDesc.size = MAX_QUAD * 6 * sizeof(uint32_t);
         m_IndexBuffer = m_GpuDevice->createBuffer(ibDesc);
-        if (!m_IndexBuffer) return false;
 
         FSamplerDesc samplerDesc = FSamplerDesc();
         samplerDesc.magFilter = EFilter::Linear;
         samplerDesc.magFilter = EFilter::Linear;
         m_Sampler = m_GpuDevice->getOrCreateSampler(samplerDesc);
-        if (!m_Sampler) return false;
 
         samplerDesc.magFilter = EFilter::Nearest;
         samplerDesc.minFilter = EFilter::Nearest;
         m_SpriteSampler = m_GpuDevice->getOrCreateSampler(samplerDesc);
 
         m_BindingGroup = m_ShaderProgram->createBindingGroup(0);
-        if (!m_BindingGroup) return false;
-
         m_BindingGroup->bindSampler(0, m_SpriteSampler);
         m_BindingGroup->bindSampler(1, m_Sampler);
-        m_LocalToWorldMatrix = FMatrix4f::Identity;
-        return true;
+
+        m_Fence = m_GpuDevice->createFence();
+
+        m_Camera.setProjectionMode(ECameraProjectionMode::Orthographic);
+        m_Camera.setClipPlanes(-1.0f, 1.0f);
+        m_Camera.setOrthographicSize(1.0f);
+        m_Camera.setSize(width, height);
+
+        FTextureDesc textureDesc{};
+        textureDesc.width = width;
+        textureDesc.height = height;
+        textureDesc.depth = 1;
+        textureDesc.format = EFormat::RGBA8_SRGB;
+        textureDesc.arrayCount = 1;
+        textureDesc.sampleCount = 1;
+        textureDesc.mipCount = 1;
+        textureDesc.usageFlags = ETextureUsage::ColorTarget | ETextureUsage::Sampled;
+
+        m_RenderTexture = m_GpuDevice->createTexture(textureDesc);
     }
 
     void FRenderer2D::destroy()
     {
         m_GpuDevice->waitIdle();
-        m_GpuDevice = nullptr;
         m_DefaultFont = nullptr;
         m_Font = nullptr;
-        //m_Shader = nullptr;
+        m_BindingGroup = nullptr;
+        m_ShaderProgram = nullptr;
         m_Pipeline = nullptr;
         m_VertexBuffer = nullptr;
         m_IndexBuffer = nullptr;
+        m_Fence = nullptr;
+        m_GpuDevice = nullptr;
         m_QuadVertices.free();
         m_QuadIndices.free();
     }
@@ -136,23 +144,85 @@ namespace Luma
         m_ReadyToRender = true;
     }
 
-    void FRenderer2D::render(ICommandBuffer* cmdBuffer, uint32_t width, uint32_t height)
+    Ref<ITexture> FRenderer2D::render()
     {
         LUMA_ASSERT(m_ReadyToRender, "not ready to render yet!!");
 
-        const FMatrix4f projection = scale(orthoTopLeft(static_cast<float>(width), static_cast<float>(height), 1.0f, -1.0f, 1.0f), {1.0f, -1.0f, 1.0f});
-        const FMatrix4f mvp = projection * m_LocalToWorldMatrix;
-        cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
-        cmdBuffer->pushConstants(m_ShaderProgram, EShaderStage::Vertex, &mvp, 0, sizeof(FMatrix4f));
-        cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
-        cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::UInt32);
-        cmdBuffer->bindRenderPipeline(m_Pipeline);
-        cmdBuffer->bindBindingGroup(m_BindingGroup);
-        cmdBuffer->setViewport(FViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f));
-        cmdBuffer->setScissor(FScissor(0, 0, width, height));
-        cmdBuffer->drawIndexed(m_QuadIndices.count(), 1, 0, 0, 0);
-        cmdBuffer->endDebugGroup();
+        const FMatrix4f& projection = m_Camera.getProjectionMatrix();
+        const FMatrix4f projectionTopLeft = translate(projection, {-1.0, -1.0, 0.0});
+
+        IQueue* renderQueue = m_GpuDevice->getRenderQueue();
+        Ref<ICommandBuffer> cmdBuffer = m_GpuDevice->createCommandBuffer(renderQueue);
+
+        if (cmdBuffer->begin())
+        {
+            FRenderPassTarget renderTarget;
+            renderTarget.type = ERenderPassTargetType::Color;
+            renderTarget.loadOp = ELoadOp::Clear;
+            renderTarget.storeOp = EStoreOp::Store;
+            renderTarget.textureView = m_RenderTexture->getTextureView();
+
+            FRenderPassDesc renderPassDesc;
+            renderPassDesc.renderArea = m_Camera.getBounds();
+            renderPassDesc.colorTargets.add(&renderTarget);
+
+            cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
+
+            FTextureBarrier toTargetOutputBarrier;
+            toTargetOutputBarrier.texture = m_RenderTexture;
+            toTargetOutputBarrier.sourceAccess = EResourceAccessBits::ShaderRead;
+            toTargetOutputBarrier.destAccess = EResourceAccessBits::ColorTargetWrite;
+            toTargetOutputBarrier.destState = EResourceState::ColorTarget;
+
+            FTextureBarrier toShaderReadBarrier;
+            toShaderReadBarrier.texture = m_RenderTexture;
+            toShaderReadBarrier.sourceAccess = EResourceAccessBits::ColorTargetWrite;
+            toShaderReadBarrier.destAccess = EResourceAccessBits::ShaderRead;
+            toShaderReadBarrier.destState = EResourceState::ShaderRead;
+
+            cmdBuffer->textureBarriers(toTargetOutputBarrier);
+
+            cmdBuffer->beginRenderPass(renderPassDesc);
+            cmdBuffer->pushConstant(m_ShaderProgram, EShaderStage::Vertex, projectionTopLeft);
+            cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
+            cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::UInt32);
+            cmdBuffer->bindRenderPipeline(m_Pipeline);
+            cmdBuffer->bindBindingGroup(m_BindingGroup);
+            cmdBuffer->setViewport(FViewport::fromCamera(m_Camera));
+            cmdBuffer->setScissor(FScissor::fromCamera(m_Camera));
+            cmdBuffer->drawIndexed(m_QuadIndices.count(), 1, 0, 0, 0);
+            cmdBuffer->endRenderPass();
+
+            cmdBuffer->textureBarriers(toShaderReadBarrier);
+
+            cmdBuffer->endDebugGroup();
+            cmdBuffer->end();
+
+            static uint64_t fenceValue = 0;
+
+            FFenceSignal signal;
+            signal.fence = m_Fence;
+            signal.stages = EPipelineStageBits::ColorTargetOutput;
+            signal.value = ++fenceValue;
+
+            FQueueExecuteInfo execInfo;
+            execInfo.cmdBuffers = {cmdBuffer};
+            execInfo.signals = {signal};
+            renderQueue->executeCommandBuffers(execInfo);
+
+            m_Fence->waitOnCPU(fenceValue);
+        }
+
+
         m_ReadyToRender = false;
+        return m_RenderTexture;
+    }
+
+    void FRenderer2D::resize(uint32_t width, uint32_t height)
+    {
+        m_GpuDevice->waitIdle();
+        m_RenderTexture->resize(width, height);
+        m_Camera.setSize(width, height);
     }
 
     void FRenderer2D::addQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color, const QuadMode quadMode, const uint32_t textureId)
@@ -236,7 +306,7 @@ namespace Luma
         const TextParams params
         {
             .alignment = ETextAlignment::Left,
-            .style = ETextStyleBits::Regular,
+            .style = ETextStyle::Regular,
             .characterSpacing = 1.0f,
             .lineSpacing = 1.0f,
             .fontSize = fontSize
@@ -362,17 +432,7 @@ namespace Luma
 
     void FRenderer2D::setFont(Ref<FFont> font)
     {
-        if (!font)
-        {
-            m_Font = m_DefaultFont;
-            return;
-        }
-        m_Font = font;
-    }
-
-    void FRenderer2D::setLocalToWorldMatrix(const FMatrix4f& localToWorld)
-    {
-        m_LocalToWorldMatrix = localToWorld;
+        m_Font = font ? font : m_DefaultFont;
     }
 
     void FRenderer2D::setDebugName(const FString& debugName)
@@ -383,5 +443,15 @@ namespace Luma
     void FRenderer2D::setDebugColor(const FColor& debugColor)
     {
         m_DebugColor = debugColor;
+    }
+
+    FCamera& FRenderer2D::getCamera()
+    {
+        return m_Camera;
+    }
+
+    Ref<ITexture> FRenderer2D::getRenderTexture() const
+    {
+        return m_RenderTexture;
     }
 }
