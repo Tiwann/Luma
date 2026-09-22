@@ -17,7 +17,7 @@ namespace Luma
         FString applicationName = "Luma Application";
         uint32_t windowWidth = 600;
         uint32_t windowHeight = 400;
-        FWindowCreateFlags windowFlags = 0;
+        FWindowOptionsFlags windowFlags = 0;
         bool vsync = false;
         uint32_t msaaSamples = 8;
     };

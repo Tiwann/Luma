@@ -177,7 +177,7 @@ namespace Luma
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
-        if (windowDesc.flags & EWindowCreateBits::Centered)
+        if (windowDesc.options & EWindowOptions::Centered)
         {
             GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
             const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
@@ -190,8 +190,8 @@ namespace Luma
             glfwWindowHint(GLFW_POSITION_Y, y);
         }
 
-        glfwWindowHint(GLFW_RESIZABLE, windowDesc.flags & EWindowCreateBits::Resizable);
-        glfwWindowHint(GLFW_DECORATED, !(windowDesc.flags & EWindowCreateBits::NoDecoration));
+        glfwWindowHint(GLFW_RESIZABLE, windowDesc.options & EWindowOptions::Resizable);
+        glfwWindowHint(GLFW_DECORATED, !(windowDesc.options & EWindowOptions::NoDecoration));
 
         m_Handle = glfwCreateWindow(windowDesc.width, windowDesc.height, *windowDesc.title, nullptr, nullptr);
         if (!m_Handle) return false;

@@ -25,7 +25,7 @@ namespace Luma
         windowDesc.title = configuration.applicationName;
         windowDesc.width = configuration.windowWidth;
         windowDesc.height = configuration.windowHeight;
-        windowDesc.flags = configuration.windowFlags;
+        windowDesc.options = configuration.windowFlags;
         m_Window = createWindow(windowDesc);
         if (!m_Window)
         {
