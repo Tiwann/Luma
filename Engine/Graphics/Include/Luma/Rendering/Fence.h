@@ -21,7 +21,7 @@ namespace Luma
     {
         const struct IFence* fence = nullptr;
         uint64_t value = 0;
-        FPipelineStageFlags stages = EPipelineStageBits::AllCommands;
+        FPipelineStageFlags stages = EPipelineStages::AllCommands;
     } FFenceWait, FFenceSignal;
 
     struct IFence : IRefCounted<IFence>

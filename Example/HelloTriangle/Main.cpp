@@ -11,7 +11,7 @@ using namespace Luma;
 
 int main()
 {
-    Ref<IWindow> window = createWindow("Hello Triangle!", 800, 600, EWindowCreateBits::Centered | EWindowCreateBits::Resizable);
+    Ref<IWindow> window = createWindow("Hello Triangle!", 800, 600, EWindowOptions::Centered | EWindowOptions::Resizable);
     LUMA_ASSERT(window, "Failed to create window! Exiting application.");
 
     Ref<IGPUDevice> device = createGPUDevice(window);

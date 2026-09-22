@@ -16,7 +16,7 @@ static constexpr uint32_t HEIGHT = 600;
 
 int main()
 {
-    Ref<FDesktopWindow> window = createWindow("Hello Renderer2D", WIDTH, HEIGHT, EWindowCreateBits::Centered);
+    Ref<FDesktopWindow> window = createWindow("Hello Renderer2D", WIDTH, HEIGHT, EWindowOptions::Centered);
     Ref<IGPUDevice> gpuDevice = createGPUDevice(window);
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(gpuDevice);
 
@@ -50,7 +50,7 @@ int main()
             renderPassDesc.colorTargets.add(&colorAttachment);
 
             cmdBuffer->beginRenderPass(renderPassDesc);
-            renderer->render(cmdBuffer, WIDTH, HEIGHT);
+            renderer->render();
             cmdBuffer->endRenderPass();
 
             gpuDevice->endFrame();

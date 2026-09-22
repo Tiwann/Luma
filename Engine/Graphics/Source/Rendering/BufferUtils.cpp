@@ -46,7 +46,7 @@ namespace Luma::BufferUtils
             FFenceSignal signal;
             signal.fence = fence;
             signal.value = 1;
-            signal.stages = EPipelineStageBits::Copy;
+            signal.stages = EPipelineStages::Copy;
 
             FQueueExecuteInfo execInfo;
             execInfo.cmdBuffers = {cmdBuffer};
@@ -87,7 +87,7 @@ namespace Luma::BufferUtils
             FFenceSignal signal;
             signal.fence = fence;
             signal.value = 1;
-            signal.stages = EPipelineStageBits::Copy;
+            signal.stages = EPipelineStages::Copy;
 
             FQueueExecuteInfo execInfo;
             execInfo.cmdBuffers = {cmdBuffer};

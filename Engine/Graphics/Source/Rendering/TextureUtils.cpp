@@ -53,7 +53,7 @@ namespace Luma::TextureUtils
         FFenceSignal signal;
         signal.fence = fence;
         signal.value = 1;
-        signal.stages = EPipelineStageBits::Copy;
+        signal.stages = EPipelineStages::Copy;
 
         FQueueExecuteInfo copyExec;
         copyExec.cmdBuffers = {cmdBuffer};

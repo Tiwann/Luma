@@ -109,7 +109,6 @@ namespace Luma::Vulkan
         Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(cmdBufferDesc);
 
         FFenceDesc fenceDesc;
-        fenceDesc.device = device;
         Ref<IFence> fence = device->createFence(fenceDesc);
 
         if (cmdBuffer->begin())

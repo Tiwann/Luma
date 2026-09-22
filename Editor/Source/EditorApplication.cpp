@@ -17,7 +17,7 @@ namespace Luma
         config.applicationName = "Luma Editor";
         config.windowWidth = 1600;
         config.windowHeight = 900;
-        config.windowFlags = EWindowCreateBits::Centered | EWindowCreateBits::Resizable;
+        config.windowFlags = EWindowOptions::Centered | EWindowOptions::Resizable;
         config.msaaSamples = 1;
         config.vsync = true;
         return config;
