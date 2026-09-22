@@ -20,7 +20,7 @@ namespace Luma
     }
     
     FFileStream::FFileStream(FStringView filepath, const FOpenModeFlags openMode)
-        : FStream(openMode), m_Filepath(std::move(filepath))
+        : IStream(openMode), m_Filepath(std::move(filepath))
     {
         open(filepath, openMode);
     }
@@ -39,12 +39,12 @@ namespace Luma
         return m_Opened = m_Handle;
     }
 
-    FStream::SizeType FFileStream::readRaw(void* outBuffer, const SizeType size)
+    IStream::SizeType FFileStream::readRaw(void* outBuffer, const SizeType size)
     {
         return fread(outBuffer, 1, size, m_Handle);
     }
 
-    FStream::SizeType FFileStream::writeRaw(const void* inBuffer, const SizeType size)
+    IStream::SizeType FFileStream::writeRaw(const void* inBuffer, const SizeType size)
     {
         return fwrite(inBuffer, 1, size, m_Handle);
     }
@@ -60,19 +60,19 @@ namespace Luma
         return result == 0;
     }
 
-    FStream::OffsetType FFileStream::tell() const
+    IStream::OffsetType FFileStream::tell() const
     {
         return ftell(m_Handle);
     }
 
     void FFileStream::close()
     {
-        FStream::close();
+        IStream::close();
         (void)fclose(m_Handle);
         m_Handle = nullptr;
     }
 
-    FStream::OffsetType FFileStream::getSize()
+    IStream::OffsetType FFileStream::getSize()
     {
         seek(ESeek::End, 0);
         const OffsetType result = tell();
@@ -91,17 +91,17 @@ namespace Luma
     FStandardStream FStandardStream::StandardError = FStandardStream(stderr, EOpenModeBits::Write | EOpenModeBits::Text);
     
     FStandardStream::FStandardStream(FILE* handle, const FOpenModeFlags& openMode)
-        : FStream(openMode), m_Handle(handle)
+        : IStream(openMode), m_Handle(handle)
     {
         m_Opened = m_Handle;
     }
 
-    FStream::SizeType FStandardStream::readRaw(void* outBuffer, SizeType size)
+    IStream::SizeType FStandardStream::readRaw(void* outBuffer, SizeType size)
     {
         return -1;
     }
 
-    FStream::SizeType FStandardStream::writeRaw(const void* inBuffer, const SizeType size)
+    IStream::SizeType FStandardStream::writeRaw(const void* inBuffer, const SizeType size)
     {
         return fprintf(m_Handle, "%*s", int(size), (const char*)inBuffer);
     }
@@ -111,14 +111,14 @@ namespace Luma
         return false;
     }
 
-    FStream::OffsetType FStandardStream::tell() const
+    IStream::OffsetType FStandardStream::tell() const
     {
         return -1;
     }
 
     void FStandardStream::close()
     {
-        FStream::close();
+        IStream::close();
         (void)fclose(m_Handle);
         m_Handle = nullptr;
     }

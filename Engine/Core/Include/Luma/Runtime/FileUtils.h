@@ -7,5 +7,5 @@ namespace Luma::FileUtils
 {
     TArray<uint8_t> readToBuffer(FStringView filepath);
     FString readToString(FStringView filepath);
-    TArray<uint8_t> readTillEnd(FStream& stream);
+    TArray<uint8_t> readTillEnd(IStream& stream);
 }

@@ -10,7 +10,7 @@ namespace Luma
     }
 
     FArrayStream::FArrayStream()
-        : FStream(EOpenModeBits::None)
+        : IStream(EOpenModeBits::None)
     {
         m_Opened = true;
         m_Data = nullptr;
@@ -30,7 +30,7 @@ namespace Luma
         return true;
     }
 
-    FStream::SizeType FArrayStream::readRaw(void* outBuffer, SizeType size)
+    IStream::SizeType FArrayStream::readRaw(void* outBuffer, SizeType size)
     {
         if(!m_Opened) return -1ULL;
         if (m_Position + size > m_Size) return -1ULL;
@@ -39,7 +39,7 @@ namespace Luma
         return size;
     }
 
-    FStream::SizeType FArrayStream::writeRaw(const void* inBuffer, SizeType size)
+    IStream::SizeType FArrayStream::writeRaw(const void* inBuffer, SizeType size)
     {
         if(!m_Opened) return -1ull;
 
@@ -89,7 +89,7 @@ namespace Luma
         return false;
     }
 
-    FStream::OffsetType FArrayStream::tell() const
+    IStream::OffsetType FArrayStream::tell() const
     {
         return m_Opened ? m_Position : (OffsetType)EndOfFile;
     }

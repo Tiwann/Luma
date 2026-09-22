@@ -29,7 +29,7 @@ namespace Luma::FileUtils
         return result;
     }
 
-    TArray<uint8_t> readTillEnd(FStream& stream)
+    TArray<uint8_t> readTillEnd(IStream& stream)
     {
         const size_t position = stream.tell();
 

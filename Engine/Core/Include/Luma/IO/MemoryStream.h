@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    class FMemoryStream : public FStream
+    class FMemoryStream : public IStream
     {
     public:
         explicit FMemoryStream(const TBufferView<uint8_t>& buffer);

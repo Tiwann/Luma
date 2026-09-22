@@ -2,12 +2,12 @@
 
 namespace Luma
 {
-    FMemoryStream::FMemoryStream(const TBufferView<uint8_t>& buffer): FStream(EOpenModeBits::None), m_Buffer(buffer)
+    FMemoryStream::FMemoryStream(const TBufferView<uint8_t>& buffer): IStream(EOpenModeBits::None), m_Buffer(buffer)
     {
         m_Opened = true;
     }
 
-    FStream::SizeType FMemoryStream::readRaw(void* outBuffer, const SizeType size)
+    IStream::SizeType FMemoryStream::readRaw(void* outBuffer, const SizeType size)
     {
         if(!m_Opened) return EndOfFile;
         memcpy(outBuffer, &m_Buffer[m_Position], size);
@@ -15,7 +15,7 @@ namespace Luma
         return size;
     }
 
-    FStream::SizeType FMemoryStream::writeRaw(const void* inBuffer, const SizeType size)
+    IStream::SizeType FMemoryStream::writeRaw(const void* inBuffer, const SizeType size)
     {
         if(!m_Opened) return EndOfFile;
         if(m_Position + size > m_Buffer.count()) return EndOfFile;
@@ -45,14 +45,14 @@ namespace Luma
         return false;
     }
 
-    FStream::OffsetType FMemoryStream::tell() const
+    IStream::OffsetType FMemoryStream::tell() const
     {
         return m_Opened ? m_Position : OffsetType(~0);
     }
 
     void FMemoryStream::close()
     {
-        FStream::close();
+        IStream::close();
     }
 
     bool FMemoryStream::isGood() const

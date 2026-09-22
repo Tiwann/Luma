@@ -7,7 +7,7 @@
 
 namespace Luma
 {
-    class FStream
+    class IStream
     {
     public:
         using SizeType = uint64_t;
@@ -15,9 +15,9 @@ namespace Luma
 
         static constexpr SizeType EndOfFile = SizeType(~0);
 
-        FStream() = default;
-        explicit FStream(const FOpenModeFlags openMode) : m_OpenMode(openMode) {}
-        virtual ~FStream() { close(); }
+        IStream() = default;
+        explicit IStream(const FOpenModeFlags openMode) : m_OpenMode(openMode) {}
+        virtual ~IStream() { close(); }
 
         bool isOpened() const;
         virtual bool isGood() const = 0;

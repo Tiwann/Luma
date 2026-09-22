@@ -4,7 +4,7 @@
 
 namespace Luma
 {
-    class FFileStream final : public FStream
+    class FFileStream final : public IStream
     {
     public:
         FFileStream() = default;
@@ -24,7 +24,7 @@ namespace Luma
         FILE* m_Handle = nullptr;
     };
 
-    class FStandardStream final : public FStream
+    class FStandardStream final : public IStream
     {
     public:
         

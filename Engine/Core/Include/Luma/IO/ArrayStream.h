@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    class FArrayStream final : public FStream
+    class FArrayStream final : public IStream
     {
     public:
         FArrayStream();
