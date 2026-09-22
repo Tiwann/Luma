@@ -188,6 +188,12 @@ namespace Luma
         template<NumberType U>
         constexpr TVector<U, 3> as() { return TVector<U, 3>(static_cast<U>(x), static_cast<U>(y), static_cast<U>(z)); }
 
+        T* begin() { return &data[0]; }
+        T* end() { return &data[0] + 3; }
+
+        const T* begin() const { return &data[0]; }
+        const T* end() const { return &data[0] + 3; }
+
         static const TVector Zero;
         static const TVector One;
         static const TVector Right;
