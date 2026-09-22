@@ -21,6 +21,8 @@ set(LUMA_CORE_SRC
         Source/IO/FileStream.cpp
         Source/IO/MemoryStream.cpp
         Source/IO/Stream.cpp
+        Source/IO/Serialization.cpp
+        Source/IO/AssetPack.cpp
 
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp
@@ -48,6 +50,7 @@ set(LUMA_CORE_SRC
         Source/Runtime/Sprite.cpp
         Source/Runtime/FileUtils.cpp
         Source/Runtime/EntryPoint.cpp
+        Source/Runtime/Hash.cpp
 
         Source/Asset/Font.cpp
 
