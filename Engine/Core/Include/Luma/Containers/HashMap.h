@@ -3,6 +3,7 @@
 #include "Array.h"
 #include "Luma/Runtime/Assertion.h"
 #include "Luma/Math/Concepts.h"
+#include "Luma/Runtime/Hash.h"
 #include <cstdint>
 
 
@@ -13,14 +14,7 @@ namespace Luma
     {
         uint64_t operator()(const Key& key) const
         {
-            const uint8_t* data = reinterpret_cast<const uint8_t*>(&key);
-            uint64_t hash = 14695981039346656037ULL;
-            for (uint64_t i = 0; i < sizeof(Key); ++i)
-            {
-                hash ^= static_cast<uint64_t>(data[i]);
-                hash *= 1099511628211ULL;
-            }
-            return hash;
+            return FNV1aHash(reinterpret_cast<const uint8_t*>(&key), sizeof(Key));
         }
     };
 
