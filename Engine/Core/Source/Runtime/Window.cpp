@@ -32,8 +32,8 @@ namespace Luma
         return window;
     }
 
-    IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags, EGPUDeviceType deviceType)
+    IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowOptionsFlags options, EGPUDeviceType deviceType)
     {
-        return createWindow(FWindowDesc{title, width, height, flags, deviceType});
+        return createWindow(FWindowDesc{title, width, height, options, deviceType});
     }
 }

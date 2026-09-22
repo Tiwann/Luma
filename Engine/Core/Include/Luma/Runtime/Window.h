@@ -11,7 +11,7 @@
 
 namespace Luma
 {
-    enum class EWindowCreateBits
+    enum class EWindowOptions
     {
         None = 0,
         Centered = BIT(0),
@@ -22,7 +22,7 @@ namespace Luma
         NoDragAndDrop = BIT(5),
     };
 
-    using FWindowCreateFlags = TFlags<EWindowCreateBits>;
+    using FWindowOptionsFlags = TFlags<EWindowOptions>;
 
 
     struct FWindowDesc
@@ -30,7 +30,7 @@ namespace Luma
         FString title;
         uint32_t width = 0;
         uint32_t height = 0;
-        FWindowCreateFlags flags = 0;
+        FWindowOptionsFlags options = 0;
         EGPUDeviceType deviceType = EGPUDeviceType::None;
     };
 
@@ -62,5 +62,5 @@ namespace Luma
 
     /// Creates a window, choose the right implementation based on platform
     /// @return A pointer to a IWindow object. Needs to be freed. Consider using Luma::Ref<>
-    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowCreateFlags flags = EWindowCreateBits::None, EGPUDeviceType deviceType = EGPUDeviceType::Auto);
+    LUMA_CORE_API IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowOptionsFlags options = EWindowOptions::None, EGPUDeviceType deviceType = EGPUDeviceType::Auto);
 }
