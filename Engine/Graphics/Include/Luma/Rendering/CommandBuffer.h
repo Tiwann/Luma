@@ -1,17 +1,18 @@
 #pragma once
-#include "Luma/Memory/RefCounted.h"
-#include "Luma/Math/Color.h"
-#include "Luma/Math/Vector3.h"
-#include "Luma/Containers/StringView.h"
-#include "Luma/Containers/ArrayView.h"
+#include <cstdint>
+#include "Camera.h"
+#include "Commands.h"
 #include "IndexFormat.h"
 #include "QueueType.h"
-#include "Scissor.h"
-#include "Viewport.h"
-#include "Camera.h"
-#include "ShaderStage.h"
 #include "ResourceBarrier.h"
-#include <cstdint>
+#include "Scissor.h"
+#include "ShaderStage.h"
+#include "Viewport.h"
+#include "Luma/Containers/ArrayView.h"
+#include "Luma/Containers/StringView.h"
+#include "Luma/Math/Color.h"
+#include "Luma/Math/Vector3.h"
+#include "Luma/Memory/RefCounted.h"
 
 
 namespace Luma
@@ -35,29 +36,6 @@ namespace Luma
     {
         IGPUDevice* device = nullptr;
         IQueue* queue = nullptr;
-    };
-
-    struct FDrawCommand
-    {
-        uint32_t vertexCount;
-        uint32_t instanceCount;
-        uint32_t firstVertex;
-        uint32_t firstInstance;
-    };
-
-    struct FDrawIndexedCommand
-    {
-        uint32_t indexCount;
-        uint32_t instanceCount;
-        uint32_t firstIndex;
-        int32_t vertexOffset;
-        uint32_t firstInstance;
-    };
-
-    struct FVertexBufferBinding
-    {
-        const IBuffer* buffer = nullptr;
-        int64_t offset = 0;
     };
 
     struct ICommandBuffer : IRefCounted<ICommandBuffer>
