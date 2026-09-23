@@ -39,4 +39,5 @@ namespace Luma
     };
 
     IImguiRenderer* createImguiRenderer(const FImguiRendererDesc& rendererDesc);
+    IImguiRenderer* createImguiRenderer(IWindow* window, IGPUDevice* device);
 }

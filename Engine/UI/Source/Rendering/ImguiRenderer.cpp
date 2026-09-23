@@ -165,4 +165,8 @@ namespace Luma
         return renderer;
     }
 
+    IImguiRenderer* createImguiRenderer(IWindow* window, IGPUDevice* device)
+    {
+        return createImguiRenderer({window, device, 1});
+    }
 }
