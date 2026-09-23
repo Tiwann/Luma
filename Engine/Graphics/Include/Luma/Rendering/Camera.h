@@ -5,6 +5,8 @@
 #include "Luma/Math/AxisAngle.h"
 #include "Luma/Math/Matrix4.h"
 #include "Luma/Math/Rect2.h"
+#include "Luma/Math/Vector2.h"
+#include "Luma/Math/Vector3.h"
 #include <cstdint>
 
 
@@ -59,6 +61,7 @@ namespace Luma
         F m_Near = F(0.01);
         F m_Far = F(1000.0);
         F m_OrthoSize = F(100.0);
+        TVector<F, 2> m_ClipSpaceOffset = TVector<F, 2>::Zero;
 
         Vector m_Position = Vector::Zero;
         Quat m_Rotation = Quat::Identity;

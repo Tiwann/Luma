@@ -21,11 +21,11 @@ namespace Luma
     template<FloatType F>
     const TCamera<F>::Matrix& TCamera<F>::getProjectionMatrix() const
     {
-        const auto computeProjection = [&]()
+        const auto computeProjection = [&]() -> Matrix
         {
             const F aspectRatio = (F)m_Width / m_Height;
-            
-            const Matrix projection = m_ProjectionMode == ECameraProjectionMode::Perspective ?
+
+            Matrix projection = m_ProjectionMode == ECameraProjectionMode::Perspective ?
                 perspective(
                 m_FieldOfView,
                 aspectRatio,
@@ -38,7 +38,6 @@ namespace Luma
                 m_OrthoSize,
                 m_Near,
                 m_Far);
-
             return projection;
         };
 
