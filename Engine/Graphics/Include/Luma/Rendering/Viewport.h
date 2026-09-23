@@ -14,6 +14,11 @@ namespace Luma
 
         explicit FViewport(const FRect2f& bounds, float minDepth = 0.0f, float maxDepth = 1.0f);
 
+        static FViewport fromSize(const FVector2f& size)
+        {
+            return FViewport{0.0f, 0.0f, size.x, size.y};
+        }
+
         static FViewport fromSize(float width, float height)
         {
             return FViewport{0.0f, 0.0f, width, height};

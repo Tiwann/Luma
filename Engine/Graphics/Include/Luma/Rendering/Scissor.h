@@ -11,6 +11,11 @@ namespace Luma
 
         FScissor(const FRect2u& rect) : FRect2u(rect){}
 
+        static FScissor fromSize(const FVector2u& size)
+        {
+            return FScissor(0, 0, size.x, size.y);
+        }
+
         static FScissor fromSize(const uint32_t width, const uint32_t height)
         {
             return FScissor{0, 0, width, height};
