@@ -12,23 +12,17 @@ using namespace Luma;
 int main()
 {
     Ref<IWindow> window = createWindow("Hello Triangle!", 800, 600, EWindowOptions::Centered | EWindowOptions::Resizable);
-    LUMA_ASSERT(window, "Failed to create window! Exiting application.");
-
     Ref<IGPUDevice> device = createGPUDevice(window);
-    LUMA_ASSERT(device, "Render device failed to create! Exiting application.");
 
     const FString vertexPath = FPath::getAssetPath("Shaders/HelloTriangle.slang.vert.spv");
     const FString fragmentPath = FPath::getAssetPath("Shaders/HelloTriangle.slang.frag.spv");
     Ref<IShader> shaderProgram = device->createShader(vertexPath, fragmentPath);
-    LUMA_ASSERT(device, "Shader program failed to create! Exiting application.");
 
     FRenderPipelineDesc pipelineDesc;
     pipelineDesc.shaderProgram = shaderProgram;
     pipelineDesc.colorTargetCount = 1;
     pipelineDesc.colorFormats[0] = EFormat::RGBA8_SRGB;
-
     Ref<IRenderPipeline> pipeline = device->createRenderPipeline(pipelineDesc);
-    LUMA_ASSERT(pipeline, "Failed to create graphics pipeline! Exiting application.");
 
     while (!window->shouldClose())
     {
@@ -52,8 +46,8 @@ int main()
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             cmdBuffer->bindRenderPipeline(pipeline);
-            cmdBuffer->setViewport(FViewport(0.0f, 0.0f, (float)window->getWidth(), (float)window->getHeight(), 0.0f, 1.0f));
-            cmdBuffer->setScissor(FScissor(0, 0, window->getWidth(), window->getHeight()));
+            cmdBuffer->setViewport(FViewport::fromSize(window->getSize().as<float>()));
+            cmdBuffer->setScissor(FScissor::fromSize(window->getSize()));
             cmdBuffer->draw(3, 1, 0, 0);
             cmdBuffer->endRenderPass();
 
