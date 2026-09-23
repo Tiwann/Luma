@@ -12,7 +12,7 @@ set(LUMA_CORE_SRC
         Include/Luma/Containers/HashMap.h
         Include/Luma/Containers/Pair.h
         Include/Luma/Containers/Event.h
-        Include/Luma/Containers/Fifo.h
+        Include/Luma/Containers/Queue.h
 
         Source/Components/TransformComponent.cpp
         Source/Components/CameraComponent.cpp
