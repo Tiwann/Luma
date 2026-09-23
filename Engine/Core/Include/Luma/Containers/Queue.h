@@ -4,7 +4,7 @@
 namespace Luma
 {
     template <typename T>
-    class TFifo
+    class TQueue
     {
     public:
         using ArrayType = TArray<T>;
@@ -12,12 +12,13 @@ namespace Luma
         using ValueType = ArrayType::ValueType;
         using ReferenceType = ArrayType::ReferenceType;
         using ConstReferenceType = ArrayType::ConstReferenceType;
+        using ForwardReferenceType = ArrayType::ForwardType;
 
-        TFifo() = default;
-        TFifo(const TFifo&) = default;
-        TFifo(TFifo&&) = default;
-        TFifo& operator=(const TFifo&) = default;
-        TFifo& operator=(TFifo&&) = default;
+        TQueue() = default;
+        TQueue(const TQueue&) = default;
+        TQueue(TQueue&&) = default;
+        TQueue& operator=(const TQueue&) = default;
+        TQueue& operator=(TQueue&&) = default;
         
         void enqueue(ConstReferenceType item)
         {
@@ -32,7 +33,7 @@ namespace Luma
 
         ValueType dequeue()
         {
-            ValueType first = m_Data.first();
+            ForwardReferenceType first = std::move(m_Data.first());
             m_Data.popHead();
             return first;
         }
