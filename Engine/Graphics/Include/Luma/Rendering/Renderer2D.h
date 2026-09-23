@@ -48,7 +48,7 @@ namespace Luma
         void end();
 
         // Render and flush the batches
-        Ref<ITexture> render();
+        Ref<ITexture> render(const FCamera& camera);
 
         // Resize the internal render texture and camera
         void resize(uint32_t width, uint32_t height);
@@ -124,8 +124,6 @@ namespace Luma
         void setDebugName(const FString& debugName);
         void setDebugColor(const FColor& debugColor);
 
-        FCamera& getCamera();
-
         Ref<ITexture> getRenderTexture() const;
     private:
         enum class QuadMode
@@ -159,7 +157,6 @@ namespace Luma
         Ref<IFence> m_Fence = nullptr;
         Ref<FFont> m_Font = nullptr;
         Ref<ITexture> m_RenderTexture = nullptr;
-        FCamera m_Camera;
         FString m_DebugName = "Renderer2D";
         FColor m_DebugColor = FColor::Cyan;
 

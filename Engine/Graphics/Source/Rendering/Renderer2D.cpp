@@ -82,10 +82,7 @@ namespace Luma
 
         m_Fence = m_GpuDevice->createFence();
 
-        m_Camera.setProjectionMode(ECameraProjectionMode::Orthographic);
-        m_Camera.setClipPlanes(-1.0f, 1.0f);
-        m_Camera.setOrthographicSize(1.0f);
-        m_Camera.setSize(width, height);
+
 
         FTextureDesc textureDesc{};
         textureDesc.width = width;
@@ -144,12 +141,11 @@ namespace Luma
         m_ReadyToRender = true;
     }
 
-    Ref<ITexture> FRenderer2D::render()
+    Ref<ITexture> FRenderer2D::render(const FCamera& camera)
     {
         LUMA_ASSERT(m_ReadyToRender, "not ready to render yet!!");
 
-        const FMatrix4f& projection = m_Camera.getProjectionMatrix();
-        const FMatrix4f projectionTopLeft = translate(projection, {-1.0, -1.0, 0.0});
+        const FMatrix4f& projection = camera.getProjectionMatrix();
 
         IQueue* renderQueue = m_GpuDevice->getRenderQueue();
         Ref<ICommandBuffer> cmdBuffer = m_GpuDevice->createCommandBuffer(renderQueue);
@@ -163,7 +159,7 @@ namespace Luma
             renderTarget.textureView = m_RenderTexture->getTextureView();
 
             FRenderPassDesc renderPassDesc;
-            renderPassDesc.renderArea = m_Camera.getBounds();
+            renderPassDesc.renderArea = camera.getBounds();
             renderPassDesc.colorTargets.add(&renderTarget);
 
             cmdBuffer->beginDebugGroup(m_DebugName, m_DebugColor);
@@ -183,13 +179,13 @@ namespace Luma
             cmdBuffer->textureBarriers(toTargetOutputBarrier);
 
             cmdBuffer->beginRenderPass(renderPassDesc);
-            cmdBuffer->pushConstant(m_ShaderProgram, EShaderStage::Vertex, projectionTopLeft);
+            cmdBuffer->pushConstant(m_ShaderProgram, EShaderStage::Vertex, projection);
             cmdBuffer->bindVertexBuffer(m_VertexBuffer, 0);
             cmdBuffer->bindIndexBuffer(m_IndexBuffer, 0, EIndexFormat::UInt32);
             cmdBuffer->bindRenderPipeline(m_Pipeline);
             cmdBuffer->bindBindingGroup(m_BindingGroup);
-            cmdBuffer->setViewport(FViewport::fromCamera(m_Camera));
-            cmdBuffer->setScissor(FScissor::fromCamera(m_Camera));
+            cmdBuffer->setViewport(FViewport::fromCamera(camera));
+            cmdBuffer->setScissor(FScissor::fromCamera(camera));
             cmdBuffer->drawIndexed(m_QuadIndices.count(), 1, 0, 0, 0);
             cmdBuffer->endRenderPass();
 
@@ -202,7 +198,7 @@ namespace Luma
 
             FFenceSignal signal;
             signal.fence = m_Fence;
-            signal.stages = EPipelineStageBits::ColorTargetOutput;
+            signal.stages = EPipelineStages::ColorTargetOutput;
             signal.value = ++fenceValue;
 
             FQueueExecuteInfo execInfo;
@@ -222,7 +218,6 @@ namespace Luma
     {
         m_GpuDevice->waitIdle();
         m_RenderTexture->resize(width, height);
-        m_Camera.setSize(width, height);
     }
 
     void FRenderer2D::addQuad(const FVector2f& position, const FVector2f& size, const float rotation, const FColor& color, const QuadMode quadMode, const uint32_t textureId)
@@ -443,11 +438,6 @@ namespace Luma
     void FRenderer2D::setDebugColor(const FColor& debugColor)
     {
         m_DebugColor = debugColor;
-    }
-
-    FCamera& FRenderer2D::getCamera()
-    {
-        return m_Camera;
     }
 
     Ref<ITexture> FRenderer2D::getRenderTexture() const
