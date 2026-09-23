@@ -3,9 +3,9 @@
 
 namespace Luma
 {
-    struct IObject : IRefCounted<IObject>
+    struct Object : RefCounted<Object>
     {
-        ~IObject() override = default;
+        ~Object() override = default;
         virtual void destroy(){}
     };
 }

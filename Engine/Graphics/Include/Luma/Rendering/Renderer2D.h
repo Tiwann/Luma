@@ -11,7 +11,7 @@
 #include "Luma/Runtime/Sprite.h"
 #include "Luma/Runtime/TextAlignment.h"
 #include "Luma/Runtime/TextStyle.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/Sampler.h"
 #include "Luma/Rendering/Buffer.h"
 #include "Luma/Rendering/Shader.h"
@@ -24,19 +24,19 @@ namespace Luma
 {
     struct TextParams
     {
-        ETextAlignment alignment = ETextAlignment::Left;
-        FTextStyleFlags style = ETextStyle::Regular;
+        TextAlignment alignment = TextAlignment::Left;
+        FTextStyleFlags style = TextStyle::Regular;
         float characterSpacing = 0.0f;
         float lineSpacing = 0.0f;
         float fontSize = 10.0f;
     };
 
-    class FRenderer2D : public IRefCounted<FRenderer2D>
+    class FRenderer2D : public RefCounted<FRenderer2D>
     {
         static constexpr uint32_t MAX_QUAD = FMath::sqr(512);
     public:
         FRenderer2D() = default;
-        explicit FRenderer2D(Ref<IGPUDevice> device, uint32_t width, uint32_t height);
+        explicit FRenderer2D(Ref<RHI::Device> device, uint32_t width, uint32_t height);
         ~FRenderer2D() override = default;
 
         void destroy();
@@ -48,7 +48,7 @@ namespace Luma
         void end();
 
         // Render and flush the batches
-        Ref<ITexture> render(const FCamera& camera);
+        Ref<RHI::Texture> render(const Camera& camera);
 
         // Resize the internal render texture and camera
         void resize(uint32_t width, uint32_t height);
@@ -58,49 +58,49 @@ namespace Luma
         /// @param size size of the quad in screen space
         /// @param rotation Rotation of the quad in radians
         /// @param color Color to fill the quad with
-        void drawQuad(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color);
+        void drawQuad(const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
 
         /// Draw a colored quad
         /// @param rect Rectangle to draw (position + size)
         /// @param rotation Rotation of the quad to draw in radians
         /// @param color Color to fill the quad with
-        void drawQuad(const FRect2f& rect, float rotation, const FColor& color);
+        void drawQuad(const FRect2f& rect, float rotation, const Color& color);
 
         /// Draw a colored ellipse
         /// @param position Position of the top left corner of the circumscribed rectangle of the ellipse
         /// @param size Size of the ellipse
         /// @param rotation Rotation in radians of the ellipse
         /// @param color Color to fill the ellipse with
-        void drawEllipse(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color);
+        void drawEllipse(const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
 
         /// Draw a colored ellipse
         /// @param rect Circumscribed rectangle of the ellipse
         /// @param rotation Rotation in radians of the ellipse
         /// @param color Color to fill the ellipse with
-        void drawEllipse(const FRect2f& rect, float rotation, const FColor& color);
+        void drawEllipse(const FRect2f& rect, float rotation, const Color& color);
 
         // Draw a colored ellipse
         /// @param position Position of the center of the ellipse
         /// @param size Size of the ellipse
         /// @param rotation Rotation in radians of the ellipse
         /// @param color Color to fill the ellipse with
-        void drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color);
+        void drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
 
         /// Draw a colored ellipse
         /// @param position Position of the top left corner of the circumscribed square of the circle
         /// @param radius Radius of the circle
         /// @param color Color to fill the circle with
-        void drawCircle(const FVector2f& position, float radius, const FColor& color);
+        void drawCircle(const FVector2f& position, float radius, const Color& color);
 
         /// Draw a colored ellipse
         /// @param position Position of the center of the circle
         /// @param radius Radius of the circle
         /// @param color Color to fill the circle with
-        void drawCircleCentered(const FVector2f& position, float radius, const FColor& color);
+        void drawCircleCentered(const FVector2f& position, float radius, const Color& color);
 
 
-        void drawText(FStringView text, const FVector2f& position, float fontSize, const FColor& color);
-        void drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const FColor& color);
+        void drawText(FStringView text, const FVector2f& position, float fontSize, const Color& color);
+        void drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const Color& color);
 
         /// Draw a colored text
         /// @param text Text to draw
@@ -108,23 +108,23 @@ namespace Luma
         /// @param rotation Rotation of the text
         /// @param color Color of the text
         /// @param params
-        void drawText(FStringView text, const FVector2f& position, float rotation, const FColor& color, TextParams params);
+        void drawText(FStringView text, const FVector2f& position, float rotation, const Color& color, TextParams params);
 
         /// Draw a sprite
         /// @param sprite Sprite to draw
         /// @param position Position in screen space
         /// @param rotation Rotation of the sprite
         /// @param color Color of the sprite
-        void drawSprite(const Sprite& sprite, const FVector2f& position, float rotation, const FColor& color);
+        void drawSprite(const Sprite& sprite, const FVector2f& position, float rotation, const Color& color);
 
         /// Sets the current font
         /// @param font Font asset to use. Null will assign the default font.
-        void setFont(Ref<FFont> font);
+        void setFont(Ref<Font> font);
 
         void setDebugName(const FString& debugName);
-        void setDebugColor(const FColor& debugColor);
+        void setDebugColor(const Color& debugColor);
 
-        Ref<ITexture> getRenderTexture() const;
+        Ref<RHI::Texture> getRenderTexture() const;
     private:
         enum class QuadMode
         {
@@ -143,29 +143,29 @@ namespace Luma
             uint32_t textureId;
         };
 
-        void addQuad(const FVector2f& position, const FVector2f& size, float rotation, const FColor& color, QuadMode quadMode, uint32_t textureId);
-        uint32_t getOrAddTexture(const ITexture* texture);
+        void addQuad(const FVector2f& position, const FVector2f& size, float rotation, const Color& color, QuadMode quadMode, uint32_t textureId);
+        uint32_t getOrAddTexture(const RHI::Texture* texture);
 
-        Ref<IGPUDevice> m_GpuDevice = nullptr;
-        Ref<IShader> m_ShaderProgram = nullptr;
-        Ref<IRenderPipeline> m_Pipeline = nullptr;
-        Ref<ISampler> m_Sampler = nullptr;
-        Ref<ISampler> m_SpriteSampler = nullptr;
-        Ref<IBuffer> m_VertexBuffer = nullptr;
-        Ref<IBuffer> m_IndexBuffer = nullptr;
-        Ref<IBindingGroup> m_BindingGroup = nullptr;
-        Ref<IFence> m_Fence = nullptr;
-        Ref<FFont> m_Font = nullptr;
-        Ref<ITexture> m_RenderTexture = nullptr;
+        Ref<RHI::Device> m_Device = nullptr;
+        Ref<RHI::Shader> m_Shader = nullptr;
+        Ref<RHI::RenderPipeline> m_Pipeline = nullptr;
+        Ref<RHI::Sampler> m_Sampler = nullptr;
+        Ref<RHI::Sampler> m_SpriteSampler = nullptr;
+        Ref<RHI::Buffer> m_VertexBuffer = nullptr;
+        Ref<RHI::Buffer> m_IndexBuffer = nullptr;
+        Ref<RHI::BindingGroup> m_BindingGroup = nullptr;
+        Ref<RHI::Fence> m_Fence = nullptr;
+        Ref<Font> m_Font = nullptr;
+        Ref<RHI::Texture> m_RenderTexture = nullptr;
         FString m_DebugName = "Renderer2D";
-        FColor m_DebugColor = FColor::Cyan;
+        Color m_DebugColor = Color::Cyan;
 
         bool m_BeginDrawing = false;
         bool m_ReadyToRender = false;
-        Ref<FFont> m_DefaultFont = nullptr;
+        Ref<Font> m_DefaultFont = nullptr;
         TArray<QuadVertex> m_QuadVertices;
         TArray<uint32_t> m_QuadIndices;
-        TArray<const ITexture*> m_Textures;
+        TArray<const RHI::Texture*> m_Textures;
     };
 
 }

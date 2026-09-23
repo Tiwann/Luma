@@ -6,7 +6,7 @@
 
 namespace Luma
 {
-    struct IWindow;
+    struct Window;
 
     struct LUMA_CORE_API FPath
     {
@@ -56,8 +56,8 @@ namespace Luma
         static FStringView getDownloadsDirectory();
         static FStringView getDesktopDirectory();
 
-        static FString openFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow);
-        static FString saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow);
+        static FString openFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow);
+        static FString saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow);
         static bool exists(FStringView path);
         static bool isFile(FStringView path);
         static bool isDirectory(FStringView path);

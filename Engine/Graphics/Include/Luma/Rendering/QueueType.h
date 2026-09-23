@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EQueueType
+    enum class QueueType
     {
         None,
         Render,

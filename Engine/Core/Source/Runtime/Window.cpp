@@ -7,16 +7,16 @@
 
 namespace Luma
 {
-    FVector2u IWindow::getSize() const
+    FVector2u Window::getSize() const
     {
         return FVector2u{getWidth(), getHeight()};
     }
 
-    IWindow* createWindow(const FWindowDesc& windowDesc)
+    Window* createWindow(const WindowDesc& windowDesc)
     {
-        IWindow* window = nullptr;
+        Window* window = nullptr;
 #if defined(LUMA_PLATFORM_WINDOWS) || defined(LUMA_PLATFORM_LINUX) || defined(LUMA_PLATFORM_MACOS)
-        window = new FDesktopWindow();
+        window = new DesktopWindow();
 #elif defined(LUMA_PLATFORM_SWITCH)
         (void)window;
         return nullptr;
@@ -32,8 +32,8 @@ namespace Luma
         return window;
     }
 
-    IWindow* createWindow(const FString& title, uint32_t width, uint32_t height, FWindowOptionsFlags options, EGPUDeviceType deviceType)
+    Window* createWindow(const FString& title, uint32_t width, uint32_t height, WindowOptionsFlags options, DeviceType deviceType)
     {
-        return createWindow(FWindowDesc{title, width, height, options, deviceType});
+        return createWindow(WindowDesc{title, width, height, options, deviceType});
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EShadingLanguage
+    enum class ShadingLanguage
     {
         Slang,
         GLSL,

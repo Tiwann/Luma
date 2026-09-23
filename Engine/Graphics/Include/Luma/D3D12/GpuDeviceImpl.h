@@ -1,5 +1,5 @@
 #pragma once
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/QueueType.h"
 #include "D3D12Fwd.h"
 #include "QueueImpl.h"

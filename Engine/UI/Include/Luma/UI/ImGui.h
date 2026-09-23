@@ -7,6 +7,6 @@
 
 namespace ImGui
 {
-    static void Image(Luma::IImguiRenderer* renderer, const Luma::ITextureView* textureView, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1));
-    static void Image(Luma::IImguiRenderer* renderer, const Luma::ITexture* texture, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1));
+    static void Image(Luma::ImguiRenderer* renderer, const Luma::RHI::TextureView* textureView, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1));
+    static void Image(Luma::ImguiRenderer* renderer, const Luma::RHI::Texture* texture, const ImVec2& uv0 = ImVec2(0, 0), const ImVec2& uv1 = ImVec2(1, 1));
 }

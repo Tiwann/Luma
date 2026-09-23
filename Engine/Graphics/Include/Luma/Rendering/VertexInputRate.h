@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EVertexInputRate
+    enum class VertexInputRate
     {
         Vertex,
         Instance

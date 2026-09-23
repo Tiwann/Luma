@@ -25,7 +25,7 @@ namespace Luma
         {
             const F aspectRatio = (F)m_Width / m_Height;
 
-            Matrix projection = m_ProjectionMode == ECameraProjectionMode::Perspective ?
+            Matrix projection = m_ProjectionMode == CameraProjectionMode::Perspective ?
                 perspective(
                 m_FieldOfView,
                 aspectRatio,
@@ -83,7 +83,7 @@ namespace Luma
     }
 
     template<FloatType F>
-    void TCamera<F>::setProjectionMode(const ECameraProjectionMode mode)
+    void TCamera<F>::setProjectionMode(const CameraProjectionMode mode)
     {
         m_ProjectionMode = mode;
         m_ProjectionMatrix.setDirty();
@@ -146,7 +146,7 @@ namespace Luma
     }
 
     template<FloatType F>
-    ECameraProjectionMode TCamera<F>::getProjectionMode() const
+    CameraProjectionMode TCamera<F>::getProjectionMode() const
     {
         return m_ProjectionMode;
     }

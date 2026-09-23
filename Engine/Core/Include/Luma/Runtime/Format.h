@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EFormat
+    enum class Format
     {
         None,
         R8_UNORM,
@@ -116,188 +116,188 @@ namespace Luma
         RGBA8_UNORM = R8G8B8A8_UNORM
     };
 
-    static uint64_t getFormatSize(const EFormat format)
+    static uint64_t getFormatSize(const Format format)
     {
         switch (format)
         {
-        case EFormat::None:                 return 0ULL;
-        case EFormat::R8G8B8A8_UNORM:       return 4ULL;
-        case EFormat::R16G16B16A16_USHORT:  return 4ULL * 2ULL;
-        case EFormat::R32G32B32A32_FLOAT:   return 4ULL * 4ULL;
-        case EFormat::R8_UNORM:             return 1ULL;
-        case EFormat::R8_SNORM:             return 1ULL * 1ULL;
-        case EFormat::R16_USHORT:           return 2ULL * 1ULL;
-        case EFormat::R16_SHORT:            return 2ULL * 1ULL;
-        case EFormat::R32_FLOAT:            return 4ULL * 1ULL;
-        case EFormat::R32_UINT:             return 4ULL * 1ULL;
-        case EFormat::R32_SINT:             return 4ULL * 1ULL;
-        case EFormat::R8G8_UNORM:           return 2ULL * 1ULL;
-        case EFormat::R8G8_SNORM:           return 2ULL * 1ULL;
-        case EFormat::R16G16_USHORT:        return 2ULL * 2ULL;
-        case EFormat::R16G16_SHORT:         return 2ULL * 2ULL;
-        case EFormat::R32G32_UINT:          return 2ULL * 4ULL;
-        case EFormat::R32G32_SINT:          return 2ULL * 4ULL;
-        case EFormat::R32G32_FLOAT:         return 2ULL * 4ULL;
-        case EFormat::R8G8B8_UNORM:         return 3ULL * 1ULL;
-        case EFormat::R8G8B8_SNORM:         return 3ULL * 1ULL;
-        case EFormat::R16G16B16_USHORT:     return 3ULL * 2ULL;
-        case EFormat::R16G16B16_SHORT:      return 3ULL * 2ULL;
-        case EFormat::R32G32B32_UINT:       return 3ULL * 4ULL;
-        case EFormat::R32G32B32_SINT:       return 3ULL * 4ULL;
-        case EFormat::R32G32B32_FLOAT:      return 3ULL * 4ULL;
-        case EFormat::R8G8B8A8_SNORM:       return 4ULL * 1ULL;
-        case EFormat::R16G16B16A16_SHORT:   return 4ULL * 2ULL;
-        case EFormat::R32G32B32A32_UINT:    return 4ULL * 4ULL;
-        case EFormat::R32G32B32A32_SINT:    return 4ULL * 4ULL;
-        case EFormat::R64G64B64A64_FLOAT: return 4ULL * 8ULL;
-        case EFormat::R8G8B8A8_SRGB:        return 4ULL * 1ULL;
-        case EFormat::D32_FLOAT:            return 4ULL;
-        case EFormat::D32_FLOAT_S8_UINT:    return 5ULL;
-        case EFormat::D24_UNORM_S8_UINT:     return 4ULL;
-        case EFormat::ASTC_4X4_UNORM:
+        case Format::None:                 return 0ULL;
+        case Format::R8G8B8A8_UNORM:       return 4ULL;
+        case Format::R16G16B16A16_USHORT:  return 4ULL * 2ULL;
+        case Format::R32G32B32A32_FLOAT:   return 4ULL * 4ULL;
+        case Format::R8_UNORM:             return 1ULL;
+        case Format::R8_SNORM:             return 1ULL * 1ULL;
+        case Format::R16_USHORT:           return 2ULL * 1ULL;
+        case Format::R16_SHORT:            return 2ULL * 1ULL;
+        case Format::R32_FLOAT:            return 4ULL * 1ULL;
+        case Format::R32_UINT:             return 4ULL * 1ULL;
+        case Format::R32_SINT:             return 4ULL * 1ULL;
+        case Format::R8G8_UNORM:           return 2ULL * 1ULL;
+        case Format::R8G8_SNORM:           return 2ULL * 1ULL;
+        case Format::R16G16_USHORT:        return 2ULL * 2ULL;
+        case Format::R16G16_SHORT:         return 2ULL * 2ULL;
+        case Format::R32G32_UINT:          return 2ULL * 4ULL;
+        case Format::R32G32_SINT:          return 2ULL * 4ULL;
+        case Format::R32G32_FLOAT:         return 2ULL * 4ULL;
+        case Format::R8G8B8_UNORM:         return 3ULL * 1ULL;
+        case Format::R8G8B8_SNORM:         return 3ULL * 1ULL;
+        case Format::R16G16B16_USHORT:     return 3ULL * 2ULL;
+        case Format::R16G16B16_SHORT:      return 3ULL * 2ULL;
+        case Format::R32G32B32_UINT:       return 3ULL * 4ULL;
+        case Format::R32G32B32_SINT:       return 3ULL * 4ULL;
+        case Format::R32G32B32_FLOAT:      return 3ULL * 4ULL;
+        case Format::R8G8B8A8_SNORM:       return 4ULL * 1ULL;
+        case Format::R16G16B16A16_SHORT:   return 4ULL * 2ULL;
+        case Format::R32G32B32A32_UINT:    return 4ULL * 4ULL;
+        case Format::R32G32B32A32_SINT:    return 4ULL * 4ULL;
+        case Format::R64G64B64A64_FLOAT: return 4ULL * 8ULL;
+        case Format::R8G8B8A8_SRGB:        return 4ULL * 1ULL;
+        case Format::D32_FLOAT:            return 4ULL;
+        case Format::D32_FLOAT_S8_UINT:    return 5ULL;
+        case Format::D24_UNORM_S8_UINT:     return 4ULL;
+        case Format::ASTC_4X4_UNORM:
             break;
-        case EFormat::ASTC_6X6_UNORM:
+        case Format::ASTC_6X6_UNORM:
             break;
-        case EFormat::ASTC_8X8_UNORM:
+        case Format::ASTC_8X8_UNORM:
             break;
-        case EFormat::ASTC_12X12_UNORM:
+        case Format::ASTC_12X12_UNORM:
             break;
-        case EFormat::ASTC_4X4_SRGB:
+        case Format::ASTC_4X4_SRGB:
             break;
-        case EFormat::ASTC_6X6_SRGB:
+        case Format::ASTC_6X6_SRGB:
             break;
-        case EFormat::ASTC_8X8_SRGB:
+        case Format::ASTC_8X8_SRGB:
             break;
-        case EFormat::ASTC_12X12_SRGB:
+        case Format::ASTC_12X12_SRGB:
             break;
         default:                           return 0ULL;
         }
         return 0;
     }
 
-    static uint64_t getFormatBytesPerChannel(const EFormat format)
+    static uint64_t getFormatBytesPerChannel(const Format format)
     {
         switch (format)
         {
-        case EFormat::None:  return 0;
-        case EFormat::R8_UNORM: return 1ULL;
-        case EFormat::R8_SNORM: return 1ULL;
-        case EFormat::R16_USHORT: return 2ULL;
-        case EFormat::R16_SHORT: return 2ULL;
-        case EFormat::R32_FLOAT: return 4ULL;
-        case EFormat::R32_UINT: return 4ULL;
-        case EFormat::R32_SINT: return 4ULL;
-        case EFormat::R8G8_UNORM: return 1ULL;
-        case EFormat::R8G8_SNORM: return 1ULL;
-        case EFormat::R16G16_USHORT: return 2ULL;
-        case EFormat::R16G16_SHORT: return 2ULL;
-        case EFormat::R32G32_UINT: return 4ULL;
-        case EFormat::R32G32_SINT: return 4ULL;
-        case EFormat::R32G32_FLOAT: return 4ULL;
-        case EFormat::R8G8B8_UNORM: return 1ULL;
-        case EFormat::R8G8B8_SNORM: return 1ULL;
-        case EFormat::R16G16B16_USHORT: return 2ULL;
-        case EFormat::R16G16B16_SHORT: return 2ULL;
-        case EFormat::R32G32B32_UINT: return 4ULL;
-        case EFormat::R32G32B32_SINT: return 4ULL;
-        case EFormat::R32G32B32_FLOAT: return 4ULL;
-        case EFormat::R8G8B8A8_UNORM: return 1ULL;
-        case EFormat::R8G8B8A8_SNORM: return 1ULL;
-        case EFormat::R16G16B16A16_USHORT: return 2ULL;
-        case EFormat::R16G16B16A16_SHORT: return 2ULL;
-        case EFormat::R32G32B32A32_UINT: return 4ULL;
-        case EFormat::R32G32B32A32_SINT: return 4ULL;
-        case EFormat::R32G32B32A32_FLOAT: return 4ULL;
-        case EFormat::R64G64B64A64_FLOAT: return 8ULL;
-        case EFormat::R8G8B8A8_SRGB: return 1ULL;
-        case EFormat::D32_FLOAT: return 4ULL;
-        case EFormat::D32_FLOAT_S8_UINT: return 4ULL;
-        case EFormat::D24_UNORM_S8_UINT: return 3ULL;
+        case Format::None:  return 0;
+        case Format::R8_UNORM: return 1ULL;
+        case Format::R8_SNORM: return 1ULL;
+        case Format::R16_USHORT: return 2ULL;
+        case Format::R16_SHORT: return 2ULL;
+        case Format::R32_FLOAT: return 4ULL;
+        case Format::R32_UINT: return 4ULL;
+        case Format::R32_SINT: return 4ULL;
+        case Format::R8G8_UNORM: return 1ULL;
+        case Format::R8G8_SNORM: return 1ULL;
+        case Format::R16G16_USHORT: return 2ULL;
+        case Format::R16G16_SHORT: return 2ULL;
+        case Format::R32G32_UINT: return 4ULL;
+        case Format::R32G32_SINT: return 4ULL;
+        case Format::R32G32_FLOAT: return 4ULL;
+        case Format::R8G8B8_UNORM: return 1ULL;
+        case Format::R8G8B8_SNORM: return 1ULL;
+        case Format::R16G16B16_USHORT: return 2ULL;
+        case Format::R16G16B16_SHORT: return 2ULL;
+        case Format::R32G32B32_UINT: return 4ULL;
+        case Format::R32G32B32_SINT: return 4ULL;
+        case Format::R32G32B32_FLOAT: return 4ULL;
+        case Format::R8G8B8A8_UNORM: return 1ULL;
+        case Format::R8G8B8A8_SNORM: return 1ULL;
+        case Format::R16G16B16A16_USHORT: return 2ULL;
+        case Format::R16G16B16A16_SHORT: return 2ULL;
+        case Format::R32G32B32A32_UINT: return 4ULL;
+        case Format::R32G32B32A32_SINT: return 4ULL;
+        case Format::R32G32B32A32_FLOAT: return 4ULL;
+        case Format::R64G64B64A64_FLOAT: return 8ULL;
+        case Format::R8G8B8A8_SRGB: return 1ULL;
+        case Format::D32_FLOAT: return 4ULL;
+        case Format::D32_FLOAT_S8_UINT: return 4ULL;
+        case Format::D24_UNORM_S8_UINT: return 3ULL;
         default: return 0;
         }
     }
 
-    static uint64_t getFormatComponentCount(const EFormat format)
+    static uint64_t getFormatComponentCount(const Format format)
     {
         switch (format)
         {
-        case EFormat::None: return 0ULL;
-        case EFormat::R8_UNORM: return 1ULL;
-        case EFormat::R8_SNORM: return 1ULL;
-        case EFormat::R16_USHORT: return 1ULL;
-        case EFormat::R16_SHORT: return 1ULL;
-        case EFormat::R32_FLOAT: return 1ULL;
-        case EFormat::R32_UINT: return 1ULL;
-        case EFormat::R32_SINT: return 1ULL;
-        case EFormat::R8G8_UNORM: return 2ULL;
-        case EFormat::R8G8_SNORM: return 2ULL;
-        case EFormat::R16G16_USHORT: return 2ULL;
-        case EFormat::R16G16_SHORT: return 2ULL;
-        case EFormat::R32G32_UINT: return 2ULL;
-        case EFormat::R32G32_SINT: return 2ULL;
-        case EFormat::R32G32_FLOAT: return 2ULL;
-        case EFormat::R8G8B8_UNORM: return 3ULL;
-        case EFormat::R8G8B8_SNORM: return 3ULL;
-        case EFormat::R16G16B16_USHORT: return 3ULL;
-        case EFormat::R16G16B16_SHORT: return 3ULL;
-        case EFormat::R32G32B32_UINT: return 3ULL;
-        case EFormat::R32G32B32_SINT: return 3ULL;
-        case EFormat::R32G32B32_FLOAT: return 3ULL;
-        case EFormat::R8G8B8A8_UNORM: return 4ULL;
-        case EFormat::R8G8B8A8_SNORM: return 4ULL;
-        case EFormat::R16G16B16A16_USHORT: return 4ULL;
-        case EFormat::R16G16B16A16_SHORT: return 4ULL;
-        case EFormat::R32G32B32A32_UINT: return 4ULL;
-        case EFormat::R32G32B32A32_SINT: return 4ULL;
-        case EFormat::R32G32B32A32_FLOAT: return 4ULL;
-            case EFormat::R64G64B64A64_FLOAT: return 4ULL;
-        case EFormat::R8G8B8A8_SRGB: return 4ULL;
-        case EFormat::D32_FLOAT: return 1ULL;
-        case EFormat::D32_FLOAT_S8_UINT: return 2ULL;
-        case EFormat::D24_UNORM_S8_UINT: return 2ULL;
+        case Format::None: return 0ULL;
+        case Format::R8_UNORM: return 1ULL;
+        case Format::R8_SNORM: return 1ULL;
+        case Format::R16_USHORT: return 1ULL;
+        case Format::R16_SHORT: return 1ULL;
+        case Format::R32_FLOAT: return 1ULL;
+        case Format::R32_UINT: return 1ULL;
+        case Format::R32_SINT: return 1ULL;
+        case Format::R8G8_UNORM: return 2ULL;
+        case Format::R8G8_SNORM: return 2ULL;
+        case Format::R16G16_USHORT: return 2ULL;
+        case Format::R16G16_SHORT: return 2ULL;
+        case Format::R32G32_UINT: return 2ULL;
+        case Format::R32G32_SINT: return 2ULL;
+        case Format::R32G32_FLOAT: return 2ULL;
+        case Format::R8G8B8_UNORM: return 3ULL;
+        case Format::R8G8B8_SNORM: return 3ULL;
+        case Format::R16G16B16_USHORT: return 3ULL;
+        case Format::R16G16B16_SHORT: return 3ULL;
+        case Format::R32G32B32_UINT: return 3ULL;
+        case Format::R32G32B32_SINT: return 3ULL;
+        case Format::R32G32B32_FLOAT: return 3ULL;
+        case Format::R8G8B8A8_UNORM: return 4ULL;
+        case Format::R8G8B8A8_SNORM: return 4ULL;
+        case Format::R16G16B16A16_USHORT: return 4ULL;
+        case Format::R16G16B16A16_SHORT: return 4ULL;
+        case Format::R32G32B32A32_UINT: return 4ULL;
+        case Format::R32G32B32A32_SINT: return 4ULL;
+        case Format::R32G32B32A32_FLOAT: return 4ULL;
+            case Format::R64G64B64A64_FLOAT: return 4ULL;
+        case Format::R8G8B8A8_SRGB: return 4ULL;
+        case Format::D32_FLOAT: return 1ULL;
+        case Format::D32_FLOAT_S8_UINT: return 2ULL;
+        case Format::D24_UNORM_S8_UINT: return 2ULL;
         default: throw;
         }
     }
 
-    static bool isDepthFormat(const EFormat format)
+    static bool isDepthFormat(const Format format)
     {
         switch (format)
         {
-        case EFormat::None: return false;
-        case EFormat::R8_UNORM:
-        case EFormat::R8_SNORM:
-        case EFormat::R16_USHORT:
-        case EFormat::R16_SHORT:
-        case EFormat::R32_FLOAT:
-        case EFormat::R32_UINT:
-        case EFormat::R32_SINT:
-        case EFormat::R8G8_UNORM:
-        case EFormat::R8G8_SNORM:
-        case EFormat::R16G16_USHORT:
-        case EFormat::R16G16_SHORT:
-        case EFormat::R32G32_UINT:
-        case EFormat::R32G32_SINT:
-        case EFormat::R32G32_FLOAT:
-        case EFormat::R8G8B8_UNORM:
-        case EFormat::R8G8B8_SNORM:
-        case EFormat::R16G16B16_USHORT:
-        case EFormat::R16G16B16_SHORT:
-        case EFormat::R32G32B32_UINT:
-        case EFormat::R32G32B32_SINT:
-        case EFormat::R32G32B32_FLOAT:
-        case EFormat::R8G8B8A8_UNORM:
-        case EFormat::R8G8B8A8_SNORM:
-        case EFormat::R8G8B8A8_SRGB:
-        case EFormat::R16G16B16A16_USHORT:
-        case EFormat::R16G16B16A16_SHORT:
-        case EFormat::R32G32B32A32_UINT:
-        case EFormat::R32G32B32A32_SINT:
-        case EFormat::R32G32B32A32_FLOAT:
-        case EFormat::R64G64B64A64_FLOAT:
+        case Format::None: return false;
+        case Format::R8_UNORM:
+        case Format::R8_SNORM:
+        case Format::R16_USHORT:
+        case Format::R16_SHORT:
+        case Format::R32_FLOAT:
+        case Format::R32_UINT:
+        case Format::R32_SINT:
+        case Format::R8G8_UNORM:
+        case Format::R8G8_SNORM:
+        case Format::R16G16_USHORT:
+        case Format::R16G16_SHORT:
+        case Format::R32G32_UINT:
+        case Format::R32G32_SINT:
+        case Format::R32G32_FLOAT:
+        case Format::R8G8B8_UNORM:
+        case Format::R8G8B8_SNORM:
+        case Format::R16G16B16_USHORT:
+        case Format::R16G16B16_SHORT:
+        case Format::R32G32B32_UINT:
+        case Format::R32G32B32_SINT:
+        case Format::R32G32B32_FLOAT:
+        case Format::R8G8B8A8_UNORM:
+        case Format::R8G8B8A8_SNORM:
+        case Format::R8G8B8A8_SRGB:
+        case Format::R16G16B16A16_USHORT:
+        case Format::R16G16B16A16_SHORT:
+        case Format::R32G32B32A32_UINT:
+        case Format::R32G32B32A32_SINT:
+        case Format::R32G32B32A32_FLOAT:
+        case Format::R64G64B64A64_FLOAT:
             return false;
-        case EFormat::D32_FLOAT:
-        case EFormat::D32_FLOAT_S8_UINT:
-        case EFormat::D24_UNORM_S8_UINT:
+        case Format::D32_FLOAT:
+        case Format::D32_FLOAT_S8_UINT:
+        case Format::D24_UNORM_S8_UINT:
             return true;
         default: return false;
         }

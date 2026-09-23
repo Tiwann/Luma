@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ETextAlignment
+    enum class TextAlignment
     {
         Left,
         Center,

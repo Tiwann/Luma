@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum ESampleCount
+    enum SampleCount
     {
         SampleCount1x = BIT(0),
         SampleCount2x = BIT(1),

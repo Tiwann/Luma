@@ -22,18 +22,18 @@ namespace Luma
     struct FMaterialSlot
     {
         FString name;
-        Ref<FMaterial> material;
+        Ref<Material> material;
     };
 
     struct FMaterialTextures
     {
-        Ref<ITexture> baseColor;
-        Ref<ITexture> metallicRoughnessAO;
-        Ref<ITexture> normal;
-        Ref<ITexture> emission;
+        Ref<RHI::Texture> baseColor;
+        Ref<RHI::Texture> metallicRoughnessAO;
+        Ref<RHI::Texture> normal;
+        Ref<RHI::Texture> emission;
     };
 
-    class FStaticMesh final : public IAsset
+    class FStaticMesh final : public Asset
     {
     public:
         FStaticMesh() = default;
@@ -41,20 +41,20 @@ namespace Luma
 
         void destroy() override;
 
-        EAssetType getAssetType() const override { return EAssetType::StaticMesh; }
-        bool loadFromFile(FStringView filepath, IGPUDevice* device);
+        AssetType getAssetType() const override { return AssetType::StaticMesh; }
+        bool loadFromFile(FStringView filepath, RHI::Device* device);
 
-        void setMaterial(uint32_t slot, Ref<FMaterial> material);
+        void setMaterial(uint32_t slot, Ref<Material> material);
 
-        Ref<FMaterial> getMaterial(uint32_t slot);
+        Ref<Material> getMaterial(uint32_t slot);
         const THashMap<uint32_t, FMaterialSlot>& getMaterialSlots() const { return m_MaterialSlots; }
         const THashMap<uint32_t, TArray<FMeshPart>>& getPerMaterialMeshParts() const { return m_PerMaterialData; }
 
-        WeakRef<IBuffer> getVertexBuffer() const;
-        WeakRef<IBuffer> getIndexBuffer() const;
+        WeakRef<RHI::Buffer> getVertexBuffer() const;
+        WeakRef<RHI::Buffer> getIndexBuffer() const;
     private:
-        Ref<IBuffer> m_VertexBuffer = nullptr;
-        Ref<IBuffer> m_IndexBuffer = nullptr;
+        Ref<RHI::Buffer> m_VertexBuffer = nullptr;
+        Ref<RHI::Buffer> m_IndexBuffer = nullptr;
         THashMap<uint32_t, TArray<FMeshPart>> m_PerMaterialData;
         THashMap<uint32_t, FMaterialSlot> m_MaterialSlots;
         THashMap<uint32_t, FMaterialTextures> m_Textures;

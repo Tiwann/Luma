@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EColorSpace
+    enum class ColorSpace
     {
         SRGB,
         Linear,

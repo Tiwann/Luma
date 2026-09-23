@@ -9,9 +9,9 @@
 
 namespace Luma
 {
-    FString FPath::openFileDialog(const FStringView title, const FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow)
+    FString FPath::openFileDialog(const FStringView title, const FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow)
     {
-        HWND hwnd = glfwGetWin32Window(static_cast<FDesktopWindow&>(owningWindow).getHandle());
+        HWND hwnd = glfwGetWin32Window(static_cast<DesktopWindow&>(owningWindow).getHandle());
         if (!hwnd) return {};
 
         OPENFILENAMEW openFilename = { };
@@ -40,9 +40,9 @@ namespace Luma
         return result ? resultPath : "";
     }
 
-    FString FPath::saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, IWindow& owningWindow)
+    FString FPath::saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow)
     {
-        HWND hwnd = glfwGetWin32Window(static_cast<FDesktopWindow&>(owningWindow).getHandle());
+        HWND hwnd = glfwGetWin32Window(static_cast<DesktopWindow&>(owningWindow).getHandle());
         if (!hwnd) return {};
 
         OPENFILENAME openFilename = { };

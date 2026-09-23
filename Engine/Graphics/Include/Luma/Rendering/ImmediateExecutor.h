@@ -1,22 +1,20 @@
 #pragma once
 #include <functional>
 
-namespace Luma
+namespace Luma::RHI
 {
-    struct FImmediateExecutorDesc
-    {
-        struct IGPUDevice* device = nullptr;
-        struct IQueue* queue = nullptr;
-    };
+    struct CommandBuffer;
+    struct Device;
+    struct Queue;
 
-    struct IImmediateExecutor
+    struct ImmediateExecutor
     {
-        IImmediateExecutor() = default;
-        virtual ~IImmediateExecutor() = default;
-
-        virtual bool initialize(const FImmediateExecutorDesc& executorDesc) = 0;
+        ImmediateExecutor() = default;
+        virtual ~ImmediateExecutor() = default;
+        virtual bool initialize(Device* device, Queue* queue) = 0;
         virtual void destroy() = 0;
-        virtual void execute(const std::function<void(const struct ICommandBuffer* cmdBuffer)>& function) = 0;
+
+        virtual void execute(const std::function<void(const CommandBuffer* cmdBuffer)>& function) = 0;
         virtual bool isValid() const = 0;
     };
 }

@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EStoreOp
+    enum class StoreOp
     {
         Store,
         DontCare

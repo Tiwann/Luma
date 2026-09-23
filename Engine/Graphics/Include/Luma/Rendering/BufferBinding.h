@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EBufferBindingType
+    enum class BufferBindingType
     {
         Uniform,
         Storage,

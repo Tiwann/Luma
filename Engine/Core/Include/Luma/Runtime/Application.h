@@ -3,7 +3,7 @@
 #include "Luma/Containers/String.h"
 #include "Luma/Math/Vector.h"
 #include "Luma/Memory/Ref.h"
-#include "Luma/Rendering/GPUDeviceType.h"
+#include "Luma/Rendering/DeviceType.h"
 #include "Luma/Rendering/Renderer2D.h"
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Window.h"
@@ -17,7 +17,7 @@ namespace Luma
         FString applicationName = "Luma Application";
         uint32_t windowWidth = 600;
         uint32_t windowHeight = 400;
-        FWindowOptionsFlags windowFlags = 0;
+        WindowOptionsFlags windowFlags = 0;
         bool vsync = false;
         uint32_t msaaSamples = 8;
     };
@@ -31,21 +31,21 @@ namespace Luma
         void exit();
 
         virtual FApplicationConfig getConfiguration() const = 0;
-        virtual EGPUDeviceType getGpuDeviceType() const = 0;
+        virtual DeviceType getGpuDeviceType() const = 0;
 
         virtual void onInit(){}
         virtual void onUpdate(float deltaTime){}
-        virtual void onPreRender(ICommandBuffer* cmdBuffer){}
-        virtual void onRender(ICommandBuffer* cmdBuffer){}
-        virtual void onPostRender(ICommandBuffer* cmdBuffer){}
+        virtual void onPreRender(RHI::CommandBuffer* cmdBuffer){}
+        virtual void onRender(RHI::CommandBuffer* cmdBuffer){}
+        virtual void onPostRender(RHI::CommandBuffer* cmdBuffer){}
         virtual void onDrawGui(){}
         virtual void onDrawDebug(){}
         virtual void onDestroy(){}
 
         float getDeltaTime() const;
-        Ref<IWindow> getWindow() const;
+        Ref<Window> getWindow() const;
         Ref<IAudioDevice> getAudioDevice() const;
-        Ref<IGPUDevice> getGpuDevice() const;
+        Ref<RHI::Device> getDevice() const;
         Ref<FRenderer2D> getRenderer2D() const;
 
         FRect2<uint32_t> getWindowBounds() const;
@@ -56,9 +56,9 @@ namespace Luma
         void destroy();
 
     private:
-        Ref<IWindow> m_Window = nullptr;
-        Ref<IGPUDevice> m_GpuDevice = nullptr;
-        Ref<IImguiRenderer> m_ImguiRenderer = nullptr;
+        Ref<Window> m_Window = nullptr;
+        Ref<RHI::Device> m_Device = nullptr;
+        Ref<ImguiRenderer> m_ImguiRenderer = nullptr;
         Ref<FRenderer2D> m_Renderer2D = nullptr;
         Ref<IAudioDevice> m_AudioDevice = nullptr;
 

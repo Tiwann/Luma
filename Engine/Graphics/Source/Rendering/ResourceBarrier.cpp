@@ -2,35 +2,35 @@
 
 namespace Luma
 {
-    FResourceAccessFlags getSourceAccessFlags(const EResourceState resourceState)
+    ResourceAccessFlags getSourceAccessFlags(const ResourceState resourceState)
     {
         switch (resourceState)
         {
-        case EResourceState::Undefined: return EResourceAccessBits::None;
-        case EResourceState::ColorTarget: return EResourceAccessBits::ColorTargetWrite;
-        case EResourceState::DepthStencilTarget: return EResourceAccessBits::DepthStencilTargetWrite;
-        case EResourceState::CopySource: return EResourceAccessBits::CopyRead;
-        case EResourceState::CopyDest: return EResourceAccessBits::CopyWrite;
-        case EResourceState::ShaderRead: return EResourceAccessBits::ShaderRead;
-        case EResourceState::ShaderWrite: return EResourceAccessBits::ShaderWrite;
-        case EResourceState::General: return EResourceAccessBits::None;
-        default: return EResourceAccessBits::None;
+        case ResourceState::Undefined: return ResourceAccess::None;
+        case ResourceState::ColorTarget: return ResourceAccess::ColorTargetWrite;
+        case ResourceState::DepthStencilTarget: return ResourceAccess::DepthStencilTargetWrite;
+        case ResourceState::CopySource: return ResourceAccess::CopyRead;
+        case ResourceState::CopyDest: return ResourceAccess::CopyWrite;
+        case ResourceState::ShaderRead: return ResourceAccess::ShaderRead;
+        case ResourceState::ShaderWrite: return ResourceAccess::ShaderWrite;
+        case ResourceState::General: return ResourceAccess::None;
+        default: return ResourceAccess::None;
         }
     }
 
-    FResourceAccessFlags getDestAccessFlags(const EResourceState resourceState)
+    ResourceAccessFlags getDestAccessFlags(const ResourceState resourceState)
     {
         switch (resourceState)
         {
-        case EResourceState::Undefined: return EResourceAccessBits::None;
-        case EResourceState::ColorTarget: return EResourceAccessBits::ColorTargetRead;
-        case EResourceState::DepthStencilTarget: return EResourceAccessBits::DepthStencilTargetRead;
-        case EResourceState::CopySource: return EResourceAccessBits::CopyRead;
-        case EResourceState::CopyDest: return EResourceAccessBits::CopyWrite;
-        case EResourceState::ShaderRead: return EResourceAccessBits::ShaderRead;
-        case EResourceState::ShaderWrite: return EResourceAccessBits::ShaderWrite;
-        case EResourceState::General: return EResourceAccessBits::None;
-        default: return EResourceAccessBits::None;
+        case ResourceState::Undefined: return ResourceAccess::None;
+        case ResourceState::ColorTarget: return ResourceAccess::ColorTargetRead;
+        case ResourceState::DepthStencilTarget: return ResourceAccess::DepthStencilTargetRead;
+        case ResourceState::CopySource: return ResourceAccess::CopyRead;
+        case ResourceState::CopyDest: return ResourceAccess::CopyWrite;
+        case ResourceState::ShaderRead: return ResourceAccess::ShaderRead;
+        case ResourceState::ShaderWrite: return ResourceAccess::ShaderWrite;
+        case ResourceState::General: return ResourceAccess::None;
+        default: return ResourceAccess::None;
         }
     }
 }

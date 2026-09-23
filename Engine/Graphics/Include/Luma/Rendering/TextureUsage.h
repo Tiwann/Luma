@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class ETextureUsage
+    enum class TextureUsage
     {
         None = 0,
         Sampled = BIT(0),
@@ -12,5 +12,5 @@ namespace Luma
         DepthStencilTarget = BIT(4),
     };
 
-    using FTextureUsageFlags = TFlags<ETextureUsage>;
+    using TextureUsageFlags = TFlags<TextureUsage>;
 }

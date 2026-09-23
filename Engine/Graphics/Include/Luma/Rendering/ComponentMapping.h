@@ -4,13 +4,13 @@
 
 namespace Luma
 {
-    struct FComponentMapping
+    struct ComponentMapping
     {
-        EComponentSwizzle r = EComponentSwizzle::Identity;
-        EComponentSwizzle g = EComponentSwizzle::Identity;
-        EComponentSwizzle b = EComponentSwizzle::Identity;
-        EComponentSwizzle a = EComponentSwizzle::Identity;
+        ComponentSwizzle r = ComponentSwizzle::Identity;
+        ComponentSwizzle g = ComponentSwizzle::Identity;
+        ComponentSwizzle b = ComponentSwizzle::Identity;
+        ComponentSwizzle a = ComponentSwizzle::Identity;
 
-        static FComponentMapping FromColorChannelFlags(FColorChannelFlags channelFlags);
+        static ComponentMapping FromColorChannelFlags(ColorChannelFlags channelFlags);
     };
 }

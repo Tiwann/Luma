@@ -1,32 +1,32 @@
 #pragma once
+#include "BlendFunction.h"
 #include "ColorChannel.h"
+#include "CompareOperation.h"
 #include "CullMode.h"
 #include "FrontFace.h"
 #include "InputLayout.h"
 #include "PolygonMode.h"
 #include "PrimitiveTopology.h"
-#include "BlendFunction.h"
-#include "CompareOperation.h"
 #include "SampleCount.h"
-#include "Luma/Containers/StaticArray.h"
 #include "Luma/Memory/RefCounted.h"
 
-namespace Luma
-{
-    struct IGPUDevice;
-    struct IShader;
 
-    struct FInputAssemblyState
+namespace Luma::RHI
+{
+    struct Shader;
+    struct Device;
+
+    struct InputAssemblyState
     {
         bool primitiveRestartEnable = false;
-        EPrimitiveTopology topology = EPrimitiveTopology::TriangleList;
+        PrimitiveTopology topology = PrimitiveTopology::TriangleList;
     };
 
-    struct FRasterizationState
+    struct RasterizationState
     {
-        ECullMode cullMode = ECullMode::BackFace;
-        EFrontFace frontFace = EFrontFace::CounterClockwise;
-        EPolygonMode polygonMode = EPolygonMode::Fill;
+        CullMode cullMode = CullMode::BackFace;
+        FrontFace frontFace = FrontFace::CounterClockwise;
+        PolygonMode polygonMode = PolygonMode::Fill;
         bool discardEnable = false;
         bool depthClampEnable = false;
         bool depthBiasEnable = false;
@@ -36,46 +36,46 @@ namespace Luma
         float lineWidth = 1.0f;
     };
 
-    struct FColorBlendState
+    struct ColorBlendState
     {
         bool colorBlendEnable = false;
-        FBlendFunction blendFunction = FBlendFunction::alphaBlend();
-        FColorChannelFlags colorWriteMask = EColorChannelBits::All;
+        BlendFunction blendFunction = BlendFunction::alphaBlend();
+        ColorChannelFlags colorWriteMask = ColorChannels::All;
 
-        static constexpr const FColorBlendState& alphaBlend()
+        static constexpr const ColorBlendState& alphaBlend()
         {
-            static FColorBlendState state;
+            static ColorBlendState state;
             state.colorBlendEnable = true;
-            state.blendFunction = FBlendFunction::alphaBlend();
-            state.colorWriteMask = EColorChannelBits::All;
+            state.blendFunction = BlendFunction::alphaBlend();
+            state.colorWriteMask = ColorChannels::All;
             return state;
         }
 
-        static constexpr const FColorBlendState& disabled()
+        static constexpr const ColorBlendState& disabled()
         {
-            static FColorBlendState state;
+            static ColorBlendState state;
             state.colorBlendEnable = false;
             return state;
         }
     };
 
-    struct FDepthStencilState
+    struct DepthStencilState
     {
         bool depthTestEnable = false;
         bool depthWriteEnable = false;
         bool stencilTestEnable = false;
-        ECompareOp depthCompareOp = ECompareOp::Less;
+        CompareOp depthCompareOp = CompareOp::Less;
     };
 
-    struct FMultisampleState
+    struct MultisampleState
     {
-        ESampleCount sampleCount = ESampleCount::SampleCount1x;
+        SampleCount sampleCount = SampleCount1x;
         bool alphaToCoverageEnable = false;
         bool alphaToOneEnable = false;
         bool sampleShadingEnable = false;
     };
 
-    struct FViewportState
+    struct ViewportState
     {
         uint32_t x = 0;
         uint32_t y = 0;
@@ -85,7 +85,7 @@ namespace Luma
         float maxDepth = 1.0f;
     };
 
-    struct FScissorState
+    struct ScissorState
     {
         uint32_t x = 0;
         uint32_t y = 0;
@@ -93,26 +93,26 @@ namespace Luma
         uint32_t height = 0;
     };
 
-    struct FRenderPipelineDesc
+    struct RenderPipelineDesc
     {
-        IGPUDevice* device = nullptr;
-        IShader* shaderProgram = nullptr;
-        FInputAssemblyState inputAssembly{};
-        FVertexInputLayout inputLayout{};
-        FRasterizationState rasterization{};
-        FMultisampleState multisample{};
+        Device* device = nullptr;
+        Shader* shaderProgram = nullptr;
+        InputAssemblyState inputAssembly{};
+        VertexInputLayout inputLayout{};
+        RasterizationState rasterization{};
+        MultisampleState multisample{};
         uint32_t colorTargetCount = 0;
-        EFormat colorFormats[8]{EFormat::None};
-        FColorBlendState colorBlend[8]{FColorBlendState::disabled()};
-        EFormat depthFormat = EFormat::None;
-        FDepthStencilState depthStencil;
+        Format colorFormats[8]{Format::None};
+        ColorBlendState colorBlend[8]{ColorBlendState::disabled()};
+        Format depthFormat = Format::None;
+        DepthStencilState depthStencil;
     };
 
-    struct IRenderPipeline : IRefCounted<IRenderPipeline>
+    struct RenderPipeline : RefCounted<RenderPipeline>
     {
-        ~IRenderPipeline() override = default;
+        ~RenderPipeline() override = default;
 
-        virtual bool initialize(const FRenderPipelineDesc& pipelineDesc) = 0;
+        virtual bool initialize(const RenderPipelineDesc& pipelineDesc) = 0;
         virtual void destroy() = 0;
     };
 }

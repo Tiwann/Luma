@@ -4,10 +4,10 @@
 namespace Luma
 {
     class FTransformComponent;
-    struct ICommandBuffer;
+    struct CommandBuffer;
     class FEntity;
 
-    struct IComponent : IObject
+    struct IComponent : Object
     {
         ~IComponent() override = default;
 
@@ -22,7 +22,7 @@ namespace Luma
         virtual void onUpdate(double deltaTime){}
         virtual void onPhysicsUpdate(double deltaTime){}
         virtual void onLateUpdate(double deltaTime){}
-        virtual void onRender(ICommandBuffer* cmdBuffer){}
+        virtual void onRender(CommandBuffer* cmdBuffer){}
     private:
         friend class FEntity;
         FEntity* m_Owner = nullptr;

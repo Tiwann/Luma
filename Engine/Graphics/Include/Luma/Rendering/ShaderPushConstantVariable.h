@@ -3,11 +3,11 @@
 
 namespace Luma
 {
-    struct FShaderPushConstantVariable
+    struct ShaderPushConstantVariable
     {
         FString name;
         int64_t offset = 0;
         uint64_t size = 0;
-        FShaderStageFlags visibility = EShaderStage::None;
+        ShaderStageFlags visibility = ShaderStage::None;
     };
 }

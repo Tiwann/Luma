@@ -79,7 +79,7 @@ namespace Luma
         }
     }
 
-    void FScene::onRender(ICommandBuffer* cmdBuffer)
+    void FScene::onRender(CommandBuffer* cmdBuffer)
     {
         for (auto& [_, entity] : m_Entities)
         {

@@ -1,5 +1,5 @@
 #include "Luma/Rendering/ImguiRenderer.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include <imgui.h>
 
 #ifdef LUMA_BUILD_VULKAN
@@ -108,7 +108,7 @@ namespace Luma
         }
     }
 
-    bool IImguiRenderer::initialize(const FImguiRendererDesc& rendererDesc)
+    bool ImguiRenderer::initialize(const ImguiRendererDesc& rendererDesc)
     {
         if(!IMGUI_CHECKVERSION()) return false;
 
@@ -128,17 +128,17 @@ namespace Luma
         return true;
     }
 
-    IImguiRenderer* createImguiRenderer(const FImguiRendererDesc& rendererDesc)
+    ImguiRenderer* createImguiRenderer(const ImguiRendererDesc& rendererDesc)
     {
         if (!rendererDesc.window) return nullptr;
         if (!rendererDesc.device) return nullptr;
         if (rendererDesc.sampleCount % 2 != 0 && rendererDesc.sampleCount > 16) return nullptr;
-        IImguiRenderer* renderer = nullptr;
+        ImguiRenderer* renderer = nullptr;
         switch (rendererDesc.device->getDeviceType())
         {
-        case EGPUDeviceType::None: return nullptr;
+        case DeviceType::None: return nullptr;
 #ifdef LUMA_BUILD_VULKAN
-        case EGPUDeviceType::Vulkan:
+        case DeviceType::Vulkan:
             {
                 renderer = new Vulkan::FImguiRendererImpl();
                 if (!renderer->initialize(rendererDesc))
@@ -149,7 +149,7 @@ namespace Luma
                 return renderer;
             }
 #elifdef LUMA_BUILD_D3D12
-        case EGPUDeviceType::D3D12:
+        case DeviceType::D3D12:
             {
                 renderer = new D3D12::FImguiRendererImpl();
                 if (!renderer->initialize(rendererDesc))
@@ -165,7 +165,7 @@ namespace Luma
         return renderer;
     }
 
-    IImguiRenderer* createImguiRenderer(IWindow* window, IGPUDevice* device)
+    ImguiRenderer* createImguiRenderer(Window* window, RHI::Device* device)
     {
         return createImguiRenderer({window, device, 1});
     }

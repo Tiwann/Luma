@@ -1,22 +1,22 @@
 #include "Luma/Rendering/CommandBuffer.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    void ICommandBuffer::bindVertexBuffer(const IBuffer* buffer, int64_t offset)
+    void CommandBuffer::bindVertexBuffer(const Buffer* buffer, int64_t offset)
     {
-        const FVertexBufferBinding binding{buffer, offset};
+        const VertexBufferBinding binding{buffer, offset};
         bindVertexBuffers({binding});
     }
 
-    void ICommandBuffer::draw(const uint32_t vertexCount, const uint32_t instanceCount, const uint32_t firstVertex, const uint32_t firstInstance)
+    void CommandBuffer::draw(const uint32_t vertexCount, const uint32_t instanceCount, const uint32_t firstVertex, const uint32_t firstInstance)
     {
-        const FDrawCommand drawCmd{vertexCount, instanceCount, firstVertex, firstInstance};
+        const DrawCommand drawCmd{vertexCount, instanceCount, firstVertex, firstInstance};
         draw(drawCmd);
     }
 
-    void ICommandBuffer::drawIndexed(const uint32_t indexCount, const uint32_t instanceCount, const uint32_t firstIndex, const int32_t vertexOffset, const uint32_t firstInstance)
+    void CommandBuffer::drawIndexed(const uint32_t indexCount, const uint32_t instanceCount, const uint32_t firstIndex, const int32_t vertexOffset, const uint32_t firstInstance)
     {
-        const FDrawIndexedCommand drawIndexedCmd{indexCount, instanceCount, firstIndex, vertexOffset, firstInstance};
+        const DrawIndexedCommand drawIndexedCmd{indexCount, instanceCount, firstIndex, vertexOffset, firstInstance};
         drawIndexed(drawIndexedCmd);
     }
 }

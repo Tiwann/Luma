@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "QueueImpl.h"
 #include "SwapchainImpl.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/Constants.h"
 #include "WgpuFwd.h"
 

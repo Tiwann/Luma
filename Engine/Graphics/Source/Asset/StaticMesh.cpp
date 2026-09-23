@@ -64,7 +64,7 @@ namespace Luma
         m_IndexBuffer->destroy();
     }
 
-    bool FStaticMesh::loadFromFile(FStringView filepath, IGPUDevice* device)
+    bool FStaticMesh::loadFromFile(FStringView filepath, RHI::Device* device)
     {
         if (filepath.isEmpty()) return false;
         if (!device) return false;
@@ -115,7 +115,7 @@ namespace Luma
         if (!m_IndexBuffer) return false;
 
 #if 0
-        const auto getTexture = [loadedScene, device](const aiMaterial* material, aiTextureType textureType) -> Ref<ITexture>
+        const auto getTexture = [loadedScene, device](const aiMaterial* material, aiTextureType textureType) -> Ref<Texture>
         {
             aiString path;
             if (material->GetTexture(textureType, 0, &path) != aiReturn_SUCCESS) return nullptr;
@@ -126,7 +126,7 @@ namespace Luma
                 {
                     const uint8_t* data = reinterpret_cast<uint8_t*>(loadedTexture->pcData);
                     const uint64_t size = loadedTexture->mWidth;
-                    Ref<ITexture> texture = TextureUtils::loadTexture(device, data, size);
+                    Ref<Texture> texture = TextureUtils::loadTexture(device, data, size);
                     return texture;
                 }
                 else
@@ -134,8 +134,8 @@ namespace Luma
                     const uint8_t* data = reinterpret_cast<uint8_t*>(loadedTexture->pcData);
                     const uint32_t width = loadedTexture->mWidth;
                     const uint32_t height = loadedTexture->mHeight;
-                    const FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_UNORM);
-                    Ref<ITexture> texture = device->createTexture(textureDesc);
+                    const TextureDesc textureDesc = TextureDesc::texture2D(width, height, Format::R8G8B8A8_UNORM);
+                    Ref<Texture> texture = device->createTexture(textureDesc);
                     if (!texture) return nullptr;
 
                     if (!TextureUtils::uploadTextureDataSync(device, texture, 0, 0, data, width * height * 4))
@@ -162,35 +162,35 @@ namespace Luma
             materialTextures.normal = getTexture(loadedMaterial, aiTextureType_NORMALS);
             m_Textures[index] = materialTextures;
 
-            FMaterialDesc materialDesc;
+            MaterialDesc materialDesc;
             materialDesc.shader = shader;
             slot.material = device->createMaterial(materialDesc);
-            slot.material->setTexture("albedoTex", materialTextures.baseColor, EBindingType::SampledTexture);
-            slot.material->setTexture("metallicRoughnessTex", materialTextures.metallicRoughnessAO, EBindingType::SampledTexture);
-            slot.material->setTexture("normalTex", materialTextures.normal, EBindingType::SampledTexture);
-            slot.material->setTexture("emissionTex", materialTextures.emission, EBindingType::SampledTexture);
+            slot.material->setTexture("albedoTex", materialTextures.baseColor, BindingType::SampledTexture);
+            slot.material->setTexture("metallicRoughnessTex", materialTextures.metallicRoughnessAO, BindingType::SampledTexture);
+            slot.material->setTexture("normalTex", materialTextures.normal, BindingType::SampledTexture);
+            slot.material->setTexture("emissionTex", materialTextures.emission, BindingType::SampledTexture);
         }
 
 #endif
         return true;
     }
 
-    void FStaticMesh::setMaterial(uint32_t slot, Ref<FMaterial> material)
+    void FStaticMesh::setMaterial(uint32_t slot, Ref<Material> material)
     {
         m_MaterialSlots[slot].material = material;
     }
 
-    Ref<FMaterial> FStaticMesh::getMaterial(uint32_t slot)
+    Ref<Material> FStaticMesh::getMaterial(uint32_t slot)
     {
         return m_MaterialSlots[slot].material;
     }
 
-    WeakRef<IBuffer> FStaticMesh::getVertexBuffer() const
+    WeakRef<RHI::Buffer> FStaticMesh::getVertexBuffer() const
     {
         return m_VertexBuffer;
     }
 
-    WeakRef<IBuffer> FStaticMesh::getIndexBuffer() const
+    WeakRef<RHI::Buffer> FStaticMesh::getIndexBuffer() const
     {
         return m_IndexBuffer;
     }

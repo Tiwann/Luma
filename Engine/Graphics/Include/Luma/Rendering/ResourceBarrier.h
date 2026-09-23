@@ -1,15 +1,17 @@
 ﻿#pragma once
 #include "ResourceState.h"
-#include "Luma/Containers/ArrayView.h"
 #include "Luma/Runtime/Flags.h"
 
 namespace Luma
 {
-    struct ITexture;
-    struct IBuffer;
-    struct IQueue;
+    namespace RHI
+    {
+        struct Texture;
+        struct Buffer;
+        struct Queue;
+    }
 
-    enum class EResourceAccessBits
+    enum class ResourceAccess
     {
         None = 0,
         ShaderRead = BIT(0),
@@ -24,30 +26,30 @@ namespace Luma
         HostWrite = BIT(9),
     };
 
-    using FResourceAccessFlags = TFlags<EResourceAccessBits>;
+    using ResourceAccessFlags = TFlags<ResourceAccess>;
 
-    struct FTextureBarrier
+    struct TextureBarrier
     {
-        ITexture* texture = nullptr;
-        EResourceState destState = EResourceState::Undefined;
-        FResourceAccessFlags sourceAccess = EResourceAccessBits::None;
-        FResourceAccessFlags destAccess = EResourceAccessBits::None;
-        const IQueue* sourceQueue = nullptr;
-        const IQueue* destQueue = nullptr;
+        RHI::Texture* texture = nullptr;
+        ResourceState destState = ResourceState::Undefined;
+        ResourceAccessFlags sourceAccess = ResourceAccess::None;
+        ResourceAccessFlags destAccess = ResourceAccess::None;
+        const RHI::Queue* sourceQueue = nullptr;
+        const RHI::Queue* destQueue = nullptr;
     };
 
-    struct FBufferBarrier
+    struct BufferBarrier
     {
-        IBuffer* buffer = nullptr;
+        RHI::Buffer* buffer = nullptr;
         uint64_t offset = 0;
         uint64_t size = 0;
-        EResourceState destState = EResourceState::Undefined;
-        FResourceAccessFlags sourceAccess = EResourceAccessBits::None;
-        FResourceAccessFlags destAccess = EResourceAccessBits::None;
-        const IQueue* sourceQueue = nullptr;
-        const IQueue* destQueue = nullptr;
+        ResourceState destState = ResourceState::Undefined;
+        ResourceAccessFlags sourceAccess = ResourceAccess::None;
+        ResourceAccessFlags destAccess = ResourceAccess::None;
+        const RHI::Queue* sourceQueue = nullptr;
+        const RHI::Queue* destQueue = nullptr;
     };
 
-    FResourceAccessFlags getSourceAccessFlags(EResourceState resourceState);
-    FResourceAccessFlags getDestAccessFlags(EResourceState resourceState);
+    ResourceAccessFlags getSourceAccessFlags(ResourceState resourceState);
+    ResourceAccessFlags getDestAccessFlags(ResourceState resourceState);
 }

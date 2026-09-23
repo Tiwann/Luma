@@ -1,5 +1,5 @@
 #pragma once
-#include <Luma/Rendering/GPUDevice.h>
+#include <Luma/Rendering/Device.h>
 #include <Luma/Rendering/Shader.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/ComputePipeline.h>

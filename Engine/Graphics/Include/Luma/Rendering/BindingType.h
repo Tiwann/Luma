@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EBindingType : uint32_t
+    enum class BindingType : uint32_t
     {
         None,
         Sampler,

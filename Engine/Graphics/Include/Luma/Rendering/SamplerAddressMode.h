@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ESamplerAddressMode
+    enum class SamplerAddressMode
     {
         Repeat,
         MirroredRepeat,

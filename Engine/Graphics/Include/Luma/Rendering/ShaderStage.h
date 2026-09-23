@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EShaderStage
+    enum class ShaderStage
     {
         None = 0,
         Vertex = BIT(0),
@@ -19,5 +19,5 @@ namespace Luma
         AllGraphics = Vertex | Geometry | Fragment | TessellationControl | TessellationEvaluation | Task | Mesh
     };
 
-    typedef TFlags<EShaderStage> FShaderStageFlags;
+    typedef TFlags<ShaderStage> ShaderStageFlags;
 }

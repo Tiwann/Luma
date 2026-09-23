@@ -6,43 +6,43 @@
 #include "ShaderBinding.h"
 #include "ShaderPushConstantVariable.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    struct IGPUDevice;
-    struct IBindingGroup;
+    struct Device;
+    struct BindingGroup;
 
-    struct FShaderCode
+    struct ShaderCode
     {
-        EShaderStage stage;
+        ShaderStage stage;
         TArrayView<uint8_t> code;
     };
 
-    struct FShaderDesc
+    struct ShaderDesc
     {
-        IGPUDevice* device = nullptr;
-        TArrayView<FShaderCode> shaderCodes;
+        Device* device = nullptr;
+        TArrayView<ShaderCode> shaderCodes;
     };
 
-    struct IShader : IRefCounted<IShader>
+    struct Shader : RefCounted<Shader>
     {
-        IShader() = default;
-        ~IShader() override = default;
+        Shader() = default;
+        ~Shader() override = default;
 
-        virtual bool initialize(const FShaderDesc& desc) = 0;
+        virtual bool initialize(const ShaderDesc& desc) = 0;
         virtual void destroy() = 0;
 
-        virtual IBindingGroup* createBindingGroup(uint32_t groupIndex);
+        virtual BindingGroup* createBindingGroup(uint32_t groupIndex);
 
-        IGPUDevice* getDevice() const { return m_Device; }
-        FShaderStageFlags getStages() const { return m_Stages; }
+        Device* getDevice() const { return m_Device; }
+        ShaderStageFlags getStages() const { return m_Stages; }
         const auto& getBindings() const { return m_Bindings; }
         uint32_t getBindingFromName(const FString& name) const { return m_NameToBindingCache[name]; }
         const auto& getPushConstantVariables() const { return m_PushConstantsVars; }
     protected:
-        IGPUDevice* m_Device = nullptr;
-        FShaderStageFlags m_Stages = EShaderStage::None;
-        THashMap<uint32_t, THashMap<uint32_t, FShaderBinding>> m_Bindings;
+        Device* m_Device = nullptr;
+        ShaderStageFlags m_Stages = ShaderStage::None;
+        THashMap<uint32_t, THashMap<uint32_t, ShaderBinding>> m_Bindings;
         THashMap<FString, uint32_t> m_NameToBindingCache;
-        TArray<FShaderPushConstantVariable> m_PushConstantsVars;
+        TArray<ShaderPushConstantVariable> m_PushConstantsVars;
     };
 }

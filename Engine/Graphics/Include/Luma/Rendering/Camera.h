@@ -12,7 +12,7 @@
 
 namespace Luma
 {
-    enum class ECameraProjectionMode
+    enum class CameraProjectionMode
     {
         Orthographic,
         Perspective
@@ -35,7 +35,7 @@ namespace Luma
         void setWidth(uint32_t width);
         void setHeight(uint32_t height);
         void setSize(uint32_t width, uint32_t height);
-        void setProjectionMode(ECameraProjectionMode mode);
+        void setProjectionMode(CameraProjectionMode mode);
         void setFieldOfView(F fov);
         void setClipPlanes(F near, F far);
         void setOrthographicSize(F orthoSize);
@@ -45,7 +45,7 @@ namespace Luma
         FRect2u getBounds() const;
         F getNearClipPlane() const;
         F getFarClipPlane() const;
-        ECameraProjectionMode getProjectionMode() const;
+        CameraProjectionMode getProjectionMode() const;
         F getOrthographicSize() const;
         F getFieldOfView() const;
 
@@ -56,11 +56,11 @@ namespace Luma
         FVector2<F> worldToScreen(const FVector3<F>& worldPos) const;
     private:
         uint32_t m_Width = 0, m_Height = 0;
-        ECameraProjectionMode m_ProjectionMode = ECameraProjectionMode::Perspective;
+        CameraProjectionMode m_ProjectionMode = CameraProjectionMode::Perspective;
         F m_FieldOfView = F(45.0);
         F m_Near = F(0.01);
         F m_Far = F(1000.0);
-        F m_OrthoSize = F(100.0);
+        F m_OrthoSize = F(1);
         TVector<F, 2> m_ClipSpaceOffset = TVector<F, 2>::Zero;
 
         Vector m_Position = Vector::Zero;
@@ -71,6 +71,6 @@ namespace Luma
         TLazy<Matrix> m_ViewProjectionMatrix{};
     };
 
-    using FCamera = TCamera<float>;
+    using Camera = TCamera<float>;
 }
 

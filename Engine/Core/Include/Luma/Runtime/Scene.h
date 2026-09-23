@@ -7,9 +7,9 @@ namespace Luma
     class FEntity;
     class FEntityHandle;
     struct IComponent;
-    struct ICommandBuffer;
+    struct CommandBuffer;
 
-    class FScene final : public IAsset
+    class FScene final : public Asset
     {
     public:
         FScene() = default;
@@ -20,9 +20,9 @@ namespace Luma
         void onUpdate(double deltaTime);
         void onPhysicsUpdate(double deltaTime);
         void onLateUpdate(double deltaTime);
-        void onRender(ICommandBuffer* cmdBuffer);
+        void onRender(CommandBuffer* cmdBuffer);
 
-        EAssetType getAssetType() const override { return EAssetType::Scene; }
+        AssetType getAssetType() const override { return AssetType::Scene; }
 
         FEntityHandle createEntity();
         void destroyEntity(FEntityHandle entity);

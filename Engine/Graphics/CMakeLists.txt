@@ -1,11 +1,11 @@
 
 
 set(LUMA_GRAPHICS_SRC
-        Source/Rendering/Camera.cpp
-        Source/Rendering/GpuDevice.cpp
-        Source/Rendering/CommandBuffer.cpp
+        Source/Rendering/Device.cpp
         Source/Rendering/Swapchain.cpp
+        Source/Rendering/CommandBuffer.cpp
         Source/Rendering/Sampler.cpp
+        Source/Rendering/Camera.cpp
         Source/Rendering/ComponentMapping.cpp
         Source/Rendering/BufferUtils.cpp
         Source/Rendering/InputLayout.cpp
@@ -20,27 +20,26 @@ set(LUMA_GRAPHICS_SRC
         #Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
         Source/Asset/StaticMesh.cpp
-        Source/Asset/Material.cpp
         Source/Components/StaticMeshRenderer.cpp
 )
 
 set(LUMA_VULKAN_SRC
         Source/Vulkan/VulkanMemoryAllocator.cpp
         Source/Vulkan/VulkanUtils.cpp
-        Source/Vulkan/GPUDeviceImpl.cpp
-        Source/Vulkan/SamplerImpl.cpp
-        Source/Vulkan/SwapchainImpl.cpp
-        Source/Vulkan/CommandBufferImpl.cpp
-        Source/Vulkan/QueueImpl.cpp
-        Source/Vulkan/FenceImpl.cpp
-        Source/Vulkan/BufferImpl.cpp
-        Source/Vulkan/TextureImpl.cpp
-        Source/Vulkan/TextureViewImpl.cpp
-        Source/Vulkan/ImmediateExecutorImpl.cpp
-        Source/Vulkan/ShaderImpl.cpp
-        Source/Vulkan/ComputePipelineImpl.cpp
-        Source/Vulkan/RenderPipelineImpl.cpp
-        Source/Vulkan/BindingGroupImpl.cpp
+        Source/Vulkan/Device.cpp
+        Source/Vulkan/Sampler.cpp
+        Source/Vulkan/Swapchain.cpp
+        Source/Vulkan/CommandBuffer.cpp
+        Source/Vulkan/Queue.cpp
+        Source/Vulkan/Fence.cpp
+        Source/Vulkan/Buffer.cpp
+        Source/Vulkan/Texture.cpp
+        Source/Vulkan/TextureView.cpp
+        Source/Vulkan/ImmediateExecutor.cpp
+        Source/Vulkan/Shader.cpp
+        Source/Vulkan/ComputePipeline.cpp
+        Source/Vulkan/RenderPipeline.cpp
+        Source/Vulkan/BindingGroup.cpp
 )
 
 

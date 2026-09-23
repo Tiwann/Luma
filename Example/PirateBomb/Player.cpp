@@ -39,8 +39,8 @@ void Player::update(float deltaTime)
 }
 
 
-void Player::render(const FCamera& camera, Ref<FRenderer2D> renderer)
+void Player::render(const Camera& camera, Ref<FRenderer2D> renderer)
 {
     const auto position = m_Body->getPosition();
-    renderer->drawQuad(FVector2f(position), FVector2f(PLAYER_SIZE), 0, FColor::White);
+    renderer->drawQuad(FVector2f(position), FVector2f(PLAYER_SIZE), 0, Color::White);
 }

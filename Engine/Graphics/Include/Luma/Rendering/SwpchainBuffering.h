@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ESwapchainBuffering
+    enum class SwapchainBuffering
     {
         None = 0,
         DoubleBuffering = 2,

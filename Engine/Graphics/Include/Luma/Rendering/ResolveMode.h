@@ -1,9 +1,8 @@
-﻿
-#pragma once
+﻿#pragma once
 
 namespace Luma
 {
-    enum class EResolveMode
+    enum class ResolveMode
     {
         None = 0,
         Zero,

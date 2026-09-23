@@ -4,14 +4,13 @@
 #include "Luma/Memory/RefCounted.h"
 #include <cstdint>
 
-
-namespace Luma
+namespace Luma::RHI
 {
-    struct IGPUDevice;
+    struct Device;
 
-    struct FFenceDesc
+    struct FenceDesc
     {
-        IGPUDevice* device = nullptr;
+        Device* device = nullptr;
         uint64_t initialValue = 0;
     };
 
@@ -19,17 +18,17 @@ namespace Luma
 
     typedef struct FenceSync
     {
-        const struct IFence* fence = nullptr;
+        const struct Fence* fence = nullptr;
         uint64_t value = 0;
-        FPipelineStageFlags stages = EPipelineStages::AllCommands;
-    } FFenceWait, FFenceSignal;
+        PipelineStageFlags stages = PipelineStages::AllCommands;
+    } FenceWait, FenceSignal;
 
-    struct IFence : IRefCounted<IFence>
+    struct Fence : RefCounted<Fence>
     {
-        IFence() = default;
-        ~IFence() override = default;
+        Fence() = default;
+        ~Fence() override = default;
 
-        virtual bool initialize(const FFenceDesc& fenceDesc) = 0;
+        virtual bool initialize(const FenceDesc& fenceDesc) = 0;
         virtual void destroy() = 0;
 
         virtual uint64_t getCompletedValue() const = 0;

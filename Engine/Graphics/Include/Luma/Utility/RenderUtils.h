@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Luma/Memory/Ref.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/Shader.h"
 #include "Luma/Rendering/Texture.h"
 

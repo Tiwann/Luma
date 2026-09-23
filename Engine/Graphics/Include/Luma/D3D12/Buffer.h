@@ -6,10 +6,10 @@ namespace Luma::D3D12
 {
     class FGPUDeviceImpl;
 
-    class FBufferImpl final : public IBuffer
+    class FBufferImpl final : public Buffer
     {
     public:
-        bool initialize(const FBufferDesc& bufferDesc) override;
+        bool initialize(const BufferDesc& bufferDesc) override;
         void destroy() override;
         void* map() override;
         void unmap(const void* ptr) override;

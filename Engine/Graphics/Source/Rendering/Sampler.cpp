@@ -1,16 +1,16 @@
 #include "Luma/Rendering/Sampler.h"
 
 
-namespace Luma
+namespace Luma::RHI
 {
-    FSamplerDesc& FSamplerDesc::withDevice(IGPUDevice* device)
+    SamplerDesc& SamplerDesc::withDevice(Device* device)
     {
         this->device = device;
         return *this;
     }
 
-    FSamplerDesc& FSamplerDesc::withAddressModeUVW(const ESamplerAddressMode u, const ESamplerAddressMode v,
-                                                 const ESamplerAddressMode w)
+    SamplerDesc& SamplerDesc::withAddressModeUVW(const SamplerAddressMode u, const SamplerAddressMode v,
+                                                 const SamplerAddressMode w)
     {
         addressModeU = u;
         addressModeV = v;
@@ -18,7 +18,7 @@ namespace Luma
         return *this;
     }
 
-    FSamplerDesc& FSamplerDesc::withAddressMode(const ESamplerAddressMode in)
+    SamplerDesc& SamplerDesc::withAddressMode(const SamplerAddressMode in)
     {
         addressModeU = in;
         addressModeV = in;
@@ -26,14 +26,14 @@ namespace Luma
         return *this;
     }
 
-    FSamplerDesc& FSamplerDesc::withFilter(const EFilter inMinFilter, const EFilter inMagFilter)
+    SamplerDesc& SamplerDesc::withFilter(const Filter inMinFilter, const Filter inMagFilter)
     {
         minFilter = inMinFilter;
         magFilter = inMagFilter;
         return *this;
     }
 
-    FSamplerDesc& FSamplerDesc::withLODRange(const float min, const float max)
+    SamplerDesc& SamplerDesc::withLODRange(const float min, const float max)
     {
         minLod = min;
         maxLod = max;

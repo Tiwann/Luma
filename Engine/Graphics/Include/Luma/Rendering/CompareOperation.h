@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ECompareOp
+    enum class CompareOp
     {
         Always,
         Never,

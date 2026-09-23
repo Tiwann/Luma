@@ -6,38 +6,38 @@
 #include "Luma/Containers/Array.h"
 #include "Luma/Math/Rect2.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    struct ITextureView;
+    struct TextureView;
 
-    struct FClearValue
+    struct ClearValue
     {
-        FColor color{FColor::Black};
+        Color color{Color::Black};
         float depth = 1.0f;
         uint32_t stencil = 0;
     };
 
-    enum class ERenderPassTargetType
+    enum class RenderPassTargetType
     {
         Color,
         DepthStencil,
     };
 
-    struct FRenderPassTarget
+    struct RenderPassTarget
     {
-        ERenderPassTargetType type = ERenderPassTargetType::Color;
-        FClearValue clearValue = FClearValue();
-        ELoadOp loadOp = ELoadOp::Clear;
-        EStoreOp storeOp = EStoreOp::Store;
-        EResolveMode resolveMode = EResolveMode::None;
-        const ITextureView* textureView = nullptr;
-        const ITextureView* resolveTextureView = nullptr;
+        RenderPassTargetType type = RenderPassTargetType::Color;
+        ClearValue clearValue = ClearValue();
+        LoadOp loadOp = LoadOp::Clear;
+        StoreOp storeOp = StoreOp::Store;
+        ResolveMode resolveMode = ResolveMode::None;
+        const TextureView* textureView = nullptr;
+        const TextureView* resolveTextureView = nullptr;
     };
 
-    struct FRenderPassDesc
+    struct RenderPassDesc
     {
-        TArray<FRenderPassTarget*> colorTargets;
-        FRenderPassTarget* depthStencilAttachment = nullptr;
+        TArray<RenderPassTarget*> colorTargets;
+        RenderPassTarget* depthStencilTarget = nullptr;
         FRect2u renderArea;
     };
 }

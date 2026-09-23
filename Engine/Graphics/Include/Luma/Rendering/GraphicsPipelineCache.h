@@ -14,7 +14,7 @@ namespace Luma
     {
         IShaderProgram* shader;
         EMaterialType materialType;
-        FVertexInputLayout vertexInputLayout;
+        VertexInputLayout vertexInputLayout;
         EFormat depthFormat;
         EFormat colorFormats[8];
         uint32_t colorFormatCount;
@@ -34,7 +34,7 @@ namespace Luma
             uint64_t seed = 0;
             hashCombine(seed, reinterpret_cast<uint64_t>(key.shader));
             hashCombine(seed, static_cast<uint64_t>(key.materialType));
-            hashCombine(seed, THasher<FVertexInputLayout>{}(key.vertexInputLayout));
+            hashCombine(seed, THasher<VertexInputLayout>{}(key.vertexInputLayout));
             hashCombine(seed, static_cast<uint64_t>(key.depthFormat));
             for (uint32_t i = 0; i < key.colorFormatCount; ++i)
                 hashCombine(seed, static_cast<uint64_t>(key.colorFormats[i]));

@@ -1,72 +1,72 @@
 #include "Luma/Asset/Font.h"
 #include "Luma/Runtime/Format.h"
-#include "Luma/Rendering/Texture.h"
-#include "Luma/Rendering/GPUDevice.h"
-#include "Luma/Rendering/TextureUtils.h"
-#include <msdf-atlas-gen/msdf-atlas-gen.h>
-
 #include "Luma/Runtime/FileUtils.h"
+#include "Luma/Rendering/Texture.h"
+#include "Luma/Rendering/Device.h"
+#include "Luma/Rendering/TextureUtils.h"
+
+#include <msdf-atlas-gen/msdf-atlas-gen.h>
 
 namespace Luma
 {
     static constexpr uint32_t ATLAS_DEFAULT_SIZE = 256;
 
-    struct FFont::FPrivate
+    struct Font::FPrivate
     {
         msdfgen::FontHandle* handle = nullptr;
         std::vector<msdf_atlas::GlyphGeometry> glyphs;
         msdf_atlas::FontGeometry fontGeometry;
     };
 
-    FFont::FFont()
+    Font::Font()
     {
         m_PrivateData = new FPrivate;
     }
 
-    FFont::~FFont()
+    Font::~Font()
     {
         delete m_PrivateData;
     }
 
-    EFontAtlasType FFont::getAtlasType() const
+    FontAtlasType Font::getAtlasType() const
     {
         return m_AtlasType;
     }
 
-    Ref<ITexture> FFont::getAtlasTexture() const
+    Ref<RHI::Texture> Font::getAtlasTexture() const
     {
         return m_AtlasTexture;
     }
 
-    msdfgen::FontHandle* FFont::getHandle() const
+    msdfgen::FontHandle* Font::getHandle() const
     {
         return m_PrivateData->handle;
     }
 
-    double FFont::getAdvance(uint32_t character) const
+    double Font::getAdvance(uint32_t character) const
     {
         const auto* glyph = m_PrivateData->fontGeometry.getGlyph(character);
         if (!glyph) return 0.0;
         return glyph->getAdvance();
     }
 
-    double FFont::getAdvance(const uint32_t character, const uint32_t nextCharacter) const
+    double Font::getAdvance(const uint32_t character, const uint32_t nextCharacter) const
     {
         double advance = 0.0;
         m_PrivateData->fontGeometry.getAdvance(advance, character, nextCharacter);
         return advance;
     }
 
-    bool FFont::hasGlyph(uint32_t unicode) const
+    bool Font::hasGlyph(uint32_t unicode) const
     {
         return m_PrivateData->fontGeometry.getGlyph(unicode);
     }
 
-    FFontMetrics FFont::getMetrics() const
+    FontMetrics Font::getMetrics() const
     {
         const auto metrics = m_PrivateData->fontGeometry.getMetrics();
 
-        FFontMetrics result;
+        FontMetrics result;
         result.ascenderY = metrics.ascenderY;
         result.descenderY = metrics.descenderY;
         result.emSize = metrics.emSize;
@@ -76,7 +76,7 @@ namespace Luma
         return result;
     }
 
-    void FFont::getAtlasTextureCoordinates(const uint32_t unicode,
+    void Font::getAtlasTextureCoordinates(const uint32_t unicode,
         double& left,
         double& right,
         double& top,
@@ -90,7 +90,7 @@ namespace Luma
         top /= m_AtlasTexture->getHeight();
     }
 
-    void FFont::getPlaneBounds(const uint32_t unicode,
+    void Font::getPlaneBounds(const uint32_t unicode,
         double& left,
         double& right,
         double& top,
@@ -100,9 +100,9 @@ namespace Luma
         glyph->getQuadPlaneBounds(left, bottom, right, top);
     }
 
-    double FFont::getTextHeight(FStringView text, float fontSize, float lineSpacing) const
+    double Font::getTextHeight(FStringView text, float fontSize, float lineSpacing) const
     {
-        const FFontMetrics metrics = getMetrics();
+        const FontMetrics metrics = getMetrics();
         const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
 
         double posY = fsScale * metrics.ascenderY;
@@ -130,9 +130,9 @@ namespace Luma
         return posY;
     }
 
-    double FFont::getTextWidth(FStringView text, float fontSize, float characterSpacing) const
+    double Font::getTextWidth(FStringView text, float fontSize, float characterSpacing) const
     {
-        const FFontMetrics metrics = getMetrics();
+        const FontMetrics metrics = getMetrics();
         const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
 
         double posX = 0.0;
@@ -168,8 +168,8 @@ namespace Luma
     }
 
 
-    bool FFont::loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType,
-        const TArray<FCharacterSet>& charSets, IGPUDevice* device)
+    bool Font::loadAndGenerate(const TBufferView<uint8_t>& fontData, FontAtlasType atlasType,
+        const TArray<CharacterSet>& charSets, RHI::Device* device)
     {
         msdfgen::FreetypeHandle* freetype = msdfgen::initializeFreetype();
         if (!freetype) return false;
@@ -202,9 +202,9 @@ namespace Luma
 
         switch (atlasType)
         {
-        case EFontAtlasType::None:
+        case FontAtlasType::None:
             return false;
-        case EFontAtlasType::Bitmap:
+        case FontAtlasType::Bitmap:
             {
                 msdf_atlas::ImmediateAtlasGenerator<float, 1, msdf_atlas::scanlineGenerator, msdf_atlas::BitmapAtlasStorage<uint8_t, 1>> generator(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE);
                 msdf_atlas::GeneratorAttributes attributes;
@@ -217,13 +217,13 @@ namespace Luma
 
                 const msdfgen::BitmapConstRef<uint8_t, 1>& bitmap = generator.atlasStorage();
 
-                FTextureDesc textureDesc = FTextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, EFormat::R8_UNORM);
+                RHI::TextureDesc textureDesc = RHI::TextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, Format::R8_UNORM);
                 m_AtlasTexture = device->createTexture(textureDesc);
                 if (!TextureUtils::uploadTextureDataSync(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE))
                     return false;
             }
             break;
-        case EFontAtlasType::SDF:
+        case FontAtlasType::SDF:
             {
                 msdf_atlas::ImmediateAtlasGenerator<float, 1, msdf_atlas::sdfGenerator, msdf_atlas::BitmapAtlasStorage<uint8_t, 1>> generator(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE);
                 msdf_atlas::GeneratorAttributes attributes;
@@ -236,13 +236,13 @@ namespace Luma
 
                 const msdfgen::BitmapConstRef<uint8_t, 1>& bitmap = generator.atlasStorage();
 
-                FTextureDesc textureDesc = FTextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, EFormat::R8_UNORM);
+                RHI::TextureDesc textureDesc = RHI::TextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, Format::R8_UNORM);
                 m_AtlasTexture = device->createTexture(textureDesc);
                 if (!TextureUtils::uploadTextureDataSync(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE))
                     return false;
             }
             break;
-        case EFontAtlasType::MSDF:
+        case FontAtlasType::MSDF:
             {
                 msdf_atlas::ImmediateAtlasGenerator<float, 4, msdf_atlas::mtsdfGenerator, msdf_atlas::BitmapAtlasStorage<uint8_t, 4>> generator(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE);
                 msdf_atlas::GeneratorAttributes attributes;
@@ -255,7 +255,7 @@ namespace Luma
 
                 const msdfgen::BitmapConstRef<uint8_t, 4>& bitmap = generator.atlasStorage();
 
-                FTextureDesc textureDesc = FTextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, EFormat::R8G8B8A8_UNORM);
+                RHI::TextureDesc textureDesc = RHI::TextureDesc::texture2D(ATLAS_DEFAULT_SIZE, ATLAS_DEFAULT_SIZE, Format::R8G8B8A8_UNORM);
                 m_AtlasTexture = device->createTexture(textureDesc);
                 if (!TextureUtils::uploadTextureDataSync(device, m_AtlasTexture, 0, 0, bitmap.pixels, ATLAS_DEFAULT_SIZE * ATLAS_DEFAULT_SIZE * 4))
                     return false;
@@ -268,19 +268,19 @@ namespace Luma
         return true;
     }
 
-    bool FFont::loadAndGenerate(const FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGPUDevice* device)
+    bool Font::loadAndGenerate(const FStringView filepath, FontAtlasType atlasType, const TArray<CharacterSet>& charSets, RHI::Device* device)
     {
         const TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
         if (filepath.isEmpty()) return false;
         return loadAndGenerate(TBufferView<uint8_t>(fileContent.data(), filepath.count()), atlasType, charSets, device);
     }
 
-    bool FFont::loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath)
+    bool Font::loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath)
     {
         return false;
     }
 
-    void FFont::destroy()
+    void Font::destroy()
     {
         m_AtlasTexture = nullptr;
         if (m_PrivateData->handle) msdfgen::destroyFont(m_PrivateData->handle);

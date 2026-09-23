@@ -2,12 +2,12 @@
 #include "ResourceState.h"
 #include "ResourceType.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    struct IResource
+    struct Resource
     {
-        virtual ~IResource() = default;
-        virtual EResourceType getResourceType() const = 0;
-        virtual EResourceState getResourceState() const = 0;
+        virtual ~Resource() = default;
+        virtual ResourceType getResourceType() const = 0;
+        virtual ResourceState getResourceState() const = 0;
     };
 }

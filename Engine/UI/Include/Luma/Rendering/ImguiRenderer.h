@@ -7,37 +7,42 @@ struct ImGuiContext;
 
 namespace Luma
 {
-    struct IWindow;
-    struct IGPUDevice;
-    struct ICommandBuffer;
-    struct ITextureView;
+    struct Window;
 
-    struct FImguiRendererDesc
+    namespace RHI
     {
-        IWindow* window = nullptr;
-        IGPUDevice* device = nullptr;
+        struct Device;
+        struct CommandBuffer;
+        struct TextureView;
+        struct Sampler;
+    }
+
+    struct ImguiRendererDesc
+    {
+        Window* window = nullptr;
+        RHI::Device* device = nullptr;
         uint32_t sampleCount = 0;
     };
 
-    struct IImguiRenderer : IRefCounted<IImguiRenderer>
+    struct ImguiRenderer : RefCounted<ImguiRenderer>
     {
-        IImguiRenderer() = default;
-        ~IImguiRenderer() override = default;
+        ImguiRenderer() = default;
+        ~ImguiRenderer() override = default;
 
-        virtual bool initialize(const FImguiRendererDesc& rendererDesc);
+        virtual bool initialize(const ImguiRendererDesc& rendererDesc);
         virtual void destroy() = 0;
 
         virtual void beginFrame() = 0;
         virtual void endFrame() = 0;
-        virtual void render(ICommandBuffer* cmdBuffer) = 0;
+        virtual void render(RHI::CommandBuffer* cmdBuffer) = 0;
 
-        virtual void drawTexture(const ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) = 0;
+        virtual void drawTexture(const RHI::TextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) = 0;
 
         ImGuiContext* getContext() const { return m_Context; }
     protected:
         ImGuiContext* m_Context = nullptr;
     };
 
-    IImguiRenderer* createImguiRenderer(const FImguiRendererDesc& rendererDesc);
-    IImguiRenderer* createImguiRenderer(IWindow* window, IGPUDevice* device);
+    ImguiRenderer* createImguiRenderer(const ImguiRendererDesc& rendererDesc);
+    ImguiRenderer* createImguiRenderer(Window* window, RHI::Device* device);
 }

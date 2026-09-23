@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EAssetType
+    enum class AssetType
     {
         Texture,
         AudioClip,
@@ -17,9 +17,9 @@ namespace Luma
         Font
     };
 
-    struct IAsset : IObject
+    struct Asset : Object
     {
-        ~IAsset() override = default;
-        virtual EAssetType getAssetType() const = 0;
+        ~Asset() override = default;
+        virtual AssetType getAssetType() const = 0;
     };
 }

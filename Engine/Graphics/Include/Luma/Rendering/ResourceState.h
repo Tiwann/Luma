@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EResourceState
+    enum class ResourceState
     {
         Undefined,
         General,

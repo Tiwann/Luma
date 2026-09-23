@@ -1,28 +1,29 @@
 #include <Luma/Memory/Ref.h>
 #include <Luma/Runtime/Window.h>
 #include <Luma/Runtime/Path.h>
-#include <Luma/Rendering/GPUDevice.h>
+#include <Luma/Rendering/Device.h>
 #include <Luma/Rendering/Shader.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Rendering/RenderPipeline.h>
 #include <Luma/Rendering/CommandBuffer.h>
 
 using namespace Luma;
+using namespace Luma::RHI;
 
 int main()
 {
-    Ref<IWindow> window = createWindow("Hello Triangle!", 800, 600, EWindowOptions::Centered | EWindowOptions::Resizable);
-    Ref<IGPUDevice> device = createGPUDevice(window);
+    Ref<Window> window = createWindow("Hello Triangle!", 800, 600, WindowOptions::Centered | WindowOptions::Resizable);
+    Ref<Device> device = createDevice(window);
 
     const FString vertexPath = FPath::getAssetPath("Shaders/HelloTriangle.slang.vert.spv");
     const FString fragmentPath = FPath::getAssetPath("Shaders/HelloTriangle.slang.frag.spv");
-    Ref<IShader> shaderProgram = device->createShader(vertexPath, fragmentPath);
+    Ref<Shader> shaderProgram = device->createShader(vertexPath, fragmentPath);
 
-    FRenderPipelineDesc pipelineDesc;
+    RenderPipelineDesc pipelineDesc;
     pipelineDesc.shaderProgram = shaderProgram;
     pipelineDesc.colorTargetCount = 1;
-    pipelineDesc.colorFormats[0] = EFormat::RGBA8_SRGB;
-    Ref<IRenderPipeline> pipeline = device->createRenderPipeline(pipelineDesc);
+    pipelineDesc.colorFormats[0] = Format::RGBA8_SRGB;
+    Ref<RenderPipeline> pipeline = device->createRenderPipeline(pipelineDesc);
 
     while (!window->shouldClose())
     {
@@ -30,24 +31,24 @@ int main()
 
         if (device->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = device->getCommandBuffer();
-            ITextureView* swapchainTexture = device->getAcquiredSwapchainTextureView();
+            CommandBuffer* cmdBuffer = device->getCommandBuffer();
+            TextureView* swapchainTexture = device->getAcquiredSwapchainTextureView();
 
-            FRenderPassTarget colorTarget;
-            colorTarget.type = ERenderPassTargetType::Color;
-            colorTarget.loadOp = ELoadOp::Clear;
-            colorTarget.storeOp = EStoreOp::Store;
-            colorTarget.clearValue.color = FColor::Black;
+            RenderPassTarget colorTarget;
+            colorTarget.type = RenderPassTargetType::Color;
+            colorTarget.loadOp = LoadOp::Clear;
+            colorTarget.storeOp = StoreOp::Store;
+            colorTarget.clearValue.color = Color::Black;
             colorTarget.textureView = swapchainTexture;
 
-            FRenderPassDesc renderPassDesc;
+            RenderPassDesc renderPassDesc;
             renderPassDesc.renderArea = window->getBounds();
             renderPassDesc.colorTargets.add(&colorTarget);
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             cmdBuffer->bindRenderPipeline(pipeline);
-            cmdBuffer->setViewport(FViewport::fromSize(window->getSize().as<float>()));
-            cmdBuffer->setScissor(FScissor::fromSize(window->getSize()));
+            cmdBuffer->setViewport(Viewport::fromSize(window->getSize().as<float>()));
+            cmdBuffer->setScissor(Scissor::fromSize(window->getSize()));
             cmdBuffer->draw(3, 1, 0, 0);
             cmdBuffer->endRenderPass();
 

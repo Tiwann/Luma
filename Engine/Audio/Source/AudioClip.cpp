@@ -45,9 +45,9 @@ namespace Luma
 
     }
 
-    EAssetType FAudioClip::getAssetType() const
+    AssetType FAudioClip::getAssetType() const
     {
-        return EAssetType::AudioClip;
+        return AssetType::AudioClip;
     }
 
     float FAudioClip::getDurationSeconds() const

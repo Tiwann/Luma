@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EIndexFormat
+    enum class IndexFormat
     {
         UInt32,
         UInt16,

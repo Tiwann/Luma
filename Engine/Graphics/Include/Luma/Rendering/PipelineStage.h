@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EPipelineStages
+    enum class PipelineStages
     {
         None = 0,
         TopOfPipe = 0x00000001,
@@ -28,5 +28,5 @@ namespace Luma
         MeshShader = 0x00100000,
     };
 
-    using FPipelineStageFlags = TFlags<EPipelineStages>;
+    using PipelineStageFlags = TFlags<PipelineStages>;
 }

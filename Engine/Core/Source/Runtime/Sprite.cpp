@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    Sprite Sprite::fromTexture(WeakRef<ITexture> texture)
+    Sprite Sprite::fromTexture(WeakRef<RHI::Texture> texture)
     {
         if (!texture) return {0, 0, 0, 0, nullptr};
         Sprite sprite;

@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EComponentSwizzle
+    enum class ComponentSwizzle
     {
         Identity,
         Zero,

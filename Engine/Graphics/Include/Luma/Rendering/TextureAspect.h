@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class ETextureAspectBits
+    enum class TextureAspect
     {
         None = 0,
         Color = BIT(0),
@@ -11,5 +11,5 @@ namespace Luma
         Stencil = BIT(2),
     };
 
-    using FTextureAspectFlags = TFlags<ETextureAspectBits>;
+    using TextureAspectFlags = TFlags<TextureAspect>;
 }

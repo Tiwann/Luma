@@ -9,7 +9,7 @@ using Luma::FPhysicsBody;
 using Luma::FRenderer2D;
 using Luma::FPhysicsWorld;
 using Luma::FBoxShape;
-using Luma::FCamera;
+using Luma::Camera;
 
 
 class Player
@@ -19,7 +19,7 @@ public:
     ~Player();
 
     void update(float deltaTime);
-    void render(const FCamera& camera, Ref<FRenderer2D> renderer);
+    void render(const Camera& camera, Ref<FRenderer2D> renderer);
 
     float Speed = 1.0f;
     float JumpHeight = 128.0f;

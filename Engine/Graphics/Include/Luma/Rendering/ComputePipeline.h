@@ -1,22 +1,22 @@
 #pragma once
 #include "Luma/Memory/RefCounted.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    struct IShader;
-    struct IGPUDevice;
+    struct Device;
+    struct Shader;
 
-    struct FComputePipelineDesc
+    struct ComputePipelineDesc
     {
-        IGPUDevice* device = nullptr;
-        IShader* shaderProgram = nullptr;
+        Device* device = nullptr;
+        Shader* shaderProgram = nullptr;
     };
     
-    struct IComputePipeline : IRefCounted<IComputePipeline>
+    struct ComputePipeline : RefCounted<ComputePipeline>
     {
-        ~IComputePipeline() override = default;
+        ~ComputePipeline() override = default;
 
-        virtual bool initialize(const FComputePipelineDesc& pipelineDesc) = 0;
+        virtual bool initialize(const ComputePipelineDesc& pipelineDesc) = 0;
         virtual void destroy() = 0;
     };
 }

@@ -1,10 +1,10 @@
 #include "Luma/Rendering/Swapchain.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    bool ISwapchain::resize(const uint32_t width, const uint32_t height)
+    bool Swapchain::resize(const uint32_t width, const uint32_t height)
     {
-        FSwapchainDesc swapchainDesc;
+        SwapchainDesc swapchainDesc;
         swapchainDesc.device = m_Device;
         swapchainDesc.format = m_Format;
         swapchainDesc.presentMode = m_PresentMode;
@@ -14,64 +14,64 @@ namespace Luma
         return initialize(swapchainDesc);
     }
 
-    uint32_t ISwapchain::getWidth() const
+    uint32_t Swapchain::getWidth() const
     {
         return m_Width;
     }
 
-    uint32_t ISwapchain::getHeight() const
+    uint32_t Swapchain::getHeight() const
     {
         return m_Height;
     }
 
-    FRect2u ISwapchain::getBounds() const
+    FRect2u Swapchain::getBounds() const
     {
         return {0, 0, m_Width, m_Height};
     }
 
-    EFormat ISwapchain::getFormat() const
+    Format Swapchain::getFormat() const
     {
         return m_Format;
     }
 
-    EPresentMode ISwapchain::getPresentMode() const
+    PresentMode Swapchain::getPresentMode() const
     {
         return m_PresentMode;
     }
 
-    ESwapchainBuffering ISwapchain::getBuffering() const
+    SwapchainBuffering Swapchain::getBuffering() const
     {
         return m_Buffering;
     }
 
-    uint32_t ISwapchain::getTextureCount() const
+    uint32_t Swapchain::getTextureCount() const
     {
         return (uint32_t)m_Buffering;
     }
 
-    IGPUDevice* ISwapchain::getDevice() const
+    Device* Swapchain::getDevice() const
     {
         return m_Device;
     }
 
-    void ISwapchain::invalidate()
+    void Swapchain::invalidate()
     {
         m_Valid = false;
     }
 
-    bool ISwapchain::isValid() const
+    bool Swapchain::isValid() const
     {
         return m_Valid;
     }
 
-    bool ISwapchain::hasVSync() const
+    bool Swapchain::hasVSync() const
     {
-        return m_PresentMode == EPresentMode::Fifo;
+        return m_PresentMode == PresentMode::Fifo;
     }
 
-    FSwapchainDesc ISwapchain::getDesc() const
+    SwapchainDesc Swapchain::getDesc() const
     {
-        FSwapchainDesc desc;
+        SwapchainDesc desc;
         desc.device = m_Device;
         desc.width = m_Width;
         desc.height = m_Height;

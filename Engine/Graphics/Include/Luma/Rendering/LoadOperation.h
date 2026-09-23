@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ELoadOp
+    enum class LoadOp
     {
         Load,
         Clear,

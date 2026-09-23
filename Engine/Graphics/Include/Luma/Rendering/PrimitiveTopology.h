@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EPrimitiveTopology
+    enum class PrimitiveTopology
     {
         PointList,
         LineList,

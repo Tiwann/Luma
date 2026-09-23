@@ -18,7 +18,7 @@ namespace Luma
         float offset = 0.0f;
     };
 
-    class LUMA_PHYSICS_API IPhysicsShape : public IRefCounted<IPhysicsShape>
+    class LUMA_PHYSICS_API IPhysicsShape : public RefCounted<IPhysicsShape>
     {
     public:
         enum class EType

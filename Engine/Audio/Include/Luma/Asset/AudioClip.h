@@ -8,7 +8,7 @@ struct ma_decoder;
 
 namespace Luma
 {
-    class LUMA_AUDIO_API FAudioClip final : public IAsset
+    class LUMA_AUDIO_API FAudioClip final : public Asset
     {
     public:
         FAudioClip();
@@ -18,7 +18,7 @@ namespace Luma
         bool loadFromMemory(const void* data, size_t size);
         void destroy() override;
 
-        EAssetType getAssetType() const override;
+        AssetType getAssetType() const override;
 
         float getDurationSeconds() const;
         uint64_t getDurationFrames() const;

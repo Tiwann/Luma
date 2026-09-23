@@ -5,7 +5,7 @@
 #include "Luma/Input/Mouse.h"
 #include <GLFW/glfw3.h>
 
-#define GET_WINDOW(x) static_cast<FDesktopWindow*>(glfwGetWindowUserPointer(x))
+#define GET_WINDOW(x) static_cast<DesktopWindow*>(glfwGetWindowUserPointer(x))
 
 namespace Luma
 {
@@ -159,13 +159,13 @@ namespace Luma
         }
     }
 
-    bool FDesktopWindow::initialize(const FWindowDesc& windowDesc)
+    bool DesktopWindow::initialize(const WindowDesc& windowDesc)
     {
         glfwInit();
         if (m_Handle) glfwDestroyWindow(m_Handle);
 
 #ifdef LUMA_BUILD_OPENGL
-        if (windowDesc.deviceType == EGPUDeviceType::OpenGL)
+        if (windowDesc.deviceType == DeviceType::OpenGL)
         {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -177,7 +177,7 @@ namespace Luma
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
-        if (windowDesc.options & EWindowOptions::Centered)
+        if (windowDesc.options & WindowOptions::Centered)
         {
             GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
             const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
@@ -190,8 +190,8 @@ namespace Luma
             glfwWindowHint(GLFW_POSITION_Y, y);
         }
 
-        glfwWindowHint(GLFW_RESIZABLE, windowDesc.options & EWindowOptions::Resizable);
-        glfwWindowHint(GLFW_DECORATED, !(windowDesc.options & EWindowOptions::NoDecoration));
+        glfwWindowHint(GLFW_RESIZABLE, windowDesc.options & WindowOptions::Resizable);
+        glfwWindowHint(GLFW_DECORATED, !(windowDesc.options & WindowOptions::NoDecoration));
 
         m_Handle = glfwCreateWindow(windowDesc.width, windowDesc.height, *windowDesc.title, nullptr, nullptr);
         if (!m_Handle) return false;
@@ -258,86 +258,86 @@ namespace Luma
         return true;
     }
 
-    void FDesktopWindow::destroy()
+    void DesktopWindow::destroy()
     {
         if (!m_Handle) return;
         glfwDestroyWindow(m_Handle);
         m_Handle = nullptr;
     }
 
-    void FDesktopWindow::pollEvents()
+    void DesktopWindow::pollEvents()
     {
         FInput::update();
         glfwPollEvents();
     }
 
-    uint32_t FDesktopWindow::getWidth() const
+    uint32_t DesktopWindow::getWidth() const
     {
         int32_t width = 0;
         glfwGetWindowSize(m_Handle, &width, nullptr);
         return static_cast<uint32_t>(width);
     }
 
-    uint32_t FDesktopWindow::getHeight() const
+    uint32_t DesktopWindow::getHeight() const
     {
         int32_t height = 0;
         glfwGetWindowSize(m_Handle, nullptr, &height);
         return static_cast<uint32_t>(height);
     }
 
-    FVector2u FDesktopWindow::getPosition() const
+    FVector2u DesktopWindow::getPosition() const
     {
         FVector2<int32_t> result;
         glfwGetWindowPos(m_Handle, &result.x, &result.y);
         return result.as<uint32_t>();
     }
 
-    void FDesktopWindow::setPosition(const FVector2u& position)
+    void DesktopWindow::setPosition(const FVector2u& position)
     {
         glfwSetWindowPos(m_Handle, position.x, position.y);
     }
 
-    bool FDesktopWindow::hasFocus() const
+    bool DesktopWindow::hasFocus() const
     {
         return m_Focused;
     }
 
-    bool FDesktopWindow::isMaximized() const
+    bool DesktopWindow::isMaximized() const
     {
         return m_Maximized;
     }
 
-    bool FDesktopWindow::isMinimized() const
+    bool DesktopWindow::isMinimized() const
     {
         return m_Minimized;
     }
 
-    void FDesktopWindow::setFullscreen(bool fullscreen)
+    void DesktopWindow::setFullscreen(bool fullscreen)
     {
 
     }
 
-    bool FDesktopWindow::isAvailable() const
+    bool DesktopWindow::isAvailable() const
     {
         return !isMinimized();
     }
 
-    bool FDesktopWindow::shouldClose() const
+    bool DesktopWindow::shouldClose() const
     {
         return glfwWindowShouldClose(m_Handle);
     }
 
-    GLFWwindow* FDesktopWindow::getHandle() const
+    GLFWwindow* DesktopWindow::getHandle() const
     {
         return m_Handle;
     }
 
-    FString FDesktopWindow::getTitle() const
+    FString DesktopWindow::getTitle() const
     {
         return m_Title;
     }
 
-    void FDesktopWindow::setTitle(const FString& title)
+    void DesktopWindow::setTitle(const FString& title)
     {
         glfwSetWindowTitle(m_Handle, *title);
         m_Title = title;

@@ -8,10 +8,14 @@ namespace msdfgen { class FontHandle; }
 
 namespace Luma
 {
-    struct ITexture;
-    struct IGPUDevice;
+    namespace RHI
+    {
+        struct Device;
+        struct Texture;
+    }
 
-    enum class EFontAtlasType
+
+    enum class FontAtlasType
     {
         None,
         Bitmap,
@@ -19,7 +23,7 @@ namespace Luma
         MSDF
     };
 
-    struct FFontMetrics
+    struct FontMetrics
     {
         double emSize = 0.0;
         double ascenderY = 0.0;
@@ -29,45 +33,45 @@ namespace Luma
         double underlineThickness = 0.0;
     };
 
-    struct FCharacterSet
+    struct CharacterSet
     {
         uint32_t begin = 0;
         uint32_t end = 0;
 
-        static constexpr const FCharacterSet& ascii() { static constexpr FCharacterSet ascii{0x20, 0x7f}; return ascii;}
+        static constexpr const CharacterSet& ascii() { static constexpr CharacterSet ascii{0x20, 0x7f}; return ascii;}
     };
 
-    class FFont : public IAsset
+    class Font : public Asset
     {
     public:
-        FFont();
-        ~FFont() override;
+        Font();
+        ~Font() override;
 
-        static EAssetType getStaticAssetType() { return EAssetType::Font; }
-        EAssetType getAssetType() const override { return getStaticAssetType(); }
+        static AssetType getStaticAssetType() { return AssetType::Font; }
+        AssetType getAssetType() const override { return getStaticAssetType(); }
 
-        bool loadAndGenerate(const TBufferView<uint8_t>& fontData, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGPUDevice* device);
-        bool loadAndGenerate(FStringView filepath, EFontAtlasType atlasType, const TArray<FCharacterSet>& charSets, IGPUDevice* device);
+        bool loadAndGenerate(const TBufferView<uint8_t>& fontData, FontAtlasType atlasType, const TArray<CharacterSet>& charSets, RHI::Device* device);
+        bool loadAndGenerate(FStringView filepath, FontAtlasType atlasType, const TArray<CharacterSet>& charSets, RHI::Device* device);
         bool loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath);
         void destroy() override;
 
-        EFontAtlasType getAtlasType() const;
-        Ref<ITexture> getAtlasTexture() const;
+        FontAtlasType getAtlasType() const;
+        Ref<RHI::Texture> getAtlasTexture() const;
         msdfgen::FontHandle* getHandle() const;
 
         double getAdvance(uint32_t character) const;
         double getAdvance(uint32_t character, uint32_t nextCharacter) const;
         bool hasGlyph(uint32_t unicode) const;
 
-        FFontMetrics getMetrics() const;
+        FontMetrics getMetrics() const;
         void getAtlasTextureCoordinates(uint32_t unicode, double& left, double& right, double& top, double& bottom) const;
         void getPlaneBounds(uint32_t unicode, double& left, double& right, double& top, double& bottom) const;
 
         double getTextWidth(FStringView text, float fontSize, float characterSpacing = 1.0f) const;
         double getTextHeight(FStringView text, float fontSize, float lineSpacing = 1.0f) const;
     private:
-        EFontAtlasType m_AtlasType = EFontAtlasType::None;
-        Ref<ITexture> m_AtlasTexture = nullptr;
+        FontAtlasType m_AtlasType = FontAtlasType::None;
+        Ref<RHI::Texture> m_AtlasTexture = nullptr;
         struct FPrivate;
         FPrivate* m_PrivateData = nullptr;
     };
@@ -91,17 +95,17 @@ namespace Luma
     struct FFontFamily
     {
         FString name = "Unnamed Font";
-        Ref<FFont> regular = nullptr;
-        Ref<FFont> italic = nullptr;
-        Ref<FFont> bold = nullptr;
-        Ref<FFont> boldItalic = nullptr;
-        Ref<FFont> light = nullptr;
-        Ref<FFont> lightItalic = nullptr;
-        Ref<FFont> medium = nullptr;
-        Ref<FFont> semiBold = nullptr;
-        Ref<FFont> black = nullptr;
-        Ref<FFont> condensed = nullptr;
-        Ref<FFont> condensedBold = nullptr;
-        Ref<FFont> extended = nullptr;
+        Ref<Font> regular = nullptr;
+        Ref<Font> italic = nullptr;
+        Ref<Font> bold = nullptr;
+        Ref<Font> boldItalic = nullptr;
+        Ref<Font> light = nullptr;
+        Ref<Font> lightItalic = nullptr;
+        Ref<Font> medium = nullptr;
+        Ref<Font> semiBold = nullptr;
+        Ref<Font> black = nullptr;
+        Ref<Font> condensed = nullptr;
+        Ref<Font> condensedBold = nullptr;
+        Ref<Font> extended = nullptr;
     };
 }

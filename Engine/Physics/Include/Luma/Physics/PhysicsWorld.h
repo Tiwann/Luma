@@ -16,7 +16,7 @@ namespace Luma
         uint32_t maxBodies = 1024;
     };
 
-    class LUMA_PHYSICS_API FPhysicsWorld : public IRefCounted<FPhysicsWorld>
+    class LUMA_PHYSICS_API FPhysicsWorld : public RefCounted<FPhysicsWorld>
     {
     public:
         explicit FPhysicsWorld(const FPhysicsWorldDesc& desc = FPhysicsWorldDesc());

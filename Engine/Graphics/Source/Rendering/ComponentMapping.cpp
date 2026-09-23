@@ -2,13 +2,13 @@
 
 namespace Luma
 {
-    FComponentMapping FComponentMapping::FromColorChannelFlags(const FColorChannelFlags channelFlags)
+    ComponentMapping ComponentMapping::FromColorChannelFlags(const ColorChannelFlags channelFlags)
     {
-        FComponentMapping swizzle;
-        swizzle.r = channelFlags & EColorChannelBits::Red ? EComponentSwizzle::Identity : EComponentSwizzle::Zero;
-        swizzle.g = channelFlags & EColorChannelBits::Green ? EComponentSwizzle::Identity : EComponentSwizzle::Zero;
-        swizzle.b = channelFlags & EColorChannelBits::Blue ? EComponentSwizzle::Identity : EComponentSwizzle::Zero;
-        swizzle.a = channelFlags & EColorChannelBits::Alpha ? EComponentSwizzle::Identity : EComponentSwizzle::Zero;
+        ComponentMapping swizzle;
+        swizzle.r = channelFlags & ColorChannels::Red ? ComponentSwizzle::Identity : ComponentSwizzle::Zero;
+        swizzle.g = channelFlags & ColorChannels::Green ? ComponentSwizzle::Identity : ComponentSwizzle::Zero;
+        swizzle.b = channelFlags & ColorChannels::Blue ? ComponentSwizzle::Identity : ComponentSwizzle::Zero;
+        swizzle.a = channelFlags & ColorChannels::Alpha ? ComponentSwizzle::Identity : ComponentSwizzle::Zero;
         return swizzle;
     }
 }

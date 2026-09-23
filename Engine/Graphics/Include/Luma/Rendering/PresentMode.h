@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EPresentMode
+    enum class PresentMode
     {
         Unknown = 0,
         Immediate,

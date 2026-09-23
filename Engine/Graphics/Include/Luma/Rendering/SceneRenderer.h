@@ -16,19 +16,19 @@ namespace Luma
         bool initialize(IGPUDevice* device, uint32_t width, uint32_t height);
         void destroy();
 
-        Ref<ITexture> getAlbedoTexture() const { return m_Albedo; }
-        Ref<ITexture> getMetallicRoughnessTexture() const { return m_MetallicRoughness; }
-        Ref<ITexture> getNormalTexture() const { return m_Normal; }
-        Ref<ITexture> getEmissionTexture() const { return m_Emission; }
-        Ref<ITexture> getPositionTexture() const { return m_Position; }
-        Ref<ITexture> getDepthStencilTexture() const { return m_DepthStencil; }
+        Ref<Texture> getAlbedoTexture() const { return m_Albedo; }
+        Ref<Texture> getMetallicRoughnessTexture() const { return m_MetallicRoughness; }
+        Ref<Texture> getNormalTexture() const { return m_Normal; }
+        Ref<Texture> getEmissionTexture() const { return m_Emission; }
+        Ref<Texture> getPositionTexture() const { return m_Position; }
+        Ref<Texture> getDepthStencilTexture() const { return m_DepthStencil; }
     private:
-        Ref<ITexture> m_Albedo = nullptr;
-        Ref<ITexture> m_MetallicRoughness = nullptr;
-        Ref<ITexture> m_Normal = nullptr;
-        Ref<ITexture> m_Emission = nullptr;
-        Ref<ITexture> m_Position = nullptr;
-        Ref<ITexture> m_DepthStencil = nullptr;
+        Ref<Texture> m_Albedo = nullptr;
+        Ref<Texture> m_MetallicRoughness = nullptr;
+        Ref<Texture> m_Normal = nullptr;
+        Ref<Texture> m_Emission = nullptr;
+        Ref<Texture> m_Position = nullptr;
+        Ref<Texture> m_DepthStencil = nullptr;
     };
 
     struct FSceneRendererDesc
@@ -53,7 +53,7 @@ namespace Luma
         void setScene(FScene* scene) { m_Scene = scene; }
 
         Ref<FGBuffer> getGBuffer() const { return m_GBuffer; }
-        Ref<ITexture> getFinalTexture() const { return m_FinalTexture; }
+        Ref<Texture> getFinalTexture() const { return m_FinalTexture; }
         Ref<IShader> getShader() const { return m_GeometryPassShader; }
     private:
         bool m_Begin = false;
@@ -62,12 +62,12 @@ namespace Luma
         IGPUDevice* m_Device = nullptr;
         FScene* m_Scene = nullptr;
         Ref<FGBuffer> m_GBuffer = nullptr;
-        Ref<ITexture> m_FinalTexture = nullptr;
+        Ref<Texture> m_FinalTexture = nullptr;
         Ref<IBuffer> m_CameraBuffer = nullptr;
         Ref<IBuffer> m_ObjectBuffer = nullptr;
         Ref<IBuffer> m_SceneBuffer = nullptr;
-        Ref<IBindingGroup> m_BindingSet1 = nullptr;
-        Ref<IBindingGroup> m_BindingSet2 = nullptr;
+        Ref<BindingGroup> m_BindingSet1 = nullptr;
+        Ref<BindingGroup> m_BindingSet2 = nullptr;
         Ref<IRenderPipeline> m_GeometryPipeline = nullptr;
         Ref<IShader> m_GeometryPassShader = nullptr;
     };

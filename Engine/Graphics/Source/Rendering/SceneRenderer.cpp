@@ -333,7 +333,7 @@ namespace Luma
 
                 for (const auto& [index, slot] : materialSlots)
                 {
-                    Ref<FMaterial> material = slot.material;
+                    Ref<Material> material = slot.material;
                     if (!material) continue;
 
                     cmdBuffer->bindMaterial(material);

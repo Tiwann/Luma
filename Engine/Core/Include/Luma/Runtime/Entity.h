@@ -8,7 +8,7 @@ namespace Luma
 {
     struct FClass;
 
-    class FEntity final : IAsset
+    class FEntity final : Asset
     {
     public:
         FEntity(FScene* context) : m_Owner(context) {}
@@ -57,7 +57,7 @@ namespace Luma
         }
 
         FScene* getOwner() const;
-        EAssetType getAssetType() const override;
+        AssetType getAssetType() const override;
 
         bool isActive() const;
         void setActive(bool active);
@@ -71,7 +71,7 @@ namespace Luma
         void onUpdate(double deltaTime);
         void onPhysicsUpdate(double deltaTime);
         void onLateUpdate(double deltaTime);
-        void onRender(ICommandBuffer* cmdBuffer);
+        void onRender(CommandBuffer* cmdBuffer);
 
         friend class FScene;
         FScene* m_Owner = nullptr;

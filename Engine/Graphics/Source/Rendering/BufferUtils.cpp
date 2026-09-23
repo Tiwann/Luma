@@ -4,16 +4,19 @@
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Fence.h"
 #include "Luma/Rendering/Queue.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
+
 
 namespace Luma::BufferUtils
 {
-    IBuffer* createStagingBuffer(IGPUDevice* device, const void* data, size_t size)
+    using namespace RHI;
+
+    Buffer* createStagingBuffer(Device* device, const void* data, size_t size)
     {
-        FBufferDesc bufferDesc;
+        BufferDesc bufferDesc;
         bufferDesc.size = size;
-        bufferDesc.usage = EBufferUsage::StagingBuffer;
-        IBuffer* stagingBuffer = device->createBuffer(bufferDesc);
+        bufferDesc.usage = BufferUsage::StagingBuffer;
+        Buffer* stagingBuffer = device->createBuffer(bufferDesc);
         if (!stagingBuffer) return nullptr;
 
         void* mappedData = stagingBuffer->map();
@@ -22,33 +25,33 @@ namespace Luma::BufferUtils
         return stagingBuffer;
     }
 
-    IBuffer* createVertexBuffer(IGPUDevice* device, const void* data, const size_t size)
+    Buffer* createVertexBuffer(Device* device, const void* data, const size_t size)
     {
-        Ref<IBuffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
+        Ref<Buffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
         if (!stagingBuffer) return nullptr;
 
-        FBufferDesc bufferDesc;
+        BufferDesc bufferDesc;
         bufferDesc.size = size;
-        bufferDesc.usage = EBufferUsage::VertexBuffer;
-        IBuffer* vertexBuffer = device->createBuffer(bufferDesc);
+        bufferDesc.usage = BufferUsage::VertexBuffer;
+        Buffer* vertexBuffer = device->createBuffer(bufferDesc);
         if (!vertexBuffer) return nullptr;
 
-        IQueue* copyQueue = device->getCopyQueue();
-        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
+        Queue* copyQueue = device->getCopyQueue();
+        Ref<CommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
 
         if (cmdBuffer->begin())
         {
             cmdBuffer->copyBuffer(stagingBuffer, vertexBuffer, 0, 0, size);
             cmdBuffer->end();
 
-            Ref<IFence> fence = Ref(device->createFence(0));
+            Ref<Fence> fence = Ref(device->createFence(0));
 
-            FFenceSignal signal;
+            FenceSignal signal;
             signal.fence = fence;
             signal.value = 1;
-            signal.stages = EPipelineStages::Copy;
+            signal.stages = PipelineStages::Copy;
 
-            FQueueExecuteInfo execInfo;
+            QueueExecuteInfo execInfo;
             execInfo.cmdBuffers = {cmdBuffer};
             execInfo.signals = signal;
 
@@ -62,19 +65,19 @@ namespace Luma::BufferUtils
         return nullptr;
     }
 
-    IBuffer* createIndexBuffer(IGPUDevice* device, const void* data, const size_t size)
+    Buffer* createIndexBuffer(Device* device, const void* data, const size_t size)
     {
-        Ref<IBuffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
+        Ref<Buffer> stagingBuffer = Ref(createStagingBuffer(device, data, size));
         if (!stagingBuffer) return nullptr;
 
-        FBufferDesc bufferDesc;
+        BufferDesc bufferDesc;
         bufferDesc.size = size;
-        bufferDesc.usage = EBufferUsage::IndexBuffer;
-        IBuffer* indexBuffer = device->createBuffer(bufferDesc);
+        bufferDesc.usage = BufferUsage::IndexBuffer;
+        Buffer* indexBuffer = device->createBuffer(bufferDesc);
         if (!indexBuffer) return nullptr;
 
-        IQueue* copyQueue = device->getCopyQueue();
-        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
+        Queue* copyQueue = device->getCopyQueue();
+        Ref<CommandBuffer> cmdBuffer = device->createCommandBuffer(copyQueue);
         LUMA_ASSERT(cmdBuffer, "Failed to create command buffer! Maybe pool is full ?");
 
         if (cmdBuffer->begin())
@@ -82,14 +85,14 @@ namespace Luma::BufferUtils
             cmdBuffer->copyBuffer(stagingBuffer, indexBuffer, 0, 0, size);
             cmdBuffer->end();
 
-            Ref<IFence> fence = Ref(device->createFence(0));
+            Ref<Fence> fence = Ref(device->createFence(0));
 
-            FFenceSignal signal;
+            FenceSignal signal;
             signal.fence = fence;
             signal.value = 1;
-            signal.stages = EPipelineStages::Copy;
+            signal.stages = PipelineStages::Copy;
 
-            FQueueExecuteInfo execInfo;
+            QueueExecuteInfo execInfo;
             execInfo.cmdBuffers = {cmdBuffer};
             execInfo.signals = signal;
 

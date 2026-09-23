@@ -18,10 +18,10 @@
 namespace Luma
 {
     template<typename T>
-    struct IRefCounted
+    struct RefCounted
     {
-        IRefCounted() = default;
-        virtual ~IRefCounted() = default;
+        RefCounted() = default;
+        virtual ~RefCounted() = default;
 
         void addRef()
         {

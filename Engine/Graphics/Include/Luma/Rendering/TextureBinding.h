@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ETextureBindingType
+    enum class TextureBindingType
     {
         Storage,
         Sampled

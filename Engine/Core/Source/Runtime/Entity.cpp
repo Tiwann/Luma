@@ -45,7 +45,7 @@ namespace Luma
         }
     }
 
-    void FEntity::onRender(ICommandBuffer* cmdBuffer)
+    void FEntity::onRender(CommandBuffer* cmdBuffer)
     {
         for (auto* component : m_Components)
         {
@@ -79,9 +79,9 @@ namespace Luma
         return m_Owner;
     }
 
-    EAssetType FEntity::getAssetType() const
+    AssetType FEntity::getAssetType() const
     {
-        return EAssetType::Entity;
+        return AssetType::Entity;
     }
 
     bool FEntity::isActive() const

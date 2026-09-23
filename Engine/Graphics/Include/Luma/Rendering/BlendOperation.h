@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EBlendOp
+    enum class BlendOp
     {
         Add,
         Min,

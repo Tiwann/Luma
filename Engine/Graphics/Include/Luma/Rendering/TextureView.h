@@ -1,56 +1,58 @@
 #pragma once
-#include "TextureAspect.h"
 #include "ComponentMapping.h"
-#include "Luma/Runtime/Format.h"
-#include "Luma/Containers/StringView.h"
+#include "TextureAspect.h"
 #include "Luma/Math/Rect2.h"
-#include <cstdint>
+#include "Luma/Runtime/Format.h"
 
-namespace Luma
+namespace Luma::RHI
 {
-    struct IGPUDevice;
-    struct ITexture;
+    struct Device;
+    struct Texture;
 
-    struct FTextureViewDesc
+    struct TextureViewDesc
     {
-        IGPUDevice* device = nullptr;
-        const ITexture* texture = nullptr;
-        EFormat format = EFormat::None;
-        FTextureAspectFlags aspectFlags = ETextureAspectBits::None;
+        Device* device = nullptr;
+        const Texture* texture = nullptr;
+        Format format = Format::None;
+        TextureAspectFlags aspectFlags = TextureAspect::None;
         uint32_t width = 0;
         uint32_t height = 0;
         uint32_t depth = 0;
-        uint32_t baseMipLevel = 0;
+        uint32_t startMipIndex = 0;
         uint32_t mipCount = 0;
-        uint32_t baseArray = 0;
+        uint32_t startArrayIndex = 0;
         uint32_t arrayCount = 0;
-        FComponentMapping mapping = FComponentMapping();
+        ComponentMapping mapping = ComponentMapping();
     };
 
-    struct ITextureView
+    struct TextureView
     {
-        ITextureView() = default;
-        virtual ~ITextureView() = default;
-        virtual bool initialize(const FTextureViewDesc& textureViewDesc) = 0;
+        TextureView() = default;
+        virtual ~TextureView() = default;
+        virtual bool initialize(const TextureViewDesc& textureViewDesc) = 0;
         virtual void destroy() = 0;
         virtual void setName(FStringView name) {}
-        const ITexture* getTexture() const { return m_Texture; }
-        EFormat getFormat() const { return m_Format; }
-        FTextureAspectFlags getAspectFlags() const { return m_AspectFlags; }
+        const Texture* getTexture() const { return m_Texture; }
+        Format getFormat() const { return m_Format; }
+        TextureAspectFlags getAspectFlags() const { return m_AspectFlags; }
         uint32_t getWidth() const { return m_Width; }
         uint32_t getHeight() const { return m_Height; }
         uint32_t getDepth() const { return m_Depth; }
-        uint32_t getBaseMipLevel() const { return m_BaseMipLevel; }
+        uint32_t getStartMipIndex() const { return m_StartMipIndex; }
         uint32_t getMipCount() const { return m_MipCount; }
+        uint32_t getStartArrayIndex() const { return m_StartArrayIndex; }
+        uint32_t getArrayCount() const { return m_ArrayCount; }
         FRect2u getArea() const { return FRect2u(0, 0, m_Width, m_Height); }
     protected:
-        const ITexture* m_Texture = nullptr;
-        EFormat m_Format = EFormat::None;
-        FTextureAspectFlags m_AspectFlags = ETextureAspectBits::None;
+        const Texture* m_Texture = nullptr;
+        Format m_Format = Format::None;
+        TextureAspectFlags m_AspectFlags = TextureAspect::None;
         uint32_t m_Width = 0;
         uint32_t m_Height = 0;
         uint32_t m_Depth = 0;
-        uint32_t m_BaseMipLevel = 0;
+        uint32_t m_StartMipIndex = 0;
         uint32_t m_MipCount = 0;
+        uint32_t m_StartArrayIndex = 0;
+        uint32_t m_ArrayCount = 0;
     };
 }

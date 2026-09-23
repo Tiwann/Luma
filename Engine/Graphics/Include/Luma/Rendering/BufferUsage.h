@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EBufferUsage
+    enum class BufferUsage
     {
         None,
         VertexBuffer,

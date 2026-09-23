@@ -26,7 +26,7 @@ namespace Luma
         FPhysicsConstraintsFlags constraints = EPhysicsConstraints::None;
     };
 
-    class LUMA_PHYSICS_API FPhysicsBody : public IRefCounted<FPhysicsBody>
+    class LUMA_PHYSICS_API FPhysicsBody : public RefCounted<FPhysicsBody>
     {
     public:
         explicit FPhysicsBody(const FPhysicsWorld* world, const FPhysicsBodyDesc& desc = FPhysicsBodyDesc());

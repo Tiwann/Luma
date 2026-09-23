@@ -16,7 +16,7 @@ namespace Luma
     struct FAudioStream;
     struct FAudioFormat;
 
-    struct LUMA_AUDIO_API IAudioDevice : IRefCounted<IAudioDevice>
+    struct LUMA_AUDIO_API IAudioDevice : RefCounted<IAudioDevice>
     {
         ~IAudioDevice() override = default;
         virtual bool initialize(const FAudioDeviceDesc& desc = FAudioDeviceDesc()) = 0;

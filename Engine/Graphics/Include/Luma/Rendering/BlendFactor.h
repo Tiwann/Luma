@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EBlendFactor
+    enum class BlendFactor
     {
         Zero,
         One,

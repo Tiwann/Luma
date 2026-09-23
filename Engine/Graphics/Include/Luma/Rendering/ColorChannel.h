@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EColorChannelBits
+    enum class ColorChannels
     {
         None = 0,
         Red = BIT(0),
@@ -13,5 +13,5 @@ namespace Luma
         All = Red | Green | Blue | Alpha
     };
 
-    typedef TFlags<EColorChannelBits> FColorChannelFlags;
+    typedef TFlags<ColorChannels> ColorChannelFlags;
 }

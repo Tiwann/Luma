@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ECullMode
+    enum class CullMode
     {
         FrontFace,
         BackFace,

@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EFilter
+    enum class Filter
     {
         Nearest,
         Linear,

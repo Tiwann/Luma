@@ -4,43 +4,43 @@
 
 namespace Luma
 {
-    struct FBlendFunction
+    struct BlendFunction
     {
-        EBlendFactor colorSource;
-        EBlendFactor colorDest;
-        EBlendOp colorOp;
-        EBlendFactor alphaSource;
-        EBlendFactor alphaDest;
-        EBlendOp alphaOp;
+        BlendFactor colorSource;
+        BlendFactor colorDest;
+        BlendOp colorOp;
+        BlendFactor alphaSource;
+        BlendFactor alphaDest;
+        BlendOp alphaOp;
 
-        static constexpr const FBlendFunction& alphaBlend()
+        static constexpr const BlendFunction& alphaBlend()
         {
-            static FBlendFunction alphaBlend = {
-                EBlendFactor::SourceAlpha,
-                EBlendFactor::OneMinusSourceAlpha,
-                EBlendOp::Add,
-                EBlendFactor::One,
-                EBlendFactor::Zero,
-                EBlendOp::Add
+            static BlendFunction alphaBlend = {
+                BlendFactor::SourceAlpha,
+                BlendFactor::OneMinusSourceAlpha,
+                BlendOp::Add,
+                BlendFactor::One,
+                BlendFactor::Zero,
+                BlendOp::Add
             };
             return alphaBlend;
         }
 
-        static constexpr const FBlendFunction& additiveBlend()
+        static constexpr const BlendFunction& additiveBlend()
         {
-            static FBlendFunction additiveBlend = {
-                EBlendFactor::SourceAlpha,
-                EBlendFactor::OneMinusSourceAlpha,
-                EBlendOp::Add,
-                EBlendFactor::One,
-                EBlendFactor::Zero,
-                EBlendOp::Add
+            static BlendFunction additiveBlend = {
+                BlendFactor::SourceAlpha,
+                BlendFactor::OneMinusSourceAlpha,
+                BlendOp::Add,
+                BlendFactor::One,
+                BlendFactor::Zero,
+                BlendOp::Add
             };
             return additiveBlend;
         }
     };
 
-    constexpr FBlendFunction makeBlendFunction(EBlendFactor src, EBlendFactor dest, EBlendOp op)
+    constexpr BlendFunction makeBlendFunction(BlendFactor src, BlendFactor dest, BlendOp op)
     {
         return { src, dest, op, src, dest, op };
     }

@@ -7,36 +7,36 @@
 
 namespace Luma
 {
-    struct FVertexAttribute
+    struct VertexAttribute
     {
         FString name;
-        EShaderDataType type;
+        ShaderDataType type;
         uint32_t binding;
-        bool operator==(const FVertexAttribute&) const = default;
+        bool operator==(const VertexAttribute&) const = default;
     };
 
-    class FVertexInputLayout
+    class VertexInputLayout
     {
     public:
-        FVertexInputLayout() = default;
+        VertexInputLayout() = default;
 
-        void addInputBinding(uint32_t binding, EVertexInputRate inputRateBinding);
-        void addInputAttribute(const FVertexAttribute& attribute);
-        void addInputAttribute(FString name, EShaderDataType type, uint32_t binding);
+        void addInputBinding(uint32_t binding, VertexInputRate inputRateBinding);
+        void addInputAttribute(const VertexAttribute& attribute);
+        void addInputAttribute(FString name, ShaderDataType type, uint32_t binding);
 
         uint32_t getStride(uint32_t binding) const;
         uint32_t getAttributeCount() const;
         uint32_t getBindingCount() const;
-        uint32_t getAttributeOffset(const FVertexAttribute& attribute) const;
+        uint32_t getAttributeOffset(const VertexAttribute& attribute) const;
         uint32_t getAttributeOffset(const FString& name) const;
         uint32_t getAttributeOffset(uint32_t index) const;
 
-        const TArray<FVertexAttribute>& getInputAttributes() const;
-        const THashMap<uint32_t, EVertexInputRate>& getInputBindings() const;
+        const TArray<VertexAttribute>& getInputAttributes() const;
+        const THashMap<uint32_t, VertexInputRate>& getInputBindings() const;
 
-        bool operator==(const FVertexInputLayout& other) const;
+        bool operator==(const VertexInputLayout& other) const;
     private:
-        THashMap<uint32_t, EVertexInputRate> m_InputBindings;
-        TArray<FVertexAttribute> m_InputAttributes;
+        THashMap<uint32_t, VertexInputRate> m_InputBindings;
+        TArray<VertexAttribute> m_InputAttributes;
     };
 }

@@ -43,556 +43,556 @@ namespace Luma::Vulkan
     VulkanType convert(const NovaType& value);
 
     template<>
-    inline VkFormat convert(const EFormat& value)
+    inline VkFormat convert(const Format& value)
     {
         switch (value)
         {
-        case EFormat::None:                  return VK_FORMAT_UNDEFINED;
-        case EFormat::R8_UNORM:              return VK_FORMAT_R8_UNORM;
-        case EFormat::R8_SNORM:              return VK_FORMAT_R8_SNORM;
-        case EFormat::R16_USHORT:            return VK_FORMAT_R16_UINT;
-        case EFormat::R16_SHORT:             return VK_FORMAT_R16_SINT;
-        case EFormat::R32_FLOAT:             return VK_FORMAT_R32_SFLOAT;
-        case EFormat::R32_UINT:              return VK_FORMAT_R32_UINT;
-        case EFormat::R32_SINT:              return VK_FORMAT_R32_SINT;
-        case EFormat::R8G8_UNORM:            return VK_FORMAT_R8G8_UNORM;
-        case EFormat::R8G8_SNORM:            return VK_FORMAT_R8G8_SNORM;
-        case EFormat::R16G16_USHORT:         return VK_FORMAT_R16G16_UINT;
-        case EFormat::R16G16_SHORT:          return VK_FORMAT_R16G16_SINT;
-        case EFormat::R32G32_UINT:           return VK_FORMAT_R32G32_UINT;
-        case EFormat::R32G32_SINT:           return VK_FORMAT_R32G32_SINT;
-        case EFormat::R32G32_FLOAT:          return VK_FORMAT_R32G32_SFLOAT;
-        case EFormat::R8G8B8_UNORM:          return VK_FORMAT_R8G8B8_UNORM;
-        case EFormat::R8G8B8_SNORM:          return VK_FORMAT_R8G8B8_SNORM;
-        case EFormat::R16G16B16_USHORT:      return VK_FORMAT_R16G16B16_UINT;
-        case EFormat::R16G16B16_SHORT:       return VK_FORMAT_R16G16B16_SINT;
-        case EFormat::R32G32B32_UINT:        return VK_FORMAT_R32G32B32_UINT;
-        case EFormat::R32G32B32_SINT:        return VK_FORMAT_R32G32B32_SINT;
-        case EFormat::R32G32B32_FLOAT:       return VK_FORMAT_R32G32B32_SFLOAT;
-        case EFormat::R8G8B8A8_UNORM:        return VK_FORMAT_R8G8B8A8_UNORM;
-        case EFormat::R8G8B8A8_SNORM:        return VK_FORMAT_R8G8B8A8_SNORM;
-        case EFormat::R8G8B8A8_SRGB:         return VK_FORMAT_R8G8B8A8_SRGB;
-        case EFormat::R16G16B16A16_USHORT:   return VK_FORMAT_R16G16B16A16_UINT;
-        case EFormat::R16G16B16A16_SHORT:    return VK_FORMAT_R16G16B16A16_SINT;
-        case EFormat::R32G32B32A32_UINT:     return VK_FORMAT_R32G32B32A32_UINT;
-        case EFormat::R32G32B32A32_SINT:     return VK_FORMAT_R32G32B32A32_SINT;
-        case EFormat::R32G32B32A32_FLOAT:    return VK_FORMAT_R32G32B32A32_SFLOAT;
-        case EFormat::R64G64B64A64_FLOAT:    return VK_FORMAT_R64G64B64A64_SFLOAT;
-        case EFormat::D32_FLOAT: return VK_FORMAT_D32_SFLOAT;
-        case EFormat::D32_FLOAT_S8_UINT: return VK_FORMAT_D32_SFLOAT_S8_UINT;
-        case EFormat::D24_UNORM_S8_UINT: return VK_FORMAT_D24_UNORM_S8_UINT;
+        case Format::None:                  return VK_FORMAT_UNDEFINED;
+        case Format::R8_UNORM:              return VK_FORMAT_R8_UNORM;
+        case Format::R8_SNORM:              return VK_FORMAT_R8_SNORM;
+        case Format::R16_USHORT:            return VK_FORMAT_R16_UINT;
+        case Format::R16_SHORT:             return VK_FORMAT_R16_SINT;
+        case Format::R32_FLOAT:             return VK_FORMAT_R32_SFLOAT;
+        case Format::R32_UINT:              return VK_FORMAT_R32_UINT;
+        case Format::R32_SINT:              return VK_FORMAT_R32_SINT;
+        case Format::R8G8_UNORM:            return VK_FORMAT_R8G8_UNORM;
+        case Format::R8G8_SNORM:            return VK_FORMAT_R8G8_SNORM;
+        case Format::R16G16_USHORT:         return VK_FORMAT_R16G16_UINT;
+        case Format::R16G16_SHORT:          return VK_FORMAT_R16G16_SINT;
+        case Format::R32G32_UINT:           return VK_FORMAT_R32G32_UINT;
+        case Format::R32G32_SINT:           return VK_FORMAT_R32G32_SINT;
+        case Format::R32G32_FLOAT:          return VK_FORMAT_R32G32_SFLOAT;
+        case Format::R8G8B8_UNORM:          return VK_FORMAT_R8G8B8_UNORM;
+        case Format::R8G8B8_SNORM:          return VK_FORMAT_R8G8B8_SNORM;
+        case Format::R16G16B16_USHORT:      return VK_FORMAT_R16G16B16_UINT;
+        case Format::R16G16B16_SHORT:       return VK_FORMAT_R16G16B16_SINT;
+        case Format::R32G32B32_UINT:        return VK_FORMAT_R32G32B32_UINT;
+        case Format::R32G32B32_SINT:        return VK_FORMAT_R32G32B32_SINT;
+        case Format::R32G32B32_FLOAT:       return VK_FORMAT_R32G32B32_SFLOAT;
+        case Format::R8G8B8A8_UNORM:        return VK_FORMAT_R8G8B8A8_UNORM;
+        case Format::R8G8B8A8_SNORM:        return VK_FORMAT_R8G8B8A8_SNORM;
+        case Format::R8G8B8A8_SRGB:         return VK_FORMAT_R8G8B8A8_SRGB;
+        case Format::R16G16B16A16_USHORT:   return VK_FORMAT_R16G16B16A16_UINT;
+        case Format::R16G16B16A16_SHORT:    return VK_FORMAT_R16G16B16A16_SINT;
+        case Format::R32G32B32A32_UINT:     return VK_FORMAT_R32G32B32A32_UINT;
+        case Format::R32G32B32A32_SINT:     return VK_FORMAT_R32G32B32A32_SINT;
+        case Format::R32G32B32A32_FLOAT:    return VK_FORMAT_R32G32B32A32_SFLOAT;
+        case Format::R64G64B64A64_FLOAT:    return VK_FORMAT_R64G64B64A64_SFLOAT;
+        case Format::D32_FLOAT: return VK_FORMAT_D32_SFLOAT;
+        case Format::D32_FLOAT_S8_UINT: return VK_FORMAT_D32_SFLOAT_S8_UINT;
+        case Format::D24_UNORM_S8_UINT: return VK_FORMAT_D24_UNORM_S8_UINT;
 
         // Compressed formats
-        case EFormat::BC1_UNORM: return VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
-        case EFormat::BC1_SRGB: return VK_FORMAT_BC1_RGBA_SRGB_BLOCK;
-        case EFormat::BC2_UNORM: return VK_FORMAT_BC2_UNORM_BLOCK;
-        case EFormat::BC2_SRGB: return VK_FORMAT_BC2_SRGB_BLOCK;
-        case EFormat::BC3_UNORM: return VK_FORMAT_BC3_UNORM_BLOCK;
-        case EFormat::BC3_SRGB: return VK_FORMAT_BC3_SRGB_BLOCK;
-        case EFormat::BC4_UNORM: return VK_FORMAT_BC4_UNORM_BLOCK;
-        case EFormat::BC4_SNORM: return VK_FORMAT_BC4_SNORM_BLOCK;
-        case EFormat::BC5_UNORM: return VK_FORMAT_BC5_UNORM_BLOCK;
-        case EFormat::BC5_SNORM: return VK_FORMAT_BC5_SNORM_BLOCK;
-        case EFormat::BC7_UNORM: return VK_FORMAT_BC7_UNORM_BLOCK;
-        case EFormat::BC7_SRGB: return VK_FORMAT_BC7_SRGB_BLOCK;
+        case Format::BC1_UNORM: return VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+        case Format::BC1_SRGB: return VK_FORMAT_BC1_RGBA_SRGB_BLOCK;
+        case Format::BC2_UNORM: return VK_FORMAT_BC2_UNORM_BLOCK;
+        case Format::BC2_SRGB: return VK_FORMAT_BC2_SRGB_BLOCK;
+        case Format::BC3_UNORM: return VK_FORMAT_BC3_UNORM_BLOCK;
+        case Format::BC3_SRGB: return VK_FORMAT_BC3_SRGB_BLOCK;
+        case Format::BC4_UNORM: return VK_FORMAT_BC4_UNORM_BLOCK;
+        case Format::BC4_SNORM: return VK_FORMAT_BC4_SNORM_BLOCK;
+        case Format::BC5_UNORM: return VK_FORMAT_BC5_UNORM_BLOCK;
+        case Format::BC5_SNORM: return VK_FORMAT_BC5_SNORM_BLOCK;
+        case Format::BC7_UNORM: return VK_FORMAT_BC7_UNORM_BLOCK;
+        case Format::BC7_SRGB: return VK_FORMAT_BC7_SRGB_BLOCK;
 
         // ASTC formats
 
-        case EFormat::ASTC_4X4_UNORM: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
-        case EFormat::ASTC_4X4_FLOAT: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
-        case EFormat::ASTC_4X4_SRGB: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
+        case Format::ASTC_4X4_UNORM: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
+        case Format::ASTC_4X4_FLOAT: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
+        case Format::ASTC_4X4_SRGB: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
 
-        case EFormat::ASTC_5X4_UNORM: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
-        case EFormat::ASTC_5X4_FLOAT: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
-        case EFormat::ASTC_5X4_SRGB: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
+        case Format::ASTC_5X4_UNORM: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
+        case Format::ASTC_5X4_FLOAT: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
+        case Format::ASTC_5X4_SRGB: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
 
-        case EFormat::ASTC_5X5_UNORM: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
-        case EFormat::ASTC_5X5_FLOAT: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
-        case EFormat::ASTC_5X5_SRGB: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
+        case Format::ASTC_5X5_UNORM: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
+        case Format::ASTC_5X5_FLOAT: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
+        case Format::ASTC_5X5_SRGB: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
 
-        case EFormat::ASTC_6X5_UNORM: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
-        case EFormat::ASTC_6X5_FLOAT: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
-        case EFormat::ASTC_6X5_SRGB: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
+        case Format::ASTC_6X5_UNORM: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
+        case Format::ASTC_6X5_FLOAT: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
+        case Format::ASTC_6X5_SRGB: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
 
-        case EFormat::ASTC_6X6_UNORM: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
-        case EFormat::ASTC_6X6_FLOAT: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
-        case EFormat::ASTC_6X6_SRGB: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
+        case Format::ASTC_6X6_UNORM: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
+        case Format::ASTC_6X6_FLOAT: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
+        case Format::ASTC_6X6_SRGB: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
 
-        case EFormat::ASTC_8X5_UNORM: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
-        case EFormat::ASTC_8X5_FLOAT: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
-        case EFormat::ASTC_8X5_SRGB: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
+        case Format::ASTC_8X5_UNORM: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
+        case Format::ASTC_8X5_FLOAT: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
+        case Format::ASTC_8X5_SRGB: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
 
-        case EFormat::ASTC_8X6_UNORM: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
-        case EFormat::ASTC_8X6_FLOAT: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
-        case EFormat::ASTC_8X6_SRGB: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
+        case Format::ASTC_8X6_UNORM: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
+        case Format::ASTC_8X6_FLOAT: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
+        case Format::ASTC_8X6_SRGB: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
 
-        case EFormat::ASTC_8X8_UNORM: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
-        case EFormat::ASTC_8X8_FLOAT: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
-        case EFormat::ASTC_8X8_SRGB: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
+        case Format::ASTC_8X8_UNORM: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
+        case Format::ASTC_8X8_FLOAT: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
+        case Format::ASTC_8X8_SRGB: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
 
-        case EFormat::ASTC_10X5_UNORM: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
-        case EFormat::ASTC_10X5_FLOAT: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
-        case EFormat::ASTC_10X5_SRGB: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
+        case Format::ASTC_10X5_UNORM: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
+        case Format::ASTC_10X5_FLOAT: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
+        case Format::ASTC_10X5_SRGB: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
 
-        case EFormat::ASTC_10X6_UNORM: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
-        case EFormat::ASTC_10X6_FLOAT: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
-        case EFormat::ASTC_10X6_SRGB: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
+        case Format::ASTC_10X6_UNORM: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
+        case Format::ASTC_10X6_FLOAT: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
+        case Format::ASTC_10X6_SRGB: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
 
-        case EFormat::ASTC_10X8_UNORM: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
-        case EFormat::ASTC_10X8_FLOAT: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
-        case EFormat::ASTC_10X8_SRGB: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
+        case Format::ASTC_10X8_UNORM: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
+        case Format::ASTC_10X8_FLOAT: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
+        case Format::ASTC_10X8_SRGB: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
 
-        case EFormat::ASTC_10X10_UNORM: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
-        case EFormat::ASTC_10X10_FLOAT: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
-        case EFormat::ASTC_10X10_SRGB: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
+        case Format::ASTC_10X10_UNORM: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
+        case Format::ASTC_10X10_FLOAT: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
+        case Format::ASTC_10X10_SRGB: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
 
-        case EFormat::ASTC_12X10_UNORM: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
-        case EFormat::ASTC_12X10_FLOAT: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
-        case EFormat::ASTC_12X10_SRGB: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
+        case Format::ASTC_12X10_UNORM: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
+        case Format::ASTC_12X10_FLOAT: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
+        case Format::ASTC_12X10_SRGB: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
 
-        case EFormat::ASTC_12X12_UNORM: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
-        case EFormat::ASTC_12X12_FLOAT: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
-        case EFormat::ASTC_12X12_SRGB: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
+        case Format::ASTC_12X12_UNORM: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
+        case Format::ASTC_12X12_FLOAT: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
+        case Format::ASTC_12X12_SRGB: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
         default: return VK_FORMAT_UNDEFINED;
         }
     }
 
     template<>
-    inline VkPresentModeKHR convert(const EPresentMode& value)
+    inline VkPresentModeKHR convert(const PresentMode& value)
     {
         switch (value)
         {
-        case EPresentMode::Unknown: throw;
-        case EPresentMode::Immediate: return VK_PRESENT_MODE_IMMEDIATE_KHR;
-        case EPresentMode::Fifo: return VK_PRESENT_MODE_FIFO_KHR;
+        case PresentMode::Unknown: throw;
+        case PresentMode::Immediate: return VK_PRESENT_MODE_IMMEDIATE_KHR;
+        case PresentMode::Fifo: return VK_PRESENT_MODE_FIFO_KHR;
         default: throw;
         }
     }
 
     template<>
-    inline VkFilter convert(const EFilter& filter)
+    inline VkFilter convert(const Filter& filter)
     {
         switch (filter)
         {
-        case EFilter::Nearest: return VK_FILTER_NEAREST;
-        case EFilter::Linear: return VK_FILTER_LINEAR;
+        case Filter::Nearest: return VK_FILTER_NEAREST;
+        case Filter::Linear: return VK_FILTER_LINEAR;
         default: return VK_FILTER_NEAREST;
         }
     }
 
     template<>
-    inline VkPrimitiveTopology convert(const EPrimitiveTopology& value)
+    inline VkPrimitiveTopology convert(const PrimitiveTopology& value)
     {
         switch (value)
         {
-        case EPrimitiveTopology::PointList: return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
-        case EPrimitiveTopology::LineList: return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-        case EPrimitiveTopology::LineStrip: return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
-        case EPrimitiveTopology::TriangleList: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-        case EPrimitiveTopology::TriangleStrip: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
-        case EPrimitiveTopology::TriangleFan: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
+        case PrimitiveTopology::PointList: return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
+        case PrimitiveTopology::LineList: return VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+        case PrimitiveTopology::LineStrip: return VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+        case PrimitiveTopology::TriangleList: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        case PrimitiveTopology::TriangleStrip: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+        case PrimitiveTopology::TriangleFan: return VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
         default: throw;
         }
     }
 
     template<>
-    inline VkCullModeFlags convert(const ECullMode& value)
+    inline VkCullModeFlags convert(const CullMode& value)
     {
         switch (value)
         {
-        case ECullMode::FrontFace:           return VK_CULL_MODE_FRONT_BIT;
-        case ECullMode::BackFace:            return VK_CULL_MODE_BACK_BIT;
-        case ECullMode::FrontAndBackFaces:   return VK_CULL_MODE_FRONT_BIT | VK_CULL_MODE_BACK_BIT;
-        case ECullMode::None:                return VK_CULL_MODE_NONE;
+        case CullMode::FrontFace:           return VK_CULL_MODE_FRONT_BIT;
+        case CullMode::BackFace:            return VK_CULL_MODE_BACK_BIT;
+        case CullMode::FrontAndBackFaces:   return VK_CULL_MODE_FRONT_BIT | VK_CULL_MODE_BACK_BIT;
+        case CullMode::None:                return VK_CULL_MODE_NONE;
         default: return VK_CULL_MODE_NONE;
         }
     }
 
     template<>
-    inline VkFrontFace convert(const EFrontFace& value)
+    inline VkFrontFace convert(const FrontFace& value)
     {
         switch (value)
         {
-        case EFrontFace::Clockwise: return VK_FRONT_FACE_CLOCKWISE;
-        case EFrontFace::CounterClockwise: return VK_FRONT_FACE_COUNTER_CLOCKWISE;
+        case FrontFace::Clockwise: return VK_FRONT_FACE_CLOCKWISE;
+        case FrontFace::CounterClockwise: return VK_FRONT_FACE_COUNTER_CLOCKWISE;
         default: throw;
         }
     }
 
     template<>
-    inline VkPolygonMode convert(const EPolygonMode& value)
+    inline VkPolygonMode convert(const PolygonMode& value)
     {
         switch (value)
         {
-        case EPolygonMode::Fill:; return VK_POLYGON_MODE_FILL;
-        case EPolygonMode::Line: return VK_POLYGON_MODE_LINE;
-        case EPolygonMode::Point: return VK_POLYGON_MODE_POINT;
+        case PolygonMode::Fill:; return VK_POLYGON_MODE_FILL;
+        case PolygonMode::Line: return VK_POLYGON_MODE_LINE;
+        case PolygonMode::Point: return VK_POLYGON_MODE_POINT;
         default: throw;
         }
     }
 
     template<>
-    inline VkCompareOp convert(const ECompareOp& value)
+    inline VkCompareOp convert(const CompareOp& value)
     {
         switch (value)
         {
-        case ECompareOp::Always:         return VK_COMPARE_OP_ALWAYS;
-        case ECompareOp::Never:          return VK_COMPARE_OP_NEVER;
-        case ECompareOp::Less:           return VK_COMPARE_OP_LESS;
-        case ECompareOp::LessOrEqual:    return VK_COMPARE_OP_LESS_OR_EQUAL;
-        case ECompareOp::Equal:          return VK_COMPARE_OP_EQUAL;
-        case ECompareOp::NotEqual:       return VK_COMPARE_OP_NOT_EQUAL;
-        case ECompareOp::Greater:        return VK_COMPARE_OP_GREATER;
-        case ECompareOp::GreaterOrEqual: return VK_COMPARE_OP_GREATER_OR_EQUAL;
+        case CompareOp::Always:         return VK_COMPARE_OP_ALWAYS;
+        case CompareOp::Never:          return VK_COMPARE_OP_NEVER;
+        case CompareOp::Less:           return VK_COMPARE_OP_LESS;
+        case CompareOp::LessOrEqual:    return VK_COMPARE_OP_LESS_OR_EQUAL;
+        case CompareOp::Equal:          return VK_COMPARE_OP_EQUAL;
+        case CompareOp::NotEqual:       return VK_COMPARE_OP_NOT_EQUAL;
+        case CompareOp::Greater:        return VK_COMPARE_OP_GREATER;
+        case CompareOp::GreaterOrEqual: return VK_COMPARE_OP_GREATER_OR_EQUAL;
         }
         throw;
     }
 
     template<>
-    inline VkSamplerAddressMode convert(const ESamplerAddressMode& value)
+    inline VkSamplerAddressMode convert(const SamplerAddressMode& value)
     {
         switch (value)
         {
-        case ESamplerAddressMode::Repeat: return VK_SAMPLER_ADDRESS_MODE_REPEAT;
-        case ESamplerAddressMode::MirroredRepeat: return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
-        case ESamplerAddressMode::ClampToEdge: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-        case ESamplerAddressMode::ClampToBorder: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-        case ESamplerAddressMode::MirrorClampToEdge: return VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE;
+        case SamplerAddressMode::Repeat: return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        case SamplerAddressMode::MirroredRepeat: return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+        case SamplerAddressMode::ClampToEdge: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        case SamplerAddressMode::ClampToBorder: return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+        case SamplerAddressMode::MirrorClampToEdge: return VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE;
         }
         throw;
     }
 
     template<>
-    inline VkBlendOp convert(const EBlendOp& value)
+    inline VkBlendOp convert(const BlendOp& value)
     {
         switch (value)
         {
-        case EBlendOp::Add: return VK_BLEND_OP_ADD;
-        case EBlendOp::Min: return VK_BLEND_OP_MIN;
-        case EBlendOp::Max: return VK_BLEND_OP_MAX;
-        case EBlendOp::Subtract: return VK_BLEND_OP_SUBTRACT;
-        case EBlendOp::ReverseSubtract: return VK_BLEND_OP_REVERSE_SUBTRACT;
+        case BlendOp::Add: return VK_BLEND_OP_ADD;
+        case BlendOp::Min: return VK_BLEND_OP_MIN;
+        case BlendOp::Max: return VK_BLEND_OP_MAX;
+        case BlendOp::Subtract: return VK_BLEND_OP_SUBTRACT;
+        case BlendOp::ReverseSubtract: return VK_BLEND_OP_REVERSE_SUBTRACT;
         }
         throw;
     }
 
     template<>
-    inline VkBlendFactor convert(const EBlendFactor& value)
+    inline VkBlendFactor convert(const BlendFactor& value)
     {
         switch (value) {
-        case EBlendFactor::Zero: return VK_BLEND_FACTOR_ZERO;
-        case EBlendFactor::One: return VK_BLEND_FACTOR_ONE;
-        case EBlendFactor::SourceColor: return VK_BLEND_FACTOR_SRC_COLOR;
-        case EBlendFactor::OneMinusSourceColor: return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
-        case EBlendFactor::DestColor: return VK_BLEND_FACTOR_DST_COLOR;
-        case EBlendFactor::OneMinusDestColor: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
-        case EBlendFactor::SourceAlpha: return VK_BLEND_FACTOR_SRC_ALPHA;
-        case EBlendFactor::OneMinusSourceAlpha: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-        case EBlendFactor::DestAlpha: return VK_BLEND_FACTOR_DST_ALPHA;
-        case EBlendFactor::OneMinusDestAlpha: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-        case EBlendFactor::ConstantColor: return VK_BLEND_FACTOR_CONSTANT_COLOR;
-        case EBlendFactor::OneMinusConstantColor: return VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR;
-        case EBlendFactor::ConstantAlpha: return VK_BLEND_FACTOR_CONSTANT_ALPHA;
-        case EBlendFactor::OneMinusConstantAlpha: return VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA;
-        case EBlendFactor::SourceAlphaSaturated: return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
-        case EBlendFactor::Source1Color: return VK_BLEND_FACTOR_SRC1_COLOR;
-        case EBlendFactor::OneMinusSource1Color: return VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR;
-        case EBlendFactor::Source1Alpha: return VK_BLEND_FACTOR_SRC1_ALPHA;
-        case EBlendFactor::OneMinusSource1Alpha: return VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA;
+        case BlendFactor::Zero: return VK_BLEND_FACTOR_ZERO;
+        case BlendFactor::One: return VK_BLEND_FACTOR_ONE;
+        case BlendFactor::SourceColor: return VK_BLEND_FACTOR_SRC_COLOR;
+        case BlendFactor::OneMinusSourceColor: return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+        case BlendFactor::DestColor: return VK_BLEND_FACTOR_DST_COLOR;
+        case BlendFactor::OneMinusDestColor: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+        case BlendFactor::SourceAlpha: return VK_BLEND_FACTOR_SRC_ALPHA;
+        case BlendFactor::OneMinusSourceAlpha: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        case BlendFactor::DestAlpha: return VK_BLEND_FACTOR_DST_ALPHA;
+        case BlendFactor::OneMinusDestAlpha: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+        case BlendFactor::ConstantColor: return VK_BLEND_FACTOR_CONSTANT_COLOR;
+        case BlendFactor::OneMinusConstantColor: return VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR;
+        case BlendFactor::ConstantAlpha: return VK_BLEND_FACTOR_CONSTANT_ALPHA;
+        case BlendFactor::OneMinusConstantAlpha: return VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA;
+        case BlendFactor::SourceAlphaSaturated: return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+        case BlendFactor::Source1Color: return VK_BLEND_FACTOR_SRC1_COLOR;
+        case BlendFactor::OneMinusSource1Color: return VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR;
+        case BlendFactor::Source1Alpha: return VK_BLEND_FACTOR_SRC1_ALPHA;
+        case BlendFactor::OneMinusSource1Alpha: return VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA;
         }
         throw;
     }
 
     template<>
-    inline VkIndexType convert(const EFormat& value)
+    inline VkIndexType convert(const Format& value)
     {
         switch (value)
         {
-        case EFormat::R32_UINT: return VK_INDEX_TYPE_UINT32;
-        case EFormat::R16_USHORT : return VK_INDEX_TYPE_UINT16;
-        case EFormat::R8_UNORM : return VK_INDEX_TYPE_UINT8;
+        case Format::R32_UINT: return VK_INDEX_TYPE_UINT32;
+        case Format::R16_USHORT : return VK_INDEX_TYPE_UINT16;
+        case Format::R8_UNORM : return VK_INDEX_TYPE_UINT8;
         default: throw;
         }
     }
 
     template<>
-    inline VkDescriptorType convert(const EBindingType& value)
+    inline VkDescriptorType convert(const BindingType& value)
     {
         switch (value)
         {
-        case EBindingType::Sampler: return VK_DESCRIPTOR_TYPE_SAMPLER;
-        case EBindingType::CombinedTextureSampler: return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        case EBindingType::SampledTexture: return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-        case EBindingType::StorageTexture: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-        case EBindingType::UniformBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        case EBindingType::StorageBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-        case EBindingType::InputTarget: return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
-        case EBindingType::InlineUniformBlock: return VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK;
-        case EBindingType::AccelerationStructure: return VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
-        case EBindingType::StorageTexelBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
-        case EBindingType::UniformTexelBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+        case BindingType::Sampler: return VK_DESCRIPTOR_TYPE_SAMPLER;
+        case BindingType::CombinedTextureSampler: return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        case BindingType::SampledTexture: return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+        case BindingType::StorageTexture: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+        case BindingType::UniformBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case BindingType::StorageBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        case BindingType::InputTarget: return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        case BindingType::InlineUniformBlock: return VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK;
+        case BindingType::AccelerationStructure: return VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
+        case BindingType::StorageTexelBuffer: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+        case BindingType::UniformTexelBuffer: return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
         default: throw;
         }
     }
 
     template<>
-    inline VkSamplerMipmapMode convert(const EFilter& value)
+    inline VkSamplerMipmapMode convert(const Filter& value)
     {
         switch (value)
         {
-        case EFilter::Nearest: return VK_SAMPLER_MIPMAP_MODE_NEAREST;
-        case EFilter::Linear: return VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        case Filter::Nearest: return VK_SAMPLER_MIPMAP_MODE_NEAREST;
+        case Filter::Linear: return VK_SAMPLER_MIPMAP_MODE_LINEAR;
         default: throw;
         }
     }
 
     template<>
-    inline VkAttachmentLoadOp convert(const ELoadOp& value)
+    inline VkAttachmentLoadOp convert(const LoadOp& value)
     {
         switch (value)
         {
-        case ELoadOp::Load: return VK_ATTACHMENT_LOAD_OP_LOAD;
-        case ELoadOp::Clear: return VK_ATTACHMENT_LOAD_OP_CLEAR;
-        case ELoadOp::DontCare: return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+        case LoadOp::Load: return VK_ATTACHMENT_LOAD_OP_LOAD;
+        case LoadOp::Clear: return VK_ATTACHMENT_LOAD_OP_CLEAR;
+        case LoadOp::DontCare: return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         default: throw;
         }
     }
 
     template<>
-    inline VkAttachmentStoreOp convert(const EStoreOp& value)
+    inline VkAttachmentStoreOp convert(const StoreOp& value)
     {
         switch (value)
         {
-        case EStoreOp::Store: return VK_ATTACHMENT_STORE_OP_STORE;
-        case EStoreOp::DontCare: return VK_ATTACHMENT_STORE_OP_DONT_CARE;
+        case StoreOp::Store: return VK_ATTACHMENT_STORE_OP_STORE;
+        case StoreOp::DontCare: return VK_ATTACHMENT_STORE_OP_DONT_CARE;
         default: throw;
         }
     }
 
 
     template<>
-    inline VkShaderStageFlags convert(const FShaderStageFlags& value)
+    inline VkShaderStageFlags convert(const ShaderStageFlags& value)
     {
         VkShaderStageFlags result = 0;
         const uint32_t val = value;
-        if (val & (uint32_t)EShaderStage::Vertex)
+        if (val & (uint32_t)ShaderStage::Vertex)
             result |= VK_SHADER_STAGE_VERTEX_BIT;
-        if (val & (uint32_t)EShaderStage::Fragment)
+        if (val & (uint32_t)ShaderStage::Fragment)
             result |= VK_SHADER_STAGE_FRAGMENT_BIT;
-        if (val & (uint32_t)EShaderStage::Geometry)
+        if (val & (uint32_t)ShaderStage::Geometry)
             result |= VK_SHADER_STAGE_GEOMETRY_BIT;
-        if (val & (uint32_t)EShaderStage::TessellationControl)
+        if (val & (uint32_t)ShaderStage::TessellationControl)
             result |= VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-        if (val & (uint32_t)EShaderStage::TessellationEvaluation)
+        if (val & (uint32_t)ShaderStage::TessellationEvaluation)
             result |= VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-        if (val & (uint32_t)EShaderStage::Mesh)
+        if (val & (uint32_t)ShaderStage::Mesh)
             result |= VK_SHADER_STAGE_MESH_BIT_EXT;
-        if (val & (uint32_t)EShaderStage::Compute)
+        if (val & (uint32_t)ShaderStage::Compute)
             result |= VK_SHADER_STAGE_COMPUTE_BIT;
         return result;
     }
 
     template<>
-    inline VkShaderStageFlagBits convert(const EShaderStage& value)
+    inline VkShaderStageFlagBits convert(const ShaderStage& value)
     {
         switch (value)
         {
-        case EShaderStage::None: return (VkShaderStageFlagBits)0;
-        case EShaderStage::Vertex: return VK_SHADER_STAGE_VERTEX_BIT;
-        case EShaderStage::Geometry: return VK_SHADER_STAGE_GEOMETRY_BIT;
-        case EShaderStage::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
-        case EShaderStage::Compute: return VK_SHADER_STAGE_COMPUTE_BIT;
-        case EShaderStage::TessellationControl: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-        case EShaderStage::Mesh: return VK_SHADER_STAGE_MESH_BIT_EXT;
-        case EShaderStage::TessellationEvaluation: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+        case ShaderStage::None: return (VkShaderStageFlagBits)0;
+        case ShaderStage::Vertex: return VK_SHADER_STAGE_VERTEX_BIT;
+        case ShaderStage::Geometry: return VK_SHADER_STAGE_GEOMETRY_BIT;
+        case ShaderStage::Fragment: return VK_SHADER_STAGE_FRAGMENT_BIT;
+        case ShaderStage::Compute: return VK_SHADER_STAGE_COMPUTE_BIT;
+        case ShaderStage::TessellationControl: return VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+        case ShaderStage::Mesh: return VK_SHADER_STAGE_MESH_BIT_EXT;
+        case ShaderStage::TessellationEvaluation: return VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
         default: return (VkShaderStageFlagBits)0;
         }
     }
 
     template<>
-    inline VkResolveModeFlagBits convert(const EResolveMode& value)
+    inline VkResolveModeFlagBits convert(const ResolveMode& value)
     {
         switch (value)
         {
-        case EResolveMode::None: return VK_RESOLVE_MODE_NONE;
-        case EResolveMode::Zero: return VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
-        case EResolveMode::Average: return VK_RESOLVE_MODE_AVERAGE_BIT;
-        case EResolveMode::Min: return VK_RESOLVE_MODE_MIN_BIT;
-        case EResolveMode::Max: return VK_RESOLVE_MODE_MAX_BIT;
+        case ResolveMode::None: return VK_RESOLVE_MODE_NONE;
+        case ResolveMode::Zero: return VK_RESOLVE_MODE_SAMPLE_ZERO_BIT;
+        case ResolveMode::Average: return VK_RESOLVE_MODE_AVERAGE_BIT;
+        case ResolveMode::Min: return VK_RESOLVE_MODE_MIN_BIT;
+        case ResolveMode::Max: return VK_RESOLVE_MODE_MAX_BIT;
         default: return VK_RESOLVE_MODE_NONE;
         }
     }
 
     template<>
-    inline VkAccessFlags2 convert(const FResourceAccessFlags& value)
+    inline VkAccessFlags2 convert(const ResourceAccessFlags& value)
     {
         VkAccessFlags2 result = VK_ACCESS_2_NONE;
-        if (value == EResourceAccessBits::None)
+        if (value == ResourceAccess::None)
             return VK_ACCESS_2_NONE;
 
-        if (value & EResourceAccessBits::ShaderRead)
+        if (value & ResourceAccess::ShaderRead)
             result |= VK_ACCESS_2_SHADER_READ_BIT;
-        if (value & EResourceAccessBits::ShaderWrite)
+        if (value & ResourceAccess::ShaderWrite)
             result |= VK_ACCESS_2_SHADER_WRITE_BIT;
-        if (value & EResourceAccessBits::ColorTargetRead)
+        if (value & ResourceAccess::ColorTargetRead)
             result |= VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT;
-        if (value & EResourceAccessBits::ColorTargetWrite)
+        if (value & ResourceAccess::ColorTargetWrite)
             result |= VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT;
-        if (value & EResourceAccessBits::DepthStencilTargetRead)
+        if (value & ResourceAccess::DepthStencilTargetRead)
             result |= VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT;
-        if (value & EResourceAccessBits::DepthStencilTargetWrite)
+        if (value & ResourceAccess::DepthStencilTargetWrite)
             result |= VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-        if (value & EResourceAccessBits::CopyRead)
+        if (value & ResourceAccess::CopyRead)
             result |= VK_ACCESS_2_TRANSFER_READ_BIT;
-        if (value & EResourceAccessBits::CopyWrite)
+        if (value & ResourceAccess::CopyWrite)
             result |= VK_ACCESS_2_TRANSFER_WRITE_BIT;
-        if (value & EResourceAccessBits::HostRead)
+        if (value & ResourceAccess::HostRead)
             result |= VK_ACCESS_2_HOST_READ_BIT;
-        if (value & EResourceAccessBits::HostWrite)
+        if (value & ResourceAccess::HostWrite)
             result |= VK_ACCESS_2_HOST_WRITE_BIT;
 
         return result;
     }
 
     template<>
-    inline VkImageLayout convert(const EResourceState& value)
+    inline VkImageLayout convert(const ResourceState& value)
     {
         switch (value)
         {
-        case EResourceState::Undefined: return VK_IMAGE_LAYOUT_UNDEFINED;
-        case EResourceState::General: return VK_IMAGE_LAYOUT_GENERAL;
-        case EResourceState::ShaderRead: return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        case EResourceState::ShaderWrite: return VK_IMAGE_LAYOUT_GENERAL;
-        case EResourceState::ColorTarget: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        case EResourceState::DepthStencilTarget: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-        case EResourceState::CopySource: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-        case EResourceState::CopyDest: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-        case EResourceState::Present: return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+        case ResourceState::Undefined: return VK_IMAGE_LAYOUT_UNDEFINED;
+        case ResourceState::General: return VK_IMAGE_LAYOUT_GENERAL;
+        case ResourceState::ShaderRead: return VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        case ResourceState::ShaderWrite: return VK_IMAGE_LAYOUT_GENERAL;
+        case ResourceState::ColorTarget: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        case ResourceState::DepthStencilTarget: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        case ResourceState::CopySource: return VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+        case ResourceState::CopyDest: return VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        case ResourceState::Present: return VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
         default: return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }
 
     template<>
-    inline VkImageUsageFlags convert(const FTextureUsageFlags& value)
+    inline VkImageUsageFlags convert(const TextureUsageFlags& value)
     {
         VkImageUsageFlags flags = 0;
-        if (value == ETextureUsage::None)
+        if (value == TextureUsage::None)
             return 0;
-        if (value & ETextureUsage::Sampled)
+        if (value & TextureUsage::Sampled)
             flags |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsage::Storage)
+        if (value & TextureUsage::Storage)
             flags |= VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsage::ColorTarget)
+        if (value & TextureUsage::ColorTarget)
             flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & ETextureUsage::DepthStencilTarget)
+        if (value & TextureUsage::DepthStencilTarget)
             flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         return flags;
     }
 
     template<>
-    inline VkImageAspectFlags convert(const FTextureAspectFlags& value)
+    inline VkImageAspectFlags convert(const TextureAspectFlags& value)
     {
         VkImageAspectFlags flags = 0;
-        if (value == ETextureAspectBits::None)
+        if (value == TextureAspect::None)
             return VK_IMAGE_ASPECT_NONE;
-        if (value & ETextureAspectBits::Color)
+        if (value & TextureAspect::Color)
             flags |= VK_IMAGE_ASPECT_COLOR_BIT;
-        if (value & ETextureAspectBits::Depth)
+        if (value & TextureAspect::Depth)
             flags |= VK_IMAGE_ASPECT_DEPTH_BIT;
-        if (value & ETextureAspectBits::Stencil)
+        if (value & TextureAspect::Stencil)
             flags |= VK_IMAGE_ASPECT_STENCIL_BIT;
         return flags;
     }
 
-    inline VkImageAspectFlags convert(const EFormat& value)
+    inline VkImageAspectFlags convert(const Format& value)
     {
         VkImageAspectFlags flags = 0;
         switch (value)
         {
-        case EFormat::None: return 0;
-        case EFormat::R8_UNORM:
-        case EFormat::R8_SNORM:
-        case EFormat::R16_USHORT:
-        case EFormat::R16_SHORT:
-        case EFormat::R32_FLOAT:
-        case EFormat::R32_UINT:
-        case EFormat::R32_SINT:
-        case EFormat::R8G8_UNORM:
-        case EFormat::R8G8_SNORM:
-        case EFormat::R16G16_USHORT:
-        case EFormat::R16G16_SHORT:
-        case EFormat::R32G32_UINT:
-        case EFormat::R32G32_SINT:
-        case EFormat::R32G32_FLOAT:
-        case EFormat::R8G8B8_UNORM:
-        case EFormat::R8G8B8_SNORM:
-        case EFormat::R16G16B16_USHORT:
-        case EFormat::R16G16B16_SHORT:
-        case EFormat::R32G32B32_UINT:
-        case EFormat::R32G32B32_SINT:
-        case EFormat::R32G32B32_FLOAT:
-        case EFormat::R8G8B8A8_UNORM:
-        case EFormat::R8G8B8A8_SNORM:
-        case EFormat::R8G8B8A8_SRGB:
-        case EFormat::R16G16B16A16_USHORT:
-        case EFormat::R16G16B16A16_SHORT:
-        case EFormat::R32G32B32A32_UINT:
-        case EFormat::R32G32B32A32_SINT:
-        case EFormat::R32G32B32A32_FLOAT:
-        case EFormat::R64G64B64A64_FLOAT:
+        case Format::None: return 0;
+        case Format::R8_UNORM:
+        case Format::R8_SNORM:
+        case Format::R16_USHORT:
+        case Format::R16_SHORT:
+        case Format::R32_FLOAT:
+        case Format::R32_UINT:
+        case Format::R32_SINT:
+        case Format::R8G8_UNORM:
+        case Format::R8G8_SNORM:
+        case Format::R16G16_USHORT:
+        case Format::R16G16_SHORT:
+        case Format::R32G32_UINT:
+        case Format::R32G32_SINT:
+        case Format::R32G32_FLOAT:
+        case Format::R8G8B8_UNORM:
+        case Format::R8G8B8_SNORM:
+        case Format::R16G16B16_USHORT:
+        case Format::R16G16B16_SHORT:
+        case Format::R32G32B32_UINT:
+        case Format::R32G32B32_SINT:
+        case Format::R32G32B32_FLOAT:
+        case Format::R8G8B8A8_UNORM:
+        case Format::R8G8B8A8_SNORM:
+        case Format::R8G8B8A8_SRGB:
+        case Format::R16G16B16A16_USHORT:
+        case Format::R16G16B16A16_SHORT:
+        case Format::R32G32B32A32_UINT:
+        case Format::R32G32B32A32_SINT:
+        case Format::R32G32B32A32_FLOAT:
+        case Format::R64G64B64A64_FLOAT:
             return VK_IMAGE_ASPECT_COLOR_BIT;
-        case EFormat::D32_FLOAT:
+        case Format::D32_FLOAT:
             return VK_IMAGE_ASPECT_DEPTH_BIT;
-        case EFormat::D32_FLOAT_S8_UINT:
+        case Format::D32_FLOAT_S8_UINT:
             return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-        case EFormat::D24_UNORM_S8_UINT:
+        case Format::D24_UNORM_S8_UINT:
             return VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
         default: return VK_IMAGE_ASPECT_COLOR_BIT;
         }
     }
 
     template<>
-    inline VkImageType convert(const ETextureDimension& value)
+    inline VkImageType convert(const TextureDimension& value)
     {
         switch (value)
         {
-        case ETextureDimension::None: return VK_IMAGE_TYPE_MAX_ENUM;
-        case ETextureDimension::Dim1D: return VK_IMAGE_TYPE_1D;
-        case ETextureDimension::Dim2D: return VK_IMAGE_TYPE_2D;
-        case ETextureDimension::Dim3D: return VK_IMAGE_TYPE_3D;
+        case TextureDimension::None: return VK_IMAGE_TYPE_MAX_ENUM;
+        case TextureDimension::Dim1D: return VK_IMAGE_TYPE_1D;
+        case TextureDimension::Dim2D: return VK_IMAGE_TYPE_2D;
+        case TextureDimension::Dim3D: return VK_IMAGE_TYPE_3D;
         default: return VK_IMAGE_TYPE_MAX_ENUM;
         }
     }
 
     template<>
-    inline VkVertexInputRate convert(const EVertexInputRate& value)
+    inline VkVertexInputRate convert(const VertexInputRate& value)
     {
         switch (value)
         {
-        case EVertexInputRate::Vertex: return VK_VERTEX_INPUT_RATE_VERTEX;
-        case EVertexInputRate::Instance: return VK_VERTEX_INPUT_RATE_INSTANCE;
+        case VertexInputRate::Vertex: return VK_VERTEX_INPUT_RATE_VERTEX;
+        case VertexInputRate::Instance: return VK_VERTEX_INPUT_RATE_INSTANCE;
         default: return VK_VERTEX_INPUT_RATE_VERTEX;
         }
     }
 
     template<>
-    inline VkComponentSwizzle convert(const EComponentSwizzle& value)
+    inline VkComponentSwizzle convert(const ComponentSwizzle& value)
     {
         switch (value)
         {
-        case EComponentSwizzle::Identity: return VK_COMPONENT_SWIZZLE_IDENTITY;
-        case EComponentSwizzle::Zero: return VK_COMPONENT_SWIZZLE_ZERO;
-        case EComponentSwizzle::One: return VK_COMPONENT_SWIZZLE_ONE;
-        case EComponentSwizzle::Red: return VK_COMPONENT_SWIZZLE_R;
-        case EComponentSwizzle::Green: return VK_COMPONENT_SWIZZLE_G;
-        case EComponentSwizzle::Blue: return VK_COMPONENT_SWIZZLE_B;
-        case EComponentSwizzle::Alpha: return VK_COMPONENT_SWIZZLE_A;
+        case ComponentSwizzle::Identity: return VK_COMPONENT_SWIZZLE_IDENTITY;
+        case ComponentSwizzle::Zero: return VK_COMPONENT_SWIZZLE_ZERO;
+        case ComponentSwizzle::One: return VK_COMPONENT_SWIZZLE_ONE;
+        case ComponentSwizzle::Red: return VK_COMPONENT_SWIZZLE_R;
+        case ComponentSwizzle::Green: return VK_COMPONENT_SWIZZLE_G;
+        case ComponentSwizzle::Blue: return VK_COMPONENT_SWIZZLE_B;
+        case ComponentSwizzle::Alpha: return VK_COMPONENT_SWIZZLE_A;
         default: return VK_COMPONENT_SWIZZLE_IDENTITY;
         }
     }
 
     template<>
-    inline VkComponentMapping convert(const FComponentMapping& value)
+    inline VkComponentMapping convert(const ComponentMapping& value)
     {
         VkComponentMapping mapping;
         mapping.r = convert<VkComponentSwizzle>(value.r);
@@ -603,75 +603,75 @@ namespace Luma::Vulkan
     }
 
     template <>
-    inline VkIndexType convert(const EIndexFormat& value)
+    inline VkIndexType convert(const IndexFormat& value)
     {
         switch (value)
         {
-        case EIndexFormat::UInt32: return VK_INDEX_TYPE_UINT32;
-        case EIndexFormat::UInt16: return VK_INDEX_TYPE_UINT16;
-        case EIndexFormat::UInt8: return VK_INDEX_TYPE_UINT8;
+        case IndexFormat::UInt32: return VK_INDEX_TYPE_UINT32;
+        case IndexFormat::UInt16: return VK_INDEX_TYPE_UINT16;
+        case IndexFormat::UInt8: return VK_INDEX_TYPE_UINT8;
         default: return VK_INDEX_TYPE_UINT32;
         }
     }
 
     template<>
-    inline VkFormat convert(const EShaderDataType& value)
+    inline VkFormat convert(const ShaderDataType& value)
     {
         switch (value)
         {
-        case EShaderDataType::Float: return VK_FORMAT_R32_SFLOAT;
-        case EShaderDataType::Float2: return VK_FORMAT_R32G32_SFLOAT;
-        case EShaderDataType::Float3: return VK_FORMAT_R32G32B32_SFLOAT;
-        case EShaderDataType::Float4: return VK_FORMAT_R32G32B32A32_SFLOAT;
-        case EShaderDataType::Int: return VK_FORMAT_R32_SINT;
-        case EShaderDataType::Int2: return VK_FORMAT_R32G32_SINT;
-        case EShaderDataType::Int3: return VK_FORMAT_R32G32B32_SINT;
-        case EShaderDataType::Int4: return VK_FORMAT_R32G32B32A32_SINT;
-        case EShaderDataType::UInt: return VK_FORMAT_R32_UINT;
-        case EShaderDataType::UInt2: return VK_FORMAT_R32G32_UINT;
-        case EShaderDataType::UInt3: return VK_FORMAT_R32G32B32_UINT;
-        case EShaderDataType::UInt4: return VK_FORMAT_R32G32B32A32_UINT;
+        case ShaderDataType::Float: return VK_FORMAT_R32_SFLOAT;
+        case ShaderDataType::Float2: return VK_FORMAT_R32G32_SFLOAT;
+        case ShaderDataType::Float3: return VK_FORMAT_R32G32B32_SFLOAT;
+        case ShaderDataType::Float4: return VK_FORMAT_R32G32B32A32_SFLOAT;
+        case ShaderDataType::Int: return VK_FORMAT_R32_SINT;
+        case ShaderDataType::Int2: return VK_FORMAT_R32G32_SINT;
+        case ShaderDataType::Int3: return VK_FORMAT_R32G32B32_SINT;
+        case ShaderDataType::Int4: return VK_FORMAT_R32G32B32A32_SINT;
+        case ShaderDataType::UInt: return VK_FORMAT_R32_UINT;
+        case ShaderDataType::UInt2: return VK_FORMAT_R32G32_UINT;
+        case ShaderDataType::UInt3: return VK_FORMAT_R32G32B32_UINT;
+        case ShaderDataType::UInt4: return VK_FORMAT_R32G32B32A32_UINT;
             default: return VK_FORMAT_UNDEFINED;
         }
     }
 
     template<>
-    inline VkImageLayout convert(const ERenderPassTargetType& value)
+    inline VkImageLayout convert(const RHI::RenderPassTargetType& value)
     {
         switch (value)
         {
-        case ERenderPassTargetType::Color: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-        case ERenderPassTargetType::DepthStencil: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+        case RHI::RenderPassTargetType::Color: return VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+        case RHI::RenderPassTargetType::DepthStencil: return VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
         default: return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }
 
     template<>
-    inline VkColorComponentFlags convert(const FColorChannelFlags& value)
+    inline VkColorComponentFlags convert(const ColorChannelFlags& value)
     {
         VkColorComponentFlags result = 0;
-        if (value & EColorChannelBits::Red) result |= VK_COLOR_COMPONENT_R_BIT;
-        if (value & EColorChannelBits::Green) result |= VK_COLOR_COMPONENT_G_BIT;
-        if (value & EColorChannelBits::Blue) result |= VK_COLOR_COMPONENT_B_BIT;
-        if (value & EColorChannelBits::Alpha) result |= VK_COLOR_COMPONENT_A_BIT;
+        if (value & ColorChannels::Red) result |= VK_COLOR_COMPONENT_R_BIT;
+        if (value & ColorChannels::Green) result |= VK_COLOR_COMPONENT_G_BIT;
+        if (value & ColorChannels::Blue) result |= VK_COLOR_COMPONENT_B_BIT;
+        if (value & ColorChannels::Alpha) result |= VK_COLOR_COMPONENT_A_BIT;
         return result;
     }
 
     template<>
-    inline VkImageSubresourceRange convert(const FTextureSubresourceRange& value)
+    inline VkImageSubresourceRange convert(const TextureSubresourceRange& value)
     {
         VkImageSubresourceRange range;
         range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        range.baseMipLevel = value.baseMipLevel;
+        range.baseMipLevel = value.startMipIndex;
         range.levelCount = value.mipCount;
-        range.baseArrayLayer = value.baseArrayLayer;
+        range.baseArrayLayer = value.startArrayIndex;
         range.layerCount = value.layerCount;
         return range;
     }
 
 
     template<>
-    inline TArray<VkPushConstantRange> convert(const TArray<FShaderPushConstantVariable>& variables)
+    inline TArray<VkPushConstantRange> convert(const TArray<ShaderPushConstantVariable>& variables)
     {
         TArray<VkPushConstantRange> ranges;
 
@@ -690,7 +690,7 @@ namespace Luma::Vulkan
 
 
     template<>
-    inline VkDescriptorSetLayoutBinding convert(const FShaderBinding& binding)
+    inline VkDescriptorSetLayoutBinding convert(const ShaderBinding& binding)
     {
         VkDescriptorSetLayoutBinding result{};
         result.binding = binding.bindingIndex;
@@ -702,25 +702,25 @@ namespace Luma::Vulkan
 
 
     template<>
-    inline VkDescriptorType convert(const ETextureBindingType& value)
+    inline VkDescriptorType convert(const TextureBindingType& value)
     {
         switch (value)
         {
-        case ETextureBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-        case ETextureBindingType::Sampled: return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+        case TextureBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+        case TextureBindingType::Sampled: return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
         default: throw;
         }
     }
 
     template<>
-    inline VkDescriptorType convert(const EBufferBindingType& value)
+    inline VkDescriptorType convert(const BufferBindingType& value)
     {
         switch (value)
         {
-        case EBufferBindingType::Uniform: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        case EBufferBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-        case EBufferBindingType::UniformTexel: return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
-        case EBufferBindingType::StorageTexel: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
+        case BufferBindingType::Uniform: return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        case BufferBindingType::Storage: return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+        case BufferBindingType::UniformTexel: return VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
+        case BufferBindingType::StorageTexel: return VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER;
         default: throw;
         }
     }

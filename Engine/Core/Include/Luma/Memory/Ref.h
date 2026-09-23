@@ -207,18 +207,18 @@ namespace Luma
         PointerType m_Pointer = nullptr;
     };
 
-    template <typename T, typename... Args> requires std::is_base_of_v<IRefCounted<T>, T>
+    template <typename T, typename... Args> requires std::is_base_of_v<RefCounted<T>, T>
     Ref<T> createRef(Args&&... args)
     {
         return Ref<T>(new T(std::forward<Args>(args)...));
     }
 
-    template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
+    template<typename T> requires std::is_base_of_v<RefCounted<T>, T>
     Ref<T> makeRef(T* object)
     {
         return Ref<T>(object);
     }
 
-    template<typename T> requires std::is_base_of_v<IRefCounted<T>, T>
+    template<typename T> requires std::is_base_of_v<RefCounted<T>, T>
     WeakRef<T> createWeakRef(const Ref<T>& ref) { return WeakRef<T>(ref); }
 }

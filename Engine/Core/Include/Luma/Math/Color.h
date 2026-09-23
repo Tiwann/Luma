@@ -93,5 +93,5 @@ namespace Luma
     template<FloatType F>
     constexpr TColor<F> TColor<F>::Transparent{ 0x000000FF };
 
-    using FColor = TColor<float>;
+    using Color = TColor<float>;
 }

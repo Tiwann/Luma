@@ -1,21 +1,20 @@
 ﻿#pragma once
 #include <cstdint>
 #include "IndexFormat.h"
+#include "RenderPassDesc.h"
 #include "TextureSubresourceRange.h"
 #include "Luma/Math/Color.h"
 
 namespace Luma
 {
-    struct FScissor;
-    struct FViewport;
-    struct FRenderPassDesc;
-    struct IComputePipeline;
-    struct IRenderPipeline;
-    struct ITexture;
-    struct IBuffer;
-    struct IBindingGroup;
+    namespace RHI
+    {
+        struct BindingGroup;
+        struct ComputePipeline;
+        struct RenderPipeline;
+    }
 
-    struct FDrawCommand
+    struct DrawCommand
     {
         uint32_t vertexCount;
         uint32_t instanceCount;
@@ -23,7 +22,7 @@ namespace Luma
         uint32_t firstInstance;
     };
 
-    struct FDrawIndexedCommand
+    struct DrawIndexedCommand
     {
         uint32_t indexCount;
         uint32_t instanceCount;
@@ -32,122 +31,122 @@ namespace Luma
         uint32_t firstInstance;
     };
 
-    struct FDrawIndirectCommand
+    struct DrawIndirectCommand
     {
-        const IBuffer* buffer;
+        const RHI::Buffer* buffer;
         int64_t offset;
         uint32_t drawCount;
     };
 
-    struct FDrawIndexedIndirectCommand
+    struct DrawIndexedIndirectCommand
     {
-        const IBuffer* buffer;
+        const RHI::Buffer* buffer;
         int64_t offset;
         uint32_t drawCount;
     };
 
-    struct FClearColorTargetCommand
+    struct ClearColorTargetCommand
     {
         uint32_t targetIndex;
-        FColor color;
+        Color color;
         FRect2u area;
         uint32_t startLayer;
         uint32_t layerCount;
     };
 
-    struct FClearDepthStencilTargetCommand
+    struct ClearDepthStencilTargetCommand
     {
         FRect2u area;
         float depth;
         uint8_t stencil;
     };
 
-    struct FClearColorTextureCommand
+    struct ClearColorTextureCommand
     {
-        const ITexture* texture;
-        FColor color;
-        FTextureSubresourceRange subresource;
+        const RHI::Texture* texture;
+        Color color;
+        TextureSubresourceRange subresource;
     };
 
-    struct FClearDepthStencilTextureCommand
+    struct ClearDepthStencilTextureCommand
     {
-        const ITexture* texture;
+        const RHI::Texture* texture;
         float depth;
         uint8_t stencil;
-        FTextureSubresourceRange subresource;
+        TextureSubresourceRange subresource;
     };
 
-    struct FVertexBufferBinding
+    struct VertexBufferBinding
     {
-        const IBuffer* buffer;
+        const RHI::Buffer* buffer;
         int64_t offset;
     };
 
-    struct FBindVertexBuffersCommand
+    struct BindVertexBuffersCommand
     {
-        const FVertexBufferBinding* bindings;
+        const VertexBufferBinding* bindings;
         uint32_t bindingCount;
     };
 
-    struct FBindIndexBufferCommand
+    struct BindIndexBufferCommand
     {
-        const IBuffer* buffer;
+        const RHI::Buffer* buffer;
         int64_t offset;
         uint64_t size;
-        EIndexFormat format;
+        IndexFormat format;
     };
 
-    struct FBindRenderPipelineCommand
+    struct BindRenderPipelineCommand
     {
-        const IRenderPipeline* pipeline;
+        const RHI::RenderPipeline* pipeline;
     };
 
-    struct FBindComputePipelineCommand
+    struct BindComputePipelineCommand
     {
-        const IComputePipeline* pipeline;
+        const RHI::ComputePipeline* pipeline;
     };
 
-    struct FBeginRenderPassCommand
+    struct BeginRenderPassCommand
     {
-        const FRenderPassDesc* renderPassDesc;
+        const RHI::RenderPassDesc* renderPassDesc;
     };
 
-    struct FEndRenderPassCommand
+    struct EndRenderPassCommand
     {
         uint32_t dummy;
     };
 
-    struct FSetViewportsCommand
+    struct SetViewportsCommand
     {
-        const FViewport* viewports;
+        const Viewport* viewports;
         uint32_t viewportsCount;
     };
 
-    struct FSetScissorsCommand
+    struct SetScissorsCommand
     {
-        const FScissor* scissors;
+        const Scissor* scissors;
         uint32_t scissorsCount;
     };
 
-    struct FDispatchCommand
+    struct DispatchCommand
     {
         uint32_t groupCountX;
         uint32_t groupCountY;
         uint32_t groupCountZ;
     };
 
-    struct FDispatchIndirectCommand
+    struct DispatchIndirectCommand
     {
-        const IBuffer* buffer;
+        const RHI::Buffer* buffer;
         int64_t offset;
     };
 
-    struct FBindBindingGroupCommand
+    struct BindBindingGroupCommand
     {
-        const IBindingGroup* bindingGroup;
+        const RHI::BindingGroup* bindingGroup;
     };
 
-    enum class EGPUCommandType
+    enum class GPUCommandType
     {
         Draw,
         DrawIndexed,
@@ -170,33 +169,33 @@ namespace Luma
         BindBindingGroup,
     };
 
-    struct FGPUCommand
+    struct GPUCommand
     {
-        EGPUCommandType type;
+        GPUCommandType type;
 
         union
         {
-            FDrawCommand draw;
-            FDrawIndexedCommand drawIndexed;
-            FDrawIndirectCommand drawIndirect;
-            FDrawIndexedIndirectCommand drawIndexedIndirect;
-            FClearColorTargetCommand clearColorTarget;
-            FClearDepthStencilTargetCommand clearDepthStencilTarget;
-            FClearColorTextureCommand clearColorTexture;
-            FClearDepthStencilTextureCommand clearDepthStencilTexture;
-            FBindVertexBuffersCommand bindVertexBuffers;
-            FBindIndexBufferCommand bindIndexBuffer;
-            FBindRenderPipelineCommand bindRenderPipeline;
-            FBindComputePipelineCommand bindComputePipeline;
-            FBeginRenderPassCommand beginRenderPass;
-            FEndRenderPassCommand endRenderPass;
-            FSetViewportsCommand setViewports;
-            FSetScissorsCommand setScissors;
-            FDispatchCommand dispatch;
-            FDispatchIndirectCommand dispatchIndirect;
-            FBindBindingGroupCommand bindBindingGroup;
+            DrawCommand draw;
+            DrawIndexedCommand drawIndexed;
+            DrawIndirectCommand drawIndirect;
+            DrawIndexedIndirectCommand drawIndexedIndirect;
+            ClearColorTargetCommand clearColorTarget;
+            ClearDepthStencilTargetCommand clearDepthStencilTarget;
+            ClearColorTextureCommand clearColorTexture;
+            ClearDepthStencilTextureCommand clearDepthStencilTexture;
+            BindVertexBuffersCommand bindVertexBuffers;
+            BindIndexBufferCommand bindIndexBuffer;
+            BindRenderPipelineCommand bindRenderPipeline;
+            BindComputePipelineCommand bindComputePipeline;
+            BeginRenderPassCommand beginRenderPass;
+            EndRenderPassCommand endRenderPass;
+            SetViewportsCommand setViewports;
+            SetScissorsCommand setScissors;
+            DispatchCommand dispatch;
+            DispatchIndirectCommand dispatchIndirect;
+            BindBindingGroupCommand bindBindingGroup;
         };
     };
 
-    static_assert(std::is_trivially_copyable_v<FGPUCommand>);
+    static_assert(std::is_trivially_copyable_v<GPUCommand>);
 }

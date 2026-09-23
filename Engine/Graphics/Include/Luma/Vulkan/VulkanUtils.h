@@ -6,13 +6,14 @@
 
 namespace Luma::Vulkan
 {
-    class FQueueImpl;
+    class Device;
+    class Queue;
 
-    void setVulkanObjectDebugName(const class FGPUDeviceImpl* device, VkObjectType objectType, void* handle, FStringView name);
-    VkPipelineStageFlags2 getSourcePipelineStageFlags(FResourceAccessFlags accessFlags);
-    VkPipelineStageFlags2 getDestPipelineStageFlags(FResourceAccessFlags accessFlags);
-    VkImageMemoryBarrier2 makeTextureBarrier(const FTextureBarrier& barrier);
-    VkBufferMemoryBarrier2 makeBufferBarrier(const FBufferBarrier& barrier);
+    void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, FStringView name);
+    VkPipelineStageFlags2 getSourcePipelineStageFlags(ResourceAccessFlags accessFlags);
+    VkPipelineStageFlags2 getDestPipelineStageFlags(ResourceAccessFlags accessFlags);
+    VkImageMemoryBarrier2 makeTextureBarrier(const TextureBarrier& barrier);
+    VkBufferMemoryBarrier2 makeBufferBarrier(const BufferBarrier& barrier);
     VkSemaphore createSemaphore(VkDevice device);
-    VkCommandPool createCommandPool(VkDevice device, const FQueueImpl& queue);
+    VkCommandPool createCommandPool(VkDevice device, const Queue& queue);
 }

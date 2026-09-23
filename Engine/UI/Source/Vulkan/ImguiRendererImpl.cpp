@@ -2,8 +2,8 @@
 #include "Luma/Runtime/DesktopWindow.h"
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Luma/Rendering/Swapchain.h"
-#include "Luma/Vulkan/SamplerImpl.h"
-#include "Luma/Vulkan/GPUDeviceImpl.h"
+#include "Luma/Vulkan/Sampler.h"
+#include "Luma/Vulkan/Device.h"
 #include "Luma/Vulkan/Conversions.h"
 
 #include <GLFW/glfw3.h>
@@ -12,19 +12,19 @@
 
 namespace Luma::Vulkan
 {
-    bool FImguiRendererImpl::initialize(const FImguiRendererDesc& rendererDesc)
+    bool FImguiRendererImpl::initialize(const ImguiRendererDesc& rendererDesc)
     {
-        if (!IImguiRenderer::initialize(rendererDesc)) return false;
+        if (!ImguiRenderer::initialize(rendererDesc)) return false;
 
-        if (FDesktopWindow* desktopWindow = dynamic_cast<FDesktopWindow*>(rendererDesc.window))
+        if (DesktopWindow* desktopWindow = dynamic_cast<DesktopWindow*>(rendererDesc.window))
         {
             if(!ImGui_ImplGlfw_InitForVulkan(desktopWindow->getHandle(), true))
                 return false;
         }
 
-        FGPUDeviceImpl* device = static_cast<FGPUDeviceImpl*>(rendererDesc.device);
-        const FSwapchainImpl* swapchain = static_cast<FSwapchainImpl*>(device->getSwapchain());
-        const FQueueImpl* renderQueue = static_cast<FQueueImpl*>(device->getRenderQueue());
+        Device* device = static_cast<Device*>(rendererDesc.device);
+        const Swapchain* swapchain = static_cast<Swapchain*>(device->getSwapchain());
+        const Queue* renderQueue = static_cast<Queue*>(device->getRenderQueue());
 
         ImGui_ImplVulkan_InitInfo initInfo{};
         initInfo.Instance = device->getInstance();
@@ -61,9 +61,9 @@ namespace Luma::Vulkan
             return false;
 
 
-        const FSamplerDesc samplerDesc = FSamplerDesc()
-        .withAddressMode(ESamplerAddressMode::Repeat)
-        .withFilter(EFilter::Linear, EFilter::Linear);
+        const RHI::SamplerDesc samplerDesc = RHI::SamplerDesc()
+                                             .withAddressMode(SamplerAddressMode::Repeat)
+                                             .withFilter(Filter::Linear, Filter::Linear);
 
         m_Sampler = device->getOrCreateSampler(samplerDesc);
         if (!m_Sampler) return false;
@@ -96,29 +96,29 @@ namespace Luma::Vulkan
         ImGui::UpdatePlatformWindows();
     }
 
-    void FImguiRendererImpl::render(ICommandBuffer* cmdBuffer)
+    void FImguiRendererImpl::render(RHI::CommandBuffer* cmdBuffer)
     {
         ImGui::Render();
         ImDrawData* drawData = ImGui::GetDrawData();
         if (!drawData) return;
 
-        const FCommandBufferImpl* cmdBufferImpl = static_cast<FCommandBufferImpl*>(cmdBuffer);
-        const ISwapchain* swapchain = m_Device->getSwapchain();
-        cmdBuffer->setViewport(FViewport(swapchain->getBounds().as<float>()));
-        cmdBuffer->setScissor(FScissor(swapchain->getBounds()));
+        const CommandBuffer* cmdBufferImpl = static_cast<CommandBuffer*>(cmdBuffer);
+        const RHI::Swapchain* swapchain = m_Device->getSwapchain();
+        cmdBuffer->setViewport(Viewport(swapchain->getBounds().as<float>()));
+        cmdBuffer->setScissor(Scissor(swapchain->getBounds()));
         ImGui_ImplVulkan_RenderDrawData(drawData, cmdBufferImpl->getHandle());
     }
 
-    void FImguiRendererImpl::drawTexture(const ITextureView* textureView, const FVector2f& uv0, const FVector2f& uv1)
+    void FImguiRendererImpl::drawTexture(const RHI::TextureView* textureView, const FVector2f& uv0, const FVector2f& uv1)
     {
         const ImTextureID textureId = getOrAddTexture(textureView);
         ImGui::Image(textureId, ImVec2(textureView->getWidth(), textureView->getHeight()), {uv0.x, uv0.y}, {uv1.x, uv1.y});
     }
 
-    uint64_t FImguiRendererImpl::addTexture(const ITextureView* texture)
+    uint64_t FImguiRendererImpl::addTexture(const RHI::TextureView* texture)
     {
-        const FTextureViewImpl* textureImpl = static_cast<const FTextureViewImpl*>(texture);
-        FSamplerImpl* samplerImpl = static_cast<FSamplerImpl*>(m_Sampler);
+        const TextureView* textureImpl = static_cast<const TextureView*>(texture);
+        Sampler* samplerImpl = static_cast<Sampler*>(m_Sampler);
         VkDescriptorSet descriptorSet = ImGui_ImplVulkan_AddTexture(samplerImpl->getHandle(), textureImpl->getHandle(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         if (!descriptorSet) return 0;
 
@@ -127,7 +127,7 @@ namespace Luma::Vulkan
         return textureId;
     }
 
-    uint64_t FImguiRendererImpl::getOrAddTexture(const ITextureView* texture)
+    uint64_t FImguiRendererImpl::getOrAddTexture(const RHI::TextureView* texture)
     {
         return m_Textures.contains(texture) ? m_Textures[texture] : addTexture(texture);
     }

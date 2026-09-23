@@ -4,26 +4,26 @@
 
 namespace Luma
 {
-    struct FScissor : FRect2u
+    struct Scissor : FRect2u
     {
-        FScissor(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height)
+        Scissor(const uint32_t x, const uint32_t y, const uint32_t width, const uint32_t height)
         : FRect2u(x, y, width, height) {};
 
-        FScissor(const FRect2u& rect) : FRect2u(rect){}
+        Scissor(const FRect2u& rect) : FRect2u(rect){}
 
-        static FScissor fromSize(const FVector2u& size)
+        static Scissor fromSize(const FVector2u& size)
         {
-            return FScissor(0, 0, size.x, size.y);
+            return Scissor(0, 0, size.x, size.y);
         }
 
-        static FScissor fromSize(const uint32_t width, const uint32_t height)
+        static Scissor fromSize(const uint32_t width, const uint32_t height)
         {
-            return FScissor{0, 0, width, height};
+            return Scissor{0, 0, width, height};
         }
 
-        static FScissor fromCamera(const FCamera& camera)
+        static Scissor fromCamera(const Camera& camera)
         {
-            return FScissor{0, 0, camera.getWidth(), camera.getHeight()};
+            return Scissor{0, 0, camera.getWidth(), camera.getHeight()};
         }
     };
 }

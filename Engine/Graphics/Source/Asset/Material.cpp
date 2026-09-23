@@ -7,7 +7,7 @@ namespace Luma
 {
     static constexpr uint32_t MATERIAL_BINDING_SET = 0;
 
-    bool FMaterial::initialize(const FMaterialDesc& materialDesc)
+    bool Material::initialize(const MaterialDesc& materialDesc)
     {
         if (!materialDesc.device) return false;
         if (!materialDesc.shader) return false;
@@ -20,29 +20,29 @@ namespace Luma
         return true;
     }
 
-    void FMaterial::destroy()
+    void Material::destroy()
     {
         m_Device = nullptr;
         m_Shader = nullptr;
         //m_BindingSet = nullptr;
     }
 
-    void FMaterial::setSampler(const FString& name, const ISampler* sampler)
+    void Material::setSampler(const FString& name, const Sampler* sampler)
     {
 
     }
 
-    void FMaterial::setTexture(const FString& name, const ITexture* texture, const EBindingType bindingType)
+    void Material::setTexture(const FString& name, const ITexture* texture, const BindingType bindingType)
     {
 
     }
 
-    void FMaterial::setCombinedTextureSampler(const FString& name, const ISampler* sampler, const ITexture* texture)
+    void Material::setCombinedTextureSampler(const FString& name, const Sampler* sampler, const ITexture* texture)
     {
 
     }
 
-    void FMaterial::setBuffer(const FString& name, const IBuffer* buffer, const uint64_t offset, const uint64_t size)
+    void Material::setBuffer(const FString& name, const Buffer* buffer, const uint64_t offset, const uint64_t size)
     {
 
     }

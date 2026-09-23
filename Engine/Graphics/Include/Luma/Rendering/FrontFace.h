@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EFrontFace
+    enum class FrontFace
     {
         Clockwise,
         CounterClockwise,

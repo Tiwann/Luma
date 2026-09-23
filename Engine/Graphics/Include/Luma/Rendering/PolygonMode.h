@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EPolygonMode
+    enum class PolygonMode
     {
         Fill,
         Line,

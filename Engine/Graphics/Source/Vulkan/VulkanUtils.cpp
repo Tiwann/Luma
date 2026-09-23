@@ -1,12 +1,12 @@
 #include "Luma/Vulkan/VulkanUtils.h"
-#include "Luma/Vulkan/BufferImpl.h"
+#include "Luma/Vulkan/Device.h"
+#include "Luma/Vulkan/Buffer.h"
 #include "Luma/Vulkan/Conversions.h"
-#include "Luma/Vulkan/GPUDeviceImpl.h"
 #include "Luma/Runtime/DebugLevel.h"
 
 namespace Luma::Vulkan
 {
-    void setVulkanObjectDebugName(const FGPUDeviceImpl* device, VkObjectType objectType, void* handle, FStringView name)
+    void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, FStringView name)
     {
         if constexpr (DEBUG_LEVEL < DebugLevel::Release)
         {
@@ -20,39 +20,39 @@ namespace Luma::Vulkan
         }
     }
 
-    VkPipelineStageFlags2 getSourcePipelineStageFlags(FResourceAccessFlags accessFlags)
+    VkPipelineStageFlags2 getSourcePipelineStageFlags(ResourceAccessFlags accessFlags)
     {
         VkPipelineStageFlags2 flags = 0;
 
-        if (accessFlags & EResourceAccessBits::ShaderRead ||
-            accessFlags & EResourceAccessBits::ShaderWrite)
+        if (accessFlags & ResourceAccess::ShaderRead ||
+            accessFlags & ResourceAccess::ShaderWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT |
                 VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT |
                 VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::ColorTargetRead ||
-            accessFlags & EResourceAccessBits::ColorTargetWrite)
+        if (accessFlags & ResourceAccess::ColorTargetRead ||
+            accessFlags & ResourceAccess::ColorTargetWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::DepthStencilTargetRead ||
-            accessFlags & EResourceAccessBits::DepthStencilTargetWrite)
+        if (accessFlags & ResourceAccess::DepthStencilTargetRead ||
+            accessFlags & ResourceAccess::DepthStencilTargetWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT |
                 VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::CopyRead ||
-            accessFlags & EResourceAccessBits::CopyWrite)
+        if (accessFlags & ResourceAccess::CopyRead ||
+            accessFlags & ResourceAccess::CopyWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_TRANSFER_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::HostRead ||
-            accessFlags & EResourceAccessBits::HostWrite)
+        if (accessFlags & ResourceAccess::HostRead ||
+            accessFlags & ResourceAccess::HostWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_HOST_BIT;
         }
@@ -63,39 +63,39 @@ namespace Luma::Vulkan
         return flags;
     }
 
-    VkPipelineStageFlags2 getDestPipelineStageFlags(FResourceAccessFlags accessFlags)
+    VkPipelineStageFlags2 getDestPipelineStageFlags(ResourceAccessFlags accessFlags)
     {
         VkPipelineStageFlags2 flags = 0;
 
-        if (accessFlags & EResourceAccessBits::ShaderRead ||
-            accessFlags & EResourceAccessBits::ShaderWrite)
+        if (accessFlags & ResourceAccess::ShaderRead ||
+            accessFlags & ResourceAccess::ShaderWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT |
                 VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT |
                 VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::ColorTargetRead ||
-            accessFlags & EResourceAccessBits::ColorTargetWrite)
+        if (accessFlags & ResourceAccess::ColorTargetRead ||
+            accessFlags & ResourceAccess::ColorTargetWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::DepthStencilTargetRead ||
-            accessFlags & EResourceAccessBits::DepthStencilTargetWrite)
+        if (accessFlags & ResourceAccess::DepthStencilTargetRead ||
+            accessFlags & ResourceAccess::DepthStencilTargetWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT |
                 VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::CopyRead ||
-            accessFlags & EResourceAccessBits::CopyWrite)
+        if (accessFlags & ResourceAccess::CopyRead ||
+            accessFlags & ResourceAccess::CopyWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_TRANSFER_BIT;
         }
 
-        if (accessFlags & EResourceAccessBits::HostRead ||
-            accessFlags & EResourceAccessBits::HostWrite)
+        if (accessFlags & ResourceAccess::HostRead ||
+            accessFlags & ResourceAccess::HostWrite)
         {
             flags |= VK_PIPELINE_STAGE_2_HOST_BIT;
         }
@@ -106,9 +106,9 @@ namespace Luma::Vulkan
         return flags;
     }
 
-    VkImageMemoryBarrier2 makeTextureBarrier(const FTextureBarrier& barrier)
+    VkImageMemoryBarrier2 makeTextureBarrier(const TextureBarrier& barrier)
     {
-        const FTextureImpl* texture = static_cast<FTextureImpl*>(barrier.texture);
+        const Texture* texture = static_cast<Texture*>(barrier.texture);
 
         VkImageMemoryBarrier2 vkBarrier = { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2 };
         vkBarrier.image = texture->getImage();
@@ -126,8 +126,8 @@ namespace Luma::Vulkan
 
         if (barrier.sourceQueue && barrier.destQueue && barrier.sourceQueue != barrier.destQueue)
         {
-            const FQueueImpl* srcQueue = static_cast<const FQueueImpl*>(barrier.sourceQueue);
-            const FQueueImpl* destQueue = static_cast<const FQueueImpl*>(barrier.destQueue);
+            const Queue* srcQueue = static_cast<const Queue*>(barrier.sourceQueue);
+            const Queue* destQueue = static_cast<const Queue*>(barrier.destQueue);
             vkBarrier.srcQueueFamilyIndex = srcQueue->getIndex();
             vkBarrier.dstQueueFamilyIndex = destQueue->getIndex();
         } else
@@ -139,9 +139,9 @@ namespace Luma::Vulkan
         return vkBarrier;
     }
 
-    VkBufferMemoryBarrier2 makeBufferBarrier(const FBufferBarrier& barrier)
+    VkBufferMemoryBarrier2 makeBufferBarrier(const BufferBarrier& barrier)
     {
-        const FBufferImpl* buffer = static_cast<FBufferImpl*>(barrier.buffer);
+        const Buffer* buffer = static_cast<Buffer*>(barrier.buffer);
 
         VkBufferMemoryBarrier2 vkBarrier = { VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
         vkBarrier.buffer = buffer->getHandle();
@@ -152,8 +152,8 @@ namespace Luma::Vulkan
         vkBarrier.srcStageMask = getSourcePipelineStageFlags(barrier.sourceAccess);
         vkBarrier.dstStageMask = getDestPipelineStageFlags(barrier.destAccess);
 
-        const FQueueImpl* srcQueue = static_cast<const FQueueImpl*>(barrier.sourceQueue);
-        const FQueueImpl* destQueue = static_cast<const FQueueImpl*>(barrier.destQueue);
+        const Queue* srcQueue = static_cast<const Queue*>(barrier.sourceQueue);
+        const Queue* destQueue = static_cast<const Queue*>(barrier.destQueue);
 
         if (barrier.sourceQueue && barrier.destQueue && !srcQueue->same(*destQueue))
         {
@@ -167,7 +167,7 @@ namespace Luma::Vulkan
         return vkBarrier;
     }
 
-    VkCommandPool createCommandPool(VkDevice device, const FQueueImpl& queue)
+    VkCommandPool createCommandPool(VkDevice device, const Queue& queue)
     {
         VkCommandPoolCreateInfo commandPoolCreateInfo = { VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO };
         commandPoolCreateInfo.queueFamilyIndex = queue.getIndex();

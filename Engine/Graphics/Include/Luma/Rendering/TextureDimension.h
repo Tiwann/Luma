@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ETextureDimension
+    enum class TextureDimension
     {
         None,
         Dim1D,

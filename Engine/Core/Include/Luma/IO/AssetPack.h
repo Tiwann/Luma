@@ -7,7 +7,7 @@ namespace Luma
     struct FAssetEntry
     {
         uint64_t id;
-        EAssetType type;
+        AssetType type;
         uint64_t offset;
 
     };

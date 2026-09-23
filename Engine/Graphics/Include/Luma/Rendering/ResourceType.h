@@ -1,7 +1,7 @@
 ﻿#pragma once
 namespace Luma
 {
-    enum class EResourceType
+    enum class ResourceType
     {
         Texture,
         Sampler,

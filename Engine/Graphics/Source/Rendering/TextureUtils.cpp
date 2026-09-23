@@ -4,7 +4,7 @@
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Fence.h"
 #include "Luma/Rendering/Queue.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/ResourceBarrier.h"
 #include "Luma/Memory/Ref.h"
 
@@ -12,7 +12,9 @@
 
 namespace Luma::TextureUtils
 {
-    bool uploadTextureDataSync(IGPUDevice* device, ITexture* texture, uint32_t arrayIndex, uint32_t mipLevel,
+    using namespace RHI;
+
+    bool uploadTextureDataSync(Device* device, Texture* texture, uint32_t arrayIndex, uint32_t mipLevel,
                            const void* data, size_t dataSize)
     {
         if (!device) return false;
@@ -20,42 +22,42 @@ namespace Luma::TextureUtils
         if (!data) return false;
         if (!dataSize) return false;
 
-        Ref<IBuffer> stagingBuffer = BufferUtils::createStagingBuffer(device, data, dataSize);
+        Ref<Buffer> stagingBuffer = BufferUtils::createStagingBuffer(device, data, dataSize);
 
-        const EResourceState initialState = texture->getResourceState();
+        const ResourceState initialState = texture->getResourceState();
 
-        IQueue* renderQueue = device->getRenderQueue();
+        Queue* renderQueue = device->getRenderQueue();
 
-        FTextureBarrier toCopyState;
+        TextureBarrier toCopyState;
         toCopyState.texture = texture;
         toCopyState.sourceAccess = getSourceAccessFlags(initialState);
-        toCopyState.destAccess = getDestAccessFlags(EResourceState::CopyDest);
-        toCopyState.destState = EResourceState::CopyDest;
+        toCopyState.destAccess = getDestAccessFlags(ResourceState::CopyDest);
+        toCopyState.destState = ResourceState::CopyDest;
 
-        FTextureBarrier toInitialState;
+        TextureBarrier toInitialState;
         toInitialState.texture = texture;
-        toInitialState.sourceAccess = getSourceAccessFlags(EResourceState::CopyDest);
+        toInitialState.sourceAccess = getSourceAccessFlags(ResourceState::CopyDest);
         toInitialState.destAccess = getDestAccessFlags(initialState);
         toInitialState.destState = initialState;
 
-        Ref<IFence> fence = device->createFence(0);
+        Ref<Fence> fence = device->createFence(0);
 
-        Ref<ICommandBuffer> cmdBuffer = device->createCommandBuffer(renderQueue);
+        Ref<CommandBuffer> cmdBuffer = device->createCommandBuffer(renderQueue);
 
         cmdBuffer->begin();
-        cmdBuffer->beginDebugGroup("Synchronous Texture Copy", FColor::Orange);
+        cmdBuffer->beginDebugGroup("Synchronous Texture Copy", Color::Orange);
         cmdBuffer->textureBarriers(toCopyState);
         cmdBuffer->copyBufferToTexture(stagingBuffer, 0, dataSize, texture, arrayIndex, mipLevel);
         cmdBuffer->textureBarriers(toInitialState);
         cmdBuffer->endDebugGroup();
         cmdBuffer->end();
 
-        FFenceSignal signal;
+        FenceSignal signal;
         signal.fence = fence;
         signal.value = 1;
-        signal.stages = EPipelineStages::Copy;
+        signal.stages = PipelineStages::Copy;
 
-        FQueueExecuteInfo copyExec;
+        QueueExecuteInfo copyExec;
         copyExec.cmdBuffers = {cmdBuffer};
         copyExec.signals = signal;
         renderQueue->executeCommandBuffers(copyExec);
@@ -65,7 +67,7 @@ namespace Luma::TextureUtils
         return true;
     }
 
-    ITexture* loadTexture(IGPUDevice* device, FStringView filepath)
+    Texture* loadTexture(Device* device, FStringView filepath)
     {
         stbi_set_flip_vertically_on_load(true);
         int32_t width = 0, height = 0;
@@ -73,8 +75,8 @@ namespace Luma::TextureUtils
         const size_t pixelsSize = width * height * 4 * sizeof(stbi_uc);
         if (!pixels) return nullptr;
 
-        const FTextureDesc textureDesc = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
-        ITexture* texture = device->createTexture(textureDesc);
+        const TextureDesc textureDesc = TextureDesc::texture2D(width, height, Format::R8G8B8A8_SRGB, 1, 1);
+        Texture* texture = device->createTexture(textureDesc);
         if (!texture) return nullptr;
 
         if (!uploadTextureDataSync(device, texture, 0, 0, pixels, pixelsSize))
@@ -89,7 +91,7 @@ namespace Luma::TextureUtils
         return texture;
     }
 
-    ITexture* loadTexture(IGPUDevice* device, const void* data, uint64_t dataSize)
+    Texture* loadTexture(Device* device, const void* data, uint64_t dataSize)
     {
         stbi_set_flip_vertically_on_load(true);
         int32_t width = 0, height = 0;
@@ -97,8 +99,8 @@ namespace Luma::TextureUtils
         const size_t pixelsSize = width * height * 4 * sizeof(stbi_uc);
         if (!pixels) return nullptr;
 
-        const FTextureDesc createInfo = FTextureDesc::texture2D(width, height, EFormat::R8G8B8A8_SRGB, 1, 1);
-        ITexture* texture = device->createTexture(createInfo);
+        const TextureDesc createInfo = TextureDesc::texture2D(width, height, Format::R8G8B8A8_SRGB, 1, 1);
+        Texture* texture = device->createTexture(createInfo);
         if (!texture) return nullptr;
 
         if (!uploadTextureDataSync(device, texture, 0, 0, pixels, pixelsSize))

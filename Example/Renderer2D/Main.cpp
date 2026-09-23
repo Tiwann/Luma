@@ -2,7 +2,7 @@
 #include <Luma/Runtime/DesktopWindow.h>
 
 #include <Luma/Runtime/Time.h>
-#include <Luma/Rendering/GPUDevice.h>
+#include <Luma/Rendering/Device.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Containers/StringFormat.h>
@@ -16,8 +16,8 @@ static constexpr uint32_t HEIGHT = 600;
 
 int main()
 {
-    Ref<FDesktopWindow> window = createWindow("Hello Renderer2D", WIDTH, HEIGHT, EWindowOptions::Centered);
-    Ref<IGPUDevice> gpuDevice = createGPUDevice(window);
+    Ref<DesktopWindow> window = createWindow("Hello Renderer2D", WIDTH, HEIGHT, WindowOptions::Centered);
+    Ref<Device> gpuDevice = createGPUDevice(window);
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(gpuDevice);
 
 
@@ -30,22 +30,22 @@ int main()
         lastTime = currentTime;
 
         renderer->begin();
-        renderer->drawText(strfmt("DeltaTime: {:.3f}ms", deltaTime), {0, 0}, 20, FColor::Cyan);
+        renderer->drawText(strfmt("DeltaTime: {:.3f}ms", deltaTime), {0, 0}, 20, Color::Cyan);
         renderer->end();
 
         if (gpuDevice->beginFrame())
         {
-            ICommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
+            CommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
             const ITextureView* swapchainTexture = gpuDevice->getAcquiredSwapchainTextureView();
 
-            FRenderPassTarget colorAttachment;
-            colorAttachment.type = ERenderPassTargetType::Color;
-            colorAttachment.loadOp = ELoadOp::Clear;
-            colorAttachment.storeOp = EStoreOp::Store;
-            colorAttachment.clearValue.color = FColor::Black;
+            RenderPassTarget colorAttachment;
+            colorAttachment.type = RenderPassTargetType::Color;
+            colorAttachment.loadOp = LoadOp::Clear;
+            colorAttachment.storeOp = StoreOp::Store;
+            colorAttachment.clearValue.color = Color::Black;
             colorAttachment.textureView = swapchainTexture;
 
-            FRenderPassDesc renderPassDesc;
+            RenderPassDesc renderPassDesc;
             renderPassDesc.renderArea = {0, 0, WIDTH, HEIGHT};
             renderPassDesc.colorTargets.add(&colorAttachment);
 

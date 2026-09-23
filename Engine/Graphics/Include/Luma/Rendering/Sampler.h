@@ -1,48 +1,48 @@
 #pragma once
+#include <cstdint>
+
 #include "CompareOperation.h"
 #include "Filter.h"
-#include "SamplerAddressMode.h"
 #include "Resource.h"
+#include "SamplerAddressMode.h"
 #include "Luma/Containers/StringView.h"
-#include "Luma/Containers/HashMap.h"
 #include "Luma/Memory/RefCounted.h"
 
-
-namespace Luma
+namespace Luma::RHI
 {
-    struct FSamplerDesc
+    struct SamplerDesc
     {
-        struct IGPUDevice* device = nullptr;
-        ESamplerAddressMode addressModeU = ESamplerAddressMode::Repeat;
-        ESamplerAddressMode addressModeV = ESamplerAddressMode::Repeat;
-        ESamplerAddressMode addressModeW = ESamplerAddressMode::Repeat;
-        EFilter minFilter = EFilter::Nearest;
-        EFilter magFilter = EFilter::Nearest;
+        struct Device* device = nullptr;
+        SamplerAddressMode addressModeU = SamplerAddressMode::Repeat;
+        SamplerAddressMode addressModeV = SamplerAddressMode::Repeat;
+        SamplerAddressMode addressModeW = SamplerAddressMode::Repeat;
+        Filter minFilter = Filter::Nearest;
+        Filter magFilter = Filter::Nearest;
         bool anisotropyEnable = false;
         bool compareEnable = false;
-        ECompareOp compareOp = ECompareOp::Always;
+        CompareOp compareOp = CompareOp::Always;
         bool unnormalizedCoordinates = false;
         float minLod = 0.0f;
         float maxLod = 1.0f;
-        EFilter mipmapFilter = EFilter::Nearest;
+        Filter mipmapFilter = Filter::Nearest;
 
-        FSamplerDesc& withDevice(IGPUDevice* device);
-        FSamplerDesc& withAddressModeUVW(ESamplerAddressMode u, ESamplerAddressMode v, ESamplerAddressMode w);
-        FSamplerDesc& withAddressMode(ESamplerAddressMode in);
-        FSamplerDesc& withFilter(EFilter inMinFilter, EFilter inMagFilter);
-        FSamplerDesc& withLODRange(float min, float max);
+        SamplerDesc& withDevice(Device* device);
+        SamplerDesc& withAddressModeUVW(SamplerAddressMode u, SamplerAddressMode v, SamplerAddressMode w);
+        SamplerDesc& withAddressMode(SamplerAddressMode in);
+        SamplerDesc& withFilter(Filter inMinFilter, Filter inMagFilter);
+        SamplerDesc& withLODRange(float min, float max);
 
-        bool operator==(const FSamplerDesc&) const = default;
+        bool operator==(const SamplerDesc&) const = default;
     };
 
     struct FSamplerDescHasher
     {
-        static void hashCombine(uint64_t& seed, const uint64_t value)
+        static void hashCombine(std::uint64_t& seed, const uint64_t value)
         {
             seed ^= value + 0x9e3779b97f4a7c15ull + (seed << 6) + (seed >> 2);
         }
 
-        uint64_t operator()(const FSamplerDesc& samplerDesc) const
+        uint64_t operator()(const SamplerDesc& samplerDesc) const
         {
             uint64_t seed = 0;
 
@@ -69,40 +69,40 @@ namespace Luma
     };
 
 
-    struct ISampler : IResource, IRefCounted<ISampler>
+    struct Sampler : Resource, RefCounted<Sampler>
     {
-        ISampler() = default;
-        ~ISampler() override = default;
+        Sampler() = default;
+        ~Sampler() override = default;
 
-        virtual bool initialize(const FSamplerDesc& samplerDesc) = 0;
+        virtual bool initialize(const SamplerDesc& samplerDesc) = 0;
         virtual void destroy() = 0;
         virtual void setName(FStringView name) {}
-        EResourceType getResourceType() const final { return EResourceType::Sampler;  }
+        ResourceType getResourceType() const final { return ResourceType::Sampler;  }
 
-        ESamplerAddressMode getAddressModeU() const { return m_AddressModeU; }
-        ESamplerAddressMode getAddressModeV() const { return m_AddressModeU; }
-        ESamplerAddressMode getAddressModeW() const { return m_AddressModeU; }
-        EFilter getMinFilter() const { return m_MinFilter; }
-        EFilter getMagFilter() const { return m_MagFilter; }
+        SamplerAddressMode getAddressModeU() const { return m_AddressModeU; }
+        SamplerAddressMode getAddressModeV() const { return m_AddressModeU; }
+        SamplerAddressMode getAddressModeW() const { return m_AddressModeU; }
+        Filter getMinFilter() const { return m_MinFilter; }
+        Filter getMagFilter() const { return m_MagFilter; }
         bool isAnisotropyEnabled() const { return m_AnisotropyEnable; }
         bool isCompareEnabled() const { return m_CompareEnable; }
-        ECompareOp getCompareOp() const { return m_CompareOp; }
+        CompareOp getCompareOp() const { return m_CompareOp; }
         bool doesAllowUnnormalizedCoordinates() const { return m_UnnormalizedCoordinates; }
         float getMinLod() const { return m_MinLod; }
         float getMaxLod() const { return m_MaxLod; }
-        EFilter getMipmapFilter() const { return m_MipmapFilter; }
+        Filter getMipmapFilter() const { return m_MipmapFilter; }
     protected:
-        ESamplerAddressMode m_AddressModeU = ESamplerAddressMode::Repeat;
-        ESamplerAddressMode m_AddressModeV = ESamplerAddressMode::Repeat;
-        ESamplerAddressMode m_AddressModeW = ESamplerAddressMode::Repeat;
-        EFilter m_MinFilter = EFilter::Nearest;
-        EFilter m_MagFilter = EFilter::Nearest;
+        SamplerAddressMode m_AddressModeU = SamplerAddressMode::Repeat;
+        SamplerAddressMode m_AddressModeV = SamplerAddressMode::Repeat;
+        SamplerAddressMode m_AddressModeW = SamplerAddressMode::Repeat;
+        Filter m_MinFilter = Filter::Nearest;
+        Filter m_MagFilter = Filter::Nearest;
         bool m_AnisotropyEnable = false;
         bool m_CompareEnable = false;
-        ECompareOp m_CompareOp = ECompareOp::Always;
+        CompareOp m_CompareOp = CompareOp::Always;
         bool m_UnnormalizedCoordinates = false;
         float m_MinLod = 0.0f;
         float m_MaxLod = 1.0f;
-        EFilter m_MipmapFilter = EFilter::Nearest;
+        Filter m_MipmapFilter = Filter::Nearest;
     };
 }

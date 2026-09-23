@@ -3,7 +3,7 @@
 #include "Luma/Memory/Ref.h"
 #include "Luma/Physics/BoxShape.h"
 #include "Luma/Runtime/Window.h"
-#include "Luma/Rendering/GPUDevice.h"
+#include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Rendering/Renderer2D.h"
 #include "Luma/Physics/PhysicsWorld.h"
@@ -16,8 +16,8 @@ static constexpr FVector3f GRAVITY {0.0f, toPixels(-9.81f), 0.0f};
 
 int main(int argc, const char** argv)
 {
-    Ref<IWindow> window = createWindow("Hello Triangle!", 800, 600, EWindowOptions::Centered | EWindowOptions::Resizable);
-    Ref<IGPUDevice> device = createGPUDevice(window);
+    Ref<Window> window = createWindow("Hello Triangle!", 800, 600, WindowOptions::Centered | WindowOptions::Resizable);
+    Ref<Device> device = createGPUDevice(window);
     Ref<FPhysicsWorld> world = createPhysicsWorld(FPhysicsWorldDesc(GRAVITY));
     Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(device, 800, 600, SampleCount1x);
     window->resizedEvent.bindMember(renderer.get(), &FRenderer2D::resize);
@@ -40,7 +40,7 @@ int main(int argc, const char** argv)
     body->attachShape(box);
     box->setSize(FVector3f(bodySize / 2, 10));
 
-    FullscreenRenderPass fullscreenPass(device, EFormat::RGBA8_SRGB);
+    FullscreenRenderPass fullscreenPass(device, Format::RGBA8_SRGB);
 
     while (!window->shouldClose())
     {
@@ -52,12 +52,12 @@ int main(int argc, const char** argv)
         const auto screenSpacePosition = camera.worldToScreen(position);
 
         renderer->begin();
-        renderer->drawText(strfmt("Position : ({:.2f}, {:.2f})", position.x, position.y), {0.0, 0.0}, 18.0f, FColor::White);
-        renderer->drawQuad(screenSpacePosition - bodySize / 2, bodySize, 0, FColor::Blue);
-        renderer->drawQuad(camera.worldToScreen(floorBody->getPosition()) - floorSize / 2, floorSize, 0, FColor::Red);
+        renderer->drawText(strfmt("Position : ({:.2f}, {:.2f})", position.x, position.y), {0.0, 0.0}, 18.0f, Color::White);
+        renderer->drawQuad(screenSpacePosition - bodySize / 2, bodySize, 0, Color::Blue);
+        renderer->drawQuad(camera.worldToScreen(floorBody->getPosition()) - floorSize / 2, floorSize, 0, Color::Red);
         renderer->end();
 
-        Ref<ITexture> rendererTexture = renderer->render();
+        Ref<Texture> rendererTexture = renderer->render();
         fullscreenPass.setInputTexture(rendererTexture);
 
         if (device->beginFrame())

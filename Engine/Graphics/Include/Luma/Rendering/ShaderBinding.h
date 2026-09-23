@@ -5,11 +5,11 @@
 
 namespace Luma
 {
-    struct FShaderBinding
+    struct ShaderBinding
     {
         FString name;
-        EBindingType bindingType = EBindingType::None;
-        FShaderStageFlags visibility = EShaderStage::None;
+        BindingType bindingType = BindingType::None;
+        ShaderStageFlags visibility = ShaderStage::None;
         uint32_t bindingIndex = 0;
         uint32_t arrayCount = 0;
     };

@@ -8,13 +8,13 @@ struct GLFWwindow;
 
 namespace Luma
 {
-    class LUMA_CORE_API FDesktopWindow : public IWindow
+    class LUMA_CORE_API DesktopWindow : public Window
     {
     public:
-        FDesktopWindow() = default;
-        ~FDesktopWindow() override = default;
+        DesktopWindow() = default;
+        ~DesktopWindow() override = default;
 
-        bool initialize(const FWindowDesc& windowDesc) override;
+        bool initialize(const WindowDesc& windowDesc) override;
         void destroy() override;
         void pollEvents() override;
         bool shouldClose() const override;
