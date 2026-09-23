@@ -80,26 +80,29 @@ namespace Luma
 
     void FInput::updateKeyState(EKey key, EInputState state)
     {
-        m_KeyboardState.previousState[(uint32_t)key] = m_KeyboardState.currentState[(uint32_t)key];
         m_KeyboardState.currentState[(uint32_t)key] = state;
     }
 
     void FInput::updateMouseButtonState(EMouseButton button, EInputState state)
     {
-        m_MouseState.previousButtons[(uint32_t)button] = m_MouseState.currentButtons[(uint32_t)button];
         m_MouseState.currentButtons[(uint32_t)button] = state;
     }
 
     void FInput::updateMousePosition(const FVector2d& position)
     {
-        m_MouseState.previousPosition = m_MouseState.currentPosition;
         m_MouseState.currentPosition = position;
     }
 
     void FInput::updateMouseWheel(double wheel)
     {
-        m_MouseState.previousWheel = m_MouseState.currentWheel;
         m_MouseState.currentWheel = wheel;
     }
 
+    void FInput::update()
+    {
+        m_KeyboardState.previousState = m_KeyboardState.currentState;
+        m_MouseState.previousButtons = m_MouseState.currentButtons;
+        m_MouseState.previousPosition = m_MouseState.currentPosition;
+        m_MouseState.previousWheel = m_MouseState.currentWheel;
+    }
 }

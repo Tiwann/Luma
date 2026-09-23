@@ -1,6 +1,7 @@
 #pragma once
 #include "InputState.h"
 #include <cstdint>
+#include <array>
 
 namespace Luma
 {
@@ -34,7 +35,7 @@ namespace Luma
 
     struct FKeyboardState
     {
-        EInputState currentState[MAX_KEYBOARD_KEYS]{};
-        EInputState previousState[MAX_KEYBOARD_KEYS]{};
+        std::array<EInputState, MAX_KEYBOARD_KEYS> currentState;
+        std::array<EInputState, MAX_KEYBOARD_KEYS> previousState;
     };
 }

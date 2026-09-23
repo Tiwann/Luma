@@ -267,6 +267,7 @@ namespace Luma
 
     void FDesktopWindow::pollEvents()
     {
+        FInput::update();
         glfwPollEvents();
     }
 
