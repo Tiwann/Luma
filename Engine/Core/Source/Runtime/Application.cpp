@@ -130,7 +130,7 @@ namespace Luma
 
             cmdBuffer->beginRenderPass(renderPassDesc);
             onRender(cmdBuffer);
-            m_Renderer2D->render();
+            //m_Renderer2D->render();
             cmdBuffer->endRenderPass();
 
 
