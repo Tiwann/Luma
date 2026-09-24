@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    enum class EOpenModeBits
+    enum class OpenMode
     {
         None = 0,
         Read = BIT(0),
@@ -19,5 +19,5 @@ namespace Luma
         ReadWriteBinary = ReadText | WriteBinary,
     };
 
-    typedef TFlags<EOpenModeBits> FOpenModeFlags;
+    typedef Flags<OpenMode> OpenModeFlags;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Character.h"
 #include "String.h"
 #include "HashMap.h"
 #include "Luma/Runtime/Hash.h"
@@ -7,10 +8,10 @@
 
 namespace Luma
 {
-    template<typename T>
-    struct THasher<TString<T>>
+    template<Character T>
+    struct Hasher<StringBase<T>>
     {
-        uint64_t operator()(const TString<T>& str) const
+        uint64_t operator()(const StringBase<T>& str) const
         {
             return FNV1aHash(reinterpret_cast<const uint8_t*>(str.data()), str.count());
         }
@@ -19,12 +20,16 @@ namespace Luma
 
 namespace std
 {
-    template<>
-    struct hash<Luma::FString>
+    using Luma::Character;
+    using Luma::StringBase;
+    using Luma::Hasher;
+
+    template<Character T>
+    struct hash<StringBase<T>>
     {
-        size_t operator()(const Luma::FString& string) const noexcept
+        size_t operator()(const StringBase<T>& string) const noexcept
         {
-            return Luma::THasher<Luma::FString>()(string);
+            return Hasher<StringBase<T>>()(string);
         }
     };
 }

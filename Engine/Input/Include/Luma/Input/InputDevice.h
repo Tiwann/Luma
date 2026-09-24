@@ -5,7 +5,7 @@
 
 namespace Luma
 {
-    enum class EInputDeviceType
+    enum class InputDeviceType
     {
         None,
         Keyboard = BIT(0),
@@ -13,11 +13,11 @@ namespace Luma
         Gamepad = BIT(2),
     };
 
-    typedef TFlags<EInputDeviceType> FInputDeviceTypeFlags;
+    typedef TFlags<InputDeviceType> InputDeviceFlags;
 
-    struct FInputDevice
+    struct InputDevice
     {
         uint32_t deviceId = -1u;
-        EInputDeviceType type = EInputDeviceType::None;
+        InputDeviceType type = InputDeviceType::None;
     };
 }

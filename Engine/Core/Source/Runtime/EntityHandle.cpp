@@ -10,10 +10,10 @@ namespace Luma
     {}
 
 
-    FEntity* FEntityHandle::operator->()
+    Entity* FEntityHandle::operator->()
     {
         if (!m_Context) return nullptr;
-        FEntity** entity = m_Context->m_Entities.findValue(m_Handle);
+        Entity** entity = m_Context->m_Entities.findValue(m_Handle);
         if (!entity) return nullptr;
         return *entity;
     }

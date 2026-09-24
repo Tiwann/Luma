@@ -36,7 +36,7 @@ add_subdirectory(Engine/Physics)
 if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)
     add_subdirectory(Example/Renderer2D)
-    add_subdirectory(Example/PirateBomb)
+    add_subdirectory(Example/Skybox)
 endif ()
 
 if(LUMA_ENGINE_BUILD_EDITOR)

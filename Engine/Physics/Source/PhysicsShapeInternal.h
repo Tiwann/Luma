@@ -7,7 +7,7 @@ namespace Luma
     struct IPhysicsShape::Impl
     {
         b3ShapeId shapeId = b3_nullShapeId;
-        FPhysicsBody* body = nullptr;
+        PhysicsBody* body = nullptr;
         FPhysicsMaterial material;
         FVector3f localPosition = FVector3f::Zero;
         FQuatf localRotation = FQuatf::Identity;

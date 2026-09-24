@@ -8,7 +8,7 @@
 
 namespace Luma
 {
-    struct FPhysicsWorldDesc
+    struct PhysicsWorldDesc
     {
         FVector3f gravity = FVector3f(0.0f, -9.81f, 0.0f);
         float timestep = 1.0f / 60.0f;
@@ -16,17 +16,17 @@ namespace Luma
         uint32_t maxBodies = 1024;
     };
 
-    class LUMA_PHYSICS_API FPhysicsWorld : public RefCounted<FPhysicsWorld>
+    class LUMA_PHYSICS_API PhysicsWorld : public RefCounted<PhysicsWorld>
     {
     public:
-        explicit FPhysicsWorld(const FPhysicsWorldDesc& desc = FPhysicsWorldDesc());
-        ~FPhysicsWorld() override = default;
+        explicit PhysicsWorld(const PhysicsWorldDesc& desc = PhysicsWorldDesc());
+        ~PhysicsWorld() override = default;
 
         void destroy();
         void step();
 
-        Ref<FPhysicsBody> createBody(const FPhysicsBodyDesc& desc = FPhysicsBodyDesc());
-        void destroyBody(Ref<FPhysicsBody> body);
+        Ref<PhysicsBody> createBody(const FPhysicsBodyDesc& desc = FPhysicsBodyDesc());
+        void destroyBody(Ref<PhysicsBody> body);
 
         void setGravity(const FVector3f& gravity);
         FVector3f getGravity() const;
@@ -35,11 +35,11 @@ namespace Luma
         float getTimestep();
     private:
         struct Impl;
-        friend class FPhysicsBody;
+        friend class PhysicsBody;
         friend class FPhysicsWorldDebugRenderer;
 
         Impl* m_Pimpl = nullptr;
     };
 
-    LUMA_PHYSICS_API FPhysicsWorld* createPhysicsWorld(const FPhysicsWorldDesc& desc = FPhysicsWorldDesc());
+    LUMA_PHYSICS_API PhysicsWorld* createPhysicsWorld(const PhysicsWorldDesc& desc = PhysicsWorldDesc());
 }

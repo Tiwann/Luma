@@ -7,7 +7,7 @@ namespace Luma
 {
     struct ShaderBinding
     {
-        FString name;
+        String name;
         BindingType bindingType = BindingType::None;
         ShaderStageFlags visibility = ShaderStage::None;
         uint32_t bindingIndex = 0;

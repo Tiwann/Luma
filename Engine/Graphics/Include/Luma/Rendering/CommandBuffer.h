@@ -39,9 +39,9 @@ namespace Luma::RHI
         virtual bool begin() = 0;
         virtual void end() = 0;
 
-        virtual void beginDebugGroup(FStringView name, const Color& color){}
+        virtual void beginDebugGroup(StringView name, const Color& color){}
         virtual void endDebugGroup(){}
-        virtual void setName(FStringView name) {}
+        virtual void setName(StringView name) {}
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         /// RENDER CMDS
@@ -50,7 +50,7 @@ namespace Luma::RHI
         virtual void clearDepthStencilTarget(float depth, uint8_t stencil) = 0;
         virtual void clearColorTexture(Texture* texture, const Color& color, const TextureSubresourceRange& subresourceRange) = 0;
         virtual void clearColorTexture(Texture* texture, const Color& color) = 0;
-        virtual void bindVertexBuffers(TArrayView<VertexBufferBinding> bindings) = 0;
+        virtual void bindVertexBuffers(ArrayView<VertexBufferBinding> bindings) = 0;
         void bindVertexBuffer(const Buffer* buffer, int64_t offset);
         virtual void bindIndexBuffer(const Buffer* buffer, int64_t offset, IndexFormat format) = 0;
         virtual void pushConstants(const Shader* shader, ShaderStageFlags stageFlags, const void* data, uint64_t offset, uint64_t size) = 0;
@@ -62,9 +62,9 @@ namespace Luma::RHI
         virtual void bindRenderPipeline(const RenderPipeline* pipeline) = 0;
         virtual void beginRenderPass(const RenderPassDesc& renderPassDesc) = 0;
         virtual void endRenderPass() = 0;
-        virtual void setScissors(const TArray<Scissor>& scissors) = 0;
+        virtual void setScissors(const Array<Scissor>& scissors) = 0;
         virtual void setScissor(const Scissor& scissor) = 0;
-        virtual void setViewports(const TArray<Viewport>& viewports) = 0;
+        virtual void setViewports(const Array<Viewport>& viewports) = 0;
         virtual void setViewport(const Viewport& viewport) = 0;
         virtual void draw(const DrawCommand& drawCmd) = 0;
         void draw(uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance);
@@ -72,8 +72,8 @@ namespace Luma::RHI
         void drawIndexed(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t vertexOffset, uint32_t firstInstance);
         virtual void drawIndirect(const Buffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
         virtual void drawIndexedIndirect(const Buffer* buffer, uint64_t offset, uint32_t drawCount) = 0;
-        virtual void textureBarriers(TArrayView<TextureBarrier> barriers) = 0;
-        virtual void bufferBarriers(TArrayView<BufferBarrier> barriers) = 0;
+        virtual void textureBarriers(ArrayView<TextureBarrier> barriers) = 0;
+        virtual void bufferBarriers(ArrayView<BufferBarrier> barriers) = 0;
         virtual void bindBindingGroup(const BindingGroup* bindingGroup) = 0;
         virtual void bindDescriptorBuffer(const Buffer* buffer){LUMA_ASSERT(false, "Not Implemented");}
         ///////////////////////////////////////////////////////////////////////////////////////////////

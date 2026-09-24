@@ -7,13 +7,13 @@
 namespace Luma
 {
     template<typename T, uint64_t N>
-    class TStaticArray
+    class StaticArray
     {
     public:
         using SizeType = uint64_t;
 
         template<typename... U> requires (std::is_same_v<U, T> && ...) && (sizeof...(U) <= N)
-        constexpr TStaticArray(U&&... elements)
+        constexpr StaticArray(U&&... elements)
             : m_Data{std::forward<U>(elements)...}
         {
 

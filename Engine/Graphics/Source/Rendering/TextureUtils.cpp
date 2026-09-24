@@ -67,7 +67,7 @@ namespace Luma::TextureUtils
         return true;
     }
 
-    Texture* loadTexture(Device* device, FStringView filepath)
+    Texture* loadTexture(Device* device, StringView filepath)
     {
         stbi_set_flip_vertically_on_load(true);
         int32_t width = 0, height = 0;

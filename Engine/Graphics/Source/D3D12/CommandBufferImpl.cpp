@@ -129,9 +129,9 @@ namespace Luma::D3D12
     {
     }
 
-    void FCommandBufferImpl::setScissors(const TArray<FScissor>& scissors)
+    void FCommandBufferImpl::setScissors(const Array<FScissor>& scissors)
     {
-        TArray<D3D12_RECT> scs = scissors.transform<D3D12_RECT>([](const FScissor& s)
+        Array<D3D12_RECT> scs = scissors.transform<D3D12_RECT>([](const FScissor& s)
         {
             return D3D12_RECT(s.x, s.y, s.width, s.height);
         });
@@ -145,9 +145,9 @@ namespace Luma::D3D12
         m_Handle->RSSetScissorRects(1, &scissorRect);
     }
 
-    void FCommandBufferImpl::setViewports(const TArray<FViewport>& viewports)
+    void FCommandBufferImpl::setViewports(const Array<FViewport>& viewports)
     {
-        TArray<D3D12_VIEWPORT> vps = viewports.transform<D3D12_VIEWPORT>([](const FViewport& v)
+        Array<D3D12_VIEWPORT> vps = viewports.transform<D3D12_VIEWPORT>([](const FViewport& v)
         {
             return D3D12_VIEWPORT(v.x, v.y, v.width, v.height, v.minDepth, v.maxDepth);
         });

@@ -7,7 +7,7 @@
 
 namespace Luma
 {
-    class IStream
+    class Stream
     {
     public:
         using SizeType = uint64_t;
@@ -15,23 +15,23 @@ namespace Luma
 
         static constexpr SizeType EndOfFile = SizeType(~0);
 
-        IStream() = default;
-        explicit IStream(const FOpenModeFlags openMode) : m_OpenMode(openMode) {}
-        virtual ~IStream() { close(); }
+        Stream() = default;
+        explicit Stream(const OpenModeFlags openMode) : m_OpenMode(openMode) {}
+        virtual ~Stream() { close(); }
 
         bool isOpened() const;
         virtual bool isGood() const = 0;
 
         virtual SizeType readRaw(void* outBuffer, SizeType size) = 0;
         virtual SizeType writeRaw(const void* inBuffer, SizeType size) = 0;
-        virtual bool seek(ESeek seekMode, OffsetType offset) = 0;
+        virtual bool seek(Seek seekMode, OffsetType offset) = 0;
         virtual OffsetType tell() const = 0;
         virtual void close();
 
-        bool rewind() { seek(ESeek::Begin, 0); return isOpened(); }
+        bool rewind() { seek(Seek::Begin, 0); return isOpened(); }
 
-        SizeType readLine(FString& outLine);
-        SizeType read(FString& str, SizeType count);
+        SizeType readLine(String& outLine);
+        SizeType read(String& str, SizeType count);
         SizeType read(char& outChar);
         SizeType read(int8_t& outInt);
         SizeType read(int16_t& outInt);
@@ -45,7 +45,7 @@ namespace Luma
         SizeType read(double& outDouble);
 
         template<typename Type>
-        SizeType readBuffer(TBufferView<Type>& outBuffer)
+        SizeType readBuffer(BufferView<Type>& outBuffer)
         {
             return readRaw(outBuffer.data(), outBuffer.count());
         }
@@ -57,7 +57,7 @@ namespace Luma
         }
 
         template<Character T>
-        SizeType readString(TString<T>& str, SizeType count)
+        SizeType readString(StringBase<T>& str, SizeType count)
         {
             const SizeType bytesToRead = min(count, str.size());
             const SizeType bytesRead = readRaw(*str, bytesToRead);
@@ -71,7 +71,7 @@ namespace Luma
         }
 
         template<Character T>
-        SizeType write(const TString<T>& str)
+        SizeType write(const StringBase<T>& str)
         {
             return writeRaw(*str, str.size());
         }
@@ -85,14 +85,14 @@ namespace Luma
         SizeType write(uint16_t value);
         SizeType write(uint32_t value);
         SizeType write(uint64_t value);
-        SizeType write(const FString& string);
-        SizeType write(FStringView string);
+        SizeType write(const String& string);
+        SizeType write(StringView string);
         SizeType write(float value);
         SizeType write(double value);
 
     protected:
         bool m_Opened = false;
-        FOpenModeFlags m_OpenMode = EOpenModeBits::None;
+        OpenModeFlags m_OpenMode = OpenMode::None;
     };
 }
 

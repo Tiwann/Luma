@@ -4,24 +4,24 @@
 
 namespace Luma
 {
-    void* FDefaultAllocator::allocate(uint64_t size, uint64_t alignment)
+    void* LinearAllocator::allocate(uint64_t size, uint64_t alignment)
     {
         return ::operator new(size);
     }
 
-    void* FDefaultAllocator::callocate(uint64_t size, uint64_t alignment)
+    void* LinearAllocator::callocate(uint64_t size, uint64_t alignment)
     {
         void* data = ::operator new(size);
         Memory::memset(data, 0, size);
         return data;
     }
 
-    void* FDefaultAllocator::reallocate(void* ptr, uint64_t size, uint64_t alignment)
+    void* LinearAllocator::reallocate(void* ptr, uint64_t size, uint64_t alignment)
     {
         return ::operator new (size, ptr);
     }
 
-    void FDefaultAllocator::free(void* ptr)
+    void LinearAllocator::free(void* ptr)
     {
         ::operator delete(ptr);
     }

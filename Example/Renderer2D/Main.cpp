@@ -1,25 +1,30 @@
-#include <Luma/Memory/Ref.h>
-#include <Luma/Runtime/DesktopWindow.h>
-
-#include <Luma/Runtime/Time.h>
-#include <Luma/Rendering/Device.h>
-#include <Luma/Rendering/CommandBuffer.h>
-#include <Luma/Rendering/RenderPassDesc.h>
 #include <Luma/Containers/StringFormat.h>
 #include <Luma/Input/Immediate.h>
+#include <Luma/Memory/Ref.h>
+#include <Luma/Rendering/CommandBuffer.h>
+#include <Luma/Rendering/Device.h>
 #include <Luma/Rendering/Renderer2D.h>
+#include <Luma/Rendering/RenderPassDesc.h>
+#include <Luma/Runtime/Time.h>
+#include <Luma/Runtime/Window.h>
+
 
 using namespace Luma;
+using namespace Luma::RHI;
 
-static constexpr uint32_t WIDTH = 800;
-static constexpr uint32_t HEIGHT = 600;
+static constexpr uint32_t kWidth = 800;
+static constexpr uint32_t kHeight = 600;
 
 int main()
 {
-    Ref<DesktopWindow> window = createWindow("Hello Renderer2D", WIDTH, HEIGHT, WindowOptions::Centered);
-    Ref<Device> gpuDevice = createGPUDevice(window);
-    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(gpuDevice);
+    Ref<Window> window = createWindow("Hello Renderer2D", kWidth, kHeight, WindowOptions::Centered);
+    Ref<Device> device = createDevice(window);
+    Ref<Renderer2D> renderer = Ref<Renderer2D>::create(device, kWidth, kHeight);
 
+    Camera camera;
+    camera.setSize(kWidth, kHeight);
+    camera.setProjectionMode(CameraProjectionMode::Orthographic);
+    camera.setClipPlanes(-1.0f, 1.0f);
 
     float lastTime = 0.0f;
     while (!window->shouldClose())
@@ -33,28 +38,14 @@ int main()
         renderer->drawText(strfmt("DeltaTime: {:.3f}ms", deltaTime), {0, 0}, 20, Color::Cyan);
         renderer->end();
 
-        if (gpuDevice->beginFrame())
+        Ref<Texture> renderedTexture = renderer->render(camera);
+
+        if (device->beginFrame())
         {
-            CommandBuffer* cmdBuffer = gpuDevice->getCommandBuffer();
-            const ITextureView* swapchainTexture = gpuDevice->getAcquiredSwapchainTextureView();
+            CommandBuffer* cmdBuffer = device->getCommandBuffer();
 
-            RenderPassTarget colorAttachment;
-            colorAttachment.type = RenderPassTargetType::Color;
-            colorAttachment.loadOp = LoadOp::Clear;
-            colorAttachment.storeOp = StoreOp::Store;
-            colorAttachment.clearValue.color = Color::Black;
-            colorAttachment.textureView = swapchainTexture;
-
-            RenderPassDesc renderPassDesc;
-            renderPassDesc.renderArea = {0, 0, WIDTH, HEIGHT};
-            renderPassDesc.colorTargets.add(&colorAttachment);
-
-            cmdBuffer->beginRenderPass(renderPassDesc);
-            renderer->render();
-            cmdBuffer->endRenderPass();
-
-            gpuDevice->endFrame();
-            gpuDevice->present();
+            device->endFrame();
+            device->present();
         }
     }
 

@@ -21,10 +21,10 @@ namespace Luma
         bool initialize(const MaterialDesc& materialDesc);
         void destroy() override;
 
-        void setSampler(const FString& name, const RHI::Sampler* sampler);
-        void setTexture(const FString& name, const RHI::Texture* texture, BindingType bindingType);
-        void setCombinedTextureSampler(const FString& name, const RHI::Sampler* sampler, const RHI::Texture* texture);
-        void setBuffer(const FString& name, const RHI::Buffer* buffer, uint64_t offset, uint64_t size);
+        void setSampler(const String& name, const RHI::Sampler* sampler);
+        void setTexture(const String& name, const RHI::Texture* texture, BindingType bindingType);
+        void setCombinedTextureSampler(const String& name, const RHI::Sampler* sampler, const RHI::Texture* texture);
+        void setBuffer(const String& name, const RHI::Buffer* buffer, uint64_t offset, uint64_t size);
 
         AssetType getAssetType() const override { return AssetType::Material; }
         Ref<RHI::Shader> getShader() const { return m_Shader; }

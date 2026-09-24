@@ -17,5 +17,5 @@ namespace Luma
         Rotation = RotationX | RotationY | RotationZ,
     };
 
-    using FPhysicsConstraintsFlags = TFlags<EPhysicsConstraints>;
+    using FPhysicsConstraintsFlags = Flags<EPhysicsConstraints>;
 }

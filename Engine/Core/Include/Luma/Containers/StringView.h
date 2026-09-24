@@ -5,27 +5,27 @@
 namespace Luma
 {
     template<Character T>
-    class TStringView
+    class StringViewBase
     {
-        using StringType = TString<T>;
+        using StringType = StringBase<T>;
         using CharacterType = StringType::CharacterType;
         using PointerType = StringType::PointerType;
         using ConstPointerType = const CharacterType*;
         using SizeType = StringType::SizeType;
     public:
-        TStringView() = default;
-        TStringView(const StringType& string) : m_Data(string.data()), m_Count(string.count()) { }
+        StringViewBase() = default;
+        StringViewBase(const StringType& string) : m_Data(string.data()), m_Count(string.count()) { }
 
-        constexpr TStringView(ConstPointerType data) : m_Data(data), m_Count(strlen(data)){}
-        constexpr TStringView(ConstPointerType data, SizeType count) : m_Data(data), m_Count(count){}
-        constexpr TStringView(decltype(nullptr)) : m_Data(nullptr), m_Count(0){}
+        constexpr StringViewBase(ConstPointerType data) : m_Data(data), m_Count(strlen(data)){}
+        constexpr StringViewBase(ConstPointerType data, SizeType count) : m_Data(data), m_Count(count){}
+        constexpr StringViewBase(decltype(nullptr)) : m_Data(nullptr), m_Count(0){}
 
-        TStringView(const TStringView&) = default;
-        TStringView(TStringView&&) noexcept = default;
-        TStringView& operator=(const TStringView&) = default;
-        TStringView& operator=(TStringView&&) noexcept = default;
+        StringViewBase(const StringViewBase&) = default;
+        StringViewBase(StringViewBase&&) noexcept = default;
+        StringViewBase& operator=(const StringViewBase&) = default;
+        StringViewBase& operator=(StringViewBase&&) noexcept = default;
 
-        bool operator==(const TStringView& other) const
+        bool operator==(const StringViewBase& other) const
         {
             return m_Count == other.m_Count && memcmp(m_Data, other.m_Data, m_Count * StringType::CharacterSize) == 0;
         }
@@ -60,21 +60,21 @@ namespace Luma
             return view.find(character);
         }
 
-        SizeType find(const TStringView& string) const
+        SizeType find(const StringViewBase& string) const
         {
             std::basic_string_view<CharacterType> view(m_Data, m_Count);
             std::basic_string_view<CharacterType> otherView(string.m_Data, string.m_Count);
             return view.find(otherView);
         }
 
-        SizeType find(SizeType index, const TStringView& str) const
+        SizeType find(SizeType index, const StringViewBase& str) const
         {
             std::basic_string_view<CharacterType> view(m_Data + index, m_Count);
             std::basic_string_view<CharacterType> otherView(str.m_Data, str.m_Count);
             return view.find(otherView);
         }
 
-        SizeType findLast(const TStringView& string) const
+        SizeType findLast(const StringViewBase& string) const
         {
             std::basic_string_view<CharacterType> view(m_Data, m_Count);
             std::basic_string_view<CharacterType> otherView(string.m_Data, string.m_Count);
@@ -87,39 +87,39 @@ namespace Luma
             return view.find_last_of(character);
         }
 
-        TStringView subview(SizeType index) const
+        StringViewBase subview(SizeType index) const
         {
             LUMA_ASSERT(index < m_Count, "Index out of bounds!");
-            return TStringView(m_Data + index, m_Count - index);
+            return StringViewBase(m_Data + index, m_Count - index);
         }
 
-        TStringView subview(SizeType index, SizeType length) const
+        StringViewBase subview(SizeType index, SizeType length) const
         {
             LUMA_ASSERT(index <= m_Count, "Index out of bounds!");
             LUMA_ASSERT(index + length <= m_Count, "Out of bounds!");
-            return TStringView(m_Data + index, length);
+            return StringViewBase(m_Data + index, length);
         }
 
-        bool startsWith(const TStringView& string) const
+        bool startsWith(const StringViewBase& string) const
         {
             return find(string) == 0;
         }
 
-        bool endsWith(const TStringView& string) const
+        bool endsWith(const StringViewBase& string) const
         {
             return findLast(string) != SizeType(-1);
         }
 
-        friend std::basic_ostream<CharacterType>& operator<<(std::basic_ostream<CharacterType>& os, const TStringView& string)
+        friend std::basic_ostream<CharacterType>& operator<<(std::basic_ostream<CharacterType>& os, const StringViewBase& string)
         {
             os.write(string.m_Data, string.m_Count);
             os.flush();
             return os;
         }
 
-        static constexpr const TStringView& empty()
+        static constexpr const StringViewBase& empty()
         {
-            static constexpr TStringView empty;
+            static constexpr StringViewBase empty;
             return empty;
         }
 
@@ -128,8 +128,9 @@ namespace Luma
         SizeType m_Count = 0;
     };
 
-    using FStringView = TStringView<char>;
-    using FStringView16 = TStringView<char16_t>;
-    using FStringView32 = TStringView<char32_t>;
-    using FWideStringView = TStringView<wchar_t>;
+    using StringView = StringViewBase<char>;
+    using StringView8 = StringViewBase<char8_t>;
+    using StringView16 = StringViewBase<char16_t>;
+    using StringView32 = StringViewBase<char32_t>;
+    using WideStringView = StringViewBase<wchar_t>;
 }

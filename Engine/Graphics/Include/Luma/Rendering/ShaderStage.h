@@ -19,5 +19,5 @@ namespace Luma
         AllGraphics = Vertex | Geometry | Fragment | TessellationControl | TessellationEvaluation | Task | Mesh
     };
 
-    typedef TFlags<ShaderStage> ShaderStageFlags;
+    typedef Flags<ShaderStage> ShaderStageFlags;
 }

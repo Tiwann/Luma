@@ -9,7 +9,7 @@ namespace Luma
 {
     struct VertexAttribute
     {
-        FString name;
+        String name;
         ShaderDataType type;
         uint32_t binding;
         bool operator==(const VertexAttribute&) const = default;
@@ -22,21 +22,21 @@ namespace Luma
 
         void addInputBinding(uint32_t binding, VertexInputRate inputRateBinding);
         void addInputAttribute(const VertexAttribute& attribute);
-        void addInputAttribute(FString name, ShaderDataType type, uint32_t binding);
+        void addInputAttribute(String name, ShaderDataType type, uint32_t binding);
 
         uint32_t getStride(uint32_t binding) const;
         uint32_t getAttributeCount() const;
         uint32_t getBindingCount() const;
         uint32_t getAttributeOffset(const VertexAttribute& attribute) const;
-        uint32_t getAttributeOffset(const FString& name) const;
+        uint32_t getAttributeOffset(const String& name) const;
         uint32_t getAttributeOffset(uint32_t index) const;
 
-        const TArray<VertexAttribute>& getInputAttributes() const;
-        const THashMap<uint32_t, VertexInputRate>& getInputBindings() const;
+        const Array<VertexAttribute>& getInputAttributes() const;
+        const HashMap<uint32_t, VertexInputRate>& getInputBindings() const;
 
         bool operator==(const VertexInputLayout& other) const;
     private:
-        THashMap<uint32_t, VertexInputRate> m_InputBindings;
-        TArray<VertexAttribute> m_InputAttributes;
+        HashMap<uint32_t, VertexInputRate> m_InputBindings;
+        Array<VertexAttribute> m_InputAttributes;
     };
 }

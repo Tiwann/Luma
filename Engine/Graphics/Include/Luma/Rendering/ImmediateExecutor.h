@@ -14,7 +14,7 @@ namespace Luma::RHI
         virtual bool initialize(Device* device, Queue* queue) = 0;
         virtual void destroy() = 0;
 
-        virtual void execute(const std::function<void(const CommandBuffer* cmdBuffer)>& function) = 0;
+        virtual void execute(const std::function<void(CommandBuffer* cmdBuffer)>& function) = 0;
         virtual bool isValid() const = 0;
     };
 }

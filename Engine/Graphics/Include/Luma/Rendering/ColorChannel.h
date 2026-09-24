@@ -13,5 +13,5 @@ namespace Luma
         All = Red | Green | Blue | Alpha
     };
 
-    typedef TFlags<ColorChannels> ColorChannelFlags;
+    typedef Flags<ColorChannels> ColorChannelFlags;
 }

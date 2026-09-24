@@ -4,5 +4,5 @@
 
 namespace Luma
 {
-    extern const TBufferView<uint8_t> robotoFontData;
+    extern const BufferView<uint8_t> robotoFontData;
 }

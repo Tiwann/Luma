@@ -11,5 +11,5 @@ namespace Luma
         Underline = BIT(2),
     };
 
-    using FTextStyleFlags = TFlags<TextStyle>;
+    using FTextStyleFlags = Flags<TextStyle>;
 }

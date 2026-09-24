@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class ESeek
+    enum class Seek
     {
         Begin,
         Current,

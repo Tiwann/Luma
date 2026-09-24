@@ -4,9 +4,9 @@
 
 namespace Luma
 {
-    struct IAllocator
+    struct Allocator
     {
-        virtual ~IAllocator() = default;
+        virtual ~Allocator() = default;
         virtual void* allocate(uint64_t size, uint64_t alignment) = 0;
         virtual void* callocate(uint64_t size, uint64_t alignment) = 0;
         virtual void* reallocate(void* ptr, uint64_t size, uint64_t alignment) = 0;
@@ -14,7 +14,7 @@ namespace Luma
     };
 
 
-    struct LUMA_CORE_API FDefaultAllocator : IAllocator
+    struct LUMA_CORE_API LinearAllocator : Allocator
     {
         void* allocate(uint64_t size, uint64_t alignment) override;
         void* callocate(uint64_t size, uint64_t alignment) override;

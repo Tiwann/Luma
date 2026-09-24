@@ -5,17 +5,17 @@
 namespace Luma
 {
     template <typename T>
-class TArrayView : public TBufferView<T>
+    class ArrayView : public BufferView<T>
     {
     public:
-        constexpr TArrayView() : TBufferView<T>()
+        constexpr ArrayView() : BufferView<T>()
         {
         }
 
-        TArrayView(const TArray<T>& array) : TBufferView<T>(array.data(), array.count())
+        ArrayView(const Array<T>& array) : BufferView<T>(array.data(), array.count())
         {
         }
 
-        TArrayView(const T& element) : TBufferView<T>(element){}
+        ArrayView(const T& element) : BufferView<T>(element){}
     };
 }

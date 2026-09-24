@@ -10,6 +10,9 @@ namespace Luma
     struct TIsCharacter<char> : std::true_type {};
 
     template<>
+    struct TIsCharacter<char8_t> : std::true_type {};
+
+    template<>
     struct TIsCharacter<char16_t> : std::true_type {};
 
     template<>

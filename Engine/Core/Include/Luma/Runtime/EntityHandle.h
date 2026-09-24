@@ -10,7 +10,7 @@ namespace Luma
         FEntityHandle(uint32_t handle, FScene* context);
         FEntityHandle(decltype(nullptr));
 
-        FEntity* operator->();
+        Entity* operator->();
 
         uint32_t getHandle() const { return m_Handle; }
         FScene* getContext() const { return m_Context; }

@@ -21,7 +21,7 @@ namespace Luma::Vulkan
 
     private:
         Device* m_Device = nullptr;
-        THashMap<const RHI::TextureView*, uint64_t> m_Textures;
+        HashMap<const RHI::TextureView*, uint64_t> m_Textures;
         RHI::Sampler* m_Sampler = nullptr;
     };
 }

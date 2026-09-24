@@ -20,22 +20,22 @@ namespace Luma::RHI
 
         virtual void destroy() = 0;
 
-        virtual void bindTextures(uint32_t bindingIndex, TArrayView<const Texture*> textures, TextureBindingType bindingType) = 0;
-        void bindTextures(const FString& name, TArrayView<const Texture*> textures, TextureBindingType bindingType);
+        virtual void bindTextures(uint32_t bindingIndex, ArrayView<const Texture*> textures, TextureBindingType bindingType) = 0;
+        void bindTextures(const String& name, ArrayView<const Texture*> textures, TextureBindingType bindingType);
         void bindTexture(uint32_t bindingIndex, const Texture* texture, TextureBindingType bindingType);
-        void bindTexture(const FString& name, const Texture* texture, TextureBindingType bindingType);
+        void bindTexture(const String& name, const Texture* texture, TextureBindingType bindingType);
 
         virtual void bindBuffer(uint32_t bindingIndex, const Buffer* buffer, int64_t offset, uint64_t size, BufferBindingType bindingType) = 0;
-        void bindBuffer(const FString& name, const Buffer* buffer, int64_t offset, uint64_t size, BufferBindingType bindingType);
+        void bindBuffer(const String& name, const Buffer* buffer, int64_t offset, uint64_t size, BufferBindingType bindingType);
 
         virtual void bindSampler(uint32_t bindingIndex, const Sampler* sampler) = 0;
-        void bindSampler(const FString& name, const Sampler* sampler);
+        void bindSampler(const String& name, const Sampler* sampler);
 
 
-        virtual void bindTexturesWithSampler(uint32_t bindingIndex, TArrayView<const Texture*> textures, const Sampler* sampler) = 0;
-        void bindTexturesWithSampler(const FString& name, TArrayView<const Texture*> textures, const Sampler* sampler);
+        virtual void bindTexturesWithSampler(uint32_t bindingIndex, ArrayView<const Texture*> textures, const Sampler* sampler) = 0;
+        void bindTexturesWithSampler(const String& name, ArrayView<const Texture*> textures, const Sampler* sampler);
         void bindTextureWithSampler(uint32_t bindingIndex, const Texture* texture, const Sampler* sampler);
-        void bindTextureWithSampler(const FString& name, const Texture* texture, const Sampler* sampler);
+        void bindTextureWithSampler(const String& name, const Texture* texture, const Sampler* sampler);
 
         Shader* getShader() const { return m_Shader; }
         uint32_t getGroupIndex() const { return m_GroupIndex; }

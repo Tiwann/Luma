@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    class FArrayStream final : public IStream
+    class FArrayStream final : public Stream
     {
     public:
         FArrayStream();
@@ -17,10 +17,10 @@ namespace Luma
         bool isGood() const override;
         SizeType readRaw(void* outBuffer, SizeType size) override;
         SizeType writeRaw(const void* inBuffer, SizeType size) override;
-        bool seek(ESeek seekMode, OffsetType offset) override;
+        bool seek(Seek seekMode, OffsetType offset) override;
         OffsetType tell() const override;
 
-        TBufferView<uint8_t> getView() const { return { m_Data, m_Size }; }
+        BufferView<uint8_t> getView() const { return { m_Data, m_Size }; }
         const uint8_t* data() const { return m_Data; }
         size_t size() const { return m_Size; }
     private:

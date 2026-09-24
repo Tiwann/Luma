@@ -3,11 +3,11 @@
 
 namespace Luma
 {
-    class LUMA_PHYSICS_API FBoxShape : public IPhysicsShape
+    class LUMA_PHYSICS_API BoxShape : public IPhysicsShape
     {
     public:
-        FBoxShape(const FVector3f& halfExtents = FVector3f(0.5f, 0.5f, 0.5f));
-        ~FBoxShape() override = default;
+        BoxShape(const FVector3f& halfExtents = FVector3f(0.5f, 0.5f, 0.5f));
+        ~BoxShape() override = default;
 
         EType getType() const override { return EType::Box; }
 

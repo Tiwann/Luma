@@ -4,9 +4,9 @@
 
 namespace Luma
 {
-    class FEntity;
+    class Entity;
     class FEntityHandle;
-    struct IComponent;
+    struct Component;
     struct CommandBuffer;
 
     class FScene final : public Asset
@@ -26,16 +26,16 @@ namespace Luma
 
         FEntityHandle createEntity();
         void destroyEntity(FEntityHandle entity);
-        TArray<FEntity*> getEntities();
+        Array<Entity*> getEntities();
 
-        template<typename T> requires std::is_base_of_v<IComponent, T>
+        template<typename T> requires std::is_base_of_v<Component, T>
         T* getFirstComponent();
 
     private:
-        friend class FEntity;
+        friend class Entity;
         friend class FEntityHandle;
 
-        THashMap<uint32_t, FEntity*> m_Entities;
+        HashMap<uint32_t, Entity*> m_Entities;
         static inline uint32_t s_EntityId = 1;
     };
 }

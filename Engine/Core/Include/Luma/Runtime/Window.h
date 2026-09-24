@@ -22,12 +22,12 @@ namespace Luma
         NoDragAndDrop = BIT(5),
     };
 
-    using WindowOptionsFlags = TFlags<WindowOptions>;
+    using WindowOptionsFlags = Flags<WindowOptions>;
 
 
     struct WindowDesc
     {
-        FString title;
+        String title;
         uint32_t width = 0;
         uint32_t height = 0;
         WindowOptionsFlags options = 0;
@@ -46,14 +46,14 @@ namespace Luma
         FRect2<uint32_t> getBounds() const { return FRect2<uint32_t>{ 0, 0, getWidth(), getHeight() }; }
         virtual bool shouldClose() const = 0;
         virtual bool isAvailable() const = 0;
-        virtual void setTitle(const FString& title){}
+        virtual void setTitle(const String& title){}
 
-        TEvent<void(uint32_t, uint32_t)> resizedEvent;
-        TEvent<void(uint32_t, uint32_t)> movedEvent;
-        TEvent<void()> closedEvent;
-        TEvent<void()> minimizedEvent;
-        TEvent<void()> maximizedEvent;
-        TEvent<void(bool)> focusedEvent;
+        Event<void(uint32_t, uint32_t)> resizedEvent;
+        Event<void(uint32_t, uint32_t)> movedEvent;
+        Event<void()> closedEvent;
+        Event<void()> minimizedEvent;
+        Event<void()> maximizedEvent;
+        Event<void(bool)> focusedEvent;
     };
 
     /// Creates a window, choose the right implementation based on platform
@@ -62,5 +62,5 @@ namespace Luma
 
     /// Creates a window, choose the right implementation based on platform
     /// @return A pointer to a IWindow object. Needs to be freed. Consider using Luma::Ref<>
-    LUMA_CORE_API Window* createWindow(const FString& title, uint32_t width, uint32_t height, WindowOptionsFlags options = WindowOptions::None, DeviceType deviceType = DeviceType::Auto);
+    LUMA_CORE_API Window* createWindow(const String& title, uint32_t width, uint32_t height, WindowOptionsFlags options = WindowOptions::None, DeviceType deviceType = DeviceType::Auto);
 }

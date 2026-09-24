@@ -15,8 +15,8 @@ int main()
     Ref<Window> window = createWindow("Hello Triangle!", 800, 600, WindowOptions::Centered | WindowOptions::Resizable);
     Ref<Device> device = createDevice(window);
 
-    const FString vertexPath = FPath::getAssetPath("Shaders/HelloTriangle.slang.vert.spv");
-    const FString fragmentPath = FPath::getAssetPath("Shaders/HelloTriangle.slang.frag.spv");
+    const String vertexPath = Path::getAssetPath("Shaders/HelloTriangle.slang.vert.spv");
+    const String fragmentPath = Path::getAssetPath("Shaders/HelloTriangle.slang.frag.spv");
     Ref<Shader> shaderProgram = device->createShader(vertexPath, fragmentPath);
 
     RenderPipelineDesc pipelineDesc;

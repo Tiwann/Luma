@@ -4,21 +4,21 @@
 namespace Luma
 {
     template <typename T>
-    class TQueue
+    class Queue
     {
     public:
-        using ArrayType = TArray<T>;
+        using ArrayType = Array<T>;
         using SizeType = ArrayType::SizeType;
         using ValueType = ArrayType::ValueType;
         using ReferenceType = ArrayType::ReferenceType;
         using ConstReferenceType = ArrayType::ConstReferenceType;
         using ForwardReferenceType = ArrayType::ForwardType;
 
-        TQueue() = default;
-        TQueue(const TQueue&) = default;
-        TQueue(TQueue&&) = default;
-        TQueue& operator=(const TQueue&) = default;
-        TQueue& operator=(TQueue&&) = default;
+        Queue() = default;
+        Queue(const Queue&) = default;
+        Queue(Queue&&) = default;
+        Queue& operator=(const Queue&) = default;
+        Queue& operator=(Queue&&) = default;
         
         void enqueue(ConstReferenceType item)
         {

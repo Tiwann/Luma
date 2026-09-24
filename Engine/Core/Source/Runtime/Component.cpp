@@ -4,25 +4,25 @@
 
 namespace Luma
 {
-    FEntity* IComponent::getOwner() const
+    Entity* Component::getOwner() const
     {
         return m_Owner;
     }
 
-    void IComponent::setActive(const bool active)
+    void Component::setActive(const bool active)
     {
         m_Active = active;
     }
 
-    bool IComponent::isActive() const
+    bool Component::isActive() const
     {
         return m_Active;
     }
 
-    FTransformComponent* IComponent::getTransformComponent() const
+    TransformComponent* Component::getTransformComponent() const
     {
-        const FEntity* owner = getOwner();
+        const Entity* owner = getOwner();
         if (!owner) return nullptr;
-        return owner->getComponent<FTransformComponent>();
+        return owner->getComponent<TransformComponent>();
     }
 }

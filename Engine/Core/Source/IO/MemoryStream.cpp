@@ -2,12 +2,12 @@
 
 namespace Luma
 {
-    FMemoryStream::FMemoryStream(const TBufferView<uint8_t>& buffer): IStream(EOpenModeBits::None), m_Buffer(buffer)
+    MemoryStream::MemoryStream(const BufferView<uint8_t>& buffer): Stream(OpenMode::None), m_Buffer(buffer)
     {
         m_Opened = true;
     }
 
-    IStream::SizeType FMemoryStream::readRaw(void* outBuffer, const SizeType size)
+    Stream::SizeType MemoryStream::readRaw(void* outBuffer, const SizeType size)
     {
         if(!m_Opened) return EndOfFile;
         memcpy(outBuffer, &m_Buffer[m_Position], size);
@@ -15,7 +15,7 @@ namespace Luma
         return size;
     }
 
-    IStream::SizeType FMemoryStream::writeRaw(const void* inBuffer, const SizeType size)
+    Stream::SizeType MemoryStream::writeRaw(const void* inBuffer, const SizeType size)
     {
         if(!m_Opened) return EndOfFile;
         if(m_Position + size > m_Buffer.count()) return EndOfFile;
@@ -25,19 +25,19 @@ namespace Luma
         return size;
     }
 
-    bool FMemoryStream::seek(const ESeek seek, const OffsetType offset)
+    bool MemoryStream::seek(const Seek seek, const OffsetType offset)
     {
         if(!m_Opened) return false;
         switch (seek) {
-        case ESeek::Begin:
+        case Seek::Begin:
             if(offset < 0) return false;
             m_Position = offset;
             return true;
-        case ESeek::Current:
+        case Seek::Current:
             if(m_Position + offset < 0) return false;
             m_Position += offset;
             return true;
-        case ESeek::End:
+        case Seek::End:
             if(offset > 0) return false;
             m_Position = (OffsetType)m_Buffer.count() + offset;
             return true;
@@ -45,17 +45,17 @@ namespace Luma
         return false;
     }
 
-    IStream::OffsetType FMemoryStream::tell() const
+    Stream::OffsetType MemoryStream::tell() const
     {
         return m_Opened ? m_Position : OffsetType(~0);
     }
 
-    void FMemoryStream::close()
+    void MemoryStream::close()
     {
-        IStream::close();
+        Stream::close();
     }
 
-    bool FMemoryStream::isGood() const
+    bool MemoryStream::isGood() const
     {
         return m_Position < (OffsetType)m_Buffer.count();
     }

@@ -105,7 +105,7 @@ namespace Luma
         TQuat<T> m_Rotation;
         FVector3<T> m_Scale;
 
-        TLazy<FMatrix4<T>> m_Matrix;
-        TLazy<FMatrix4<T>> m_InverseMatrix;
+        Lazy<FMatrix4<T>> m_Matrix;
+        Lazy<FMatrix4<T>> m_InverseMatrix;
     };
 }

@@ -7,7 +7,7 @@
 using namespace Luma;
 
 
-Player::Player(Ref<FPhysicsWorld> physicsWorld)
+Player::Player(Ref<PhysicsWorld> physicsWorld)
     : m_World(physicsWorld)
 {
     FPhysicsBodyDesc desc{};
@@ -15,7 +15,7 @@ Player::Player(Ref<FPhysicsWorld> physicsWorld)
     m_Body = m_World->createBody(desc);
     m_Body->setConstraints(EPhysicsConstraints::PositionZ);
 
-    m_BoxShape = Ref<FBoxShape>::create(FVector3f(PLAYER_SIZE * 0.5f));
+    m_BoxShape = Ref<BoxShape>::create(FVector3f(PLAYER_SIZE * 0.5f));
     m_Body->attachShape(m_BoxShape);
 }
 
@@ -28,7 +28,7 @@ Player::~Player()
 
 void Player::update(float deltaTime)
 {
-    if (FInput::getKeyDown(EKey::Space))
+    if (Input::getKeyDown(Key::Space))
     {
         const auto mass = m_Body->getMass();
         const auto gravity = m_World->getGravity();
@@ -39,7 +39,7 @@ void Player::update(float deltaTime)
 }
 
 
-void Player::render(const Camera& camera, Ref<FRenderer2D> renderer)
+void Player::render(const Camera& camera, Ref<Renderer2D> renderer)
 {
     const auto position = m_Body->getPosition();
     renderer->drawQuad(FVector2f(position), FVector2f(PLAYER_SIZE), 0, Color::White);

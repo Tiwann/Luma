@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EInputState
+    enum class InputState
     {
         None,
         Pressed,

@@ -14,7 +14,7 @@ namespace Luma
 {
     struct FApplicationConfig
     {
-        FString applicationName = "Luma Application";
+        String applicationName = "Luma Application";
         uint32_t windowWidth = 600;
         uint32_t windowHeight = 400;
         WindowOptionsFlags windowFlags = 0;
@@ -46,7 +46,7 @@ namespace Luma
         Ref<Window> getWindow() const;
         Ref<IAudioDevice> getAudioDevice() const;
         Ref<RHI::Device> getDevice() const;
-        Ref<FRenderer2D> getRenderer2D() const;
+        Ref<Renderer2D> getRenderer2D() const;
 
         FRect2<uint32_t> getWindowBounds() const;
         FVector2<uint32_t> getWindowSize() const;
@@ -59,7 +59,7 @@ namespace Luma
         Ref<Window> m_Window = nullptr;
         Ref<RHI::Device> m_Device = nullptr;
         Ref<ImguiRenderer> m_ImguiRenderer = nullptr;
-        Ref<FRenderer2D> m_Renderer2D = nullptr;
+        Ref<Renderer2D> m_Renderer2D = nullptr;
         Ref<IAudioDevice> m_AudioDevice = nullptr;
 
         uint32_t m_IsRunning = true;

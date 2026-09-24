@@ -50,15 +50,15 @@ namespace Luma::RHI
         return createBuffer(desc);
     }
 
-    Shader* Device::createShader(FStringView vertexPath, FStringView fragmentPath)
+    Shader* Device::createShader(StringView vertexPath, StringView fragmentPath)
     {
-        const TArray<uint8_t> vertexByteCode = FileUtils::readToBuffer(vertexPath);
-        const TArray<uint8_t> fragmentByteCode = FileUtils::readToBuffer(fragmentPath);
+        const Array<uint8_t> vertexByteCode = FileUtils::readToBuffer(vertexPath);
+        const Array<uint8_t> fragmentByteCode = FileUtils::readToBuffer(fragmentPath);
 
         if (vertexByteCode.isEmpty() || fragmentByteCode.isEmpty())
             return nullptr;
 
-        TArray<ShaderCode> shaderCodes
+        Array<ShaderCode> shaderCodes
         {
             {ShaderStage::Vertex, vertexByteCode},
             {ShaderStage::Fragment, fragmentByteCode}

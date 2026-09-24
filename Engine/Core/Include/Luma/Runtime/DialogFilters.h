@@ -9,8 +9,8 @@ namespace Luma
     public:
         struct FFilter
         {
-            FString name;
-            TArray<FString> extensions;
+            String name;
+            Array<String> extensions;
             bool operator==(const FFilter& other) const;
         };
         static const FFilter All;
@@ -34,31 +34,31 @@ namespace Luma
         static const FFilter OTF;
     public:
         FDialogFilters();
-        FDialogFilters(const FString& name, const TArray<FString>& extensions);
+        FDialogFilters(const String& name, const Array<String>& extensions);
         FDialogFilters(const FFilter& filter);
-        FDialogFilters(const TArray<FFilter>& filters);
+        FDialogFilters(const Array<FFilter>& filters);
         ~FDialogFilters();
 
-        void addFilter(const FString& name, const TArray<FString>& extensions);
+        void addFilter(const String& name, const Array<String>& extensions);
         void addFilter(const FFilter& filter);
 
         template<typename... Ext>
-        void addFilter(const FString& name, Ext&&... extensions)
+        void addFilter(const String& name, Ext&&... extensions)
         {
             addFilter(name, { std::forward<Ext>(extensions)... });
         }
 
-        void removeFilter(const FString& name, const TArray<FString>& extensions);
+        void removeFilter(const String& name, const Array<String>& extensions);
         void removeFilter(const FFilter& filter);
-        FFilter* getFilter(const FString& name) const;
+        FFilter* getFilter(const String& name) const;
         
-        FString getFilterString() const;
+        String getFilterString() const;
         
         static const FDialogFilters AudioFilters;
         static const FDialogFilters ModelFilters;
         static const FDialogFilters ImageFilters;
         static const FDialogFilters FontFilters;
     private:
-        TArray<FFilter> m_Filters;
+        Array<FFilter> m_Filters;
     };
 }

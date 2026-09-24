@@ -4,28 +4,28 @@
 #include <format>
 
 template<>
-struct std::formatter<Luma::FString> : std::formatter<std::string_view>
+struct std::formatter<Luma::String> : std::formatter<std::string_view>
 {
-    std::format_context::iterator format(const Luma::FString& str, format_context& ctx) const;
+    std::format_context::iterator format(const Luma::String& str, format_context& ctx) const;
 };
 
 template<>
-struct std::formatter<Luma::FStringView> : std::formatter<std::string_view>
+struct std::formatter<Luma::StringView> : std::formatter<std::string_view>
 {
-    std::format_context::iterator format(const Luma::FStringView& str, format_context& ctx) const;
+    std::format_context::iterator format(const Luma::StringView& str, format_context& ctx) const;
 };
 
 namespace Luma
 {
     template <typename... Args>
-    FString strfmt(const FStringView& format, const Args&... args)
+    String strfmt(const StringView& format, const Args&... args)
     {
         std::string formatted = std::vformat(static_cast<std::string_view>(format), std::make_format_args(args...));
         return {formatted.data(), formatted.size()};
     }
 
     template<Character T, typename... Args>
-    uint32_t strscanf(const TStringView<T> string, const TStringView<T> format, Args*... args)
+    uint32_t strscanf(const StringViewBase<T> string, const StringViewBase<T> format, Args*... args)
     {
         if constexpr (typeid(T) == typeid(char))
         {

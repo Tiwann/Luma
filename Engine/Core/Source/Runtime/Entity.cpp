@@ -2,13 +2,13 @@
 
 namespace Luma
 {
-    void FEntity::onInit()
+    void Entity::onInit()
     {
         for (auto* component : m_Components)
             component->initialize();
     }
 
-    void FEntity::onDestroy()
+    void Entity::onDestroy()
     {
         for (auto* component : m_Components)
         {
@@ -18,7 +18,7 @@ namespace Luma
         m_Components.clear();
     }
 
-    void FEntity::onUpdate(double deltaTime)
+    void Entity::onUpdate(double deltaTime)
     {
         for (auto* component : m_Components)
         {
@@ -27,7 +27,7 @@ namespace Luma
         }
     }
 
-    void FEntity::onPhysicsUpdate(double deltaTime)
+    void Entity::onPhysicsUpdate(double deltaTime)
     {
         for (auto* component : m_Components)
         {
@@ -36,7 +36,7 @@ namespace Luma
         }
     }
 
-    void FEntity::onLateUpdate(double deltaTime)
+    void Entity::onLateUpdate(double deltaTime)
     {
         for (auto* component : m_Components)
         {
@@ -45,7 +45,7 @@ namespace Luma
         }
     }
 
-    void FEntity::onRender(CommandBuffer* cmdBuffer)
+    void Entity::onRender(CommandBuffer* cmdBuffer)
     {
         for (auto* component : m_Components)
         {
@@ -54,57 +54,57 @@ namespace Luma
         }
     }
 
-    FEntity* FEntity::getParent() const
+    Entity* Entity::getParent() const
     {
         return m_Parent;
     }
 
-    void FEntity::setParent(FEntity* parent)
+    void Entity::setParent(Entity* parent)
     {
         m_Parent = parent;
     }
 
-    void FEntity::addChild(FEntity* child)
+    void Entity::addChild(Entity* child)
     {
         m_Children.addUnique(child);
     }
 
-    void FEntity::removeChild(FEntity* child)
+    void Entity::removeChild(Entity* child)
     {
         m_Children.remove(child);
     }
 
-    FScene* FEntity::getOwner() const
+    FScene* Entity::getOwner() const
     {
         return m_Owner;
     }
 
-    AssetType FEntity::getAssetType() const
+    AssetType Entity::getAssetType() const
     {
         return AssetType::Entity;
     }
 
-    bool FEntity::isActive() const
+    bool Entity::isActive() const
     {
         return m_Active;
     }
 
-    void FEntity::setActive(bool active)
+    void Entity::setActive(bool active)
     {
         m_Active = active;
     }
 
-    void FEntity::initialize()
+    void Entity::initialize()
     {
         onInit();
     }
 
-    void FEntity::destroy()
+    void Entity::destroy()
     {
         onDestroy();
     }
 
-    const TArray<FEntity*>& FEntity::getChildren() const
+    const Array<Entity*>& Entity::getChildren() const
     {
         return m_Children;
     }

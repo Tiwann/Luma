@@ -34,7 +34,7 @@ namespace Luma::Deko3d
     private:
         FGPUDeviceImpl* m_Device = nullptr;
         DkQueue m_Handle = nullptr;
-        TArray<const FSemaphoreImpl*> m_WaitSemaphores;
-        TArray<const FSemaphoreImpl*> m_SignalSemaphores;
+        Array<const FSemaphoreImpl*> m_WaitSemaphores;
+        Array<const FSemaphoreImpl*> m_SignalSemaphores;
     };
 }

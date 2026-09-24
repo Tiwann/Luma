@@ -3,15 +3,15 @@
 
 namespace Luma
 {
-    const FMatrix4f& FTransformComponent::getWorldSpaceMatrix()
+    const FMatrix4f& TransformComponent::getWorldSpaceMatrix()
     {
         const auto computeWorldSpaceMatrix = [&] -> FMatrix4f
         {
             const FMatrix4f& localMatrix = getLocalSpaceMatrix();
-            const FEntity* owner = getOwner();
-            if(const FEntity* parent = owner->getParent())
+            const Entity* owner = getOwner();
+            if(const Entity* parent = owner->getParent())
             {
-                FTransformComponent* parentTransform = parent->getComponent<FTransformComponent>();
+                TransformComponent* parentTransform = parent->getComponent<TransformComponent>();
                 if (!parentTransform) return localMatrix;
                 const FMatrix4f& parentWorldMatrix = parentTransform->getWorldSpaceMatrix();
                 return parentWorldMatrix * localMatrix;
@@ -22,7 +22,7 @@ namespace Luma
         return m_WorldSpaceMatrix.get(computeWorldSpaceMatrix);
     }
 
-    const FMatrix4f& FTransformComponent::getLocalSpaceMatrix()
+    const FMatrix4f& TransformComponent::getLocalSpaceMatrix()
     {
         return getMatrix();
     }

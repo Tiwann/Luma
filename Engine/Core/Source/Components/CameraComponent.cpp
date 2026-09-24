@@ -4,10 +4,11 @@
 
 namespace Luma
 {
-    void FCameraComponent::onUpdate(double deltaTime)
+    void CameraComponent::onUpdate(double deltaTime)
     {
-        FTransformComponent* transform = getOwner()->getComponent<FTransformComponent>();
+        TransformComponent* transform = getOwner()->getComponent<TransformComponent>();
         if (!transform) return;
+
 
     }
 }

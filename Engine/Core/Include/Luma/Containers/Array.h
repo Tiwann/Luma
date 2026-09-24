@@ -1,15 +1,15 @@
 #pragma once
 #include "Luma/Memory/Allocator.h"
 #include "Luma/Runtime/Assertion.h"
+
 #include <initializer_list>
 #include <algorithm>
 #include <functional>
 
-
 namespace Luma
 {
     template<typename T>
-    class TArray final
+    class Array final
     {
     public:
         using ValueType = T;
@@ -20,14 +20,14 @@ namespace Luma
         using SizeType = uint64_t;
         using ForwardType = T&&;
         
-        TArray()
+        Array()
         {
             m_Allocated = 1;
             m_Data = new T[m_Allocated]{};
             m_Count = 0;
         }
 
-        explicit TArray(const SizeType count)
+        explicit Array(const SizeType count)
         {
             static constexpr auto nearestPow2 = [](SizeType n) -> SizeType
             {
@@ -46,25 +46,25 @@ namespace Luma
             m_Count = count;
         }
 
-        TArray(const std::initializer_list<T>& list) : m_Count(list.size()), m_Allocated(list.size())
+        Array(const std::initializer_list<T>& list) : m_Count(list.size()), m_Allocated(list.size())
         {
             m_Data = new T[m_Allocated]{};
             std::ranges::copy(list.begin(), list.end(), m_Data);
         }
 
-        TArray(ConstPointerType data, SizeType count) : m_Count(count), m_Allocated(count)
+        Array(ConstPointerType data, SizeType count) : m_Count(count), m_Allocated(count)
         {
             m_Data = new T[m_Allocated]{};
             std::ranges::copy(data, data + count, m_Data);
         }
 
-        TArray(const TArray& other) : m_Count(other.m_Count), m_Allocated(other.m_Allocated)
+        Array(const Array& other) : m_Count(other.m_Count), m_Allocated(other.m_Allocated)
         {
             m_Data = new T[m_Allocated]{};
             std::ranges::copy(other.begin(), other.end(), m_Data);
         }
 
-        TArray(TArray&& other) noexcept
+        Array(Array&& other) noexcept
         {
             m_Data = other.m_Data;
             m_Count = other.m_Count;
@@ -75,7 +75,7 @@ namespace Luma
             other.m_Allocated = 0;
         }
 
-        ~TArray()
+        ~Array()
         {
             if (m_Data)
                 delete[] m_Data;
@@ -83,7 +83,7 @@ namespace Luma
             m_Allocated = 0;
         }
 
-        TArray& operator=(const TArray& other)
+        Array& operator=(const Array& other)
         {
             if(this == &other)
                 return *this;
@@ -96,7 +96,7 @@ namespace Luma
             return *this;
         }
 
-        TArray& operator=(TArray&& other) noexcept
+        Array& operator=(Array&& other) noexcept
         {
             if(this == &other)
                 return *this;
@@ -222,7 +222,7 @@ namespace Luma
             m_Count += list.size();
         }
 
-        void addRange(const TArray& other)
+        void addRange(const Array& other)
         {
             const SizeType totalCount = m_Count + other.m_Count;
             if(totalCount >= m_Allocated)
@@ -243,7 +243,7 @@ namespace Luma
             m_Count += other.count();
         }
 
-        void addRange(TArray&& other)
+        void addRange(Array&& other)
         {
             const SizeType totalCount = m_Count + other.m_Count;
             if(totalCount >= m_Allocated)
@@ -325,9 +325,9 @@ namespace Luma
             m_Data[m_Count++] = std::move(element);
         }
 
-        TArray unite(const TArray& other)
+        Array unite(const Array& other)
         {
-            TArray result = *this;
+            Array result = *this;
             for (const T& element : other)
                 result.addUnique(element);
             return result;
@@ -404,10 +404,10 @@ namespace Luma
         }
 
         // Return an array of pointer to elements of type T, inside m_Data, where each element satisfies Predicate
-        TArray<PointerType> where(const std::function<bool(const T&)>& predicate) const
+        Array<PointerType> where(const std::function<bool(const T&)>& predicate) const
         {
             if(!predicate) return {};
-            TArray<PointerType> Result;
+            Array<PointerType> Result;
             for(SizeType i = 0; i < m_Count; ++i)
             {
                 if(predicate(m_Data[i]))
@@ -429,10 +429,10 @@ namespace Luma
         }
 
         template<typename Out>
-        TArray<Out*> select(const std::function<Out*(T&)>& selector) const
+        Array<Out*> select(const std::function<Out*(T&)>& selector) const
         {
             if(!selector) return {};
-            TArray<Out*> Result;
+            Array<Out*> Result;
             for(SizeType i = 0; i < m_Count; ++i)
             {
                 Result.add(selector(m_Data[i]));
@@ -464,9 +464,9 @@ namespace Luma
 
 
         template<typename U>
-        TArray<U> transform(const std::function<U(const T&)>& predicate) const
+        Array<U> transform(const std::function<U(const T&)>& predicate) const
         {
-            TArray<U> result;
+            Array<U> result;
             for (size_t index = 0; index < m_Count; ++index)
             {
                 const T& element = m_Data[index];
@@ -476,7 +476,7 @@ namespace Luma
         }
 
         template<typename U> requires std::is_convertible_v<T, U>
-        TArray<U> as()
+        Array<U> as()
         {
             return transform<U>([](const T& element) { return static_cast<U>(element); });
         }
@@ -493,7 +493,7 @@ namespace Luma
         SizeType count() const { return m_Count; }
         SizeType size() const { return m_Count * sizeof(T); }
 
-        bool operator==(const TArray& other) const
+        bool operator==(const Array& other) const
         {
             if(m_Count != other.m_Count) return false;
             for(SizeType i = 0; i < m_Count; ++i)

@@ -22,7 +22,6 @@ set(LUMA_CORE_SRC
         Source/IO/MemoryStream.cpp
         Source/IO/Stream.cpp
         Source/IO/Serialization.cpp
-        Source/IO/AssetPack.cpp
 
         Source/Math/AABB.cpp
         Source/Math/AxisAngle.cpp

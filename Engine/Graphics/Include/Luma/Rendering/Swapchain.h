@@ -49,7 +49,7 @@ namespace Luma::RHI
         virtual Texture* getTexture(uint32_t index) { return nullptr; }
         virtual TextureView* getTextureView(uint32_t index) { return nullptr; }
 
-        virtual void setName(FStringView name) {}
+        virtual void setName(StringView name) {}
 
         SwapchainDesc getDesc() const;
     protected:

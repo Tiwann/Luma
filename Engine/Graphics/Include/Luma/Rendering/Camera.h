@@ -53,6 +53,9 @@ namespace Luma
         void setRotation(const Quat& rotation);
         void setRotation(const AxisAngle& axisAngle);
 
+        Vector getPosition() const { return m_Position; }
+        Quat getRotation() const { return m_Rotation; }
+
         FVector2<F> worldToScreen(const FVector3<F>& worldPos) const;
     private:
         uint32_t m_Width = 0, m_Height = 0;
@@ -66,9 +69,9 @@ namespace Luma
         Vector m_Position = Vector::Zero;
         Quat m_Rotation = Quat::Identity;
 
-        TLazy<Matrix> m_ViewMatrix{};
-        TLazy<Matrix> m_ProjectionMatrix{};
-        TLazy<Matrix> m_ViewProjectionMatrix{};
+        Lazy<Matrix> m_ViewMatrix{};
+        Lazy<Matrix> m_ProjectionMatrix{};
+        Lazy<Matrix> m_ViewProjectionMatrix{};
     };
 
     using Camera = TCamera<float>;

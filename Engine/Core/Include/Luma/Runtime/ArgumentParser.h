@@ -12,7 +12,7 @@ namespace Luma
     struct TArgumentOption
     {
         T shortName;
-        TString<T> longName;
+        StringBase<T> longName;
     };
 
     template<Character T>
@@ -21,7 +21,7 @@ namespace Luma
         uint64_t operator()(const TArgumentOption<T>& option) const
         {
             uint64_t hash = THasher<T>{}(option.shortName);
-            hash ^= THasher<TString<T>>{}(option.longName);
+            hash ^= THasher<StringBase<T>>{}(option.longName);
             return hash;
         }
     };
@@ -30,25 +30,25 @@ namespace Luma
     class TArgumentParser final
     {
     public:
-        TArgumentParser(TString<T> name, const TArray<TArgumentOption<T>>& options);
+        TArgumentParser(StringBase<T> name, const Array<TArgumentOption<T>>& options);
 
         bool parse(TBufferView<const T*> arguments);
 
         bool isUsed(const TArgumentOption<T>& option) const;
-        bool isUsed(TStringView<T> name);
+        bool isUsed(StringViewBase<T> name);
         bool isUsed(T name);
 
         bool getString(const TArgumentOption<T>& option);
-        bool getString(TStringView<T> name);
+        bool getString(StringViewBase<T> name);
         bool getString(T name);
 
     private:
-        TStringView<T> getArg(uint32_t index);
+        StringViewBase<T> getArg(uint32_t index);
     private:
-        TString<T> m_Name;
+        StringBase<T> m_Name;
         TBufferView<const T*> m_Arguments;
-        TArray<TArgumentOption<T>> m_Options;
-        THashMap<TArgumentOption<T>, TString<T>> m_Values;
+        Array<TArgumentOption<T>> m_Options;
+        THashMap<TArgumentOption<T>, StringBase<T>> m_Values;
     };
 
     using FArgumentOption = TArgumentOption<char>;

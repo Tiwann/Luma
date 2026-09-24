@@ -5,23 +5,23 @@
 namespace Luma
 {
     template <typename T>
-    class TBufferView
+    class BufferView
     {
     public:
-        constexpr TBufferView() = default;
+        constexpr BufferView() = default;
 
-        constexpr TBufferView(const T* data, uint64_t count) : m_Data(data), m_Count(count){}
-        constexpr TBufferView(const T& element) : m_Data(&element), m_Count(1){}
-        TBufferView(const TBufferView& buffer) : m_Data(buffer.m_Data), m_Count(buffer.m_Count){}
+        constexpr BufferView(const T* data, uint64_t count) : m_Data(data), m_Count(count){}
+        constexpr BufferView(const T& element) : m_Data(&element), m_Count(1){}
+        BufferView(const BufferView& buffer) : m_Data(buffer.m_Data), m_Count(buffer.m_Count){}
 
 
         const T* begin() const { return m_Data; }
         const T* end() const { return m_Data + m_Count; }
 
         template <typename U> requires std::is_convertible_v<T, U>
-        TBufferView<U> as() const
+        BufferView<U> as() const
         {
-            return TBufferView<U>(m_Data, m_Count * (sizeof(T) / sizeof(U)));
+            return BufferView<U>(m_Data, m_Count * (sizeof(T) / sizeof(U)));
         }
 
         const T& first() const { return m_Data[0]; }

@@ -28,5 +28,5 @@ namespace Luma
         MeshShader = 0x00100000,
     };
 
-    using PipelineStageFlags = TFlags<PipelineStages>;
+    using PipelineStageFlags = Flags<PipelineStages>;
 }

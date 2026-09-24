@@ -36,6 +36,6 @@ namespace Luma::RHI
         virtual bool waitOnCPU(uint64_t value, uint64_t timeoutNs = FENCE_WAIT_INFINITE) = 0;
         virtual bool isComplete(uint64_t value) const { return getCompletedValue() >= value; }
 
-        virtual void setName(FStringView name) {}
+        virtual void setName(StringView name) {}
     };
 }

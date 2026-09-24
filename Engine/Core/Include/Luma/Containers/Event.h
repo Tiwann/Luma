@@ -9,21 +9,21 @@
 namespace Luma
 {
     template <typename Signature>
-    class TEvent;
+    class Event;
 
     template <typename R, typename... Args>
-    class TEvent<R(Args...)>
+    class Event<R(Args...)>
     {
     public:
         using FunctionType = std::function<R(Args...)>;
         using ReturnType = R;
 
-        TEvent() = default;
-        ~TEvent() = default;
-        TEvent(const TEvent&) = default;
-        TEvent& operator=(const TEvent&) = default;
-        TEvent(TEvent&&) = default;
-        TEvent& operator=(TEvent&&) = default;
+        Event() = default;
+        ~Event() = default;
+        Event(const Event&) = default;
+        Event& operator=(const Event&) = default;
+        Event(Event&&) = default;
+        Event& operator=(Event&&) = default;
 
         template <typename Callable>
         uint64_t bind(Callable&& callable)
@@ -53,7 +53,7 @@ namespace Luma
         bool unbind(uint64_t handle)
         {
             if (handle == 0) return false;
-            const FEntry* found = m_Entries.single([&handle](const FEntry& entry) -> bool { return entry.handle == handle; });
+            const Entry* found = m_Entries.single([&handle](const Entry& entry) -> bool { return entry.handle == handle; });
             if (!found) return false;
             m_Entries.remove(*found);
             return true;
@@ -68,7 +68,7 @@ namespace Luma
 
         bool isHandleBound(uint64_t handle) const noexcept
         {
-            return m_Entries.any([&handle](const FEntry& entry) { return entry.handle == handle; });
+            return m_Entries.any([&handle](const Entry& entry) { return entry.handle == handle; });
         }
 
         size_t count() const noexcept { return m_Entries.size(); }
@@ -82,7 +82,7 @@ namespace Luma
             }
             else
             {
-                TArray<R> results;
+                Array<R> results;
                 for (const auto& entry : m_Entries)
                     results.add(entry.fn(std::forward<Args>(args)...));
                 return results;
@@ -95,7 +95,7 @@ namespace Luma
         }
 
     private:
-        struct FEntry
+        struct Entry
         {
             uint64_t handle;
             FunctionType fn;
@@ -110,11 +110,11 @@ namespace Luma
         {
             LUMA_ASSERT(fn, "TEvent — cannot bind an empty callable.");
             const uint64_t handle = next();
-            m_Entries.emplace(FEntry(handle, std::move(fn)));
+            m_Entries.emplace(Entry(handle, std::move(fn)));
             return handle;
         }
 
-        TArray<FEntry> m_Entries;
+        Array<Entry> m_Entries;
         uint64_t m_NextHandle{0};
     };
 }

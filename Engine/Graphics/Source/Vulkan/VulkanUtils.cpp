@@ -6,7 +6,7 @@
 
 namespace Luma::Vulkan
 {
-    void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, FStringView name)
+    void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, StringView name)
     {
         if constexpr (DEBUG_LEVEL < DebugLevel::Release)
         {

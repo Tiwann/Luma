@@ -20,7 +20,7 @@ namespace Luma
     {
     }
 
-    bool FAudioClip::loadFromFile(FStringView filepath)
+    bool FAudioClip::loadFromFile(StringView filepath)
     {
         FAudioDevice* audioDevice = FAudioDevice::getInstance();
         if (!audioDevice) return false;

@@ -4,20 +4,20 @@
 
 namespace Luma
 {
-    FWideString stringConvertToWide(const FString& from);
-    FString stringConvertToMultibyte(const FWideString& from);
-    FWideString stringConvertToWide(const FStringView& from);
-    FString stringConvertToMultibyte(const FWideStringView& from);
+    WideString stringConvertToWide(const String& from);
+    String stringConvertToMultibyte(const WideString& from);
+    WideString stringConvertToWide(const StringView& from);
+    String stringConvertToMultibyte(const WideStringView& from);
 
     template<Character T>
-    TString<T> stringFromView(TStringView<T> view)
+    StringBase<T> stringFromView(StringViewBase<T> view)
     {
-        return TString<T>(const_cast<T*>(view.data()), view.count());
+        return StringBase<T>(const_cast<T*>(view.data()), view.count());
     }
 
     template<Character To, Character From> requires (!std::is_same_v<To, From>)
-    TString<To> stringConvert(const TString<From>& from);
+    StringBase<To> stringConvert(const StringBase<From>& from);
 
     template<Character To, Character From> requires (!std::is_same_v<To, From>)
-    TString<To> stringConvert(const TStringView<From>& from);
+    StringBase<To> stringConvert(const StringViewBase<From>& from);
 }

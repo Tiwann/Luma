@@ -6,7 +6,7 @@
 namespace Luma
 {
 
-    FPhysicsWorld::FPhysicsWorld(const FPhysicsWorldDesc& desc)
+    PhysicsWorld::PhysicsWorld(const PhysicsWorldDesc& desc)
     {
         m_Pimpl = new Impl();
 
@@ -22,12 +22,12 @@ namespace Luma
         LUMA_ASSERT(b3World_IsValid(m_Pimpl->worldId), "Failed to create physics world!");
     }
 
-    void FPhysicsWorld::step()
+    void PhysicsWorld::step()
     {
         b3World_Step(m_Pimpl->worldId, m_Pimpl->timestep, m_Pimpl->substepCount);
     }
 
-    void FPhysicsWorld::destroy()
+    void PhysicsWorld::destroy()
     {
         if (b3World_IsValid(m_Pimpl->worldId))
             b3DestroyWorld(m_Pimpl->worldId);
@@ -35,39 +35,39 @@ namespace Luma
         delete m_Pimpl;
     }
 
-    Ref<FPhysicsBody> FPhysicsWorld::createBody(const FPhysicsBodyDesc& desc)
+    Ref<PhysicsBody> PhysicsWorld::createBody(const FPhysicsBodyDesc& desc)
     {
-        FPhysicsBody* body = new FPhysicsBody(this, desc);
+        PhysicsBody* body = new PhysicsBody(this, desc);
         return body;
     }
 
-    void FPhysicsWorld::destroyBody(Ref<FPhysicsBody> body)
+    void PhysicsWorld::destroyBody(Ref<PhysicsBody> body)
     {
         body->destroy();
     }
 
-    void FPhysicsWorld::setGravity(const FVector3f& gravity)
+    void PhysicsWorld::setGravity(const FVector3f& gravity)
     {
         b3World_SetGravity(m_Pimpl->worldId, convert<b3Vec3>(gravity));
     }
 
-    FVector3f FPhysicsWorld::getGravity() const
+    FVector3f PhysicsWorld::getGravity() const
     {
         return convert<FVector3f>(b3World_GetGravity(m_Pimpl->worldId));
     }
 
-    void FPhysicsWorld::setTimestep(float timestep)
+    void PhysicsWorld::setTimestep(float timestep)
     {
         m_Pimpl->timestep = timestep;
     }
 
-    float FPhysicsWorld::getTimestep()
+    float PhysicsWorld::getTimestep()
     {
         return m_Pimpl->timestep;
     }
 
-    FPhysicsWorld* createPhysicsWorld(const FPhysicsWorldDesc& desc)
+    PhysicsWorld* createPhysicsWorld(const PhysicsWorldDesc& desc)
     {
-        return new FPhysicsWorld(desc);
+        return new PhysicsWorld(desc);
     }
 }

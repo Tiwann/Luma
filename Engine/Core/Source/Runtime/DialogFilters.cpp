@@ -5,7 +5,7 @@ namespace Luma
 {
     FDialogFilters::FDialogFilters() = default;
 
-    FDialogFilters::FDialogFilters(const FString& name, const TArray<FString>& extensions)
+    FDialogFilters::FDialogFilters(const String& name, const Array<String>& extensions)
     {
        addFilter(name, extensions);
     }
@@ -20,7 +20,7 @@ namespace Luma
 
     }
 
-    void FDialogFilters::removeFilter(const FString& name, const TArray<FString>& extensions)
+    void FDialogFilters::removeFilter(const String& name, const Array<String>& extensions)
     {
         m_Filters.remove({name, extensions});
     }
@@ -30,13 +30,13 @@ namespace Luma
         m_Filters.remove(filter);
     }
 
-    FDialogFilters::FFilter* FDialogFilters::getFilter(const FString& name) const
+    FDialogFilters::FFilter* FDialogFilters::getFilter(const String& name) const
     {
         FFilter* Result = m_Filters.single([&name](const FFilter& filter) { return filter.name == name; });
         return Result;
     }
 
-    void FDialogFilters::addFilter(const FString& name, const TArray<FString>& extensions)
+    void FDialogFilters::addFilter(const String& name, const Array<String>& extensions)
     {
         m_Filters.add({ name, extensions });
     }
@@ -70,40 +70,40 @@ namespace Luma
         return name == other.name && extensions == other.extensions;
     }
 
-    FDialogFilters::FDialogFilters(const TArray<FFilter>& Filters)
+    FDialogFilters::FDialogFilters(const Array<FFilter>& Filters)
     {
         m_Filters = Filters;
     }
 
-    const FDialogFilters FDialogFilters::ImageFilters = TArray {
+    const FDialogFilters FDialogFilters::ImageFilters = Array {
         {"All Image Formats", {"png", "jpg", "jpeg", "bmp", "tga", "dds", "astc"}},
         PNG, JPEG, BMP, TARGA, DDS, ASTC, All
     };
 
-    const FDialogFilters FDialogFilters::AudioFilters = TArray {
+    const FDialogFilters FDialogFilters::AudioFilters = Array {
         FFilter{ .name = "All Audio Formats", .extensions = { "wav", "mp3", "ogg", "flac" }},
         WAV, MP3, OGG, FLAC, All
     };
 
-    const FDialogFilters FDialogFilters::ModelFilters = TArray {
+    const FDialogFilters FDialogFilters::ModelFilters = Array {
         FFilter{ .name = "All Model Formats", .extensions = { "fbx", "gltf", "glb", "obj", "dae" }},
         FBX, GLTF, OBJ, DAE, All
     };
 
-    const FDialogFilters FDialogFilters::FontFilters = TArray {
+    const FDialogFilters FDialogFilters::FontFilters = Array {
         FFilter{ .name = "All Font Formats", .extensions = { "ttf", "ttc", "otf", "otc", "dfont" }},
         TTF, OTF
     };
 
-    FString FDialogFilters::getFilterString() const
+    String FDialogFilters::getFilterString() const
     {
-        TArray<FString> displayNames;
-        TArray<FString> extensions;
+        Array<String> displayNames;
+        Array<String> extensions;
 
         for (const FFilter& filter : m_Filters)
         {
-            FString extensionsComma;
-            FString extensionsSemiColon;
+            String extensionsComma;
+            String extensionsSemiColon;
             for (size_t i = 0; i < filter.extensions.count(); i++)
             {
                 if (i != filter.extensions.count() - 1)
@@ -127,13 +127,13 @@ namespace Luma
             totalCount += extensions[i].count() + 1;
         }
 
-        FString result(totalCount);
+        String result(totalCount);
         
         size_t currentCount = 0;
         for (size_t i = 0; i < m_Filters.count(); i++)
         {
-            const FString& currentDisplayName = displayNames[i];
-            const FString& currentExtension = extensions[i];
+            const String& currentDisplayName = displayNames[i];
+            const String& currentExtension = extensions[i];
             memcpy(*result + currentCount, *currentDisplayName, currentDisplayName.count());
             memcpy(*result + currentCount + currentDisplayName.count() + 1 , *currentExtension, currentExtension.count());
             currentCount += currentDisplayName.count() + currentExtension.count() + 1 + 1;

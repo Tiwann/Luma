@@ -12,58 +12,58 @@ namespace Luma
     }
 
     template<typename Enum> requires std::is_scoped_enum_v<Enum>
-    class TFlags
+    class Flags
     {
     public:
         using IntegerType = std::underlying_type_t<Enum>;
 
-        constexpr TFlags() = default;
-        constexpr TFlags(Enum value) : m_Value(value) {}
-        constexpr TFlags(IntegerType value) : m_Value((Enum)value) {}
-        constexpr TFlags(const TFlags&) = default;
-        constexpr TFlags(TFlags&&) = default;
-        TFlags& operator=(const TFlags&) = default;
-        TFlags& operator=(TFlags&&) = default;
+        constexpr Flags() = default;
+        constexpr Flags(Enum value) : m_Value(value) {}
+        constexpr Flags(IntegerType value) : m_Value((Enum)value) {}
+        constexpr Flags(const Flags&) = default;
+        constexpr Flags(Flags&&) = default;
+        Flags& operator=(const Flags&) = default;
+        Flags& operator=(Flags&&) = default;
 
-        static constexpr TFlags all() { return TFlags(static_cast<Enum>(~static_cast<IntegerType>(0))); }
-        static constexpr TFlags none(){ return TFlags(static_cast<Enum>(0)); }
+        static constexpr Flags all() { return Flags(static_cast<Enum>(~static_cast<IntegerType>(0))); }
+        static constexpr Flags none(){ return Flags(static_cast<Enum>(0)); }
 
         constexpr operator IntegerType() const { return (IntegerType)m_Value; }
         constexpr operator Enum() const { return (Enum)m_Value; }
 
-        constexpr bool operator==(const TFlags other) const { return m_Value == other.m_Value; }
+        constexpr bool operator==(const Flags other) const { return m_Value == other.m_Value; }
         constexpr bool operator==(const Enum other) const { return m_Value == other; }
         constexpr bool operator==(IntegerType other) const { return (IntegerType)m_Value == other; }
 
-        constexpr TFlags operator~() const {return TFlags(static_cast<Enum>(~static_cast<IntegerType>(m_Value))); }
-        constexpr TFlags operator|(const Enum other) const { return TFlags((IntegerType)m_Value | (IntegerType)other); };
-        constexpr TFlags operator&(const Enum other) const { return TFlags((IntegerType)m_Value & (IntegerType)other); };
-        constexpr TFlags operator^(const Enum other) const { return TFlags((IntegerType)m_Value ^ (IntegerType)other); };
-        constexpr TFlags& operator|=(const Enum other) { m_Value = (Enum)((IntegerType)m_Value | (IntegerType)other); return *this; };
-        constexpr TFlags& operator&=(const Enum other) { m_Value = (Enum)((IntegerType)m_Value & (IntegerType)other); return *this; };
-        constexpr TFlags& operator^=(const Enum other) { m_Value = (Enum)((IntegerType)m_Value ^ (IntegerType)other); return *this; };
-        constexpr TFlags operator|(const TFlags other) const { return TFlags(static_cast<Enum>(m_Value | other.m_Value)); }
-        constexpr TFlags operator&(const TFlags other) const { return TFlags(static_cast<Enum>(m_Value & other.m_Value)); }
-        constexpr TFlags operator^(const TFlags other) const { return TFlags(static_cast<Enum>(m_Value ^ other.m_Value)); }
+        constexpr Flags operator~() const {return Flags(static_cast<Enum>(~static_cast<IntegerType>(m_Value))); }
+        constexpr Flags operator|(const Enum other) const { return Flags((IntegerType)m_Value | (IntegerType)other); };
+        constexpr Flags operator&(const Enum other) const { return Flags((IntegerType)m_Value & (IntegerType)other); };
+        constexpr Flags operator^(const Enum other) const { return Flags((IntegerType)m_Value ^ (IntegerType)other); };
+        constexpr Flags& operator|=(const Enum other) { m_Value = (Enum)((IntegerType)m_Value | (IntegerType)other); return *this; };
+        constexpr Flags& operator&=(const Enum other) { m_Value = (Enum)((IntegerType)m_Value & (IntegerType)other); return *this; };
+        constexpr Flags& operator^=(const Enum other) { m_Value = (Enum)((IntegerType)m_Value ^ (IntegerType)other); return *this; };
+        constexpr Flags operator|(const Flags other) const { return Flags(static_cast<Enum>(m_Value | other.m_Value)); }
+        constexpr Flags operator&(const Flags other) const { return Flags(static_cast<Enum>(m_Value & other.m_Value)); }
+        constexpr Flags operator^(const Flags other) const { return Flags(static_cast<Enum>(m_Value ^ other.m_Value)); }
 
         template<typename T> requires std::is_convertible_v<T, IntegerType>
         T as() const { return (T)m_Value; }
 
         constexpr bool contains(const Enum other) const { return ((IntegerType)m_Value & (IntegerType)other) != 0; }
 
-        constexpr TFlags& append(const Enum value)
+        constexpr Flags& append(const Enum value)
         {
             m_Value = (Enum)((IntegerType)m_Value | (IntegerType)value);
             return *this;
         }
 
-        constexpr TFlags& remove(const Enum value)
+        constexpr Flags& remove(const Enum value)
         {
             m_Value = (Enum)((IntegerType)m_Value & ~(IntegerType)value);
             return *this;
         }
 
-        constexpr TFlags& toggle(const Enum value)
+        constexpr Flags& toggle(const Enum value)
         {
             m_Value = (Enum)((IntegerType)m_Value ^ (IntegerType)value);
             return *this;
@@ -73,23 +73,23 @@ namespace Luma
     };
 
     template<typename Enum> requires std::is_scoped_enum_v<Enum>
-    constexpr TFlags<Enum> operator|(const Enum lhs, const Enum rhs)
+    constexpr Flags<Enum> operator|(const Enum lhs, const Enum rhs)
     {
         using IntegerType = std::underlying_type_t<Enum>;
-        return TFlags((Enum)((IntegerType)lhs | (IntegerType)rhs));
+        return Flags((Enum)((IntegerType)lhs | (IntegerType)rhs));
     }
 
     template<typename Enum> requires std::is_scoped_enum_v<Enum>
-    constexpr TFlags<Enum> operator&(const Enum lhs, const Enum rhs)
+    constexpr Flags<Enum> operator&(const Enum lhs, const Enum rhs)
     {
         using IntegerType = std::underlying_type_t<Enum>;
-        return TFlags((Enum)((IntegerType)lhs & (IntegerType)rhs));
+        return Flags((Enum)((IntegerType)lhs & (IntegerType)rhs));
     }
 
     template<typename Enum> requires std::is_scoped_enum_v<Enum>
-    constexpr TFlags<Enum> operator^(const Enum lhs, const Enum rhs)
+    constexpr Flags<Enum> operator^(const Enum lhs, const Enum rhs)
     {
         using IntegerType = std::underlying_type_t<Enum>;
-        return TFlags((Enum)((IntegerType)lhs ^ (IntegerType)rhs));
+        return Flags((Enum)((IntegerType)lhs ^ (IntegerType)rhs));
     }
 }

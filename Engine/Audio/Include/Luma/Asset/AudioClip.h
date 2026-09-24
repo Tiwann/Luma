@@ -14,7 +14,7 @@ namespace Luma
         FAudioClip();
         ~FAudioClip() override;
 
-        bool loadFromFile(FStringView filepath);
+        bool loadFromFile(StringView filepath);
         bool loadFromMemory(const void* data, size_t size);
         void destroy() override;
 

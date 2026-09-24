@@ -8,51 +8,51 @@ namespace Luma
 {
     struct FClass;
 
-    class FEntity final : Asset
+    class Entity final : Asset
     {
     public:
-        FEntity(FScene* context) : m_Owner(context) {}
+        Entity(FScene* context) : m_Owner(context) {}
 
-        FEntity* getParent() const;
-        void setParent(FEntity* parent);
+        Entity* getParent() const;
+        void setParent(Entity* parent);
 
-        const TArray<FEntity*>& getChildren() const;
-        void addChild(FEntity* child);
-        void removeChild(FEntity* child);
+        const Array<Entity*>& getChildren() const;
+        void addChild(Entity* child);
+        void removeChild(Entity* child);
 
-        template<typename T> requires std::is_base_of_v<IComponent, T>
+        template<typename T> requires std::is_base_of_v<Component, T>
         T* getComponent() const
         {
-            for (IComponent* component : m_Components)
+            for (Component* component : m_Components)
                 if (T* asT = dynamic_cast<T*>(component))
                     return asT;
             return nullptr;
         }
 
-        template<typename T> requires std::is_base_of_v<IComponent, T>
-        TArray<T*> getAllComponentsOfType() const
+        template<typename T> requires std::is_base_of_v<Component, T>
+        Array<T*> getAllComponentsOfType() const
         {
-            TArray<T*> components;
-            for (IComponent* component : m_Components)
+            Array<T*> components;
+            for (Component* component : m_Components)
                 if (T* asT = dynamic_cast<T*>(component))
                     components.addUnique(asT);
             return components;
         }
 
-        template<typename T> requires std::is_base_of_v<IComponent, T>
+        template<typename T> requires std::is_base_of_v<Component, T>
         T* addComponent()
         {
             T* component = new T();
             component->m_Owner = this;
             m_Components.add(component);
-            static_cast<IComponent*>(component)->initialize();
+            static_cast<Component*>(component)->initialize();
             return component;
         }
 
-        template<typename T> requires std::is_base_of_v<IComponent, T>
+        template<typename T> requires std::is_base_of_v<Component, T>
         void removeComponent(T* component)
         {
-            static_cast<IComponent*>(component)->destroy();
+            static_cast<Component*>(component)->destroy();
             m_Components.remove(component);
         }
 
@@ -75,9 +75,9 @@ namespace Luma
 
         friend class FScene;
         FScene* m_Owner = nullptr;
-        FEntity* m_Parent = nullptr;
+        Entity* m_Parent = nullptr;
         bool m_Active = true;
-        TArray<FEntity*> m_Children;
-        TArray<IComponent*> m_Components;
+        Array<Entity*> m_Children;
+        Array<Component*> m_Components;
     };
 }

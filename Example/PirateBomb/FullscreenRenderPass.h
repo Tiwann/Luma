@@ -9,23 +9,32 @@
 #include "Luma/Rendering/BindingGroup.h"
 #include "Luma/Math/Vector2.h"
 
+using Luma::Ref;
+using Luma::RHI::Device;
+using Luma::RHI::Texture;
+using Luma::RHI::Shader;
+using Luma::RHI::Sampler;
+using Luma::RHI::RenderPipeline;
+using Luma::RHI::BindingGroup;
+using Luma::RHI::CommandBuffer;
+
 class FullscreenRenderPass
 {
 public:
-    FullscreenRenderPass(Luma::Ref<Luma::Device> device, Luma::Format format);
+    FullscreenRenderPass(Ref<Device> device, Luma::Format format);
     ~FullscreenRenderPass();
 
-    void setInputTexture(const Luma::Texture* texture);
-    void setOutputTexture(const Luma::Texture* texture);
+    void setInputTexture(const Texture* texture);
+    void setOutputTexture(const Texture* texture);
     void setSize(const Luma::FVector2u& size);
-    void execute(Luma::CommandBuffer* cmdBuffer);
+    void execute(CommandBuffer* cmdBuffer);
 
 private:
-    Luma::Ref<Luma::Shader> fullscreenShader = nullptr;
-    Luma::Ref<Luma::RenderPipeline> fullscreenPipeline = nullptr;
-    Luma::Ref<Luma::Sampler> fullscreenSampler = nullptr;
-    Luma::Ref<Luma::BindingGroup> fullscreenBindingGroup = nullptr;
-    const Luma::Texture* inputTexture = nullptr;
-    const Luma::Texture* outputTexture = nullptr;
+    Ref<Shader> fullscreenShader = nullptr;
+    Ref<RenderPipeline> fullscreenPipeline = nullptr;
+    Ref<Sampler> fullscreenSampler = nullptr;
+    Ref<BindingGroup> fullscreenBindingGroup = nullptr;
+    const Texture* inputTexture = nullptr;
+    const Texture* outputTexture = nullptr;
     Luma::FVector2u m_Size;
 };

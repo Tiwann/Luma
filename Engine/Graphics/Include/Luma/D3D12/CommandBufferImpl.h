@@ -29,9 +29,9 @@ namespace Luma::D3D12
         void bindRenderPipeline(const IRenderPipeline* pipeline) override;
         void beginRenderPass(const FRenderPassDesc& renderPassDesc) override;
         void endRenderPass() override;
-        void setScissors(const TArray<FScissor>& scissors) override;
+        void setScissors(const Array<FScissor>& scissors) override;
         void setScissor(const FScissor& scissor) override;
-        void setViewports(const TArray<FViewport>& viewports) override;
+        void setViewports(const Array<FViewport>& viewports) override;
         void setViewport(const FViewport& viewport) override;
         void draw(const FDrawCommand& drawCmd) override;
         void drawIndexed(const FDrawIndexedCommand& drawIndexedCmd) override;

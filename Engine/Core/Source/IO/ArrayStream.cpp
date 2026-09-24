@@ -10,7 +10,7 @@ namespace Luma
     }
 
     FArrayStream::FArrayStream()
-        : IStream(EOpenModeBits::None)
+        : Stream(OpenMode::None)
     {
         m_Opened = true;
         m_Data = nullptr;
@@ -30,7 +30,7 @@ namespace Luma
         return true;
     }
 
-    IStream::SizeType FArrayStream::readRaw(void* outBuffer, SizeType size)
+    Stream::SizeType FArrayStream::readRaw(void* outBuffer, SizeType size)
     {
         if(!m_Opened) return -1ULL;
         if (m_Position + size > m_Size) return -1ULL;
@@ -39,7 +39,7 @@ namespace Luma
         return size;
     }
 
-    IStream::SizeType FArrayStream::writeRaw(const void* inBuffer, SizeType size)
+    Stream::SizeType FArrayStream::writeRaw(const void* inBuffer, SizeType size)
     {
         if(!m_Opened) return -1ull;
 
@@ -66,21 +66,21 @@ namespace Luma
         return size;
     }
 
-    bool FArrayStream::seek(ESeek seekMode, OffsetType offset)
+    bool FArrayStream::seek(Seek seekMode, OffsetType offset)
     {
         if(!m_Opened) return false;
         switch (seekMode) {
-        case ESeek::Begin:
+        case Seek::Begin:
             if(offset < 0) return false;
             if (offset > (OffsetType)m_Size) return false;
             m_Position = offset;
             return true;
-        case ESeek::Current:
+        case Seek::Current:
             if(m_Position + offset < 0) return false;
             if(m_Position + offset > (OffsetType)m_Size) return false;
             m_Position += offset;
             return true;
-        case ESeek::End:
+        case Seek::End:
             if(offset > 0) return false;
             if((OffsetType)m_Size + offset < 0) return false;
             m_Position = (OffsetType)m_Size + offset;
@@ -89,7 +89,7 @@ namespace Luma
         return false;
     }
 
-    IStream::OffsetType FArrayStream::tell() const
+    Stream::OffsetType FArrayStream::tell() const
     {
         return m_Opened ? m_Position : (OffsetType)EndOfFile;
     }

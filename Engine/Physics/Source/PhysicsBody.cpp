@@ -32,15 +32,15 @@ namespace Luma
             return b3NormalizeQuat(rotation);
         }
     }
-    struct FPhysicsBody::Impl
+    struct PhysicsBody::Impl
     {
-        const FPhysicsWorld* world = nullptr;
+        const PhysicsWorld* world = nullptr;
         b3BodyId bodyId = b3_nullBodyId;
         EPhysicsBodyType bodyType = EPhysicsBodyType::Static;
-        TArray<Ref<IPhysicsShape>> shapes;
+        Array<Ref<IPhysicsShape>> shapes;
     };
 
-    FPhysicsBody::FPhysicsBody(const FPhysicsWorld* world, const FPhysicsBodyDesc& desc)
+    PhysicsBody::PhysicsBody(const PhysicsWorld* world, const FPhysicsBodyDesc& desc)
     {
         LUMA_ASSERT(world, "World should be a valid pointer to a FPhysicsWorld!");
         
@@ -67,37 +67,37 @@ namespace Luma
     }
 
     
-    void FPhysicsBody::addForce(const FVector3f& force)
+    void PhysicsBody::addForce(const FVector3f& force)
     {
         b3Body_ApplyForceToCenter(m_Pimpl->bodyId, convert<b3Vec3>(force), true);
     }
 
-    void FPhysicsBody::addForce(const FVector3f& force, const FVector3f& point)
+    void PhysicsBody::addForce(const FVector3f& force, const FVector3f& point)
     {
         b3Body_ApplyForce(m_Pimpl->bodyId, convert<b3Vec3>(force), convert<b3Vec3>(point), true);
     }
 
-    void FPhysicsBody::addImpulse(const FVector3f& impulse)
+    void PhysicsBody::addImpulse(const FVector3f& impulse)
     {
         b3Body_ApplyLinearImpulseToCenter(m_Pimpl->bodyId, convert<b3Vec3>(impulse), true);
     }
 
-    void FPhysicsBody::addImpulse(const FVector3f& impulse, const FVector3f& point)
+    void PhysicsBody::addImpulse(const FVector3f& impulse, const FVector3f& point)
     {
         b3Body_ApplyLinearImpulse(m_Pimpl->bodyId, convert<b3Vec3>(impulse), convert<b3Vec3>(point), true);
     }
 
-    void FPhysicsBody::addTorque(const FVector3f& torque)
+    void PhysicsBody::addTorque(const FVector3f& torque)
     {
         b3Body_ApplyTorque(m_Pimpl->bodyId, convert<b3Vec3>(torque), true);
     }
 
-    void FPhysicsBody::addAngularImpulse(const FVector3f& impulse)
+    void PhysicsBody::addAngularImpulse(const FVector3f& impulse)
     {
         b3Body_ApplyAngularImpulse(m_Pimpl->bodyId, convert<b3Vec3>(impulse), true);
     }
 
-    void FPhysicsBody::destroy()
+    void PhysicsBody::destroy()
     {
         if (m_Pimpl == nullptr)
             return;
@@ -117,7 +117,7 @@ namespace Luma
         m_Pimpl = nullptr;
     }
 
-    void FPhysicsBody::createNativeShape(IPhysicsShape* shape)
+    void PhysicsBody::createNativeShape(IPhysicsShape* shape)
     {
         IPhysicsShape::Impl& shapeImpl = *shape->m_Pimpl;
 
@@ -173,7 +173,7 @@ namespace Luma
         shapeImpl.shapeId = shapeId;
     }
 
-    void FPhysicsBody::attachShape(Ref<IPhysicsShape> shape, bool updateMass)
+    void PhysicsBody::attachShape(Ref<IPhysicsShape> shape, bool updateMass)
     {
         if (!shape) return;
 
@@ -194,7 +194,7 @@ namespace Luma
         m_Pimpl->shapes.add(shape);
     }
 
-    void FPhysicsBody::detachShape(IPhysicsShape* shape, bool updateMass)
+    void PhysicsBody::detachShape(IPhysicsShape* shape, bool updateMass)
     {
         if (!shape || shape->m_Pimpl->body != this) return;
 
@@ -213,7 +213,7 @@ namespace Luma
         }
     }
 
-    void FPhysicsBody::detachAllShapes()
+    void PhysicsBody::detachAllShapes()
     {
         for (Ref<IPhysicsShape> shape : m_Pimpl->shapes)
         {
@@ -225,17 +225,17 @@ namespace Luma
         m_Pimpl->shapes.clear();
     }
 
-    uint32_t FPhysicsBody::getShapeCount() const
+    uint32_t PhysicsBody::getShapeCount() const
     {
         return m_Pimpl->shapes.count();
     }
 
-    IPhysicsShape* FPhysicsBody::getShape(uint32_t index) const
+    IPhysicsShape* PhysicsBody::getShape(uint32_t index) const
     {
         return m_Pimpl->shapes[index];
     }
 
-    void FPhysicsBody::refreshShape(IPhysicsShape* shape)
+    void PhysicsBody::refreshShape(IPhysicsShape* shape)
     {
         if (!shape || shape->m_Pimpl->body != this) return;
 
@@ -249,87 +249,87 @@ namespace Luma
         b3Body_ApplyMassFromShapes(m_Pimpl->bodyId);
     }
 
-    void FPhysicsBody::setBodyType(EPhysicsBodyType bodyType)
+    void PhysicsBody::setBodyType(EPhysicsBodyType bodyType)
     {
         b3Body_SetType(m_Pimpl->bodyId, convert<b3BodyType>(bodyType));
     }
 
-    EPhysicsBodyType FPhysicsBody::getBodyType() const
+    EPhysicsBodyType PhysicsBody::getBodyType() const
     {
         return convert<EPhysicsBodyType>(b3Body_GetType(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setPosition(const FVector3f& position)
+    void PhysicsBody::setPosition(const FVector3f& position)
     {
         b3Body_SetTransform(m_Pimpl->bodyId, convert<b3Vec3>(position), b3Body_GetRotation(m_Pimpl->bodyId));
     }
 
-    FVector3f FPhysicsBody::getPosition() const
+    FVector3f PhysicsBody::getPosition() const
     {
         return convert<FVector3f>(b3Body_GetPosition(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setRotation(const FQuatf& rotation)
+    void PhysicsBody::setRotation(const FQuatf& rotation)
     {
         b3Body_SetTransform(m_Pimpl->bodyId, b3Body_GetPosition(m_Pimpl->bodyId), convert<b3Quat>(rotation));
     }
 
-    FQuatf FPhysicsBody::getRotation()
+    FQuatf PhysicsBody::getRotation()
     {
         return convert<FQuatf>(b3Body_GetRotation(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setLinearVelocity(const FVector3f& linearVelocity)
+    void PhysicsBody::setLinearVelocity(const FVector3f& linearVelocity)
     {
         b3Body_SetLinearVelocity(m_Pimpl->bodyId, convert<b3Vec3>(linearVelocity));
     }
 
-    FVector3f FPhysicsBody::getLinearVelocity() const
+    FVector3f PhysicsBody::getLinearVelocity() const
     {
         return convert<FVector3f>(b3Body_GetLinearVelocity(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setAngularVelocity(const FVector3f& angularVelocity)
+    void PhysicsBody::setAngularVelocity(const FVector3f& angularVelocity)
     {
         b3Body_SetAngularVelocity(m_Pimpl->bodyId, convert<b3Vec3>(angularVelocity));
     }
 
-    FVector3f FPhysicsBody::getAngularVelocity() const
+    FVector3f PhysicsBody::getAngularVelocity() const
     {
         return convert<FVector3f>(b3Body_GetAngularVelocity(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setLinearDamping(float linearDamping)
+    void PhysicsBody::setLinearDamping(float linearDamping)
     {
         b3Body_SetLinearDamping(m_Pimpl->bodyId, linearDamping);
     }
 
-    float FPhysicsBody::getLinearDamping() const
+    float PhysicsBody::getLinearDamping() const
     {
         return b3Body_GetLinearDamping(m_Pimpl->bodyId);
     }
 
-    void FPhysicsBody::setAngularDamping(float angularDamping)
+    void PhysicsBody::setAngularDamping(float angularDamping)
     {
         b3Body_SetAngularDamping(m_Pimpl->bodyId, angularDamping);
     }
 
-    float FPhysicsBody::getAngularDamping() const
+    float PhysicsBody::getAngularDamping() const
     {
         return b3Body_GetAngularDamping(m_Pimpl->bodyId);
     }
 
-    void FPhysicsBody::setConstraints(FPhysicsConstraintsFlags constraints)
+    void PhysicsBody::setConstraints(FPhysicsConstraintsFlags constraints)
     {
         b3Body_SetMotionLocks(m_Pimpl->bodyId, convert<b3MotionLocks>(constraints));
     }
 
-    FPhysicsConstraintsFlags FPhysicsBody::getConstraints() const
+    FPhysicsConstraintsFlags PhysicsBody::getConstraints() const
     {
         return convert<FPhysicsConstraintsFlags>(b3Body_GetMotionLocks(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setMass(float mass)
+    void PhysicsBody::setMass(float mass)
     {
         b3MassData massData;
         massData.center = b3Vec3_zero;
@@ -339,22 +339,22 @@ namespace Luma
         b3Body_SetMassData(m_Pimpl->bodyId, massData);
     }
 
-    float FPhysicsBody::getMass() const
+    float PhysicsBody::getMass() const
     {
         return b3Body_GetMass(m_Pimpl->bodyId);
     }
 
-    FVector3f FPhysicsBody::getCenterOfMass() const
+    FVector3f PhysicsBody::getCenterOfMass() const
     {
         return convert<FVector3f>(b3Body_GetLocalCenter(m_Pimpl->bodyId));
     }
 
-    void FPhysicsBody::setAwake(bool awake)
+    void PhysicsBody::setAwake(bool awake)
     {
         b3Body_SetAwake(m_Pimpl->bodyId, awake);
     }
 
-    bool FPhysicsBody::isAwake()
+    bool PhysicsBody::isAwake()
     {
         return b3Body_IsAwake(m_Pimpl->bodyId);
     }

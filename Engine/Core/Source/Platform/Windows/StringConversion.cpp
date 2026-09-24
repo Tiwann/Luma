@@ -3,66 +3,66 @@
 
 namespace Luma
 {
-    FWideString stringConvertToWide(const FString& from)
+    WideString stringConvertToWide(const String& from)
     {
         const uint64_t length = MultiByteToWideChar(CP_UTF8, 0, from.data(), from.count(), nullptr, 0);
-        FWideString::CharacterType* buffer = new FWideString::CharacterType[length] { 0 };
+        WideString::CharacterType* buffer = new WideString::CharacterType[length] { 0 };
         MultiByteToWideChar(CP_UTF8, 0, from.data(), from.count(), buffer, length);
-        FWideString result { buffer, length };
+        WideString result { buffer, length };
         delete[] buffer;
         return result;
     }
 
-    FString stringConvertToMultibyte(const FWideString& from)
+    String stringConvertToMultibyte(const WideString& from)
     {
         const uint64_t length = WideCharToMultiByte(CP_UTF8, 0, from.data(), from.count(), nullptr, 0, nullptr, nullptr);
-        FString::CharacterType* buffer = new FString::CharacterType[length] { 0 };
+        String::CharacterType* buffer = new String::CharacterType[length] { 0 };
         WideCharToMultiByte(CP_UTF8, 0, from.data(), from.count(), buffer, length, nullptr, nullptr);
-        FString result { buffer, length };
+        String result { buffer, length };
         delete[] buffer;
         return result;
     }
 
-    FWideString stringConvertToWide(const FStringView& from)
+    WideString stringConvertToWide(const StringView& from)
     {
         const uint64_t length = MultiByteToWideChar(CP_UTF8, 0, from.data(), from.count(), nullptr, 0);
-        FWideString::CharacterType* buffer = new FWideString::CharacterType[length] { };
+        WideString::CharacterType* buffer = new WideString::CharacterType[length] { };
         MultiByteToWideChar(CP_UTF8, 0, from.data(), from.count(), buffer, length);
-        FWideString result { buffer, length };
+        WideString result { buffer, length };
         delete[] buffer;
         return result;
     }
 
-    FString stringConvertToMultibyte(const FWideStringView& from)
+    String stringConvertToMultibyte(const WideStringView& from)
     {
         const uint64_t length = WideCharToMultiByte(CP_UTF8, 0, from.data(), from.count(), nullptr, 0, nullptr, nullptr);
-        FString::CharacterType* buffer = new FString::CharacterType[length] { };
+        String::CharacterType* buffer = new String::CharacterType[length] { };
         WideCharToMultiByte(CP_UTF8, 0, from.data(), from.count(), buffer, length, nullptr, nullptr);
-        FString result { buffer, length };
+        String result { buffer, length };
         delete[] buffer;
         return result;
     }
 
     template<>
-    TString<wchar_t> stringConvert(const TString<char>& from)
+    StringBase<wchar_t> stringConvert(const StringBase<char>& from)
     {
         return stringConvertToWide(from);
     }
 
     template<>
-    TString<char> stringConvert(const TString<wchar_t>& from)
+    StringBase<char> stringConvert(const StringBase<wchar_t>& from)
     {
         return stringConvertToMultibyte(from);
     }
 
     template<>
-    TString<wchar_t> stringConvert(const TStringView<char>& from)
+    StringBase<wchar_t> stringConvert(const StringViewBase<char>& from)
     {
         return stringConvertToWide(from);
     }
 
     template<>
-    TString<char> stringConvert(const TStringView<wchar_t>& from)
+    StringBase<char> stringConvert(const StringViewBase<wchar_t>& from)
     {
         return stringConvertToMultibyte(from);
     }

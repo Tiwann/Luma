@@ -36,7 +36,7 @@ namespace Luma::RHI
 
     struct RenderPassDesc
     {
-        TArray<RenderPassTarget*> colorTargets;
+        Array<RenderPassTarget*> colorTargets;
         RenderPassTarget* depthStencilTarget = nullptr;
         FRect2u renderArea;
     };

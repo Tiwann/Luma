@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
 
-    <!-- Luma::TArray<T> -->
-    <Type Name="Luma::TArray&lt;*&gt;">
+    <!-- Luma::Array<T> -->
+    <Type Name="Luma::Array&lt;*&gt;">
         <DisplayString>{{Count = {m_Count}}}</DisplayString>
         <Expand>
             <ArrayItems Condition="m_Count!=0">
@@ -13,7 +13,7 @@
     </Type>
 
 
-    <Type Name="Luma::TString&lt;*&gt;">
+    <Type Name="Luma::StringBase&lt;*&gt;">
         <DisplayString>{{{m_Data}}, Count = {m_Count}}</DisplayString>
         <Expand>
             <ArrayItems>
@@ -23,7 +23,7 @@
         </Expand>
     </Type>
 
-    <Type Name="Luma::TStringView&lt;*&gt;">
+    <Type Name="Luma::StringViewBase&lt;*&gt;">
         <DisplayString>{m_Data}</DisplayString>
         <StringView>m_Data</StringView>
         <Expand>

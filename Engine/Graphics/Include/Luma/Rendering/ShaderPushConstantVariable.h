@@ -5,7 +5,7 @@ namespace Luma
 {
     struct ShaderPushConstantVariable
     {
-        FString name;
+        String name;
         int64_t offset = 0;
         uint64_t size = 0;
         ShaderStageFlags visibility = ShaderStage::None;

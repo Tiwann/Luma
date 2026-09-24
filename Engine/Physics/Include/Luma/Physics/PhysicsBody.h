@@ -10,7 +10,7 @@
 namespace Luma
 {
     class IPhysicsShape;
-    class FPhysicsWorld;
+    class PhysicsWorld;
 
 
     struct FPhysicsBodyDesc
@@ -26,11 +26,11 @@ namespace Luma
         FPhysicsConstraintsFlags constraints = EPhysicsConstraints::None;
     };
 
-    class LUMA_PHYSICS_API FPhysicsBody : public RefCounted<FPhysicsBody>
+    class LUMA_PHYSICS_API PhysicsBody : public RefCounted<PhysicsBody>
     {
     public:
-        explicit FPhysicsBody(const FPhysicsWorld* world, const FPhysicsBodyDesc& desc = FPhysicsBodyDesc());
-        ~FPhysicsBody() override = default;
+        explicit PhysicsBody(const PhysicsWorld* world, const FPhysicsBodyDesc& desc = FPhysicsBodyDesc());
+        ~PhysicsBody() override = default;
 
         void destroy();
 

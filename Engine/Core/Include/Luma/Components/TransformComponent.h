@@ -4,14 +4,14 @@
 
 namespace Luma
 {
-    class FTransformComponent : public IComponent, public TTransform<float>
+    class TransformComponent : public Component, public TTransform<float>
     {
     public:
-        FTransformComponent() = default;
+        TransformComponent() = default;
 
         const FMatrix4f& getWorldSpaceMatrix();
         const FMatrix4f& getLocalSpaceMatrix();
     private:
-        TLazy<FMatrix4f> m_WorldSpaceMatrix;
+        Lazy<FMatrix4f> m_WorldSpaceMatrix;
     };
 }

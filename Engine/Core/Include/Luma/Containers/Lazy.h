@@ -4,11 +4,11 @@
 namespace Luma
 {
     template<typename T>
-    class TLazy
+    class Lazy
     {
     public:
-        constexpr TLazy() = default;
-        constexpr explicit TLazy(const T& value) : m_Value(value), m_Dirty(false) {};
+        constexpr Lazy() = default;
+        constexpr explicit Lazy(const T& value) : m_Value(value), m_Dirty(false) {};
 
         const T& get(const std::function<T()>& getter)
         {

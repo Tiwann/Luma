@@ -7,10 +7,10 @@ namespace Luma
 {
     FEntityHandle FScene::createEntity()
     {
-        FEntity* entity = new FEntity(this);
+        Entity* entity = new Entity(this);
         const uint32_t id = s_EntityId;
         m_Entities[s_EntityId++] = entity;
-        entity->addComponent<FTransformComponent>();
+        entity->addComponent<TransformComponent>();
         entity->initialize();
         return FEntityHandle(id, this);
     }
@@ -18,16 +18,16 @@ namespace Luma
     void FScene::destroyEntity(FEntityHandle entity)
     {
         LUMA_ASSERT(entity.getContext() == this, "Entity context don't match!");
-        FEntity** pEntity = m_Entities.findValue(entity.getHandle());
+        Entity** pEntity = m_Entities.findValue(entity.getHandle());
         if (!pEntity) return;
         (*pEntity)->destroy();
         delete *pEntity;
         m_Entities.remove(entity.getHandle());
     }
 
-    TArray<FEntity*> FScene::getEntities()
+    Array<Entity*> FScene::getEntities()
     {
-        TArray<FEntity*> entities;
+        Array<Entity*> entities;
         for (auto& [_, entity] : m_Entities)
             entities.addUnique(entity);
         return entities;

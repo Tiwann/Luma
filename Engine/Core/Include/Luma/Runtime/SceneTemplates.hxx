@@ -5,7 +5,7 @@
 
 namespace Luma
 {
-    template <typename T> requires std::is_base_of_v<IComponent, T>
+    template <typename T> requires std::is_base_of_v<Component, T>
     T* FScene::getFirstComponent()
     {
         for (auto& [_, entity] : m_Entities)

@@ -4,7 +4,7 @@
 
 namespace Luma
 {
-    enum class EGamepadButton
+    enum class GamepadButton
     {
         North, South, East, West,
         LeftShoulder, RightShoulder,
@@ -17,9 +17,9 @@ namespace Luma
         _ButtonCount
     };
 
-    static constexpr uint32_t MAX_GAMEPAD_BUTTONS = static_cast<uint32_t>(EGamepadButton::_ButtonCount);
+    static constexpr uint32_t MAX_GAMEPAD_BUTTONS = static_cast<uint32_t>(GamepadButton::_ButtonCount);
 
-    enum class EGamepadAxis
+    enum class GamepadAxis
     {
         LeftX, LeftY,
         RightX, RightY,
@@ -28,12 +28,12 @@ namespace Luma
         _AxisCount
     };
 
-    static constexpr uint32_t MAX_GAMEPAD_AXIS = static_cast<uint32_t>(EGamepadAxis::_AxisCount);
+    static constexpr uint32_t MAX_GAMEPAD_AXIS = static_cast<uint32_t>(GamepadAxis::_AxisCount);
 
-    struct FGamepadState
+    struct GamepadState
     {
-        EInputState currentButtons[MAX_GAMEPAD_BUTTONS];
-        EInputState previousButtons[MAX_GAMEPAD_BUTTONS];
+        InputState currentButtons[MAX_GAMEPAD_BUTTONS];
+        InputState previousButtons[MAX_GAMEPAD_BUTTONS];
         double currentAxes[MAX_GAMEPAD_AXIS];
         double previousAxes[MAX_GAMEPAD_AXIS];
         uint32_t connected;

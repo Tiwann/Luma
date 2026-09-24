@@ -9,34 +9,41 @@
 #include "Luma/Physics/PhysicsWorld.h"
 
 using namespace Luma;
+using namespace Luma::RHI;
 
-static constexpr float PIXELS_PER_METER = 64.0f;
-static constexpr float toPixels(float value) { return value * PIXELS_PER_METER; }
-static constexpr FVector3f GRAVITY {0.0f, toPixels(-9.81f), 0.0f};
+static constexpr float kPixelsPerMeter = 64.0f;
+static constexpr FVector3f kGravity{0.0f, kPixelsPerMeter * 9.81, 0.0f};
+static constexpr uint32_t kWidth = 800;
+static constexpr uint32_t kHeight = 600;
 
-int main(int argc, const char** argv)
+int main()
 {
-    Ref<Window> window = createWindow("Hello Triangle!", 800, 600, WindowOptions::Centered | WindowOptions::Resizable);
-    Ref<Device> device = createGPUDevice(window);
-    Ref<FPhysicsWorld> world = createPhysicsWorld(FPhysicsWorldDesc(GRAVITY));
-    Ref<FRenderer2D> renderer = Ref<FRenderer2D>::create(device, 800, 600, SampleCount1x);
-    window->resizedEvent.bindMember(renderer.get(), &FRenderer2D::resize);
+    Ref<Window> window = createWindow("Hello Triangle!", kWidth, kHeight, WindowOptions::Centered);
+    Ref<Device> device = createDevice(window);
+    Ref<PhysicsWorld> world = createPhysicsWorld({kGravity});
+    Ref<Renderer2D> renderer = Ref<Renderer2D>::create(device, kWidth, kHeight);
+    window->resizedEvent.bindMember(renderer.get(), &Renderer2D::resize);
+
+    Camera camera;
+    camera.setSize(kWidth, kHeight);
+    camera.setProjectionMode(CameraProjectionMode::Orthographic);
+    camera.setClipPlanes(-1.0f, 1.0f);
 
     const FVector2f bodySize = FVector2f(20, 20);
-    Ref<FPhysicsBody> body = world->createBody();
+    Ref<PhysicsBody> body = world->createBody();
     body->setBodyType(EPhysicsBodyType::Dynamic);
     body->setConstraints(EPhysicsConstraints::PositionZ);
 
     const FVector2f floorSize = FVector2f(300, 30);
-    Ref<FPhysicsBody> floorBody = world->createBody();
+    Ref<PhysicsBody> floorBody = world->createBody();
     floorBody->setBodyType(EPhysicsBodyType::Static);
     floorBody->setPosition(FVector3f(0.0f, -100.0f, 0.0f));
 
-    Ref<FBoxShape> floorBox = Ref<FBoxShape>::create();
+    Ref<BoxShape> floorBox = Ref<BoxShape>::create();
     floorBox->setSize(FVector3f(floorSize / 2, 150));
     floorBody->attachShape(floorBox);
 
-    Ref<FBoxShape> box = Ref<FBoxShape>::create();
+    Ref<BoxShape> box = Ref<BoxShape>::create();
     body->attachShape(box);
     box->setSize(FVector3f(bodySize / 2, 10));
 
@@ -47,7 +54,6 @@ int main(int argc, const char** argv)
         window->pollEvents();
         world->step();
 
-        const auto& camera = renderer->getCamera();
         const auto position = body->getPosition();
         const auto screenSpacePosition = camera.worldToScreen(position);
 
@@ -57,7 +63,7 @@ int main(int argc, const char** argv)
         renderer->drawQuad(camera.worldToScreen(floorBody->getPosition()) - floorSize / 2, floorSize, 0, Color::Red);
         renderer->end();
 
-        Ref<Texture> rendererTexture = renderer->render();
+        Ref<Texture> rendererTexture = renderer->render(camera);
         fullscreenPass.setInputTexture(rendererTexture);
 
         if (device->beginFrame())

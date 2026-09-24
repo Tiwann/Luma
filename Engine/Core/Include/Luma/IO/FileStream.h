@@ -4,33 +4,33 @@
 
 namespace Luma
 {
-    class FFileStream final : public IStream
+    class FileStream final : public Stream
     {
     public:
-        FFileStream() = default;
-        explicit FFileStream(FStringView filepath, FOpenModeFlags openMode);
+        FileStream() = default;
+        explicit FileStream(StringView filepath, OpenModeFlags openMode);
         
-        bool open(const FStringView& filepath, FOpenModeFlags openMode);
+        bool open(const StringView& filepath, OpenModeFlags openMode);
         SizeType readRaw(void* outBuffer, SizeType size) override;
         SizeType writeRaw(const void* inBuffer, SizeType size) override;
-        bool seek(ESeek seekMode, OffsetType offset) override;
+        bool seek(Seek seekMode, OffsetType offset) override;
         OffsetType tell() const override;
         void close() override;
         OffsetType getSize();
         bool isGood() const override;
 
     private:
-        FStringView m_Filepath;
+        StringView m_Filepath;
         FILE* m_Handle = nullptr;
     };
 
-    class FStandardStream final : public IStream
+    class FStandardStream final : public Stream
     {
     public:
         
         SizeType readRaw(void* outBuffer, SizeType size) override;
         SizeType writeRaw(const void* inBuffer, SizeType size) override;
-        bool seek(ESeek seekMode, OffsetType offset) override;
+        bool seek(Seek seekMode, OffsetType offset) override;
         OffsetType tell() const override;
         void close() override;
         bool isGood() const override;
@@ -40,7 +40,7 @@ namespace Luma
         static FStandardStream StandardError;
         
     protected:
-        explicit FStandardStream(FILE* handle, const FOpenModeFlags& openMode);
+        explicit FStandardStream(FILE* handle, const OpenModeFlags& openMode);
     
     private:
         FILE* m_Handle = nullptr;

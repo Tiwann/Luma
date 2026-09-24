@@ -44,6 +44,11 @@ namespace Luma
             return static_cast<T>(std::sqrt(static_cast<double>(x * x + y * y)));
         }
 
+        T magnitudeSqr() const
+        {
+            return static_cast<T>(x * x + y * y);
+        }
+
         TVector normalized() const
         {
             const double m = magnitude();

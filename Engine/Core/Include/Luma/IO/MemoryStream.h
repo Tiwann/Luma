@@ -3,19 +3,19 @@
 
 namespace Luma
 {
-    class FMemoryStream : public IStream
+    class MemoryStream : public Stream
     {
     public:
-        explicit FMemoryStream(const TBufferView<uint8_t>& buffer);
+        explicit MemoryStream(const BufferView<uint8_t>& buffer);
 
         SizeType    readRaw(void* outBuffer, SizeType size) override;
         SizeType    writeRaw(const void* inBuffer, SizeType size) override;
-        bool        seek(ESeek seek, OffsetType offset) override;
+        bool        seek(Seek seek, OffsetType offset) override;
         OffsetType  tell() const override;
         void        close() override;
         bool        isGood() const override;
     private:
-        TBufferView<uint8_t> m_Buffer;
+        BufferView<uint8_t> m_Buffer;
         OffsetType m_Position = 0;
     };
 }

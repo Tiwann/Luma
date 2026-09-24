@@ -27,7 +27,7 @@ namespace Luma
     {
     public:
         FClass() = delete;
-        constexpr FClass(FStringView className, const FClass* parentClass)
+        constexpr FClass(StringView className, const FClass* parentClass)
             : m_ClassName(className), m_ParentClass(parentClass){}
 
         FClass(const FClass&) = delete;
@@ -70,12 +70,12 @@ namespace Luma
             return cast(T::staticClass());
         }
 
-        constexpr FStringView getName() const { return m_ClassName; }
+        constexpr StringView getName() const { return m_ClassName; }
         constexpr const FClass* getParent() const { return m_ParentClass; }
 
 
     private:
-        FStringView m_ClassName;
+        StringView m_ClassName;
         const FClass* m_ParentClass;
     };
 }

@@ -31,7 +31,7 @@ namespace Luma::RHI
         virtual ~TextureView() = default;
         virtual bool initialize(const TextureViewDesc& textureViewDesc) = 0;
         virtual void destroy() = 0;
-        virtual void setName(FStringView name) {}
+        virtual void setName(StringView name) {}
         const Texture* getTexture() const { return m_Texture; }
         Format getFormat() const { return m_Format; }
         TextureAspectFlags getAspectFlags() const { return m_AspectFlags; }

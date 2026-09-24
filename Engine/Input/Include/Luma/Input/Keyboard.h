@@ -5,7 +5,7 @@
 
 namespace Luma
 {
-    enum class EKey
+    enum class Key
     {
         None,
         A, B, C, D, E, F, G, H, I, J, K, L, M,
@@ -31,11 +31,11 @@ namespace Luma
         _KeyCount
     };
 
-    static constexpr uint32_t MAX_KEYBOARD_KEYS = static_cast<uint32_t>(EKey::_KeyCount);
+    static constexpr uint32_t MAX_KEYBOARD_KEYS = static_cast<uint32_t>(Key::_KeyCount);
 
-    struct FKeyboardState
+    struct KeyboardState
     {
-        std::array<EInputState, MAX_KEYBOARD_KEYS> currentState;
-        std::array<EInputState, MAX_KEYBOARD_KEYS> previousState;
+        std::array<InputState, MAX_KEYBOARD_KEYS> currentState;
+        std::array<InputState, MAX_KEYBOARD_KEYS> previousState;
     };
 }

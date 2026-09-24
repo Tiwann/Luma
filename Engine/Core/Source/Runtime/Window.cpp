@@ -32,7 +32,7 @@ namespace Luma
         return window;
     }
 
-    Window* createWindow(const FString& title, uint32_t width, uint32_t height, WindowOptionsFlags options, DeviceType deviceType)
+    Window* createWindow(const String& title, uint32_t width, uint32_t height, WindowOptionsFlags options, DeviceType deviceType)
     {
         return createWindow(WindowDesc{title, width, height, options, deviceType});
     }

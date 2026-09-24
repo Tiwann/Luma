@@ -3,19 +3,19 @@
 
 namespace Luma
 {
-    class FTransformComponent;
+    class TransformComponent;
     struct CommandBuffer;
-    class FEntity;
+    class Entity;
 
-    struct IComponent : Object
+    struct Component : Object
     {
-        ~IComponent() override = default;
+        ~Component() override = default;
 
-        FEntity* getOwner() const;
+        Entity* getOwner() const;
         void setActive(bool active);
         bool isActive() const;
 
-        FTransformComponent* getTransformComponent() const;
+        TransformComponent* getTransformComponent() const;
     protected:
         virtual void onInit(){}
         virtual void onDestroy(){}
@@ -23,9 +23,10 @@ namespace Luma
         virtual void onPhysicsUpdate(double deltaTime){}
         virtual void onLateUpdate(double deltaTime){}
         virtual void onRender(CommandBuffer* cmdBuffer){}
+
     private:
-        friend class FEntity;
-        FEntity* m_Owner = nullptr;
+        friend class Entity;
+        Entity* m_Owner = nullptr;
         bool m_Active = true;
 
         void initialize() { onInit(); }

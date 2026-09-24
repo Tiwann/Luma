@@ -6,7 +6,7 @@
 
 namespace Luma
 {
-    enum class EMouseButton
+    enum class MouseButton
     {
         None,
         Left,
@@ -15,12 +15,12 @@ namespace Luma
         _ButtonCount
     };
 
-    static constexpr uint32_t MAX_MOUSE_BUTTONS = static_cast<uint32_t>(EMouseButton::_ButtonCount);
+    static constexpr uint32_t MAX_MOUSE_BUTTONS = static_cast<uint32_t>(MouseButton::_ButtonCount);
 
-    struct FMouseState
+    struct MouseState
     {
-        std::array<EInputState, MAX_MOUSE_BUTTONS> currentButtons;
-        std::array<EInputState, MAX_MOUSE_BUTTONS> previousButtons;
+        std::array<InputState, MAX_MOUSE_BUTTONS> currentButtons;
+        std::array<InputState, MAX_MOUSE_BUTTONS> previousButtons;
         double currentWheel = 0.0;
         double previousWheel = 0.0;
         FVector2<double> currentPosition{};

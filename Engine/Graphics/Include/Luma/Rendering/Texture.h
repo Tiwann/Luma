@@ -78,7 +78,7 @@ namespace Luma::RHI
         virtual bool resize(uint32_t width, uint32_t height = 1, uint32_t depth = 1) = 0;
         virtual void destroy() = 0;
         virtual bool isValid() = 0;
-        virtual void setName(FStringView name) {}
+        virtual void setName(StringView name) {}
         ResourceType getResourceType() const final { return ResourceType::Texture; }
         Format getFormat() const { return m_Format; }
         uint32_t getWidth() const { return m_Width; }

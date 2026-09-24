@@ -6,37 +6,37 @@
 
 namespace Luma
 {
-    FString FPath::combine(const FStringView path, const FStringView other)
+    String Path::combine(const StringView path, const StringView other)
     {
         return strfmt("{}{}{}", path, Separator<char>, other).replaceAll(OtherSeparator<char>, Separator<char>);
     }
 
-    FStringView FPath::getEngineDir()
+    StringView Path::getEngineDir()
     {
         return LUMA_ENGINE_ROOT_DIR;
     }
 
-    FString FPath::getEngineAssetsDir()
+    String Path::getEngineAssetsDir()
     {
         return combine(getEngineDir(), "Assets");
     }
 
-    FString FPath::getEngineAssetPath(const FStringView filepath)
+    String Path::getEngineAssetPath(const StringView filepath)
     {
         return combine(getEngineAssetsDir(), filepath);
     }
 
-    FString FPath::getEngineShadersDir()
+    String Path::getEngineShadersDir()
     {
         return combine(getEngineAssetsDir(), "Shaders/Source");
     }
 
-    FString FPath::getEngineShaderPath(FStringView filepath)
+    String Path::getEngineShaderPath(StringView filepath)
     {
         return combine(getEngineShadersDir(), filepath);
     }
 
-    FStringView FPath::getFilename(const FStringView filepath)
+    StringView Path::getFilename(const StringView filepath)
     {
         const auto sep = filepath.findLast(Separator<char>);
         if (sep == -1)
@@ -45,27 +45,27 @@ namespace Luma
         return filepath.subview(sep + 1);
     }
 
-    FStringView FPath::getExtension(const FStringView filepath)
+    StringView Path::getExtension(const StringView filepath)
     {
         const auto dot = filepath.findLast('.');
         const auto sep = filepath.findLast(Separator<char>);
 
         if (dot == -1 || (sep != -1 && dot < sep))
-            return FStringView::empty();
+            return StringView::empty();
 
         return filepath.subview(dot + 1);
     }
 
-    FStringView FPath::getDirectory(const FStringView filepath)
+    StringView Path::getDirectory(const StringView filepath)
     {
         const auto sep = filepath.findLast(Separator<char>);
         if (sep == -1)
-            return FStringView::empty();
+            return StringView::empty();
 
         return filepath.subview(0, sep);
     }
 
-    FStringView FPath::getFilenameWithoutExtension(const FStringView filepath)
+    StringView Path::getFilenameWithoutExtension(const StringView filepath)
     {
         const auto sep = filepath.findLast(Separator<char>);
         const auto dot = filepath.findLast('.');
@@ -78,26 +78,26 @@ namespace Luma
         return filepath.subview(start, dot - start);
     }
 
-    bool FPath::exists(FStringView path)
+    bool Path::exists(StringView path)
     {
         return std::filesystem::exists({*path});
     }
 
-    bool FPath::isFile(FStringView path)
+    bool Path::isFile(StringView path)
     {
         return !isDirectory(path);
     }
 
-    bool FPath::isDirectory(FStringView path)
+    bool Path::isDirectory(StringView path)
     {
         return std::filesystem::is_directory({*path});
     }
 
-    TArray<FString> FPath::getFiles(FStringView path)
+    Array<String> Path::getFiles(StringView path)
     {
         if (!isDirectory(path)) return {};
         std::filesystem::path directory(*path);
-        TArray<FString> files;
+        Array<String> files;
         for (auto it : std::filesystem::directory_iterator(directory))
             files.add(it.path().string().c_str());
         return files;

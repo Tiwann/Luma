@@ -15,7 +15,7 @@ namespace Luma::RHI
         BufferUsage usage = BufferUsage::None;
         uint64_t size = 0;
         bool alwaysMapped = false;
-        FString debugName;
+        String debugName;
     };
 
     struct Buffer : Resource, RefCounted<Buffer>
@@ -40,7 +40,7 @@ namespace Luma::RHI
         uint64_t getSize() const { return m_Size; }
         bool isAlwaysMapped() const { return m_AlwaysMapped; }
 
-        virtual void setName(FStringView name){}
+        virtual void setName(StringView name){}
     protected:
         uint64_t m_Size = 0;
         BufferUsage m_Usage = BufferUsage::None;

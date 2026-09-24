@@ -11,5 +11,5 @@ namespace Luma
         Stencil = BIT(2),
     };
 
-    using TextureAspectFlags = TFlags<TextureAspect>;
+    using TextureAspectFlags = Flags<TextureAspect>;
 }

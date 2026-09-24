@@ -100,7 +100,7 @@ namespace Luma
         glyph->getQuadPlaneBounds(left, bottom, right, top);
     }
 
-    double Font::getTextHeight(FStringView text, float fontSize, float lineSpacing) const
+    double Font::getTextHeight(StringView text, float fontSize, float lineSpacing) const
     {
         const FontMetrics metrics = getMetrics();
         const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
@@ -130,7 +130,7 @@ namespace Luma
         return posY;
     }
 
-    double Font::getTextWidth(FStringView text, float fontSize, float characterSpacing) const
+    double Font::getTextWidth(StringView text, float fontSize, float characterSpacing) const
     {
         const FontMetrics metrics = getMetrics();
         const double fsScale = fontSize / (metrics.ascenderY - metrics.descenderY);
@@ -168,8 +168,8 @@ namespace Luma
     }
 
 
-    bool Font::loadAndGenerate(const TBufferView<uint8_t>& fontData, FontAtlasType atlasType,
-        const TArray<CharacterSet>& charSets, RHI::Device* device)
+    bool Font::loadAndGenerate(const BufferView<uint8_t>& fontData, FontAtlasType atlasType,
+        const Array<CharacterSet>& charSets, RHI::Device* device)
     {
         msdfgen::FreetypeHandle* freetype = msdfgen::initializeFreetype();
         if (!freetype) return false;
@@ -268,14 +268,14 @@ namespace Luma
         return true;
     }
 
-    bool Font::loadAndGenerate(const FStringView filepath, FontAtlasType atlasType, const TArray<CharacterSet>& charSets, RHI::Device* device)
+    bool Font::loadAndGenerate(const StringView filepath, FontAtlasType atlasType, const Array<CharacterSet>& charSets, RHI::Device* device)
     {
-        const TArray<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
+        const Array<uint8_t> fileContent = FileUtils::readToBuffer(filepath);
         if (filepath.isEmpty()) return false;
-        return loadAndGenerate(TBufferView<uint8_t>(fileContent.data(), filepath.count()), atlasType, charSets, device);
+        return loadAndGenerate(BufferView<uint8_t>(fileContent.data(), filepath.count()), atlasType, charSets, device);
     }
 
-    bool Font::loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath)
+    bool Font::loadFromAtlas(StringView atlasFilepath, StringView fontDataFilepath)
     {
         return false;
     }

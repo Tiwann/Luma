@@ -12,9 +12,9 @@ namespace Luma::RHI
 
     struct QueueExecuteInfo
     {
-        TArrayView<const CommandBuffer*> cmdBuffers;
-        TArrayView<FenceWait> waits;
-        TArrayView<FenceSignal> signals;
+        ArrayView<const CommandBuffer*> cmdBuffers;
+        ArrayView<FenceWait> waits;
+        ArrayView<FenceSignal> signals;
     };
 
     struct Queue
@@ -27,7 +27,7 @@ namespace Luma::RHI
         QueueType getQueueType() const { return m_QueueType; }
         void setQueueType(const QueueType queueType) { m_QueueType = queueType; }
 
-        virtual void setName(FStringView name) { }
+        virtual void setName(StringView name) { }
     protected:
         QueueType m_QueueType = QueueType::None;
     };

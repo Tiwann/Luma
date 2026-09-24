@@ -9,7 +9,7 @@ namespace Luma::RHI
 
     }
 
-    void BindingGroup::bindTextures(const FString& name, TArrayView<const Texture*> textures, TextureBindingType bindingType)
+    void BindingGroup::bindTextures(const String& name, ArrayView<const Texture*> textures, TextureBindingType bindingType)
     {
         bindTextures(m_Shader->getBindingFromName(name), textures, bindingType);
     }
@@ -19,22 +19,22 @@ namespace Luma::RHI
         bindTextures(bindingIndex, {texture}, bindingType);
     }
 
-    void BindingGroup::bindTexture(const FString& name, const Texture* texture, TextureBindingType bindingType)
+    void BindingGroup::bindTexture(const String& name, const Texture* texture, TextureBindingType bindingType)
     {
         bindTextures(m_Shader->getBindingFromName(name), {texture}, bindingType);
     }
 
-    void BindingGroup::bindBuffer(const FString& name, const Buffer* buffer, int64_t offset, uint64_t size, BufferBindingType bindingType)
+    void BindingGroup::bindBuffer(const String& name, const Buffer* buffer, int64_t offset, uint64_t size, BufferBindingType bindingType)
     {
         bindBuffer(m_Shader->getBindingFromName(name), buffer, offset, size, bindingType);
     }
 
-    void BindingGroup::bindSampler(const FString& name, const Sampler* sampler)
+    void BindingGroup::bindSampler(const String& name, const Sampler* sampler)
     {
         bindSampler(m_Shader->getBindingFromName(name), sampler);
     }
 
-    void BindingGroup::bindTexturesWithSampler(const FString& name, TArrayView<const Texture*> textures, const Sampler* sampler)
+    void BindingGroup::bindTexturesWithSampler(const String& name, ArrayView<const Texture*> textures, const Sampler* sampler)
     {
         bindTexturesWithSampler(m_Shader->getBindingFromName(name), textures, sampler);
     }
@@ -44,7 +44,7 @@ namespace Luma::RHI
         bindTexturesWithSampler(bindingIndex, {texture}, sampler);
     }
 
-    void BindingGroup::bindTextureWithSampler(const FString& name, const Texture* texture, const Sampler* sampler)
+    void BindingGroup::bindTextureWithSampler(const String& name, const Texture* texture, const Sampler* sampler)
     {
         bindTexturesWithSampler(m_Shader->getBindingFromName(name), texture, sampler);
     }

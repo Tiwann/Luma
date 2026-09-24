@@ -102,7 +102,7 @@ namespace Luma
         auto* context = ma_device_get_context(device);
         const char* backendName = ma_get_backend_name(context->backend);
 
-        FString infoString;
+        String infoString;
         infoString.append(strfmt("Using miniaudio with {} backend.\n", backendName));
         infoString.append(strfmt("    Channel count: {}\n", m_Pimpl->m_Channels));
         infoString.append(strfmt("    Sample rate: {}\n", m_Pimpl->m_SampleRate));

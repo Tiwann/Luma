@@ -314,7 +314,7 @@ namespace Luma
 
         for (const FEntity* entity : m_Scene->getEntities())
         {
-            TArray<FStaticMeshRenderer*> renderers = entity->getAllComponentsOfType<FStaticMeshRenderer>();
+            Array<FStaticMeshRenderer*> renderers = entity->getAllComponentsOfType<FStaticMeshRenderer>();
             if (renderers.isEmpty()) continue;
 
             for (FStaticMeshRenderer* renderer : renderers)
@@ -337,7 +337,7 @@ namespace Luma
                     if (!material) continue;
 
                     cmdBuffer->bindMaterial(material);
-                    const TArray<FMeshPart>& meshParts = perMaterialMeshParts[index];
+                    const Array<FMeshPart>& meshParts = perMaterialMeshParts[index];
                     for (const FMeshPart& meshPart : meshParts)
                     {
                         cmdBuffer->bindVertexBuffer(vertexBuffer, meshPart.vertexOffset);

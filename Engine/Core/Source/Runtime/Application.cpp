@@ -188,7 +188,7 @@ namespace Luma
         return m_Device;
     }
 
-    Ref<FRenderer2D> IApplication::getRenderer2D() const
+    Ref<Renderer2D> IApplication::getRenderer2D() const
     {
         return m_Renderer2D;
     }

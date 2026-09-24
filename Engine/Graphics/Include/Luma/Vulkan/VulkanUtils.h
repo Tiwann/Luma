@@ -9,7 +9,7 @@ namespace Luma::Vulkan
     class Device;
     class Queue;
 
-    void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, FStringView name);
+    void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, StringView name);
     VkPipelineStageFlags2 getSourcePipelineStageFlags(ResourceAccessFlags accessFlags);
     VkPipelineStageFlags2 getDestPipelineStageFlags(ResourceAccessFlags accessFlags);
     VkImageMemoryBarrier2 makeTextureBarrier(const TextureBarrier& barrier);

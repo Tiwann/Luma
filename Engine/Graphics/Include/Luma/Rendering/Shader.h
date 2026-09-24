@@ -2,6 +2,7 @@
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Containers/ArrayView.h"
 #include "Luma/Containers/HashMap.h"
+#include "Luma/Containers/StringHash.h"
 #include "ShaderStage.h"
 #include "ShaderBinding.h"
 #include "ShaderPushConstantVariable.h"
@@ -14,13 +15,13 @@ namespace Luma::RHI
     struct ShaderCode
     {
         ShaderStage stage;
-        TArrayView<uint8_t> code;
+        ArrayView<uint8_t> code;
     };
 
     struct ShaderDesc
     {
         Device* device = nullptr;
-        TArrayView<ShaderCode> shaderCodes;
+        ArrayView<ShaderCode> shaderCodes;
     };
 
     struct Shader : RefCounted<Shader>
@@ -36,13 +37,13 @@ namespace Luma::RHI
         Device* getDevice() const { return m_Device; }
         ShaderStageFlags getStages() const { return m_Stages; }
         const auto& getBindings() const { return m_Bindings; }
-        uint32_t getBindingFromName(const FString& name) const { return m_NameToBindingCache[name]; }
+        uint32_t getBindingFromName(const String& name) const { return m_NameToBindingCache[name]; }
         const auto& getPushConstantVariables() const { return m_PushConstantsVars; }
     protected:
         Device* m_Device = nullptr;
         ShaderStageFlags m_Stages = ShaderStage::None;
-        THashMap<uint32_t, THashMap<uint32_t, ShaderBinding>> m_Bindings;
-        THashMap<FString, uint32_t> m_NameToBindingCache;
-        TArray<ShaderPushConstantVariable> m_PushConstantsVars;
+        HashMap<uint32_t, HashMap<uint32_t, ShaderBinding>> m_Bindings;
+        HashMap<String, uint32_t> m_NameToBindingCache;
+        Array<ShaderPushConstantVariable> m_PushConstantsVars;
     };
 }

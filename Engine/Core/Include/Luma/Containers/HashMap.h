@@ -10,7 +10,7 @@
 namespace Luma
 {
     template<typename Key>
-    struct THasher
+    struct Hasher
     {
         uint64_t operator()(const Key& key) const
         {
@@ -19,7 +19,7 @@ namespace Luma
     };
 
     template<IntegerType T>
-    struct THasher<T>
+    struct Hasher<T>
     {
         uint64_t operator()(const T& key) const
         {
@@ -27,17 +27,17 @@ namespace Luma
         }
     };
 
-    template<typename Key, typename Value, typename Hasher = THasher<Key>>
-    class THashMap final
+    template<typename Key, typename Value, typename HasherType = Hasher<Key>>
+    class HashMap final
     {
     public:
         using SizeType = uint64_t;
-        using PairType = TPair<Key, Value>;
-        using BucketType = TArray<PairType>;
+        using PairType = Pair<Key, Value>;
+        using BucketType = Array<PairType>;
 
         struct Iterator
         {
-            TArray<BucketType>* buckets = nullptr;
+            Array<BucketType>* buckets = nullptr;
             SizeType bucketIdx = 0;
             SizeType pairIdx = 0;
 
@@ -72,7 +72,7 @@ namespace Luma
 
         struct ConstIterator
         {
-            const TArray<BucketType>* buckets = nullptr;
+            const Array<BucketType>* buckets = nullptr;
             SizeType bucketIdx = 0;
             SizeType pairIdx = 0;
 
@@ -105,13 +105,13 @@ namespace Luma
             bool operator!=(const ConstIterator& other) const { return !(*this == other); }
         };
 
-        THashMap()
+        HashMap()
         {
             for (SizeType i = 0; i < 16; ++i)
                 m_Buckets.emplace(BucketType{});
         }
 
-        explicit THashMap(SizeType bucketCount)
+        explicit HashMap(SizeType bucketCount)
         {
             for (SizeType i = 0; i < bucketCount; ++i)
                 m_Buckets.emplace(BucketType{});
@@ -207,7 +207,7 @@ namespace Luma
             return nullptr;
         }
 
-        bool operator==(const THashMap& other) const
+        bool operator==(const HashMap& other) const
         {
             if (count() != other.count())
                 return false;
@@ -257,8 +257,8 @@ namespace Luma
             return bucket[bucket.count() - 1].value;
         }
     private:
-        TArray<BucketType> m_Buckets;
-        Hasher m_Hasher;
+        Array<BucketType> m_Buckets;
+        HasherType m_Hasher;
         SizeType m_Count = 0;
     };
 }

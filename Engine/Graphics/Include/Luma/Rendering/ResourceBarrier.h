@@ -26,7 +26,7 @@ namespace Luma
         HostWrite = BIT(9),
     };
 
-    using ResourceAccessFlags = TFlags<ResourceAccess>;
+    using ResourceAccessFlags = Flags<ResourceAccess>;
 
     struct TextureBarrier
     {

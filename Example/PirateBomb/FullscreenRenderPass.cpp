@@ -2,19 +2,22 @@
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Runtime/Path.h"
 
-FullscreenRenderPass::FullscreenRenderPass(Luma::Ref<Luma::Device> device, Luma::Format format)
+using namespace Luma;
+using namespace Luma::RHI;
+
+FullscreenRenderPass::FullscreenRenderPass(Ref<Device> device, Format format)
 {
-    const Luma::FString fullscreenVertexPath = Luma::FPath::getEngineShaderPath("Fullscreen.slang.vert.spv");
-    const Luma::FString fullscreenFragmentPath = Luma::FPath::getEngineShaderPath("Fullscreen.slang.frag.spv");
+    const String fullscreenVertexPath = Path::getEngineShaderPath("Fullscreen.slang.vert.spv");
+    const String fullscreenFragmentPath = Path::getEngineShaderPath("Fullscreen.slang.frag.spv");
     fullscreenShader = device->createShader(fullscreenVertexPath, fullscreenFragmentPath);
 
-    Luma::RenderPipelineDesc fullscreenPipelineDesc;
+    RenderPipelineDesc fullscreenPipelineDesc;
     fullscreenPipelineDesc.shaderProgram = fullscreenShader;
     fullscreenPipelineDesc.colorFormats[0] = format;
     fullscreenPipelineDesc.colorTargetCount = 1;
     fullscreenPipeline = device->createRenderPipeline(fullscreenPipelineDesc);
 
-    fullscreenSampler = device->createSampler(Luma::SamplerDesc());
+    fullscreenSampler = device->createSampler(SamplerDesc());
     fullscreenBindingGroup = fullscreenShader->createBindingGroup(0);
 }
 
@@ -28,39 +31,39 @@ FullscreenRenderPass::~FullscreenRenderPass()
     fullscreenShader = nullptr;
 }
 
-void FullscreenRenderPass::setInputTexture(const Luma::Texture* texture)
+void FullscreenRenderPass::setInputTexture(const Texture* texture)
 {
     inputTexture = texture;
     fullscreenBindingGroup->bindTextureWithSampler(0, inputTexture, fullscreenSampler);
 }
 
-void FullscreenRenderPass::setOutputTexture(const Luma::Texture* texture)
+void FullscreenRenderPass::setOutputTexture(const Texture* texture)
 {
     outputTexture = texture;
 }
 
-void FullscreenRenderPass::setSize(const Luma::FVector2u& size)
+void FullscreenRenderPass::setSize(const FVector2u& size)
 {
     m_Size = size;
 }
 
-void FullscreenRenderPass::execute(Luma::CommandBuffer* cmdBuffer)
+void FullscreenRenderPass::execute(CommandBuffer* cmdBuffer)
 {
-    Luma::RenderPassTarget renderTarget;
-    renderTarget.type = Luma::RenderPassTargetType::Color;
-    renderTarget.loadOp = Luma::LoadOp::Clear;
-    renderTarget.storeOp = Luma::StoreOp::Store;
+    RenderPassTarget renderTarget;
+    renderTarget.type = RenderPassTargetType::Color;
+    renderTarget.loadOp = LoadOp::Clear;
+    renderTarget.storeOp = StoreOp::Store;
     renderTarget.textureView = outputTexture->getTextureView();
 
-    Luma::RenderPassDesc renderPassDesc;
+    RenderPassDesc renderPassDesc;
     renderPassDesc.renderArea = {0, 0, m_Size.x, m_Size.y};
     renderPassDesc.colorTargets.add(&renderTarget);
 
     cmdBuffer->beginRenderPass(renderPassDesc);
     cmdBuffer->bindBindingGroup(fullscreenBindingGroup);
     cmdBuffer->bindRenderPipeline(fullscreenPipeline);
-    cmdBuffer->setViewport(Luma::Viewport::fromSize(m_Size.x, m_Size.y));
-    cmdBuffer->setScissor(Luma::Scissor::fromSize(m_Size.x, m_Size.y));
+    cmdBuffer->setViewport(Viewport::fromSize(m_Size.x, m_Size.y));
+    cmdBuffer->setScissor(Scissor::fromSize(m_Size.x, m_Size.y));
     cmdBuffer->draw(6, 1, 0, 0);
     cmdBuffer->endRenderPass();
 }

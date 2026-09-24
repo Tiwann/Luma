@@ -5,28 +5,28 @@
 #include "Luma/Rendering/Renderer2D.h"
 
 using Luma::Ref;
-using Luma::FPhysicsBody;
-using Luma::FRenderer2D;
-using Luma::FPhysicsWorld;
-using Luma::FBoxShape;
+using Luma::PhysicsBody;
+using Luma::Renderer2D;
+using Luma::PhysicsWorld;
+using Luma::BoxShape;
 using Luma::Camera;
 
 
 class Player
 {
 public:
-    Player(Ref<FPhysicsWorld> physicsWorld);
+    Player(Ref<PhysicsWorld> physicsWorld);
     ~Player();
 
     void update(float deltaTime);
-    void render(const Camera& camera, Ref<FRenderer2D> renderer);
+    void render(const Camera& camera, Ref<Renderer2D> renderer);
 
     float Speed = 1.0f;
     float JumpHeight = 128.0f;
 private:
     static constexpr float PLAYER_SIZE = 64.f;
 
-    Ref<FPhysicsWorld> m_World = nullptr;
-    Ref<FPhysicsBody> m_Body = nullptr;
-    Ref<FBoxShape> m_BoxShape = nullptr;
+    Ref<PhysicsWorld> m_World = nullptr;
+    Ref<PhysicsBody> m_Body = nullptr;
+    Ref<BoxShape> m_BoxShape = nullptr;
 };

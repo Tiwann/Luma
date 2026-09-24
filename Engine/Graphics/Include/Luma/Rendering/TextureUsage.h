@@ -8,9 +8,10 @@ namespace Luma
         None = 0,
         Sampled = BIT(0),
         Storage = BIT(1),
-        ColorTarget = BIT(3),
-        DepthStencilTarget = BIT(4),
+        Color = BIT(3),
+        DepthStencil = BIT(4),
+        RenderTarget = BIT(5)
     };
 
-    using TextureUsageFlags = TFlags<TextureUsage>;
+    using TextureUsageFlags = Flags<TextureUsage>;
 }

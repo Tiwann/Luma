@@ -71,7 +71,7 @@ namespace Luma::RHI
         virtual Texture* createTexture(const TextureDesc& textureDesc) = 0;
         virtual TextureView* createTextureView(const TextureViewDesc& textureViewDesc) = 0;
         virtual Shader* createShader(const ShaderDesc& shaderDesc) = 0;
-        Shader* createShader(FStringView vertexPath, FStringView fragmentPath);
+        Shader* createShader(StringView vertexPath, StringView fragmentPath);
         virtual CommandBuffer* createCommandBuffer(const CommandBufferDesc& cmdBufferDesc) = 0;
         CommandBuffer* createCommandBuffer(Queue* queue);
         virtual CommandBuffer* getCommandBuffer() = 0;
@@ -84,7 +84,7 @@ namespace Luma::RHI
         virtual TextureView* getAcquiredSwapchainTextureView() = 0;
         virtual Texture* getAcquiredSwapchainTexture() = 0;
     protected:
-        THashMap<SamplerDesc, Sampler*, FSamplerDescHasher> m_PerDescSamplers;
+        HashMap<SamplerDesc, Sampler*, FSamplerDescHasher> m_PerDescSamplers;
     };
 
     LUMA_GRAPHICS_API Device* createDevice(const DeviceDesc& deviceDesc);

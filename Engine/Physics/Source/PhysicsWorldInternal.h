@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    struct FPhysicsWorld::Impl
+    struct PhysicsWorld::Impl
     {
         b3WorldId worldId{b3_nullWorldId};
         float timestep = 1.0f / 60.0f;

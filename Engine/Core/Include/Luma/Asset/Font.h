@@ -50,9 +50,9 @@ namespace Luma
         static AssetType getStaticAssetType() { return AssetType::Font; }
         AssetType getAssetType() const override { return getStaticAssetType(); }
 
-        bool loadAndGenerate(const TBufferView<uint8_t>& fontData, FontAtlasType atlasType, const TArray<CharacterSet>& charSets, RHI::Device* device);
-        bool loadAndGenerate(FStringView filepath, FontAtlasType atlasType, const TArray<CharacterSet>& charSets, RHI::Device* device);
-        bool loadFromAtlas(FStringView atlasFilepath, FStringView fontDataFilepath);
+        bool loadAndGenerate(const BufferView<uint8_t>& fontData, FontAtlasType atlasType, const Array<CharacterSet>& charSets, RHI::Device* device);
+        bool loadAndGenerate(StringView filepath, FontAtlasType atlasType, const Array<CharacterSet>& charSets, RHI::Device* device);
+        bool loadFromAtlas(StringView atlasFilepath, StringView fontDataFilepath);
         void destroy() override;
 
         FontAtlasType getAtlasType() const;
@@ -67,8 +67,8 @@ namespace Luma
         void getAtlasTextureCoordinates(uint32_t unicode, double& left, double& right, double& top, double& bottom) const;
         void getPlaneBounds(uint32_t unicode, double& left, double& right, double& top, double& bottom) const;
 
-        double getTextWidth(FStringView text, float fontSize, float characterSpacing = 1.0f) const;
-        double getTextHeight(FStringView text, float fontSize, float lineSpacing = 1.0f) const;
+        double getTextWidth(StringView text, float fontSize, float characterSpacing = 1.0f) const;
+        double getTextHeight(StringView text, float fontSize, float lineSpacing = 1.0f) const;
     private:
         FontAtlasType m_AtlasType = FontAtlasType::None;
         Ref<RHI::Texture> m_AtlasTexture = nullptr;
@@ -94,7 +94,7 @@ namespace Luma
 
     struct FFontFamily
     {
-        FString name = "Unnamed Font";
+        String name = "Unnamed Font";
         Ref<Font> regular = nullptr;
         Ref<Font> italic = nullptr;
         Ref<Font> bold = nullptr;

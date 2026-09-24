@@ -29,15 +29,15 @@ namespace Luma
 {
     using namespace RHI;
 
-    FRenderer2D::FRenderer2D(Ref<Device> device, uint32_t width, uint32_t height)
+    Renderer2D::Renderer2D(Ref<Device> device, uint32_t width, uint32_t height)
         : m_Device(device)
     {
         m_DefaultFont = Ref<Font>::create();
         m_DefaultFont->loadAndGenerate(robotoFontData, FontAtlasType::MSDF, {CharacterSet::ascii()}, m_Device);
         setFont(m_DefaultFont);
 
-        FString vertexPath = FPath::getEngineShaderPath("Renderer2D.slang.vert.spv");
-        FString fragmentPath = FPath::getEngineShaderPath("Renderer2D.slang.frag.spv");
+        String vertexPath = Path::getEngineShaderPath("Renderer2D.slang.vert.spv");
+        String fragmentPath = Path::getEngineShaderPath("Renderer2D.slang.frag.spv");
         m_Shader = m_Device->createShader(vertexPath, fragmentPath);
 
         VertexInputLayout vertexLayout;
@@ -94,12 +94,12 @@ namespace Luma
         textureDesc.arrayCount = 1;
         textureDesc.sampleCount = 1;
         textureDesc.mipCount = 1;
-        textureDesc.usageFlags = TextureUsage::ColorTarget | TextureUsage::Sampled;
+        textureDesc.usageFlags = TextureUsage::Color | TextureUsage::Sampled;
 
         m_RenderTexture = m_Device->createTexture(textureDesc);
     }
 
-    void FRenderer2D::destroy()
+    void Renderer2D::destroy()
     {
         m_Device->waitIdle();
         m_DefaultFont = nullptr;
@@ -116,7 +116,7 @@ namespace Luma
     }
 
 
-    void FRenderer2D::begin()
+    void Renderer2D::begin()
     {
         LUMA_ASSERT(!m_BeginDrawing, "begin/end mismatch");
         m_BeginDrawing = true;
@@ -126,7 +126,7 @@ namespace Luma
         m_Textures.clear();
     }
 
-    void FRenderer2D::end()
+    void Renderer2D::end()
     {
         LUMA_ASSERT(m_BeginDrawing, "begin/end mismatch");
 
@@ -143,7 +143,7 @@ namespace Luma
         m_ReadyToRender = true;
     }
 
-    Ref<Texture> FRenderer2D::render(const Camera& camera)
+    Ref<Texture> Renderer2D::render(const Camera& camera)
     {
         LUMA_ASSERT(m_ReadyToRender, "not ready to render yet!!");
 
@@ -216,13 +216,13 @@ namespace Luma
         return m_RenderTexture;
     }
 
-    void FRenderer2D::resize(uint32_t width, uint32_t height)
+    void Renderer2D::resize(uint32_t width, uint32_t height)
     {
         m_Device->waitIdle();
         m_RenderTexture->resize(width, height);
     }
 
-    void FRenderer2D::addQuad(const FVector2f& position, const FVector2f& size, const float rotation, const Color& color, const QuadMode quadMode, const uint32_t textureId)
+    void Renderer2D::addQuad(const FVector2f& position, const FVector2f& size, const float rotation, const Color& color, const QuadMode quadMode, const uint32_t textureId)
     {
         FMatrix3f transform;
         transform = rotate(transform, FAxisAnglef(FVector3f::Forward, rotation));
@@ -247,7 +247,7 @@ namespace Luma
         m_QuadIndices.addRange(quadIndices);
     }
 
-    uint32_t FRenderer2D::getOrAddTexture(const Texture* texture)
+    uint32_t Renderer2D::getOrAddTexture(const Texture* texture)
     {
         LUMA_ASSERT(texture, "ITexture should be valid!");
         if (m_Textures.contains(texture))
@@ -256,49 +256,49 @@ namespace Luma
         return m_Textures.count() - 1;
     }
 
-    void FRenderer2D::drawQuad(const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
+    void Renderer2D::drawQuad(const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
     {
         addQuad(position, size, rotation, color, QuadMode::Quad, 0);
     }
 
-    void FRenderer2D::drawQuad(const FRect2f& rect, const float rotation, const Color& color)
+    void Renderer2D::drawQuad(const FRect2f& rect, const float rotation, const Color& color)
     {
         const FVector2f position = { rect.x, rect.y };
         const FVector2f size = { rect.width, rect.height };
         drawQuad(position, size, rotation, color);
     }
 
-    void FRenderer2D::drawEllipse(const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
+    void Renderer2D::drawEllipse(const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
     {
         addQuad(position, size, rotation, color, QuadMode::Ellipse, 0);
     }
 
-    void FRenderer2D::drawEllipse(const FRect2f& rect, const float rotation, const Color& color)
+    void Renderer2D::drawEllipse(const FRect2f& rect, const float rotation, const Color& color)
     {
         const FVector2f position = { rect.x, rect.y };
         const FVector2f size = { rect.width, rect.height };
         drawEllipse(position, size, rotation, color);
     }
 
-    void FRenderer2D::drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation,
+    void Renderer2D::drawEllipseCentered(const FVector2f& position, const FVector2f& size, float rotation,
         const Color& color)
     {
         const FVector2f newPos = { position.x - size.x * 0.5f, position.y - size.y * 0.5f };
         drawEllipse(newPos, size, rotation, color);
     }
 
-    void FRenderer2D::drawCircleCentered(const FVector2f& position, float radius, const Color& color)
+    void Renderer2D::drawCircleCentered(const FVector2f& position, float radius, const Color& color)
     {
         const FVector2f newPos = { position.x - radius, position.y - radius };
         drawCircle(newPos, radius, color);
     }
 
-    void FRenderer2D::drawCircle(const FVector2f& position, float radius, const Color& color)
+    void Renderer2D::drawCircle(const FVector2f& position, float radius, const Color& color)
     {
         drawEllipse(position, {radius * 2.0f, radius * 2.0f}, 0.0f, color);
     }
 
-    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float fontSize, const Color& color)
+    void Renderer2D::drawText(const StringView text, const FVector2f& position, const float fontSize, const Color& color)
     {
         const TextParams params
         {
@@ -312,7 +312,7 @@ namespace Luma
         drawText(text, position, 0.0f, color, params);
     }
 
-    void FRenderer2D::drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const Color& color)
+    void Renderer2D::drawTextCentered(StringView text, const FVector2<float>& position, float fontSize, const Color& color)
     {
         const float width = m_Font->getTextWidth(text, fontSize);
         const float height = m_Font->getTextHeight(text, fontSize);
@@ -321,7 +321,7 @@ namespace Luma
         drawText(text, {x, y}, fontSize, color);
     }
 
-    void FRenderer2D::drawText(const FStringView text, const FVector2f& position, const float rotation, const Color& color, TextParams params)
+    void Renderer2D::drawText(const StringView text, const FVector2f& position, const float rotation, const Color& color, TextParams params)
     {
         if (!m_Font) return;
         WeakRef<Texture> atlasTexture = m_Font->getAtlasTexture();
@@ -394,7 +394,7 @@ namespace Luma
         }
     }
 
-    void FRenderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const Color& color)
+    void Renderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const Color& color)
     {
         if (!sprite.texture) return;
         const uint32_t textureId = getOrAddTexture(sprite.texture);
@@ -427,22 +427,22 @@ namespace Luma
         m_QuadIndices.addRange(quadIndices);
     }
 
-    void FRenderer2D::setFont(Ref<Font> font)
+    void Renderer2D::setFont(Ref<Font> font)
     {
         m_Font = font ? font : m_DefaultFont;
     }
 
-    void FRenderer2D::setDebugName(const FString& debugName)
+    void Renderer2D::setDebugName(const String& debugName)
     {
         m_DebugName = debugName;
     }
 
-    void FRenderer2D::setDebugColor(const Color& debugColor)
+    void Renderer2D::setDebugColor(const Color& debugColor)
     {
         m_DebugColor = debugColor;
     }
 
-    Ref<Texture> FRenderer2D::getRenderTexture() const
+    Ref<Texture> Renderer2D::getRenderTexture() const
     {
         return m_RenderTexture;
     }

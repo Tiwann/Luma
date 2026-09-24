@@ -31,13 +31,13 @@ namespace Luma
         float fontSize = 10.0f;
     };
 
-    class FRenderer2D : public RefCounted<FRenderer2D>
+    class Renderer2D : public RefCounted<Renderer2D>
     {
         static constexpr uint32_t MAX_QUAD = FMath::sqr(512);
     public:
-        FRenderer2D() = default;
-        explicit FRenderer2D(Ref<RHI::Device> device, uint32_t width, uint32_t height);
-        ~FRenderer2D() override = default;
+        Renderer2D() = default;
+        explicit Renderer2D(Ref<RHI::Device> device, uint32_t width, uint32_t height);
+        ~Renderer2D() override = default;
 
         void destroy();
 
@@ -99,8 +99,8 @@ namespace Luma
         void drawCircleCentered(const FVector2f& position, float radius, const Color& color);
 
 
-        void drawText(FStringView text, const FVector2f& position, float fontSize, const Color& color);
-        void drawTextCentered(FStringView text, const FVector2<float>& position, float fontSize, const Color& color);
+        void drawText(StringView text, const FVector2f& position, float fontSize, const Color& color);
+        void drawTextCentered(StringView text, const FVector2<float>& position, float fontSize, const Color& color);
 
         /// Draw a colored text
         /// @param text Text to draw
@@ -108,7 +108,7 @@ namespace Luma
         /// @param rotation Rotation of the text
         /// @param color Color of the text
         /// @param params
-        void drawText(FStringView text, const FVector2f& position, float rotation, const Color& color, TextParams params);
+        void drawText(StringView text, const FVector2f& position, float rotation, const Color& color, TextParams params);
 
         /// Draw a sprite
         /// @param sprite Sprite to draw
@@ -121,7 +121,7 @@ namespace Luma
         /// @param font Font asset to use. Null will assign the default font.
         void setFont(Ref<Font> font);
 
-        void setDebugName(const FString& debugName);
+        void setDebugName(const String& debugName);
         void setDebugColor(const Color& debugColor);
 
         Ref<RHI::Texture> getRenderTexture() const;
@@ -157,15 +157,15 @@ namespace Luma
         Ref<RHI::Fence> m_Fence = nullptr;
         Ref<Font> m_Font = nullptr;
         Ref<RHI::Texture> m_RenderTexture = nullptr;
-        FString m_DebugName = "Renderer2D";
+        String m_DebugName = "Renderer2D";
         Color m_DebugColor = Color::Cyan;
 
         bool m_BeginDrawing = false;
         bool m_ReadyToRender = false;
         Ref<Font> m_DefaultFont = nullptr;
-        TArray<QuadVertex> m_QuadVertices;
-        TArray<uint32_t> m_QuadIndices;
-        TArray<const RHI::Texture*> m_Textures;
+        Array<QuadVertex> m_QuadVertices;
+        Array<uint32_t> m_QuadIndices;
+        Array<const RHI::Texture*> m_Textures;
     };
 
 }

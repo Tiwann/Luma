@@ -28,13 +28,13 @@ namespace Luma
         void setFullscreen(bool fullscreen);
         bool isAvailable() const override;
 
-        FString getTitle() const;
-        void setTitle(const FString& title) override;
+        String getTitle() const;
+        void setTitle(const String& title) override;
 
         GLFWwindow* getHandle() const;
     private:
         GLFWwindow* m_Handle = nullptr;
-        FString m_Title;
+        String m_Title;
         bool m_Focused = false;
         bool m_Maximized = false;
         bool m_Minimized = false;

@@ -9,7 +9,7 @@
 
 namespace Luma
 {
-    FString FPath::openFileDialog(const FStringView title, const FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow)
+    String Path::openFileDialog(const StringView title, const StringView defaultPath, const FDialogFilters& filters, Window& owningWindow)
     {
         HWND hwnd = glfwGetWin32Window(static_cast<DesktopWindow&>(owningWindow).getHandle());
         if (!hwnd) return {};
@@ -36,11 +36,11 @@ namespace Luma
 
         const bool result = GetOpenFileNameW(&openFilename);
 
-        auto resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
+        auto resultPath = stringConvert<char, wchar_t>(WideStringView(openFilename.lpstrFile));
         return result ? resultPath : "";
     }
 
-    FString FPath::saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow)
+    String Path::saveFileDialog(StringView title, StringView defaultPath, const FDialogFilters& filters, Window& owningWindow)
     {
         HWND hwnd = glfwGetWin32Window(static_cast<DesktopWindow&>(owningWindow).getHandle());
         if (!hwnd) return {};
@@ -67,7 +67,7 @@ namespace Luma
 
         const bool result = GetOpenFileNameW(&openFilename);
 
-        auto resultPath = stringConvert<char, wchar_t>(FWideStringView(openFilename.lpstrFile));
+        auto resultPath = stringConvert<char, wchar_t>(WideStringView(openFilename.lpstrFile));
         return result ? *resultPath : "";
     }
 }

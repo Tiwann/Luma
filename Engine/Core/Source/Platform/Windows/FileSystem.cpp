@@ -5,40 +5,40 @@
 
 namespace Luma
 {
-    FStringView FPath::getUserDirectory()
+    StringView Path::getUserDirectory()
     {
-        static FString userDirectory;
+        static String userDirectory;
         if (userDirectory.isEmpty())
         {
-            FWideString::CharacterType buffer[MAX_PATH] = {0};
+            WideString::CharacterType buffer[MAX_PATH] = {0};
             const DWORD length = GetEnvironmentVariableW(L"USERPROFILE", buffer, MAX_PATH);
-            userDirectory = stringConvert<char, wchar_t>(FWideStringView(buffer, length));
+            userDirectory = stringConvert<char, wchar_t>(WideStringView(buffer, length));
         }
 
         return userDirectory;
     }
 
-    FStringView FPath::getDocumentsDirectory()
+    StringView Path::getDocumentsDirectory()
     {
-        static FString documentsDirectory = combine(getUserDirectory(), "Documents");
+        static String documentsDirectory = combine(getUserDirectory(), "Documents");
         return documentsDirectory;
     }
 
-    FStringView FPath::getMusicDirectory()
+    StringView Path::getMusicDirectory()
     {
-        static FString musicDirectory = combine(getUserDirectory(), "Music");
+        static String musicDirectory = combine(getUserDirectory(), "Music");
         return musicDirectory;
     }
 
-    FStringView FPath::getDownloadsDirectory()
+    StringView Path::getDownloadsDirectory()
     {
-        static FString downloadsDirectory = combine(getUserDirectory(), "Downloads");
+        static String downloadsDirectory = combine(getUserDirectory(), "Downloads");
         return downloadsDirectory;
     }
 
-    FStringView FPath::getDesktopDirectory()
+    StringView Path::getDesktopDirectory()
     {
-        static FString desktopDirectory = combine(getUserDirectory(), "Desktop");
+        static String desktopDirectory = combine(getUserDirectory(), "Desktop");
         return desktopDirectory;
     }
 }

@@ -76,7 +76,7 @@ namespace Luma::RHI
 
         virtual bool initialize(const SamplerDesc& samplerDesc) = 0;
         virtual void destroy() = 0;
-        virtual void setName(FStringView name) {}
+        virtual void setName(StringView name) {}
         ResourceType getResourceType() const final { return ResourceType::Sampler;  }
 
         SamplerAddressMode getAddressModeU() const { return m_AddressModeU; }

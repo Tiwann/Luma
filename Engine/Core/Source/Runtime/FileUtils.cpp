@@ -3,42 +3,42 @@
 
 namespace Luma::FileUtils
 {
-    TArray<uint8_t> readToBuffer(const FStringView filepath)
+    Array<uint8_t> readToBuffer(const StringView filepath)
     {
-        FFileStream stream(filepath, EOpenModeBits::ReadBinary);
+        FileStream stream(filepath, OpenMode::ReadBinary);
         if (!stream.isOpened()) return {};
 
         const size_t fileSize = stream.getSize();
-        TArray<uint8_t> buffer(fileSize);
+        Array<uint8_t> buffer(fileSize);
         const size_t read = stream.readRaw(buffer.data(), fileSize);
         if (read != fileSize) return {};
 
         return buffer;
     }
 
-    FString readToString(const FStringView filepath)
+    String readToString(const StringView filepath)
     {
-        FFileStream stream(filepath, EOpenModeBits::ReadBinary);
+        FileStream stream(filepath, OpenMode::ReadBinary);
         if (!stream.isOpened()) return {};
 
         const size_t fileSize = stream.getSize();
-        FString result(fileSize);
+        String result(fileSize);
         const size_t read = stream.read(result, fileSize);
 
         if (read != fileSize) return {};
         return result;
     }
 
-    TArray<uint8_t> readTillEnd(IStream& stream)
+    Array<uint8_t> readTillEnd(Stream& stream)
     {
         const size_t position = stream.tell();
 
-        stream.seek(ESeek::End, 0);
+        stream.seek(Seek::End, 0);
         const size_t endPosition = stream.tell();
-        stream.seek(ESeek::Begin, position);
+        stream.seek(Seek::Begin, position);
 
         const size_t bytesToRead = endPosition - position;
-        TArray<uint8_t> result(bytesToRead);
+        Array<uint8_t> result(bytesToRead);
         const size_t read = stream.readRaw(result.data(), result.size());
         if (read != bytesToRead) return {};
         return result;

@@ -3,7 +3,7 @@
 namespace Luma
 {
     template<typename KeyType, typename ValueType>
-    struct TPair
+    struct Pair
     {
         KeyType key;
         ValueType value;

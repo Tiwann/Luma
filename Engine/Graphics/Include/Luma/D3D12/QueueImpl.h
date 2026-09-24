@@ -21,8 +21,8 @@ namespace Luma::D3D12
     private:
         FGPUDeviceImpl* m_Device = nullptr;
         ID3D12CommandQueue* m_Handle = nullptr;
-        TArray<const ISemaphore*> m_WaitSemaphores;
-        TArray<const ISemaphore*> m_SignalSemaphores;
+        Array<const ISemaphore*> m_WaitSemaphores;
+        Array<const ISemaphore*> m_SignalSemaphores;
     };
 
 

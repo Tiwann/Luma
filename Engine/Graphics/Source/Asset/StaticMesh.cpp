@@ -16,9 +16,9 @@
 
 namespace Luma
 {
-    static TArray<uint32_t> getIndicesFromFaces(const TBufferView<aiFace>& faces)
+    static Array<uint32_t> getIndicesFromFaces(const BufferView<aiFace>& faces)
     {
-        TArray<uint32_t> result;
+        Array<uint32_t> result;
         for (uint32_t faceIndex = 0; faceIndex < faces.count(); ++faceIndex)
         {
             const aiFace& face = faces[faceIndex];
@@ -27,9 +27,9 @@ namespace Luma
         return result;
     }
 
-    static TArray<MeshVertex> getVerticesFromMesh(const aiMesh& mesh)
+    static Array<MeshVertex> getVerticesFromMesh(const aiMesh& mesh)
     {
-        TArray<MeshVertex> result;
+        Array<MeshVertex> result;
 
         const auto toVector3 = [](const aiVector3D& in) { return FVector3<float>(in.x, in.y, in.z); };
         const auto toVector2 = [](const aiVector3D& in) { return FVector2<float>(in.x, in.y); };
@@ -64,7 +64,7 @@ namespace Luma
         m_IndexBuffer->destroy();
     }
 
-    bool FStaticMesh::loadFromFile(FStringView filepath, RHI::Device* device)
+    bool FStaticMesh::loadFromFile(StringView filepath, RHI::Device* device)
     {
         if (filepath.isEmpty()) return false;
         if (!device) return false;
@@ -77,8 +77,8 @@ namespace Luma
         if (!loadedScene) return false;
         if (!loadedScene->HasMeshes()) return false;
 
-        TArray<MeshVertex> allVertices;
-        TArray<uint32_t> allIndices;
+        Array<MeshVertex> allVertices;
+        Array<uint32_t> allIndices;
         uint64_t vertexOffset = 0;
         uint64_t indexOffset = 0;
 
@@ -89,10 +89,10 @@ namespace Luma
             const aiString materialSlotName = loadedScene->mMaterials[materialSlotIndex]->GetName();
 
             FMaterialSlot& materialSlot = m_MaterialSlots[materialSlotIndex];
-            materialSlot.name = FString(materialSlotName.C_Str());
+            materialSlot.name = String(materialSlotName.C_Str());
 
-            TArray<uint32_t> indices = getIndicesFromFaces(TBufferView(loadedMesh->mFaces, loadedMesh->mNumFaces));
-            TArray<MeshVertex> vertices = getVerticesFromMesh(*loadedMesh);
+            Array<uint32_t> indices = getIndicesFromFaces(BufferView(loadedMesh->mFaces, loadedMesh->mNumFaces));
+            Array<MeshVertex> vertices = getVerticesFromMesh(*loadedMesh);
 
             allVertices.addRange(vertices);
             allIndices.addRange(indices);
@@ -150,7 +150,7 @@ namespace Luma
             return nullptr;
         };
 
-        TBufferView<aiMaterial*> materials(loadedScene->mMaterials, loadedScene->mNumMaterials);
+        BufferView<aiMaterial*> materials(loadedScene->mMaterials, loadedScene->mNumMaterials);
         for (auto& [index, slot] : m_MaterialSlots)
         {
             const aiMaterial* loadedMaterial = materials[index];

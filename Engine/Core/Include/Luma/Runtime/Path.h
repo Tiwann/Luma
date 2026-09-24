@@ -8,63 +8,63 @@ namespace Luma
 {
     struct Window;
 
-    struct LUMA_CORE_API FPath
+    struct LUMA_CORE_API Path
     {
 #ifdef LUMA_PLATFORM_WINDOWS
         template<Character T>
-        static constexpr TString<T>::CharacterType Separator = '\\';
+        static constexpr StringBase<T>::CharacterType Separator = '\\';
 
         template<Character T>
-        static constexpr TString<T>::CharacterType OtherSeparator = '/';
+        static constexpr StringBase<T>::CharacterType OtherSeparator = '/';
 #else
         template<Character T>
-        static constexpr TString<T>::CharacterType Separator = '/';
+        static constexpr StringBase<T>::CharacterType Separator = '/';
 
         template<Character T>
-        static constexpr TString<T>::CharacterType OtherSeparator = '\\';
+        static constexpr StringBase<T>::CharacterType OtherSeparator = '\\';
 #endif
 
-        static FString combine(FStringView path, FStringView other);
+        static String combine(StringView path, StringView other);
 
         template<typename... Args>
-        static FString combine(const FStringView path, const FStringView other, const Args&... args)
+        static String combine(const StringView path, const StringView other, const Args&... args)
         {
             return combine(combine(path, other), args...);
         }
 
 
-        static FStringView getEngineDir();
-        static FString getEngineAssetsDir();
-        static FString getEngineAssetPath(FStringView filepath);
-        static FString getEngineShadersDir();
-        static FString getEngineShaderPath(FStringView filepath);
+        static StringView getEngineDir();
+        static String getEngineAssetsDir();
+        static String getEngineAssetPath(StringView filepath);
+        static String getEngineShadersDir();
+        static String getEngineShaderPath(StringView filepath);
 #ifdef LUMA_CLIENT
-        static FStringView getExeDir()
+        static StringView getExeDir()
         {
             return LUMA_APPLICATION_DIR;
         }
 
-        static FString getAssetPath(const FStringView filepath)
+        static String getAssetPath(const StringView filepath)
         {
             return combine(LUMA_APPLICATION_DIR, "Assets", filepath);
         }
 #endif
 
-        static FStringView getUserDirectory();
-        static FStringView getDocumentsDirectory();
-        static FStringView getMusicDirectory();
-        static FStringView getDownloadsDirectory();
-        static FStringView getDesktopDirectory();
+        static StringView getUserDirectory();
+        static StringView getDocumentsDirectory();
+        static StringView getMusicDirectory();
+        static StringView getDownloadsDirectory();
+        static StringView getDesktopDirectory();
 
-        static FString openFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow);
-        static FString saveFileDialog(FStringView title, FStringView defaultPath, const FDialogFilters& filters, Window& owningWindow);
-        static bool exists(FStringView path);
-        static bool isFile(FStringView path);
-        static bool isDirectory(FStringView path);
-        static TArray<FString> getFiles(FStringView path);
-        static FStringView getFilename(FStringView filepath);
-        static FStringView getExtension(FStringView filepath);
-        static FStringView getDirectory(FStringView filepath);
-        static FStringView getFilenameWithoutExtension(FStringView filepath);
+        static String openFileDialog(StringView title, StringView defaultPath, const FDialogFilters& filters, Window& owningWindow);
+        static String saveFileDialog(StringView title, StringView defaultPath, const FDialogFilters& filters, Window& owningWindow);
+        static bool exists(StringView path);
+        static bool isFile(StringView path);
+        static bool isDirectory(StringView path);
+        static Array<String> getFiles(StringView path);
+        static StringView getFilename(StringView filepath);
+        static StringView getExtension(StringView filepath);
+        static StringView getDirectory(StringView filepath);
+        static StringView getFilenameWithoutExtension(StringView filepath);
     };
 }

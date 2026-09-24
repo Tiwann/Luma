@@ -3,14 +3,14 @@
 namespace Luma
 {
     template<>
-    struct THasher<VertexAttribute>
+    struct Hasher<VertexAttribute>
     {
         uint64_t operator()(const VertexAttribute& attr) const noexcept
         {
             uint64_t seed = 0;
             auto hashCombine = [&seed]<typename T>(const T& value)
             {
-                seed ^= THasher<std::decay_t<T>>{}(value)
+                seed ^= Hasher<std::decay_t<T>>{}(value)
                       + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             };
 
@@ -23,14 +23,14 @@ namespace Luma
     };
 
     template<>
-    struct THasher<VertexInputLayout>
+    struct Hasher<VertexInputLayout>
     {
         uint64_t operator()(const VertexInputLayout& layout) const noexcept
         {
             size_t seed = 0;
             auto hashCombine = [&seed]<typename T>(const T& value)
             {
-                seed ^= THasher<std::decay_t<T>>{}(value)
+                seed ^= Hasher<std::decay_t<T>>{}(value)
                       + 0x9e3779b9 + (seed << 6) + (seed >> 2);
             };
 
@@ -57,7 +57,7 @@ namespace Luma
         m_InputAttributes.add(attribute);
     }
 
-    void VertexInputLayout::addInputAttribute(FString name, ShaderDataType type, uint32_t binding)
+    void VertexInputLayout::addInputAttribute(String name, ShaderDataType type, uint32_t binding)
     {
         m_InputAttributes.add(VertexAttribute{name, type, binding});
     }
@@ -93,7 +93,7 @@ namespace Luma
         return result;
     }
 
-    uint32_t VertexInputLayout::getAttributeOffset(const FString& name) const
+    uint32_t VertexInputLayout::getAttributeOffset(const String& name) const
     {
         const auto predicate = [&name](const VertexAttribute& attribute) { return attribute.name == name; };
         const VertexAttribute* attribute = m_InputAttributes.single(predicate);
@@ -115,12 +115,12 @@ namespace Luma
         return result;
     }
 
-    const TArray<VertexAttribute>& VertexInputLayout::getInputAttributes() const
+    const Array<VertexAttribute>& VertexInputLayout::getInputAttributes() const
     {
         return m_InputAttributes;
     }
 
-    const THashMap<uint32_t, VertexInputRate>& VertexInputLayout::getInputBindings() const
+    const HashMap<uint32_t, VertexInputRate>& VertexInputLayout::getInputBindings() const
     {
         return m_InputBindings;
     }

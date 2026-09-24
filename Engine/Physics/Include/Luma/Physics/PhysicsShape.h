@@ -7,7 +7,7 @@
 
 namespace Luma
 {
-    class FPhysicsBody;
+    class PhysicsBody;
 
     struct FPhysicsShapeGeometry
     {
@@ -50,7 +50,7 @@ namespace Luma
 
         void refreshNativeShape();
     private:
-        friend class FPhysicsBody;
+        friend class PhysicsBody;
 
         virtual FPhysicsShapeGeometry getGeometry() const = 0;
 

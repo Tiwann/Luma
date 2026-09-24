@@ -3,7 +3,7 @@
 namespace Luma
 {
     template <Character T>
-    TArgumentParser<T>::TArgumentParser(TString<T> name, const TArray<TArgumentOption<T>>& options)
+    TArgumentParser<T>::TArgumentParser(StringBase<T> name, const Array<TArgumentOption<T>>& options)
         : m_Name(std::move(name)), m_Options(options)
     {
     }
@@ -22,7 +22,7 @@ namespace Luma
     }
 
     template <Character T>
-    bool TArgumentParser<T>::isUsed(TStringView<T> name)
+    bool TArgumentParser<T>::isUsed(StringViewBase<T> name)
     {
     }
 
@@ -37,7 +37,7 @@ namespace Luma
     }
 
     template <Character T>
-    bool TArgumentParser<T>::getString(TStringView<T> name)
+    bool TArgumentParser<T>::getString(StringViewBase<T> name)
     {
     }
 
@@ -47,7 +47,7 @@ namespace Luma
     }
 
     template <Character T>
-    TStringView<T> TArgumentParser<T>::getArg(uint32_t index)
+    StringViewBase<T> TArgumentParser<T>::getArg(uint32_t index)
     {
     }
 

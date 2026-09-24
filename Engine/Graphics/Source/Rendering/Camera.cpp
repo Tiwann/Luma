@@ -78,6 +78,7 @@ namespace Luma
     {
         m_Width = width;
         m_Height = height;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -86,6 +87,7 @@ namespace Luma
     void TCamera<F>::setProjectionMode(const CameraProjectionMode mode)
     {
         m_ProjectionMode = mode;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -94,6 +96,7 @@ namespace Luma
     void TCamera<F>::setFieldOfView(F fov)
     {
         m_FieldOfView = fov;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -103,6 +106,7 @@ namespace Luma
     {
         m_Near = near;
         m_Far = far;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -111,6 +115,7 @@ namespace Luma
     void TCamera<F>::setOrthographicSize(F orthoSize)
     {
         m_OrthoSize = orthoSize;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -167,6 +172,7 @@ namespace Luma
     void TCamera<F>::setPosition(const Vector& position)
     {
         m_Position = position;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -175,6 +181,7 @@ namespace Luma
     void TCamera<F>::setRotation(const Quat& rotation)
     {
         m_Rotation = rotation;
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
@@ -183,6 +190,7 @@ namespace Luma
     void TCamera<F>::setRotation(const AxisAngle& axisAngle)
     {
         m_Rotation = Quat::fromAxisAngle(axisAngle);
+        m_ViewMatrix.setDirty();
         m_ProjectionMatrix.setDirty();
         m_ViewProjectionMatrix.setDirty();
     }
