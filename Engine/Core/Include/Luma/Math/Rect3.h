@@ -10,6 +10,8 @@ namespace Luma
         T x, y, z;
         T width, height, depth;
 
+        static constexpr uint32_t kDimension = 3;
+
         constexpr TRect(): x(T(0)), y(T(0)), z(T(0)),width(T(0)), height(T(0)), depth(T(0)){}
         constexpr TRect(T x, T y, T z, T width, T height, T depth): x(x), y(y), z(z),width(width), height(height), depth(depth){}
 

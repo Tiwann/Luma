@@ -9,18 +9,6 @@
 
 namespace Luma
 {
-    /*static RGFW_windowFlags getFlags(const FWindowCreateFlags flags)
-    {
-        RGFW_windowFlags result = RGFW_windowNoResize | RGFW_windowAllowDND;
-        if (flags & EWindowCreateBits::Centered) result |= RGFW_windowCenter;
-        if (flags & EWindowCreateBits::FullScreen) result |= RGFW_windowFullscreen;
-        if (flags & EWindowCreateBits::Resizable) result &= ~RGFW_windowNoResize;
-        if (flags & EWindowCreateBits::NoDecoration) result |= RGFW_windowNoBorder;
-        if (flags & EWindowCreateBits::Transparent) result |= RGFW_windowTransparent;
-        if (flags & EWindowCreateBits::NoDragAndDrop) result &= ~RGFW_windowAllowDND;
-        return result;
-    }*/
-
     static Key getKeyFromGLFW(int key)
     {
         switch (key)
@@ -248,9 +236,11 @@ namespace Luma
                 Input::updateMouseButtonState(getMouseButtonFromGLFW(button), InputState::Released);
         });
 
-        glfwSetCursorPosCallback(m_Handle, [](GLFWwindow*, double x, double y)
+        glfwSetCursorPosCallback(m_Handle, [](GLFWwindow* w, double x, double y)
         {
-            Input::updateMousePosition(FVector2d(x, y));
+            int32_t width, height;
+            glfwGetWindowSize(w, &width, &height);
+            Input::updateMousePosition(FVector2d(x / width, y / height));
         });
 
         glfwShowWindow(m_Handle);

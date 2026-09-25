@@ -46,7 +46,7 @@ namespace Luma::BufferUtils
 
             Ref<Fence> fence = Ref(device->createFence(0));
 
-            FenceSignal signal;
+            FenceSync signal;
             signal.fence = fence;
             signal.value = 1;
             signal.stages = PipelineStages::Copy;
@@ -87,7 +87,7 @@ namespace Luma::BufferUtils
 
             Ref<Fence> fence = Ref(device->createFence(0));
 
-            FenceSignal signal;
+            FenceSync signal;
             signal.fence = fence;
             signal.value = 1;
             signal.stages = PipelineStages::Copy;

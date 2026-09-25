@@ -1,4 +1,5 @@
 #pragma once
+#include "Filter.h"
 #include "QueueType.h"
 #include "ResourceBarrier.h"
 #include "Scissor.h"
@@ -8,6 +9,7 @@
 #include "Luma/Containers/ArrayView.h"
 #include "Luma/Containers/StringView.h"
 #include "Luma/Math/Color.h"
+#include "Luma/Math/Rect2.h"
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Rendering/Commands.h"
 
@@ -90,6 +92,9 @@ namespace Luma::RHI
         ///////////////////////////////////////////////////////////////////////////////////////////////
         virtual void copyBuffer(Buffer* srcBuffer, Buffer* dstBuffer, int64_t srcOffset, int64_t dstOffset, uint64_t size) = 0;
         virtual void copyBufferToTexture(Buffer* buffer, int64_t offset, uint64_t size, Texture* texture, uint32_t arraySlice, uint32_t mipLevel) = 0;
+        virtual void blitTexture(const Texture* srcTexture, const FRect3u& srcRect, uint32_t srcMip, uint32_t srcBaseArrayLayer, uint32_t srcArrayCount, const Texture* destTexture, const
+                                 FRect3u& destRect, const TextureSubresourceRange& destRange, uint32_t destBaseArrayLayer, uint32_t destArrayCount, Filter
+                                 filter, uint32_t destMipLevel) = 0;
     protected:
         const RenderPassDesc* m_CurrentRenderPassDesc = nullptr;
     };

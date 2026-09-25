@@ -37,18 +37,19 @@ int main()
     window->resizedEvent.bindMember(&camera, &Camera::setSize);
 
     int32_t width, height;
-    const String path = Path::combine(Path::getDesktopDirectory(), "pink_sunrise_8k.hdr");
+    const String path = Path::combine(Path::getDesktopDirectory(), "sky_93_2k.png");
     float* hdriPixels = stbi_loadf(*path, &width, &height, nullptr, STBI_rgb_alpha);
     const uint64_t hdriPixelsSize = width * height * 4 * sizeof(float);
 
     TextureDesc textureDesc = TextureDesc::texture2D(width, height, Format::R32G32B32A32_FLOAT);
     textureDesc.usageFlags |= TextureUsage::Color;
-
     Ref<Texture> hdriTexture = device->createTexture(textureDesc);
     TextureUtils::uploadTextureDataSync(device, hdriTexture, 0, 0, hdriPixels, hdriPixelsSize);
     stbi_image_free(hdriPixels);
 
     SamplerDesc samplerDesc;
+    samplerDesc.minFilter = Filter::Linear;
+    samplerDesc.magFilter = Filter::Linear;
     Ref<Sampler> sampler = device->createSampler(samplerDesc);
 
     const String vertexPath = Path::getAssetPath("Shaders/Skybox.slang.vert.spv");
@@ -66,6 +67,7 @@ int main()
 
     float lastTime = 0.0f;
     float yaw = 0.0f, pitch = 0.0f;
+    float sensitivity = 100.0f;
 
     while (!window->shouldClose())
     {
@@ -79,12 +81,10 @@ int main()
             const FVector2<double> mouseDelta = Input::getMouseDelta();
             if (mouseDelta.magnitude() > 0.0f)
             {
-                yaw += FMath::Deg2Rad<float> * mouseDelta.x;
-                pitch -= FMath::Deg2Rad<float> * mouseDelta.y;
+                yaw += FMath::Deg2Rad<float> * mouseDelta.x * sensitivity;
+                pitch -= FMath::Deg2Rad<float> * mouseDelta.y * sensitivity;
                 pitch = FMath::clamp(pitch, FMath::Deg2Rad<float> * -80.0f, FMath::Deg2Rad<float> * 80.0f);
                 camera.setRotation(FQuatf::fromEulerAngles({pitch, yaw, 0.0f}));
-
-                std::cout << strfmt("({}, {}, {})", yaw, pitch, 0.0) << std::endl;
             }
          }
 

@@ -13,8 +13,8 @@ namespace Luma::RHI
     struct QueueExecuteInfo
     {
         ArrayView<const CommandBuffer*> cmdBuffers;
-        ArrayView<FenceWait> waits;
-        ArrayView<FenceSignal> signals;
+        ArrayView<FenceSync> waits;
+        ArrayView<FenceSync> signals;
     };
 
     struct Queue

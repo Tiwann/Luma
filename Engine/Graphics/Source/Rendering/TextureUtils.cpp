@@ -52,7 +52,7 @@ namespace Luma::TextureUtils
         cmdBuffer->endDebugGroup();
         cmdBuffer->end();
 
-        FenceSignal signal;
+        FenceSync signal;
         signal.fence = fence;
         signal.value = 1;
         signal.stages = PipelineStages::Copy;
@@ -65,6 +65,23 @@ namespace Luma::TextureUtils
         fence->waitOnCPU(1);
 
         return true;
+    }
+
+    bool generateMips(Device* device, Texture* texture, uint32_t sourceMip, uint32_t destMip, uint32_t mipCount)
+    {
+
+        Queue* renderQueue = device->getRenderQueue();
+        Ref<CommandBuffer> cmdBuffer = device->createCommandBuffer(renderQueue);
+
+        TextureBarrier barrier;
+        barrier.sourceAccess = ResourceAccess::None;
+        barrier.destAccess = ResourceAccess::CopyRead;
+        barrier.destState = ResourceState::CopySource;
+
+        TextureBarrier barrier2;
+        barrier2.sourceAccess = ResourceAccess::None;
+
+        return false;
     }
 
     Texture* loadTexture(Device* device, StringView filepath)

@@ -7,6 +7,7 @@
 namespace Luma::RHI
 {
     struct Device;
+    struct Fence;
 
     struct FenceDesc
     {
@@ -16,12 +17,12 @@ namespace Luma::RHI
 
     static constexpr uint64_t FENCE_WAIT_INFINITE = 1'000'000'000;
 
-    typedef struct FenceSync
+    struct FenceSync
     {
-        const struct Fence* fence = nullptr;
+        const Fence* fence = nullptr;
         uint64_t value = 0;
         PipelineStageFlags stages = PipelineStages::AllCommands;
-    } FenceWait, FenceSignal;
+    };
 
     struct Fence : RefCounted<Fence>
     {

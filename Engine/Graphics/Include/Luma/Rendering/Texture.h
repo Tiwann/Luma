@@ -5,6 +5,9 @@
 #include "TextureDimension.h"
 #include "TextureUsage.h"
 #include "Luma/Containers/StringView.h"
+#include "Luma/Math/Functions.h"
+#include "Luma/Math/Rect3.h"
+#include "Luma/Math/Vector3.h"
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Runtime/Format.h"
 
@@ -91,6 +94,13 @@ namespace Luma::RHI
         void setResourceState(const ResourceState state) { m_State = state; }
         TextureUsageFlags getUsageFlags() const { return m_UsageFlags; }
         TextureDimension getDimension() const { return m_Dimension; }
+
+        uint32_t getMipWidth(uint32_t mipLevel) const { return max(1u, m_Width >> mipLevel); }
+        uint32_t getMipHeight(uint32_t mipLevel) const { return max(1u, m_Height >> mipLevel); }
+        uint32_t getMipDepth(uint32_t mipLevel) const { return max(1u, m_Depth >> mipLevel); }
+
+        FVector3u getSize() const { return FVector3u(m_Width, m_Height, m_Depth); }
+        FRect3u getBounds() const { return FRect3u(0, 0, 0, m_Width, m_Height, m_Depth); }
 
         virtual const TextureView* getTextureView() const = 0;
     protected:

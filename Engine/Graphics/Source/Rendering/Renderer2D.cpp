@@ -198,7 +198,7 @@ namespace Luma
 
             static uint64_t fenceValue = 0;
 
-            FenceSignal signal;
+            FenceSync signal;
             signal.fence = m_Fence;
             signal.stages = PipelineStages::ColorTargetOutput;
             signal.value = ++fenceValue;
