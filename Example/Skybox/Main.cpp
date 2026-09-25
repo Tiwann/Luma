@@ -1,7 +1,7 @@
 #include <stb_image.h>
-#include <Luma/Containers/StringFormat.h>
 #include <Luma/Input/Immediate.h>
 #include <Luma/Memory/Ref.h>
+#include <Luma/Math/Math.h>
 #include <Luma/Rendering/Device.h>
 #include <Luma/Rendering/CommandBuffer.h>
 #include <Luma/Rendering/Shader.h>
@@ -15,8 +15,6 @@
 #include <Luma/Runtime/Path.h>
 #include <Luma/Runtime/Time.h>
 #include <Luma/Runtime/Window.h>
-
-#include "Luma/Math/Math.h"
 
 using namespace Luma;
 using namespace Luma::RHI;
@@ -33,11 +31,11 @@ int main()
     Camera camera;
     camera.setSize(kWidth, kHeight);
     camera.setProjectionMode(CameraProjectionMode::Perspective);
-    camera.setFieldOfView(80.0f);
+    camera.setFieldOfView(90);
     window->resizedEvent.bindMember(&camera, &Camera::setSize);
 
     int32_t width, height;
-    const String path = Path::combine(Path::getDesktopDirectory(), "sky_93_2k.png");
+    const String path = Path::getAssetPath("HDRI/venice_sunset_8k.hdr");
     float* hdriPixels = stbi_loadf(*path, &width, &height, nullptr, STBI_rgb_alpha);
     const uint64_t hdriPixelsSize = width * height * 4 * sizeof(float);
 
@@ -67,7 +65,7 @@ int main()
 
     float lastTime = 0.0f;
     float yaw = 0.0f, pitch = 0.0f;
-    float sensitivity = 100.0f;
+    float sensitivity = 150.0f;
 
     while (!window->shouldClose())
     {
@@ -81,9 +79,9 @@ int main()
             const FVector2<double> mouseDelta = Input::getMouseDelta();
             if (mouseDelta.magnitude() > 0.0f)
             {
-                yaw += FMath::Deg2Rad<float> * mouseDelta.x * sensitivity;
-                pitch -= FMath::Deg2Rad<float> * mouseDelta.y * sensitivity;
-                pitch = FMath::clamp(pitch, FMath::Deg2Rad<float> * -80.0f, FMath::Deg2Rad<float> * 80.0f);
+                yaw += Math::Deg2Rad<float> * mouseDelta.x * sensitivity;
+                pitch -= Math::Deg2Rad<float> * mouseDelta.y * sensitivity;
+                pitch = Math::clamp(pitch, Math::Deg2Rad<float> * -80.0f, Math::Deg2Rad<float> * 80.0f);
                 camera.setRotation(FQuatf::fromEulerAngles({pitch, yaw, 0.0f}));
             }
          }

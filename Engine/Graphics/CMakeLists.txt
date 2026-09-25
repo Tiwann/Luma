@@ -16,6 +16,7 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/Viewport.cpp
         Source/Rendering/BindingGroup.cpp
         Source/Rendering/Shader.cpp
+        Source/Rendering/ImmediateExecutor.cpp
         #Source/Rendering/SceneRenderer.cpp
         #Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp
@@ -35,7 +36,6 @@ set(LUMA_VULKAN_SRC
         Source/Vulkan/Buffer.cpp
         Source/Vulkan/Texture.cpp
         Source/Vulkan/TextureView.cpp
-        Source/Vulkan/ImmediateExecutor.cpp
         Source/Vulkan/Shader.cpp
         Source/Vulkan/ComputePipeline.cpp
         Source/Vulkan/RenderPipeline.cpp

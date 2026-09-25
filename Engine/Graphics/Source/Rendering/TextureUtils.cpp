@@ -6,9 +6,11 @@
 #include "Luma/Rendering/Queue.h"
 #include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/ResourceBarrier.h"
+#include "Luma/Rendering/ImmediateExecutor.h"
 #include "Luma/Memory/Ref.h"
 
 #include <stb_image.h>
+
 
 namespace Luma::TextureUtils
 {
@@ -40,29 +42,15 @@ namespace Luma::TextureUtils
         toInitialState.destAccess = getDestAccessFlags(initialState);
         toInitialState.destState = initialState;
 
-        Ref<Fence> fence = device->createFence(0);
-
-        Ref<CommandBuffer> cmdBuffer = device->createCommandBuffer(renderQueue);
-
-        cmdBuffer->begin();
-        cmdBuffer->beginDebugGroup("Synchronous Texture Copy", Color::Orange);
-        cmdBuffer->textureBarriers(toCopyState);
-        cmdBuffer->copyBufferToTexture(stagingBuffer, 0, dataSize, texture, arrayIndex, mipLevel);
-        cmdBuffer->textureBarriers(toInitialState);
-        cmdBuffer->endDebugGroup();
-        cmdBuffer->end();
-
-        FenceSync signal;
-        signal.fence = fence;
-        signal.value = 1;
-        signal.stages = PipelineStages::Copy;
-
-        QueueExecuteInfo copyExec;
-        copyExec.cmdBuffers = {cmdBuffer};
-        copyExec.signals = signal;
-        renderQueue->executeCommandBuffers(copyExec);
-
-        fence->waitOnCPU(1);
+        ImmediateExecutor executor(device, renderQueue);
+        executor.execute([&](CommandBuffer* cmdBuffer)
+        {
+            cmdBuffer->beginDebugGroup("Synchronous Texture Copy", Color::Orange);
+            cmdBuffer->textureBarriers(toCopyState);
+            cmdBuffer->copyBufferToTexture(stagingBuffer, 0, dataSize, texture, arrayIndex, mipLevel);
+            cmdBuffer->textureBarriers(toInitialState);
+            cmdBuffer->endDebugGroup();
+        });
 
         return true;
     }

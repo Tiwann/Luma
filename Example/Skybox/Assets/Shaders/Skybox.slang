@@ -38,7 +38,7 @@ struct PushConstants
 
 static const float2 kInvAtan = float2(0.1591, 0.3183);
 
-float2 dirToEquirectUV(float3 dir)
+float2 getEquirectTexCoords(float3 dir)
 {
     float2 uv = float2(atan2(dir.z, dir.x), asin(dir.y));
     uv *= kInvAtan;
@@ -54,6 +54,6 @@ float4 frag(VertexOutput input) : SV_Target
     world /= world.w;
 
     float3 dir = normalize(world.xyz - constants.cameraPos);
-    float2 uv = dirToEquirectUV(dir);
+    float2 uv = getEquirectTexCoords(dir);
     return float4(hdriTexture.Sample(uv).rgb, 1.0);
 }

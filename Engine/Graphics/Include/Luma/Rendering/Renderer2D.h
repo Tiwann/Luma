@@ -33,7 +33,7 @@ namespace Luma
 
     class Renderer2D : public RefCounted<Renderer2D>
     {
-        static constexpr uint32_t MAX_QUAD = FMath::sqr(512);
+        static constexpr uint32_t MAX_QUAD = Math::sqr(512);
     public:
         Renderer2D() = default;
         explicit Renderer2D(Ref<RHI::Device> device, uint32_t width, uint32_t height);

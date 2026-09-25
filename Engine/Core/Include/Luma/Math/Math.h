@@ -9,7 +9,7 @@
     
 namespace Luma
 {
-    enum class EEaseType
+    enum class EaseType
     {
         Linear,
         QuadraticIn,
@@ -32,7 +32,7 @@ namespace Luma
         SineInOut,
     };
 
-    struct FMath
+    struct Math
     {
         template<FloatType T = float>
         static constexpr T Pi = T(3.141592653589793);
@@ -65,29 +65,29 @@ namespace Luma
         static T lerp(T a, T b, T t) { return a + (b - a) * t; }
 
         template <FloatType T = float>
-        using FEaseFunction = T(*)(T);
+        using EaseFunc = T(*)(T);
 
         template <FloatType T = float>
-        static constexpr FEaseFunction<T> getEaseFunction(EEaseType easeType)
+        static constexpr EaseFunc<T> getEaseFunction(EaseType easeType)
         {
             switch (easeType)
             {
-            case EEaseType::Linear:
+            case EaseType::Linear:
                 {
                     static constexpr auto f = [](T t) constexpr { return t; };
                     return f;
                 }
-            case EEaseType::QuadraticIn:
+            case EaseType::QuadraticIn:
                 {
                     static constexpr auto f = [](T t) constexpr { return SQUARE(t); };
                     return f;
                 }
-            case EEaseType::QuadraticOut:
+            case EaseType::QuadraticOut:
                 {
                     static constexpr auto f = [](T t) constexpr { return T(1) - SQUARE(T(1) - t); };
                     return f;
                 }
-            case EEaseType::QuadraticInOut:
+            case EaseType::QuadraticInOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -95,17 +95,17 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::CubicIn:
+            case EaseType::CubicIn:
                 {
                     static constexpr auto f = [](T t) constexpr { return CUBE(t); };
                     return f;
                 }
-            case EEaseType::CubicOut:
+            case EaseType::CubicOut:
                 {
                     static constexpr auto f = [](T t) constexpr { return T(1) - CUBE(T(1) - t); };
                     return f;
                 }
-            case EEaseType::CubicInOut:
+            case EaseType::CubicInOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -113,17 +113,17 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::QuarticIn:
+            case EaseType::QuarticIn:
                 {
                     static constexpr auto f = [](T t) constexpr { return QUART(t); };
                     return f;
                 }
-            case EEaseType::QuarticOut:
+            case EaseType::QuarticOut:
                 {
                     static constexpr auto f = [](T t) constexpr { return T(1) - QUART(T(1) - t); };
                     return f;
                 }
-            case EEaseType::QuarticInOut:
+            case EaseType::QuarticInOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -131,17 +131,17 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::ExpoIn:
+            case EaseType::ExpoIn:
                 {
                     static constexpr auto f = [](T t) constexpr { return t == 0 ? 0 : std::exp2(10 * t - 10); };
                     return f;
                 }
-            case EEaseType::ExpoOut:
+            case EaseType::ExpoOut:
                 {
                     static constexpr auto f = [](T t) constexpr { return t == 1 ? 1 : T(1) - std::exp2(-10 * t); };
                     return f;
                 }
-            case EEaseType::ExpoInOut:
+            case EaseType::ExpoInOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -153,7 +153,7 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::BackIn:
+            case EaseType::BackIn:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -163,7 +163,7 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::BackOut:
+            case EaseType::BackOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -174,7 +174,7 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::BackInOut:
+            case EaseType::BackInOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -186,7 +186,7 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::SineIn:
+            case EaseType::SineIn:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -194,7 +194,7 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::SineOut:
+            case EaseType::SineOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -202,7 +202,7 @@ namespace Luma
                     };
                     return f;
                 }
-            case EEaseType::SineInOut:
+            case EaseType::SineInOut:
                 {
                     static constexpr auto f = [](T t) constexpr
                     {
@@ -215,7 +215,7 @@ namespace Luma
             }
         }
         
-        template<EEaseType E, FloatType T>
+        template<EaseType E, FloatType T>
         static constexpr T ease(T value) { return getEaseFunction<T>(E)(value); }
     };
 }
