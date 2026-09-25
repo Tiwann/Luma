@@ -1,4 +1,5 @@
 #pragma once
+#include "Luma/Memory/Ref.h"
 #include <functional>
 
 namespace Luma::RHI
@@ -6,15 +7,22 @@ namespace Luma::RHI
     struct CommandBuffer;
     struct Device;
     struct Queue;
+    struct Fence;
 
-    struct ImmediateExecutor
+    class ImmediateExecutor
     {
-        ImmediateExecutor() = default;
-        virtual ~ImmediateExecutor() = default;
-        virtual bool initialize(Device* device, Queue* queue) = 0;
-        virtual void destroy() = 0;
+    public:
+        ImmediateExecutor(Device* device, Queue* queue);
+        ~ImmediateExecutor();
+        void execute(const std::function<void(CommandBuffer* cmdBuffer)>& function);
+        bool isValid() const;
 
-        virtual void execute(const std::function<void(CommandBuffer* cmdBuffer)>& function) = 0;
-        virtual bool isValid() const = 0;
+    private:
+        bool m_IsValid = false;
+        Device* m_Device = nullptr;
+        Queue* m_Queue = nullptr;
+        Ref<CommandBuffer> m_CmdBuf = nullptr;
+        Ref<Fence> m_Fence = nullptr;
+        uint32_t m_FenceValue = 0;
     };
 }
