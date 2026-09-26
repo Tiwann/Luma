@@ -2,7 +2,7 @@
 
 namespace Luma
 {
-    enum class EMaterialType
+    enum class MaterialType
     {
         Opaque,
         Transparent,

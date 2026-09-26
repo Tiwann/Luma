@@ -30,7 +30,7 @@ namespace Luma::RHI
         static TextureDesc texture1D(const uint32_t width, const Format format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             TextureDesc desc;
-            desc.usageFlags = TextureUsage::Sampled;
+            desc.usageFlags = TextureUsage::Sampled | TextureUsage::Color;
             desc.format = format;
             desc.width = width;
             desc.height = 1;
@@ -44,7 +44,7 @@ namespace Luma::RHI
         static TextureDesc texture2D(const uint32_t width, const uint32_t height, const Format format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             TextureDesc desc;
-            desc.usageFlags = TextureUsage::Sampled;
+            desc.usageFlags = TextureUsage::Sampled | TextureUsage::Color;
             desc.format = format;
             desc.width = width;
             desc.height = height;
@@ -58,7 +58,7 @@ namespace Luma::RHI
         static TextureDesc texture3D(const uint32_t width, const uint32_t height, const uint32_t depth, const Format format, const uint32_t mipCount = 1, const uint32_t sampleCount = 1)
         {
             TextureDesc desc;
-            desc.usageFlags = TextureUsage::Sampled;
+            desc.usageFlags = TextureUsage::Sampled | TextureUsage::Color;
             desc.format = format;
             desc.width = width;
             desc.height = height;

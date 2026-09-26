@@ -33,10 +33,10 @@ struct MaterialParameters
 	float metallness;
 	float roughness;
 	float3 emissive;
-#ifdef NOVA_MATERIAL_TRANSPARENT
+#ifdef LUMA_MATERIAL_TRANSPARENT
 	float opacity;
 #else
-#ifdef NOVA_MATERIAL_CUTOUT
+#ifdef LUMA_MATERIAL_CUTOUT
 	float opacity;
 	float alphaCutoff;
 #endif
@@ -83,7 +83,7 @@ float4 frag(VertexOutput input) : SV_Target
     float roughnessMap = metalnessRoughnessMap.g;
     float3 normalMap = normalTex.Sample(u_Sampler, input.texCoord).rgb * 2.0 - 1.0;
 
-#ifdef NOVA_MATERIAL_CUTOUT
+#ifdef LUMA_MATERIAL_CUTOUT
     float finalOpacity = albedoMap.a * materialParams.opacity;
     if (finalOpacity < materialParams.alphaCutoff)
         discard;
@@ -105,7 +105,7 @@ float4 frag(VertexOutput input) : SV_Target
     float3 ambient = albedoMap.rgb * ambientLight.color * ambientLight.intensity;
 	float4 finalColor = float4(lightContribution + ambient, 1.0);
 
-#ifdef NOVA_MATERIAL_TRANSPARENT
+#ifdef LUMA_MATERIAL_TRANSPARENT
     return float4(finalColor.rgb, materialParams.opacity);
 #else
     return float4(finalColor.rgb, 1.0);

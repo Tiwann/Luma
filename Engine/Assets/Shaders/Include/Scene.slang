@@ -1,5 +1,5 @@
-﻿module Scene;
-import LightTypes;
+﻿#pragma once
+#include "LightTypes.slang"
 
 public struct SceneData
 {

@@ -3,40 +3,27 @@
 #include "Luma/Containers/HashMap.h"
 #include "Luma/Memory/Ref.h"
 #include "Luma/Rendering/BindingType.h"
-#include "Luma/Rendering/Device.h"
-#include "Luma/Rendering/Shader.h"
+#include "Luma/Rendering/Forward.h"
 #include "Luma/Runtime/Asset.h"
 
 namespace Luma
 {
-    struct MaterialDesc
-    {
-        RHI::Device* device = nullptr;
-        RHI::Shader* shader = nullptr;
-    };
-
     class Material : public Asset
     {
     public:
-        bool initialize(const MaterialDesc& materialDesc);
-        void destroy() override;
-
-        void setSampler(const String& name, const RHI::Sampler* sampler);
-        void setTexture(const String& name, const RHI::Texture* texture, BindingType bindingType);
-        void setCombinedTextureSampler(const String& name, const RHI::Sampler* sampler, const RHI::Texture* texture);
-        void setBuffer(const String& name, const RHI::Buffer* buffer, uint64_t offset, uint64_t size);
+        Material() = default;
+        Material(Ref<Shader> shader);
+        ~Material();
 
         AssetType getAssetType() const override { return AssetType::Material; }
-        Ref<RHI::Shader> getShader() const { return m_Shader; }
-        //const IBindingGroup* getBindingSet() const { return m_BindingSet; }
-        void setMaterialType(const EMaterialType materialType) { m_MaterialType = materialType; }
-        EMaterialType getMaterialType() const { return m_MaterialType; }
+        Ref<Shader> getShader() const { return m_Shader; }
+
+        void setMaterialType(const MaterialType materialType) { m_MaterialType = materialType; }
+        MaterialType getMaterialType() const { return m_MaterialType; }
 
     private:
-        EMaterialType m_MaterialType = EMaterialType::Opaque;
-        Ref<RHI::Device> m_Device = nullptr;
-        Ref<RHI::Shader> m_Shader = nullptr;
-        //Ref<IBindingGroup> m_BindingSet = nullptr;
-        //THashMap<EMaterialType, Ref<IGraphicsPipeline>> m_Pipelines;
+        MaterialType m_MaterialType = MaterialType::Opaque;
+        Ref<Shader> m_Shader = nullptr;
+        Ref<BindingGroup> m_BindingGroup = nullptr;
     };
 }

@@ -2,7 +2,6 @@
 #include "Luma/Memory/RefCounted.h"
 #include "Luma/Containers/ArrayView.h"
 #include "Luma/Containers/HashMap.h"
-#include "Luma/Containers/StringHash.h"
 #include "ShaderStage.h"
 #include "ShaderBinding.h"
 #include "ShaderPushConstantVariable.h"

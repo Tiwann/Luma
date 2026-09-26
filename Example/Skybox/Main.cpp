@@ -16,6 +16,8 @@
 #include <Luma/Runtime/Time.h>
 #include <Luma/Runtime/Window.h>
 
+#include "SkinnedMesh.h"
+
 using namespace Luma;
 using namespace Luma::RHI;
 
@@ -26,7 +28,7 @@ int main()
 {
     Ref<Window> window = createWindow("Hello Renderer2D", kWidth, kHeight, WindowOptions::Centered | WindowOptions::Resizable);
     Ref<Device> device = createDevice(window);
-    device->setVSync(false);
+    device->setVSync(true);
 
     Camera camera;
     camera.setSize(kWidth, kHeight);
@@ -40,7 +42,6 @@ int main()
     const uint64_t hdriPixelsSize = width * height * 4 * sizeof(float);
 
     TextureDesc textureDesc = TextureDesc::texture2D(width, height, Format::R32G32B32A32_FLOAT);
-    textureDesc.usageFlags |= TextureUsage::Color;
     Ref<Texture> hdriTexture = device->createTexture(textureDesc);
     TextureUtils::uploadTextureDataSync(device, hdriTexture, 0, 0, hdriPixels, hdriPixelsSize);
     stbi_image_free(hdriPixels);
@@ -62,6 +63,11 @@ int main()
 
     Ref<BindingGroup> bindingGroup = skyboxShader->createBindingGroup(0);
     bindingGroup->bindTextureWithSampler("hdriTexture", hdriTexture, sampler);
+
+
+    /*const String modelPath = Path::openFileDialog("Select a mesh file.", "", FDialogFilters::ModelFilters, *window);
+    SkinnedMesh mesh;
+    mesh.loadFromFile(modelPath, device);*/
 
     float lastTime = 0.0f;
     float yaw = 0.0f, pitch = 0.0f;

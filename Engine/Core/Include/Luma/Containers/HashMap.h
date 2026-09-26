@@ -10,22 +10,7 @@
 namespace Luma
 {
     template<typename Key>
-    struct Hasher
-    {
-        uint64_t operator()(const Key& key) const
-        {
-            return FNV1aHash(reinterpret_cast<const uint8_t*>(&key), sizeof(Key));
-        }
-    };
-
-    template<IntegerType T>
-    struct Hasher<T>
-    {
-        uint64_t operator()(const T& key) const
-        {
-            return static_cast<uint64_t>(key);
-        }
-    };
+    struct Hasher;
 
     template<typename Key, typename Value, typename HasherType = Hasher<Key>>
     class HashMap final

@@ -10,9 +10,9 @@ namespace Luma
     public:
         FStaticMeshRenderer() = default;
 
-        Ref<FStaticMesh> getMesh() const;
-        void setMesh(Ref<FStaticMesh> newMesh);
+        Ref<StaticMesh> getMesh() const;
+        void setMesh(Ref<StaticMesh> newMesh);
     private:
-        Ref<FStaticMesh> m_StaticMesh = nullptr;
+        Ref<StaticMesh> m_StaticMesh = nullptr;
     };
 }

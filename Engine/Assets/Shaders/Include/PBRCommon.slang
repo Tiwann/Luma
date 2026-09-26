@@ -1,5 +1,5 @@
-﻿module PBRCommon;
-import Common;
+﻿#pragma once
+#include "Common.slang"
 
 // GGX/Towbridge-Reitz normal distribution function.
 // Uses Disney's reparametrization of alpha = roughness^2

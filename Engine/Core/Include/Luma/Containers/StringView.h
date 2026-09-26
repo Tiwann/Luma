@@ -15,6 +15,8 @@ namespace Luma
     public:
         StringViewBase() = default;
         StringViewBase(const StringType& string) : m_Data(string.data()), m_Count(string.count()) { }
+        StringViewBase(const StringType& string, SizeType count) : m_Data(string.data()), m_Count(count) { LUMA_ASSERT(count <= string.count(), "READING TO MUCH"); }
+        StringViewBase(const StringType& string, SizeType start, SizeType end) : m_Data(string.data()), m_Count(end - start) { LUMA_ASSERT(end - start <= string.count(), "READING TO MUCH"); }
 
         constexpr StringViewBase(ConstPointerType data) : m_Data(data), m_Count(strlen(data)){}
         constexpr StringViewBase(ConstPointerType data, SizeType count) : m_Data(data), m_Count(count){}

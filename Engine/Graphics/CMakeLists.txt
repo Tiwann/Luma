@@ -17,6 +17,8 @@ set(LUMA_GRAPHICS_SRC
         Source/Rendering/BindingGroup.cpp
         Source/Rendering/Shader.cpp
         Source/Rendering/ImmediateExecutor.cpp
+        Source/Rendering/RenderGraph.cpp
+        Source/Asset/Material.cpp
         #Source/Rendering/SceneRenderer.cpp
         #Source/Utility/SlangCommon.cpp
         Source/Utility/SpirvReflectCommon.cpp

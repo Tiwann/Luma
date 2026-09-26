@@ -1,4 +1,4 @@
-﻿module Screen;
+﻿#pragma once
 
 public struct ScreenData
 {

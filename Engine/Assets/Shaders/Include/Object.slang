@@ -1,4 +1,4 @@
-﻿module Object;
+﻿#pragma once
 
 public struct ObjectData
 {

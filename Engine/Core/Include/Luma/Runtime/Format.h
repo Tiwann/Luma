@@ -40,50 +40,6 @@ namespace Luma
         D32_FLOAT_S8_UINT,
         D24_UNORM_S8_UINT,
 
-        // Astc formats
-        ASTC_4X4_UNORM,
-        ASTC_4X4_FLOAT,
-        ASTC_4X4_SRGB,
-        ASTC_5X4_UNORM,
-        ASTC_5X4_FLOAT,
-        ASTC_5X4_SRGB,
-        ASTC_5X5_UNORM,
-        ASTC_5X5_FLOAT,
-        ASTC_5X5_SRGB,
-        ASTC_6X5_UNORM,
-        ASTC_6X5_FLOAT,
-        ASTC_6X5_SRGB,
-        ASTC_6X6_UNORM,
-        ASTC_6X6_FLOAT,
-        ASTC_6X6_SRGB,
-        ASTC_8X5_UNORM,
-        ASTC_8X5_FLOAT,
-        ASTC_8X5_SRGB,
-        ASTC_8X6_UNORM,
-        ASTC_8X6_FLOAT,
-        ASTC_8X6_SRGB,
-        ASTC_8X8_UNORM,
-        ASTC_8X8_FLOAT,
-        ASTC_8X8_SRGB,
-        ASTC_10X5_UNORM,
-        ASTC_10X5_FLOAT,
-        ASTC_10X5_SRGB,
-        ASTC_10X6_UNORM,
-        ASTC_10X6_FLOAT,
-        ASTC_10X6_SRGB,
-        ASTC_10X8_UNORM,
-        ASTC_10X8_FLOAT,
-        ASTC_10X8_SRGB,
-        ASTC_10X10_UNORM,
-        ASTC_10X10_FLOAT,
-        ASTC_10X10_SRGB,
-        ASTC_12X10_UNORM,
-        ASTC_12X10_FLOAT,
-        ASTC_12X10_SRGB,
-        ASTC_12X12_UNORM,
-        ASTC_12X12_FLOAT,
-        ASTC_12X12_SRGB,
-
         // Compressed formats
         BC1_UNORM,
         BC1_SRGB,
@@ -154,22 +110,6 @@ namespace Luma
         case Format::D32_FLOAT:            return 4ULL;
         case Format::D32_FLOAT_S8_UINT:    return 5ULL;
         case Format::D24_UNORM_S8_UINT:     return 4ULL;
-        case Format::ASTC_4X4_UNORM:
-            break;
-        case Format::ASTC_6X6_UNORM:
-            break;
-        case Format::ASTC_8X8_UNORM:
-            break;
-        case Format::ASTC_12X12_UNORM:
-            break;
-        case Format::ASTC_4X4_SRGB:
-            break;
-        case Format::ASTC_6X6_SRGB:
-            break;
-        case Format::ASTC_8X8_SRGB:
-            break;
-        case Format::ASTC_12X12_SRGB:
-            break;
         default:                           return 0ULL;
         }
         return 0;
@@ -250,7 +190,7 @@ namespace Luma
         case Format::R32G32B32A32_UINT: return 4ULL;
         case Format::R32G32B32A32_SINT: return 4ULL;
         case Format::R32G32B32A32_FLOAT: return 4ULL;
-            case Format::R64G64B64A64_FLOAT: return 4ULL;
+        case Format::R64G64B64A64_FLOAT: return 4ULL;
         case Format::R8G8B8A8_SRGB: return 4ULL;
         case Format::D32_FLOAT: return 1ULL;
         case Format::D32_FLOAT_S8_UINT: return 2ULL;

@@ -1,7 +1,7 @@
-﻿module Common;
-import Camera;
-import Scene;
-import Object;
+﻿#pragma once
+#include "Camera.slang"
+#include "Scene.slang"
+#include "Object.slang"
 
 public typealias vec2 = float2;
 public typealias vec3 = float3;

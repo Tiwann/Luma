@@ -1,4 +1,4 @@
-﻿module LightTypes;
+﻿#pragma once
 
 public struct DirectionalLight
 {

@@ -1,7 +1,7 @@
-﻿module Lighting;
-import PBRCommon;
-import LightTypes;
-import Common;
+﻿#pragma once
+#niclude "PBRCommon.slang"
+#niclude "LightTypes.slang"
+#niclude "Common.slang"
 
 public float3 CalculateDirLight(DirectionalLight light, float3 F0, float3 N, float3 V, float3 albedo, float metalness, float roughness)
 {

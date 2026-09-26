@@ -18,8 +18,10 @@ cmake_dependent_option(LUMA_ENGINE_BUILD_DEKO3D "Build the engine with Deko3D ba
 cmake_dependent_option(LUMA_ENGINE_BUILD_GNM "Build the engine with GNM backend" ON PS5 OFF)
 
 
-add_library(luma-natvis INTERFACE LumaEngine.natvis)
+set(LUMA_NATVIS ${CMAKE_CURRENT_SOURCE_DIR}/LumaEngine.natvis)
+add_library(luma-natvis INTERFACE)
 add_library(luma::natvis ALIAS luma-natvis)
+target_sources(luma-natvis INTERFACE ${LUMA_NATVIS})
 set_target_properties(luma-natvis PROPERTIES FOLDER luma-engine)
 
 set(LUMA_ENGINE_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Engine)

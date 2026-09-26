@@ -1,4 +1,4 @@
-﻿module Camera;
+﻿#pragma once
 
 public struct CameraData
 {

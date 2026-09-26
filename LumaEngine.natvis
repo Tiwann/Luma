@@ -1,40 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-
-    <!-- Luma::Array<T> -->
-    <Type Name="Luma::Array&lt;*&gt;">
-        <DisplayString>{{Count = {m_Count}}}</DisplayString>
-        <Expand>
-            <ArrayItems Condition="m_Count!=0">
-                <Size>m_Count</Size>
-                <ValuePointer>m_Data</ValuePointer>
-            </ArrayItems>
+    <Type Name="Luma::TVector&lt;*,2&gt;">
+        <DisplayString>[{x}, {y}]</DisplayString>
+        <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Synthetic Name="[raw]">
+                <Expand>
+                    <ArrayItems>
+                        <Size>2</Size>
+                        <ValuePointer>data</ValuePointer>
+                    </ArrayItems>
+                </Expand>
+            </Synthetic>
+        </Expand>
+    </Type>
+    <Type Name="Luma::TVector&lt;*,3&gt;">
+        <DisplayString>[{x}, {y}, {z}]</DisplayString>
+        <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Item Name="z">z</Item>
+            <Synthetic Name="[raw]">
+                <Expand>
+                    <ArrayItems>
+                        <Size>3</Size>
+                        <ValuePointer>data</ValuePointer>
+                    </ArrayItems>
+                </Expand>
+            </Synthetic>
         </Expand>
     </Type>
 
+    <Type Name="Luma::TVector&lt;*,4&gt;">
+        <DisplayString>[{x}, {y}, {z}, {w}]</DisplayString>
+        <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Item Name="z">z</Item>
+            <Item Name="w">w</Item>
+            <Synthetic Name="[raw]">
+                <Expand>
+                    <ArrayItems>
+                        <Size>4</Size>
+                        <ValuePointer>data</ValuePointer>
+                    </ArrayItems>
+                </Expand>
+            </Synthetic>
+        </Expand>
+    </Type>
+
+    <Type Name="Luma::TRect&lt;*,2&gt;">
+        <DisplayString>[x={x}, y={y}, width={width}, height={height}]</DisplayString>
+        <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Item Name="width">width</Item>
+            <Item Name="height">height</Item>
+        </Expand>
+    </Type>
+
+    <Type Name="Luma::TRect&lt;*,3&gt;">
+        <DisplayString>[x={x}, y={y}, z={z}, width={width}, height={height}, depth={depth}]</DisplayString>
+        <Expand HideRawView="1">
+            <Item Name="x">x</Item>
+            <Item Name="y">y</Item>
+            <Item Name="z">z</Item>
+            <Item Name="width">width</Item>
+            <Item Name="height">height</Item>
+            <Item Name="depth">depth</Item>
+        </Expand>
+    </Type>
 
     <Type Name="Luma::StringBase&lt;*&gt;">
-        <DisplayString>{{{m_Data}}, Count = {m_Count}}</DisplayString>
-        <Expand>
-            <ArrayItems>
-                <Size>m_Count</Size>
-                <ValuePointer>m_Data</ValuePointer>
-            </ArrayItems>
-        </Expand>
+        <DisplayString>{m_Data,na} Count={m_Count}</DisplayString>
     </Type>
 
     <Type Name="Luma::StringViewBase&lt;*&gt;">
-        <DisplayString>{m_Data}</DisplayString>
-        <StringView>m_Data</StringView>
-        <Expand>
-            <ArrayItems>
-                <Size>m_Count</Size>
-                <ValuePointer>m_Data</ValuePointer>
-            </ArrayItems>
-        </Expand>
-    </Type>
-
-    <Type Name="Luma::Ref&lt;*&gt;">
-        <DisplayString>{Ref Count [{m_RefCount}]</DisplayString>
+        <DisplayString>{m_Data,[m_Count]s} Count={m_Count}</DisplayString>
     </Type>
 </AutoVisualizer>

@@ -95,64 +95,6 @@ namespace Luma::Vulkan
         case Format::BC5_SNORM: return VK_FORMAT_BC5_SNORM_BLOCK;
         case Format::BC7_UNORM: return VK_FORMAT_BC7_UNORM_BLOCK;
         case Format::BC7_SRGB: return VK_FORMAT_BC7_SRGB_BLOCK;
-
-        // ASTC formats
-
-        case Format::ASTC_4X4_UNORM: return VK_FORMAT_ASTC_4x4_UNORM_BLOCK;
-        case Format::ASTC_4X4_FLOAT: return VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK;
-        case Format::ASTC_4X4_SRGB: return VK_FORMAT_ASTC_4x4_SRGB_BLOCK;
-
-        case Format::ASTC_5X4_UNORM: return VK_FORMAT_ASTC_5x4_UNORM_BLOCK;
-        case Format::ASTC_5X4_FLOAT: return VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK;
-        case Format::ASTC_5X4_SRGB: return VK_FORMAT_ASTC_5x4_SRGB_BLOCK;
-
-        case Format::ASTC_5X5_UNORM: return VK_FORMAT_ASTC_5x5_UNORM_BLOCK;
-        case Format::ASTC_5X5_FLOAT: return VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK;
-        case Format::ASTC_5X5_SRGB: return VK_FORMAT_ASTC_5x5_SRGB_BLOCK;
-
-        case Format::ASTC_6X5_UNORM: return VK_FORMAT_ASTC_6x5_UNORM_BLOCK;
-        case Format::ASTC_6X5_FLOAT: return VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK;
-        case Format::ASTC_6X5_SRGB: return VK_FORMAT_ASTC_6x5_SRGB_BLOCK;
-
-        case Format::ASTC_6X6_UNORM: return VK_FORMAT_ASTC_6x6_UNORM_BLOCK;
-        case Format::ASTC_6X6_FLOAT: return VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK;
-        case Format::ASTC_6X6_SRGB: return VK_FORMAT_ASTC_6x6_SRGB_BLOCK;
-
-        case Format::ASTC_8X5_UNORM: return VK_FORMAT_ASTC_8x5_UNORM_BLOCK;
-        case Format::ASTC_8X5_FLOAT: return VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK;
-        case Format::ASTC_8X5_SRGB: return VK_FORMAT_ASTC_8x5_SRGB_BLOCK;
-
-        case Format::ASTC_8X6_UNORM: return VK_FORMAT_ASTC_8x6_UNORM_BLOCK;
-        case Format::ASTC_8X6_FLOAT: return VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK;
-        case Format::ASTC_8X6_SRGB: return VK_FORMAT_ASTC_8x6_SRGB_BLOCK;
-
-        case Format::ASTC_8X8_UNORM: return VK_FORMAT_ASTC_8x8_UNORM_BLOCK;
-        case Format::ASTC_8X8_FLOAT: return VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK;
-        case Format::ASTC_8X8_SRGB: return VK_FORMAT_ASTC_8x8_SRGB_BLOCK;
-
-        case Format::ASTC_10X5_UNORM: return VK_FORMAT_ASTC_10x5_UNORM_BLOCK;
-        case Format::ASTC_10X5_FLOAT: return VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK;
-        case Format::ASTC_10X5_SRGB: return VK_FORMAT_ASTC_10x5_SRGB_BLOCK;
-
-        case Format::ASTC_10X6_UNORM: return VK_FORMAT_ASTC_10x6_UNORM_BLOCK;
-        case Format::ASTC_10X6_FLOAT: return VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK;
-        case Format::ASTC_10X6_SRGB: return VK_FORMAT_ASTC_10x6_SRGB_BLOCK;
-
-        case Format::ASTC_10X8_UNORM: return VK_FORMAT_ASTC_10x8_UNORM_BLOCK;
-        case Format::ASTC_10X8_FLOAT: return VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK;
-        case Format::ASTC_10X8_SRGB: return VK_FORMAT_ASTC_10x8_SRGB_BLOCK;
-
-        case Format::ASTC_10X10_UNORM: return VK_FORMAT_ASTC_10x10_UNORM_BLOCK;
-        case Format::ASTC_10X10_FLOAT: return VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK;
-        case Format::ASTC_10X10_SRGB: return VK_FORMAT_ASTC_10x10_SRGB_BLOCK;
-
-        case Format::ASTC_12X10_UNORM: return VK_FORMAT_ASTC_12x10_UNORM_BLOCK;
-        case Format::ASTC_12X10_FLOAT: return VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK;
-        case Format::ASTC_12X10_SRGB: return VK_FORMAT_ASTC_12x10_SRGB_BLOCK;
-
-        case Format::ASTC_12X12_UNORM: return VK_FORMAT_ASTC_12x12_UNORM_BLOCK;
-        case Format::ASTC_12X12_FLOAT: return VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK;
-        case Format::ASTC_12X12_SRGB: return VK_FORMAT_ASTC_12x12_SRGB_BLOCK;
         default: return VK_FORMAT_UNDEFINED;
         }
     }

@@ -10,6 +10,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/GltfMaterial.h>
 
+#include "Luma/Rendering/Shader.h"
 #include "Luma/Rendering/BufferUtils.h"
 #include "Luma/Rendering/TextureUtils.h"
 
@@ -58,13 +59,13 @@ namespace Luma
         return result;
     }
 
-    void FStaticMesh::destroy()
+    void StaticMesh::destroy()
     {
         m_VertexBuffer->destroy();
         m_IndexBuffer->destroy();
     }
 
-    bool FStaticMesh::loadFromFile(StringView filepath, RHI::Device* device)
+    bool StaticMesh::loadFromFile(StringView filepath, RHI::Device* device)
     {
         if (filepath.isEmpty()) return false;
         if (!device) return false;
@@ -88,16 +89,16 @@ namespace Luma
             const uint32_t materialSlotIndex = loadedMesh->mMaterialIndex;
             const aiString materialSlotName = loadedScene->mMaterials[materialSlotIndex]->GetName();
 
-            FMaterialSlot& materialSlot = m_MaterialSlots[materialSlotIndex];
+            MaterialSlot& materialSlot = m_MaterialSlots[materialSlotIndex];
             materialSlot.name = String(materialSlotName.C_Str());
 
             Array<uint32_t> indices = getIndicesFromFaces(BufferView(loadedMesh->mFaces, loadedMesh->mNumFaces));
             Array<MeshVertex> vertices = getVerticesFromMesh(*loadedMesh);
 
-            allVertices.addRange(vertices);
-            allIndices.addRange(indices);
+            allVertices.addRange(std::move(vertices));
+            allIndices.addRange(std::move(indices));
 
-            FMeshPart meshPart { };
+            MeshPart meshPart { };
             meshPart.vertexSize = vertices.size();
             meshPart.vertexOffset = vertexOffset;
             meshPart.indexSize = indices.size();
@@ -155,7 +156,7 @@ namespace Luma
         {
             const aiMaterial* loadedMaterial = materials[index];
 
-            FMaterialTextures materialTextures;
+            MaterialTextures materialTextures;
             materialTextures.baseColor = getTexture(loadedMaterial, aiTextureType_BASE_COLOR);
             materialTextures.metallicRoughnessAO = getTexture(loadedMaterial, aiTextureType_GLTF_METALLIC_ROUGHNESS);
             materialTextures.emission = getTexture(loadedMaterial, aiTextureType_EMISSION_COLOR);
@@ -175,22 +176,22 @@ namespace Luma
         return true;
     }
 
-    void FStaticMesh::setMaterial(uint32_t slot, Ref<Material> material)
+    void StaticMesh::setMaterial(uint32_t slot, Ref<Material> material)
     {
         m_MaterialSlots[slot].material = material;
     }
 
-    Ref<Material> FStaticMesh::getMaterial(uint32_t slot)
+    Ref<Material> StaticMesh::getMaterial(uint32_t slot)
     {
         return m_MaterialSlots[slot].material;
     }
 
-    WeakRef<RHI::Buffer> FStaticMesh::getVertexBuffer() const
+    WeakRef<RHI::Buffer> StaticMesh::getVertexBuffer() const
     {
         return m_VertexBuffer;
     }
 
-    WeakRef<RHI::Buffer> FStaticMesh::getIndexBuffer() const
+    WeakRef<RHI::Buffer> StaticMesh::getIndexBuffer() const
     {
         return m_IndexBuffer;
     }
