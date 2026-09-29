@@ -32,9 +32,9 @@ namespace Luma::Vulkan
             bindingDescs.add(bindingDesc);
         }
 
+        uint32_t location = 0;
         for (const auto& attribute : inputLayout.getInputAttributes())
         {
-            static uint32_t location = 0;
             VkVertexInputAttributeDescription attributeDesc;
             attributeDesc.binding = attribute.binding;
             attributeDesc.location = location;
