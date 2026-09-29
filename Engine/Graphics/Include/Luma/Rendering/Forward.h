@@ -10,6 +10,7 @@ namespace Luma::RHI
     struct Buffer;
     struct Shader;
     struct BindingGroup;
+    struct RenderPipeline;
 }
 
 using Luma::RHI::Device;
@@ -20,3 +21,4 @@ using Luma::RHI::Texture;
 using Luma::RHI::Buffer;
 using Luma::RHI::Shader;
 using Luma::RHI::BindingGroup;
+using Luma::RHI::RenderPipeline;
