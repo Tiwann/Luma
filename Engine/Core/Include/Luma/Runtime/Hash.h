@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Luma/Math/Concepts.h"
 #include "Luma/Containers/String.h"
+#include "Luma/Containers/StringView.h"
 #include <cstdint>
 
 namespace Luma
@@ -30,7 +31,16 @@ namespace Luma
     {
         uint64_t operator()(const StringBase<T>& str) const
         {
-            return FNV1aHash(reinterpret_cast<const uint8_t*>(str.data()), str.count());
+            return FNV1aHash(reinterpret_cast<const uint8_t*>(str.data()), str.size());
+        }
+    };
+
+    template<Character T>
+    struct Hasher<StringViewBase<T>>
+    {
+        uint64_t operator()(const StringViewBase<T>& str) const
+        {
+            return FNV1aHash(reinterpret_cast<const uint8_t*>(str.data()), str.size());
         }
     };
 }
