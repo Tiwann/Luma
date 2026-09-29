@@ -28,19 +28,19 @@ namespace Luma::Vulkan
                 const uint32_t setIndex = set.set;
                 if (set.binding_count == 0) continue;
 
-                const BufferView<SpvReflectDescriptorBinding> descriptorBindings{*set.bindings, set.binding_count};
-                for (const auto& binding : descriptorBindings)
+                const BufferView<SpvReflectDescriptorBinding*> descriptorBindings{set.bindings, set.binding_count};
+                for (const auto* binding : descriptorBindings)
                 {
-                    const uint32_t bindingIndex = binding.binding;
+                    const uint32_t bindingIndex = binding->binding;
 
-                    ShaderBinding& cachedBinding = m_Bindings[setIndex][bindingIndex];
+                    ShaderBinding& cachedBinding = m_Bindings[setIndex][binding->binding];
                     cachedBinding.bindingIndex = bindingIndex;
                     cachedBinding.visibility |= stage;
-                    cachedBinding.name = binding.name;
-                    cachedBinding.bindingType = getBindingType(binding.descriptor_type);
-                    cachedBinding.arrayCount = binding.count;
+                    cachedBinding.name = binding->name;
+                    cachedBinding.bindingType = getBindingType(binding->descriptor_type);
+                    cachedBinding.arrayCount = binding->count;
 
-                    m_NameToBindingCache[binding.name] = bindingIndex;
+                    m_NameToBindingCache[binding->name] = bindingIndex;
                 }
             }
 
@@ -80,11 +80,12 @@ namespace Luma::Vulkan
         }
 
         Array<VkDescriptorBindingFlags> bindingFlags;
-        Array<VkDescriptorSetLayoutBinding> vkBindings;
         Array<VkDescriptorSetLayout> setLayouts;
 
         for (const auto& [setIndex, bindings] : m_Bindings)
         {
+            Array<VkDescriptorSetLayoutBinding> vkBindings;
+
             for (const auto& [bindingIndex, binding] : bindings)
             {
                 VkDescriptorSetLayoutBinding vkBinding = { };
