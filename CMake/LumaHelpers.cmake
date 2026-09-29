@@ -14,7 +14,7 @@
     set(OUTPUT_DIR  "${CMAKE_CURRENT_BINARY_DIR}/Include/Luma/${FOLDER_NAME}")
     set(OUTPUT_FILE "${OUTPUT_DIR}/Export.h")
 
-    set(HEADER_TEMPLATE "${CMAKE_SOURCE_DIR}/CMake/ModuleExport.h.in")
+    set(HEADER_TEMPLATE "${LUMA_ENGINE_ROOT_DIR}/../CMake/ModuleExport.h.in")
 
     set(MODULE_NAME ${ARG_MODULE_NAME})
     configure_file("${HEADER_TEMPLATE}" "${OUTPUT_FILE}" @ONLY)
@@ -28,8 +28,8 @@ function(add_shader_target TARGET)
     cmake_parse_arguments(
             ARG
             ""
-            "PROFILE"
-            "SOURCES;OUTPUT_TYPE;VERTEX;FRAG;COMPUTE;HULL;INCLUDES;DEFINES"
+            "PROFILE;OUTPUT_DIR"
+            "SOURCES;OUTPUT_TYPE;VERTEX;FRAG;COMPUTE;HULL;INCLUDES;DEFINES;OUTPUT_NAME"
             ${ARGN}
     )
 
@@ -53,6 +53,13 @@ function(add_shader_target TARGET)
         endif ()
     endforeach ()
 
+    list(LENGTH ARG_SOURCES ARG_SOURCES_COUNT)
+    if(ARG_OUTPUT_NAME AND ARG_SOURCES_COUNT GREATER 1)
+        message(FATAL_ERROR
+                "add_shader_target(${TARGET}): OUTPUT_NAME gives every source the same output filename. Use one SOURCES entry per OUTPUT_NAME, or drop OUTPUT_NAME."
+        )
+    endif ()
+
     find_program(SLANGC_EXECUTABLE slangc REQUIRED)
 
     set(SHADER_OUTPUTS)
@@ -64,6 +71,24 @@ function(add_shader_target TARGET)
         endif()
 
         get_filename_component(SHADER_NAME "${SHADER}" NAME)
+
+        if(ARG_OUTPUT_DIR)
+            if(IS_ABSOLUTE "${ARG_OUTPUT_DIR}")
+                set(OUTPUT_DIR "${ARG_OUTPUT_DIR}")
+            else()
+                set(OUTPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${ARG_OUTPUT_DIR}")
+            endif()
+            file(MAKE_DIRECTORY "${OUTPUT_DIR}")
+        else()
+            get_filename_component(OUTPUT_DIR "${SHADER}" DIRECTORY)
+        endif()
+
+        if(ARG_OUTPUT_NAME)
+            set(OUTPUT_BASENAME "${ARG_OUTPUT_NAME}")
+        else()
+            get_filename_component(SHADER_NAME_NO_EXT ${SHADER_NAME} NAME_WLE)
+            set(OUTPUT_BASENAME "${SHADER_NAME_NO_EXT}")
+        endif()
 
         set(INCLUDE_FLAGS "")
         foreach(_inc IN LISTS ARG_INCLUDES)
@@ -97,7 +122,7 @@ function(add_shader_target TARGET)
 
             # Vertex shader
             if(ARG_VERTEX)
-                set(OUTPUT "${SHADER}.${ARG_VERTEX}.${OUTPUT_EXT}")
+                set(OUTPUT "${OUTPUT_DIR}/${OUTPUT_BASENAME}.${ARG_VERTEX}.${OUTPUT_EXT}")
 
                 add_custom_command(
                         OUTPUT "${OUTPUT}"
@@ -111,7 +136,7 @@ function(add_shader_target TARGET)
                         ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
-                        COMMENT "Compiling vertex shader ${SHADER_NAME} (${OUT_TYPE})"
+                        COMMENT "Compiling vertex shader ${SHADER_NAME} (${OUT_TYPE}) -> ${OUTPUT}"
                         VERBATIM
                 )
 
@@ -120,7 +145,7 @@ function(add_shader_target TARGET)
 
             # Fragment shader
             if(ARG_FRAG)
-                set(OUTPUT "${SHADER}.${ARG_FRAG}.${OUTPUT_EXT}")
+                set(OUTPUT "${OUTPUT_DIR}/${OUTPUT_BASENAME}.${ARG_FRAG}.${OUTPUT_EXT}")
 
                 add_custom_command(
                         OUTPUT "${OUTPUT}"
@@ -134,7 +159,7 @@ function(add_shader_target TARGET)
                         ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
-                        COMMENT "Compiling fragment shader ${SHADER_NAME} (${OUT_TYPE})"
+                        COMMENT "Compiling fragment shader ${SHADER_NAME} (${OUT_TYPE}) -> ${OUTPUT}"
                         VERBATIM
                 )
 
@@ -143,7 +168,7 @@ function(add_shader_target TARGET)
 
             # Compute shader
             if(ARG_COMPUTE)
-                set(OUTPUT "${SHADER}.${ARG_COMPUTE}.${OUTPUT_EXT}")
+                set(OUTPUT "${OUTPUT_DIR}/${OUTPUT_BASENAME}.${ARG_COMPUTE}.${OUTPUT_EXT}")
 
                 add_custom_command(
                         OUTPUT "${OUTPUT}"
@@ -157,7 +182,7 @@ function(add_shader_target TARGET)
                         ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
-                        COMMENT "Compiling compute shader ${SHADER_NAME} (${OUT_TYPE})"
+                        COMMENT "Compiling compute shader ${SHADER_NAME} (${OUT_TYPE}) -> ${OUTPUT}"
                         VERBATIM
                 )
 
@@ -166,7 +191,7 @@ function(add_shader_target TARGET)
 
             # Hull shader
             if(ARG_HULL)
-                set(OUTPUT "${SHADER}.${ARG_HULL}.${OUTPUT_EXT}")
+                set(OUTPUT "${OUTPUT_DIR}/${OUTPUT_BASENAME}.${ARG_HULL}.${OUTPUT_EXT}")
 
                 add_custom_command(
                         OUTPUT "${OUTPUT}"
@@ -180,7 +205,7 @@ function(add_shader_target TARGET)
                         ${DEFINE_FLAGS}
                         -o "${OUTPUT}"
                         DEPENDS "${SHADER}"
-                        COMMENT "Compiling hull shader ${SHADER_NAME} (${OUT_TYPE})"
+                        COMMENT "Compiling hull shader ${SHADER_NAME} (${OUT_TYPE}) -> ${OUTPUT}"
                         VERBATIM
                 )
 
@@ -189,7 +214,5 @@ function(add_shader_target TARGET)
         endforeach ()
     endforeach()
 
-    add_custom_target("${TARGET}"
-            DEPENDS ${SHADER_OUTPUTS}
-    )
+    add_custom_target("${TARGET}" DEPENDS ${SHADER_OUTPUTS})
 endfunction()
