@@ -8,7 +8,7 @@ namespace Luma::Vulkan
 {
     void setVulkanObjectDebugName(const Device* device, VkObjectType objectType, void* handle, StringView name)
     {
-        if constexpr (DEBUG_LEVEL < DebugLevel::Release)
+        if constexpr (kDebugLevel < DebugLevel::Release)
         {
             if (!device) return;
             const VkDevice deviceHandle = device->getHandle();
