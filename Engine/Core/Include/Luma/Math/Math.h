@@ -38,6 +38,9 @@ namespace Luma
         static constexpr T Pi = T(3.141592653589793);
 
         template<FloatType T = float>
+        static constexpr T Epsilon = T(2.2204460492503131e-016);
+
+        template<FloatType T = float>
         static constexpr T Tau = T(2) * Pi<T>;
 
         template<FloatType T = float>
