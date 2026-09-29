@@ -2,7 +2,7 @@
 #include <cstdint>
 namespace Luma
 {
-    class FTime
+    class Time
     {
     public:
         static double getTime();
