@@ -265,7 +265,11 @@ namespace Luma::Vulkan
         //deviceExtensions.add(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
         deviceExtensions.add(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
 
+        VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES};
+        bufferDeviceAddressFeatures.bufferDeviceAddress = true;
+
         VkPhysicalDeviceTimelineSemaphoreFeatures timelineSemFeatures = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES};
+        timelineSemFeatures.pNext = &bufferDeviceAddressFeatures;
         timelineSemFeatures.timelineSemaphore = true;
 
         VkPhysicalDeviceDescriptorBufferFeaturesEXT descriptorBufferFeatures = { VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT };
