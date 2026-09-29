@@ -417,17 +417,21 @@ namespace Luma::Vulkan
     template<>
     inline VkImageUsageFlags convert(const TextureUsageFlags& value)
     {
-        VkImageUsageFlags flags = 0;
+        VkImageUsageFlags flags = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+
         if (value == TextureUsage::None)
             return 0;
         if (value & TextureUsage::Sampled)
-            flags |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+            flags |= VK_IMAGE_USAGE_SAMPLED_BIT;
         if (value & TextureUsage::Storage)
-            flags |= VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & (TextureUsage::Color | TextureUsage::RenderTarget))
-            flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        if (value & (TextureUsage::DepthStencil | TextureUsage::RenderTarget))
-            flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+            flags |= VK_IMAGE_USAGE_STORAGE_BIT;
+        if (value & TextureUsage::RenderTarget)
+        {
+            if (value & TextureUsage::Color)
+                flags |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            if (value & TextureUsage::DepthStencil)
+                flags |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        }
         return flags;
     }
 
