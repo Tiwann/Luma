@@ -4,7 +4,7 @@
 
 namespace Luma
 {
-    double FTime::getTime()
+    double Time::getTime()
     {
         static bool initialized = false;
         static LARGE_INTEGER frequency;
