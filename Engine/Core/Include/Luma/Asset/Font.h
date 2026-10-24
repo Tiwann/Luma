@@ -43,6 +43,7 @@ namespace Luma
 
     class Font : public Asset
     {
+        LUMA_CLASS(Font, Asset)
     public:
         Font();
         ~Font() override;

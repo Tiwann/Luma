@@ -79,4 +79,31 @@
     <Type Name="Luma::StringViewBase&lt;*&gt;">
         <DisplayString>{m_Data,[m_Count]s} Count={m_Count}</DisplayString>
     </Type>
+
+    <Type Name="Luma::Array&lt;*&gt;">
+        <Expand>
+            <ArrayItems>
+                <Size>m_Count</Size>
+                <ValuePointer>m_Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="Luma::ArrayView&lt;*&gt;">
+        <Expand>
+            <ArrayItems>
+                <Size>m_Count</Size>
+                <ValuePointer>m_Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+
+    <Type Name="Luma::BufferView&lt;*&gt;">
+        <Expand>
+            <ArrayItems>
+                <Size>m_Count</Size>
+                <ValuePointer>m_Data</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
 </AutoVisualizer>

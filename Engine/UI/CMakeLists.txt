@@ -5,11 +5,11 @@ set(LUMA_UI_SRC
 )
 
 set(LUMA_UI_VULKAN_SRC
-    Source/Vulkan/ImguiRendererImpl.cpp
+    Source/Vulkan/ImguiRenderer.cpp
 )
 
 set(LUMA_UI_D3D12_SRC
-    Source/D3D12/ImguiRendererImpl.cpp
+    Source/D3D12/ImguiRenderer.cpp
 )
 
 add_library(luma-ui ${LUMA_UI_SRC})

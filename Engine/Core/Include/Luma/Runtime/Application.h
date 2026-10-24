@@ -44,7 +44,7 @@ namespace Luma
 
         float getDeltaTime() const;
         Ref<Window> getWindow() const;
-        Ref<IAudioDevice> getAudioDevice() const;
+        Ref<AudioDevice> getAudioDevice() const;
         Ref<RHI::Device> getDevice() const;
         Ref<Renderer2D> getRenderer2D() const;
 
@@ -58,9 +58,10 @@ namespace Luma
     private:
         Ref<Window> m_Window = nullptr;
         Ref<RHI::Device> m_Device = nullptr;
-        Ref<ImguiRenderer> m_ImguiRenderer = nullptr;
         Ref<Renderer2D> m_Renderer2D = nullptr;
-        Ref<IAudioDevice> m_AudioDevice = nullptr;
+        Ref<AudioDevice> m_AudioDevice = nullptr;
+
+        ImguiRenderer* m_ImguiRenderer = nullptr;
 
         uint32_t m_IsRunning = true;
         double m_LastTime = 0.0f;

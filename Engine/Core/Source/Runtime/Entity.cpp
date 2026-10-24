@@ -1,5 +1,7 @@
 #include "Luma/Runtime/Entity.h"
 
+LUMA_DEFINE_CLASS(Luma::Entity)
+
 namespace Luma
 {
     void Entity::onInit()
@@ -74,7 +76,7 @@ namespace Luma
         m_Children.remove(child);
     }
 
-    FScene* Entity::getOwner() const
+    Scene* Entity::getOwner() const
     {
         return m_Owner;
     }
@@ -104,7 +106,7 @@ namespace Luma
         onDestroy();
     }
 
-    const Array<Entity*>& Entity::getChildren() const
+    ArrayView<Entity*> Entity::getChildren() const
     {
         return m_Children;
     }

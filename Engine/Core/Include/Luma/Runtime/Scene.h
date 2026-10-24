@@ -9,10 +9,11 @@ namespace Luma
     struct Component;
     struct CommandBuffer;
 
-    class FScene final : public Asset
+    class Scene final : public Asset
     {
+        LUMA_CLASS(Scene, Asset)
     public:
-        FScene() = default;
+        Scene() = default;
 
         void initialize();
         void destroy() override;

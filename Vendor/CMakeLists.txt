@@ -1,7 +1,8 @@
 if(LUMA_ENGINE_BUILD_VULKAN)
-add_subdirectory(volk)
-set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
-target_link_libraries(volk PUBLIC Vulkan::Headers)
+    set(VOLK_PULL_IN_VULKAN OFF)
+    add_subdirectory(volk)
+    set_target_properties(volk PROPERTIES FOLDER luma-vendor/vulkan)
+    target_link_libraries(volk PUBLIC Vulkan::Headers)
 endif ()
 
 set(GLFW_BUILD_DOCS OFF)

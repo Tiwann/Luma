@@ -22,8 +22,8 @@ namespace Luma
         
         Array()
         {
-            m_Allocated = 1;
-            m_Data = new T[m_Allocated]{};
+            m_Allocated = 0;
+            //m_Data = new T[m_Allocated]{};
             m_Count = 0;
         }
 
@@ -541,7 +541,7 @@ namespace Luma
             return i;
         }
         
-        SizeType getNewSize(SizeType current){ return 2 * current; }
+        SizeType getNewSize(SizeType current){ return current == 0 ? 1 : 2 * current; }
         
         PointerType m_Data = nullptr;
         SizeType m_Count = 0;

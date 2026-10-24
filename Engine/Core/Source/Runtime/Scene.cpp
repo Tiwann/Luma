@@ -3,9 +3,11 @@
 #include "Luma/Runtime/EntityHandle.h"
 #include "Luma/Components/TransformComponent.h"
 
+LUMA_DEFINE_CLASS(Luma::Scene)
+
 namespace Luma
 {
-    FEntityHandle FScene::createEntity()
+    FEntityHandle Scene::createEntity()
     {
         Entity* entity = new Entity(this);
         const uint32_t id = s_EntityId;
@@ -15,7 +17,7 @@ namespace Luma
         return FEntityHandle(id, this);
     }
 
-    void FScene::destroyEntity(FEntityHandle entity)
+    void Scene::destroyEntity(FEntityHandle entity)
     {
         LUMA_ASSERT(entity.getContext() == this, "Entity context don't match!");
         Entity** pEntity = m_Entities.findValue(entity.getHandle());
@@ -25,7 +27,7 @@ namespace Luma
         m_Entities.remove(entity.getHandle());
     }
 
-    Array<Entity*> FScene::getEntities()
+    Array<Entity*> Scene::getEntities()
     {
         Array<Entity*> entities;
         for (auto& [_, entity] : m_Entities)
@@ -33,7 +35,7 @@ namespace Luma
         return entities;
     }
 
-    void FScene::initialize()
+    void Scene::initialize()
     {
         for (auto& [_, entity] : m_Entities)
         {
@@ -42,7 +44,7 @@ namespace Luma
         }
     }
 
-    void FScene::destroy()
+    void Scene::destroy()
     {
         for (auto& [_, entity] : m_Entities)
         {
@@ -52,7 +54,7 @@ namespace Luma
         m_Entities.clear();
     }
 
-    void FScene::onUpdate(double deltaTime)
+    void Scene::onUpdate(double deltaTime)
     {
         for (auto& [_, entity] : m_Entities)
         {
@@ -61,7 +63,7 @@ namespace Luma
         }
     }
 
-    void FScene::onPhysicsUpdate(double deltaTime)
+    void Scene::onPhysicsUpdate(double deltaTime)
     {
         for (auto& [_, entity] : m_Entities)
         {
@@ -70,7 +72,7 @@ namespace Luma
         }
     }
 
-    void FScene::onLateUpdate(double deltaTime)
+    void Scene::onLateUpdate(double deltaTime)
     {
         for (auto& [_, entity] : m_Entities)
         {
@@ -79,7 +81,7 @@ namespace Luma
         }
     }
 
-    void FScene::onRender(CommandBuffer* cmdBuffer)
+    void Scene::onRender(CommandBuffer* cmdBuffer)
     {
         for (auto& [_, entity] : m_Entities)
         {

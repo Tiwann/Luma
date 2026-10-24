@@ -10,13 +10,14 @@ namespace Luma
 {
     class Material : public Asset
     {
+        LUMA_CLASS(Material, Asset)
     public:
         Material() = default;
         Material(Ref<Shader> shader);
         ~Material();
 
         AssetType getAssetType() const override { return AssetType::Material; }
-        Ref<Shader> getShader() const { return m_Shader; }
+        Ref<Shader> getShader() const;
 
         void setMaterialType(const MaterialType materialType) { m_MaterialType = materialType; }
         MaterialType getMaterialType() const { return m_MaterialType; }

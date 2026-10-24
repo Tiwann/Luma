@@ -1,6 +1,8 @@
 #include "Luma/Components/TransformComponent.h"
 #include "Luma/Runtime/Entity.h"
 
+LUMA_DEFINE_CLASS(Luma::TransformComponent)
+
 namespace Luma
 {
     const FMatrix4f& TransformComponent::getWorldSpaceMatrix()

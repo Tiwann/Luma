@@ -3,7 +3,7 @@
 
 namespace Luma
 {
-    FEntityHandle::FEntityHandle(uint32_t handle, FScene* context): m_Handle(handle), m_Context(context)
+    FEntityHandle::FEntityHandle(uint32_t handle, Scene* context): m_Handle(handle), m_Context(context)
     {}
 
     FEntityHandle::FEntityHandle(decltype(nullptr)): m_Handle(0), m_Context(nullptr)

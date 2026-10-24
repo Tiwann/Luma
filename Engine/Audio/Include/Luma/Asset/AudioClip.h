@@ -1,31 +1,53 @@
 #pragma once
-#include "Luma/Containers/StringView.h"
+#include "Luma/Audio/AudioFormat.h"
 #include "Luma/Runtime/Asset.h"
 #include "Luma/Audio/Export.h"
-
-struct ma_sound;
-struct ma_decoder;
+#include "Luma/Containers/Array.h"
+#include "Luma/Containers/ArrayView.h"
 
 namespace Luma
 {
-    class LUMA_AUDIO_API FAudioClip final : public Asset
+    struct AudioDevice;
+
+    struct LUMA_AUDIO_API AudioClip : Asset
     {
+        LUMA_CLASS(AudioClip, Asset)
     public:
-        FAudioClip();
-        ~FAudioClip() override;
+        AudioClip() = default;
 
-        bool loadFromFile(StringView filepath);
-        bool loadFromMemory(const void* data, size_t size);
-        void destroy() override;
+        virtual bool initialize(AudioDevice* device, const uint8_t* data, uint64_t dataSize, AudioFormat requestedFormat) = 0;
 
-        AssetType getAssetType() const override;
+        AssetType getAssetType() const final { return AssetType::AudioClip; }
 
-        float getDurationSeconds() const;
-        uint64_t getDurationFrames() const;
+        uint64_t getDurationFrames() const { return m_DurationFrames; }
+        float getDurationSeconds() const { return m_DurationFrames / static_cast<float>(m_SampleRate); }
+        uint32_t getSampleRate() const { return m_SampleRate; }
+        uint32_t getChannelCount() const { return m_ChannelCount; }
+        ArrayView<uint8_t> getSamples() const { return m_Samples; }
 
-        ma_sound* getHandle() const { return m_Handle; }
-    private:
-        ma_sound* m_Handle = nullptr;
-        ma_decoder* m_Decoder = nullptr;
+        AudioDevice* getAudioDevice() const { return m_AudioDevice; }
+    protected:
+        AudioDevice* m_AudioDevice = nullptr;
+        uint64_t m_DurationFrames = 0;
+        uint32_t m_SampleRate = 0;
+        uint32_t m_ChannelCount = 0;
+        Array<uint8_t> m_Samples;
     };
+
+    namespace Miniaudio
+    {
+        class AudioDevice;
+
+        class LUMA_AUDIO_API AudioClip final : public Luma::AudioClip
+        {
+        public:
+            void destroy() override;
+        protected:
+            bool initialize(Luma::AudioDevice* device, const uint8_t* data, uint64_t dataSize, AudioFormat requestedFormat) override;
+        private:
+            friend AudioDevice;
+            struct Impl;
+            Impl* m_Pimpl = nullptr;
+        };
+    }
 }

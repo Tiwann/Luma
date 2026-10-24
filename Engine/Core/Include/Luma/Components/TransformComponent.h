@@ -6,6 +6,7 @@ namespace Luma
 {
     class TransformComponent : public Component, public TTransform<float>
     {
+        LUMA_CLASS(TransformComponent, Component)
     public:
         TransformComponent() = default;
 

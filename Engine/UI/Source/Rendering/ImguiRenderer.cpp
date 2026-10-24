@@ -1,9 +1,10 @@
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Luma/Rendering/Device.h"
+#include "Luma/Rendering/Texture.h"
 #include <imgui.h>
 
 #ifdef LUMA_BUILD_VULKAN
-#include "Luma/Vulkan/ImguiRendererImpl.h"
+#include "Luma/Vulkan/ImguiRenderer.h"
 #endif
 
 #ifdef LUMA_BUILD_D3D12
@@ -108,45 +109,33 @@ namespace Luma
         }
     }
 
-    bool ImguiRenderer::initialize(const ImguiRendererDesc& rendererDesc)
+    ImguiRenderer::ImguiRenderer()
     {
-        if(!IMGUI_CHECKVERSION()) return false;
+        IMGUI_CHECKVERSION();
 
         m_Context = ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-        if(!m_Context) return false;
-        
-
         ImGui::SetCurrentContext(m_Context);
         lumaStyle(nullptr);
-
-        // TODO: Add imguizmo
-        //ImGuizmo::SetImGuiContext(m_Context);
-        return true;
     }
 
-    ImguiRenderer* createImguiRenderer(const ImguiRendererDesc& rendererDesc)
+    ImguiRenderer* createImguiRenderer(Window* window, RHI::Device* device)
     {
-        if (!rendererDesc.window) return nullptr;
-        if (!rendererDesc.device) return nullptr;
-        if (rendererDesc.sampleCount % 2 != 0 && rendererDesc.sampleCount > 16) return nullptr;
+        if (!window) return nullptr;
+        if (!device) return nullptr;
+
+
         ImguiRenderer* renderer = nullptr;
-        switch (rendererDesc.device->getDeviceType())
+        switch (device->getDeviceType())
         {
         case DeviceType::None: return nullptr;
 #ifdef LUMA_BUILD_VULKAN
         case DeviceType::Vulkan:
             {
-                renderer = new Vulkan::FImguiRendererImpl();
-                if (!renderer->initialize(rendererDesc))
-                {
-                    delete renderer;
-                    return nullptr;
-                }
-                return renderer;
+                return new Vulkan::ImguiRenderer(window, device);
             }
 #elifdef LUMA_BUILD_D3D12
         case DeviceType::D3D12:
@@ -163,10 +152,5 @@ namespace Luma
         default: return nullptr;
         }
         return renderer;
-    }
-
-    ImguiRenderer* createImguiRenderer(Window* window, RHI::Device* device)
-    {
-        return createImguiRenderer({window, device, 1});
     }
 }

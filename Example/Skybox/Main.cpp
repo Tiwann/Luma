@@ -76,7 +76,7 @@ int main()
     while (!window->shouldClose())
     {
         window->pollEvents();
-        const double currentTime = FTime::getTime();
+        const double currentTime = Time::getTime();
         const float deltaTime = currentTime - lastTime;
         lastTime = currentTime;
 

@@ -7,15 +7,15 @@ namespace Luma
     class FEntityHandle
     {
     public:
-        FEntityHandle(uint32_t handle, FScene* context);
+        FEntityHandle(uint32_t handle, Scene* context);
         FEntityHandle(decltype(nullptr));
 
         Entity* operator->();
 
         uint32_t getHandle() const { return m_Handle; }
-        FScene* getContext() const { return m_Context; }
+        Scene* getContext() const { return m_Context; }
     private:
         uint32_t m_Handle = 0;
-        FScene* m_Context = nullptr;
+        Scene* m_Context = nullptr;
     };
 }

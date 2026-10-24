@@ -9,6 +9,8 @@ namespace Luma
 
     struct Component : Object
     {
+        LUMA_CLASS(Component, Object)
+    public:
         ~Component() override = default;
 
         Entity* getOwner() const;

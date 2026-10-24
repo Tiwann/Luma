@@ -2,6 +2,8 @@
 #include "Luma/Runtime/Entity.h"
 #include "Luma/Components/TransformComponent.h"
 
+LUMA_DEFINE_CLASS(Luma::Component)
+
 namespace Luma
 {
     Entity* Component::getOwner() const

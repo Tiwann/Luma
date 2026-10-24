@@ -7,6 +7,8 @@
 
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
+LUMA_DEFINE_CLASS(Luma::Font)
+
 namespace Luma
 {
     static constexpr uint32_t ATLAS_DEFAULT_SIZE = 256;

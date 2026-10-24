@@ -1,6 +1,8 @@
 #include "Luma/Components/StaticMeshRenderer.h"
 #include "Luma/Rendering/Shader.h"
 
+LUMA_DEFINE_CLASS(Luma::FStaticMeshRenderer)
+
 namespace Luma
 {
     Ref<StaticMesh> FStaticMeshRenderer::getMesh() const

@@ -6,6 +6,8 @@ namespace Luma
 {
     class CameraComponent : public Component, public TCamera<float>
     {
+        LUMA_CLASS(CameraComponent, Component)
+
         void onUpdate(double deltaTime) override;
     };
 }

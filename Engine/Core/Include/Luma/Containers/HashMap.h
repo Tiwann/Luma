@@ -213,6 +213,13 @@ namespace Luma
             m_Count = 0;
         }
 
+        void free()
+        {
+            for (auto& bucket : m_Buckets)
+                bucket.free();
+            m_Count = 0;
+        }
+
         bool isEmpty() const { return m_Count <= 0; }
     private:
         SizeType getBucketIndex(const Key& key) const

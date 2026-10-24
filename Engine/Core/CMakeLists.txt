@@ -35,6 +35,8 @@ set(LUMA_CORE_SRC
         Include/Luma/Math/MatrixProjection.hxx
         Source/Modules/ModuleManager.cpp
         Source/Runtime/RTTI.cpp
+        Source/Runtime/Object.cpp
+        Source/Runtime/Asset.cpp
         Source/Runtime/Path.cpp
         Source/Runtime/DialogFilters.cpp
         Source/Containers/StringFormat.cpp

@@ -15,6 +15,8 @@
 #include "Luma/Rendering/TextureUtils.h"
 
 
+LUMA_DEFINE_CLASS(Luma::StaticMesh)
+
 namespace Luma
 {
     static Array<uint32_t> getIndicesFromFaces(const BufferView<aiFace>& faces)
@@ -71,8 +73,7 @@ namespace Luma
         if (!device) return false;
 
         Assimp::Importer importer;
-        constexpr auto flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals
-        | aiProcess_JoinIdenticalVertices | aiProcess_EmbedTextures | aiProcess_PreTransformVertices;
+        constexpr auto flags = aiProcess_Triangulate;
 
         const aiScene* loadedScene = importer.ReadFile(*filepath, flags);
         if (!loadedScene) return false;

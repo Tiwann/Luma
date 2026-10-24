@@ -7,6 +7,7 @@ namespace Luma
 {
     class FStaticMeshRenderer : public Component
     {
+        LUMA_CLASS(FStaticMeshRenderer, Component)
     public:
         FStaticMeshRenderer() = default;
 

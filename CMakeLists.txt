@@ -2,7 +2,7 @@
 project(luma LANGUAGES C CXX)
 
 include(CMakeDependentOption)
-include(CMake/LumaHelpers.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/CMake/LumaHelpers.cmake)
 
 option(BUILD_SHARED_LIBS "Build libraries as shared libraries" OFF)
 option(BUILD_TESTING "Build test targets" OFF)
@@ -39,6 +39,7 @@ if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)
     add_subdirectory(Example/Renderer2D)
     add_subdirectory(Example/Skybox)
+    add_subdirectory(Example/RTTI)
 endif ()
 
 if(LUMA_ENGINE_BUILD_EDITOR)

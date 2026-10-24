@@ -35,6 +35,7 @@ namespace Luma
 
     class StaticMesh final : public Asset
     {
+        LUMA_CLASS(StaticMesh, Asset)
     public:
         StaticMesh() = default;
         ~StaticMesh() override = default;

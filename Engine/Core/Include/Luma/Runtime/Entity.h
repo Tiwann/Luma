@@ -1,22 +1,23 @@
 #pragma once
 #include "Scene.h"
 #include "Luma/Containers/Array.h"
+#include "Luma/Containers/ArrayView.h"
 #include "Luma/Runtime/Component.h"
 #include <cstdint>
 
+
 namespace Luma
 {
-    struct FClass;
-
-    class Entity final : Asset
+    class Entity final : public Asset
     {
+        LUMA_CLASS(Entity, Asset)
     public:
-        Entity(FScene* context) : m_Owner(context) {}
+        explicit Entity(Scene* context) : m_Owner(context) {}
 
         Entity* getParent() const;
         void setParent(Entity* parent);
 
-        const Array<Entity*>& getChildren() const;
+        ArrayView<Entity*> getChildren() const;
         void addChild(Entity* child);
         void removeChild(Entity* child);
 
@@ -24,7 +25,7 @@ namespace Luma
         T* getComponent() const
         {
             for (Component* component : m_Components)
-                if (T* asT = dynamic_cast<T*>(component))
+                if (T* asT = cast<T>(component))
                     return asT;
             return nullptr;
         }
@@ -34,7 +35,7 @@ namespace Luma
         {
             Array<T*> components;
             for (Component* component : m_Components)
-                if (T* asT = dynamic_cast<T*>(component))
+                if (T* asT = cast<T>(component))
                     components.addUnique(asT);
             return components;
         }
@@ -56,7 +57,7 @@ namespace Luma
             m_Components.remove(component);
         }
 
-        FScene* getOwner() const;
+        Scene* getOwner() const;
         AssetType getAssetType() const override;
 
         bool isActive() const;
@@ -73,8 +74,8 @@ namespace Luma
         void onLateUpdate(double deltaTime);
         void onRender(CommandBuffer* cmdBuffer);
 
-        friend class FScene;
-        FScene* m_Owner = nullptr;
+        friend class Scene;
+        Scene* m_Owner = nullptr;
         Entity* m_Parent = nullptr;
         bool m_Active = true;
         Array<Entity*> m_Children;

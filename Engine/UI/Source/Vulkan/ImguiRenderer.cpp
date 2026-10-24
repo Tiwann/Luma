@@ -6,30 +6,26 @@
 #include "Luma/Vulkan/Device.h"
 #include "Luma/Vulkan/Conversions.h"
 
-#include <GLFW/glfw3.h>
 #include <imgui_impl_vulkan.h>
 #include <imgui_impl_glfw.h>
 
+using namespace Luma::RHI;
+
 namespace Luma::Vulkan
 {
-    bool ImguiRenderer::initialize(const ImguiRendererDesc& rendererDesc)
+    ImguiRenderer::ImguiRenderer(Window* window, RHI::Device* device)
     {
-        if (!ImguiRenderer::initialize(rendererDesc)) return false;
+        if (DesktopWindow* desktopWindow = dynamic_cast<DesktopWindow*>(window))
+            ImGui_ImplGlfw_InitForVulkan(desktopWindow->getHandle(), true);
 
-        if (DesktopWindow* desktopWindow = dynamic_cast<DesktopWindow*>(rendererDesc.window))
-        {
-            if(!ImGui_ImplGlfw_InitForVulkan(desktopWindow->getHandle(), true))
-                return false;
-        }
-
-        Device* device = static_cast<Device*>(rendererDesc.device);
+        Device* deviceImpl = static_cast<Device*>(device);
         const Swapchain* swapchain = static_cast<Swapchain*>(device->getSwapchain());
         const Queue* renderQueue = static_cast<Queue*>(device->getRenderQueue());
 
         ImGui_ImplVulkan_InitInfo initInfo{};
-        initInfo.Instance = device->getInstance();
-        initInfo.Device = device->getHandle();
-        initInfo.PhysicalDevice = device->getPhysicalDevice();
+        initInfo.Instance = deviceImpl->getInstance();
+        initInfo.Device = deviceImpl->getHandle();
+        initInfo.PhysicalDevice = deviceImpl->getPhysicalDevice();
         initInfo.Queue = renderQueue->getHandle();
         initInfo.Allocator = nullptr;
         initInfo.ImageCount = swapchain->getTextureCount();
@@ -39,7 +35,7 @@ namespace Luma::Vulkan
         initInfo.DescriptorPoolSize = 32;
         initInfo.UseDynamicRendering = true;
 
-        initInfo.PipelineInfoMain.MSAASamples = static_cast<VkSampleCountFlagBits>(rendererDesc.sampleCount);
+        initInfo.PipelineInfoMain.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
         initInfo.PipelineInfoMain.PipelineRenderingCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO;
         initInfo.PipelineInfoMain.PipelineRenderingCreateInfo.viewMask = 0;
         initInfo.PipelineInfoMain.PipelineRenderingCreateInfo.colorAttachmentCount = 1;
@@ -57,8 +53,7 @@ namespace Luma::Vulkan
             }
         };
 
-        if(!ImGui_ImplVulkan_Init(&initInfo))
-            return false;
+        ImGui_ImplVulkan_Init(&initInfo);
 
 
         const SamplerDesc samplerDesc = SamplerDesc()
@@ -66,13 +61,10 @@ namespace Luma::Vulkan
         .withFilter(Filter::Linear, Filter::Linear);
 
         m_Sampler = device->getOrCreateSampler(samplerDesc);
-        if (!m_Sampler) return false;
-
         m_Device = device;
-        return true;
     }
 
-    void ImguiRenderer::destroy()
+    ImguiRenderer::~ImguiRenderer()
     {
         for (const auto& [_, id] : m_Textures)
             ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(id));
@@ -80,7 +72,6 @@ namespace Luma::Vulkan
         ImGui_ImplVulkan_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext(m_Context);
-        if (m_Sampler) m_Sampler->destroy();
     }
 
     void ImguiRenderer::beginFrame()
@@ -109,7 +100,7 @@ namespace Luma::Vulkan
         ImGui_ImplVulkan_RenderDrawData(drawData, cmdBufferImpl->getHandle());
     }
 
-    void ImguiRenderer::drawTexture(const RHI::TextureView* textureView, const Vector2f& uv0, const Vector2f& uv1)
+    void ImguiRenderer::drawTexture(const RHI::TextureView* textureView, const FVector2f& uv0, const FVector2f& uv1)
     {
         const ImTextureID textureId = getOrAddTexture(textureView);
         ImGui::Image(textureId, ImVec2(textureView->getWidth(), textureView->getHeight()), {uv0.x, uv0.y}, {uv1.x, uv1.y});

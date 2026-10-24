@@ -46,11 +46,7 @@ namespace Luma
             return;
         }
 
-        ImguiRendererDesc imguiRendererDesc;
-        imguiRendererDesc.device = m_Device;
-        imguiRendererDesc.sampleCount = 1;
-        imguiRendererDesc.window = m_Window;
-        m_ImguiRenderer = createImguiRenderer(imguiRendererDesc);
+        m_ImguiRenderer = createImguiRenderer(m_Window, m_Device);
         if (!m_ImguiRenderer)
         {
             destroy();
@@ -64,9 +60,9 @@ namespace Luma
             return;
         }*/
 
-        FAudioDeviceDesc audioDeviceDesc;
+        AudioDeviceDesc audioDeviceDesc;
         audioDeviceDesc.sampleRate = 44100;
-        audioDeviceDesc.numChannels = 2;
+        audioDeviceDesc.channelCount = 2;
         audioDeviceDesc.maxListeners = 4;
         m_AudioDevice = createAudioDevice(audioDeviceDesc);
         if (!m_AudioDevice)
@@ -89,7 +85,7 @@ namespace Luma
     {
         while (m_IsRunning)
         {
-            const double currentTime = FTime::getTime();
+            const double currentTime = Time::getTime();
             m_DeltaTime = currentTime - m_LastTime;
             m_LastTime = currentTime;
             m_Window->pollEvents();
@@ -162,7 +158,7 @@ namespace Luma
         
         m_AudioDevice = nullptr;
         m_Renderer2D = nullptr;
-        m_ImguiRenderer = nullptr;
+        delete m_ImguiRenderer;
         m_Device = nullptr;
         m_Window = nullptr;
     }
@@ -178,7 +174,7 @@ namespace Luma
         return m_Window;
     }
 
-    Ref<IAudioDevice> IApplication::getAudioDevice() const
+    Ref<AudioDevice> IApplication::getAudioDevice() const
     {
         return m_AudioDevice;
     }

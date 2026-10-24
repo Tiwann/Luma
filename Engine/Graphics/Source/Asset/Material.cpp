@@ -6,6 +6,8 @@
 #include "Luma/Rendering/Sampler.h"
 #include "Luma/Rendering/BindingGroup.h"
 
+LUMA_DEFINE_CLASS(Luma::Material)
+
 namespace Luma
 {
     static constexpr uint32_t MATERIAL_BINDING_SET = 0;
@@ -19,5 +21,10 @@ namespace Luma
     {
         m_BindingGroup = nullptr;
         m_Shader = nullptr;
+    }
+
+    Ref<Shader> Material::getShader() const
+    {
+        return m_Shader;
     }
 }
