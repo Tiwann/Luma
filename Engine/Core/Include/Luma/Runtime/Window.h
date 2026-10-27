@@ -6,8 +6,6 @@
 #include "Luma/Rendering/DeviceType.h"
 #include "Luma/Math/Rect2.h"
 #include "Flags.h"
-#include <cstdint>
-
 
 namespace Luma
 {
@@ -43,7 +41,8 @@ namespace Luma
         virtual uint32_t getWidth() const = 0;
         virtual uint32_t getHeight() const = 0;
         FVector2u getSize() const;
-        FRect2<uint32_t> getBounds() const { return FRect2<uint32_t>{ 0, 0, getWidth(), getHeight() }; }
+        FRect2u getBounds() const { return FRect2<uint32_t>{ 0, 0, getWidth(), getHeight() }; }
+
         virtual bool shouldClose() const = 0;
         virtual bool isAvailable() const = 0;
         virtual void setTitle(const String& title){}
