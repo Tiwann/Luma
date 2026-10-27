@@ -110,20 +110,36 @@ namespace Luma
         /// @param params
         void drawText(StringView text, const FVector2f& position, float rotation, const Color& color, TextParams params);
 
-        /// Draw a sprite
+        /// Draw a sprite with nearest filtering, for pixel art
         /// @param sprite Sprite to draw
         /// @param position Position in screen space
         /// @param rotation Rotation of the sprite
         /// @param color Color of the sprite
         void drawSprite(const Sprite& sprite, const FVector2f& position, float rotation, const Color& color);
 
-        /// Draw a sprite stretched to a given size
+        /// Draw a sprite stretched to a given size with nearest filtering, for pixel art
         /// @param sprite Sprite to draw
         /// @param position Position in screen space
         /// @param size Size of the drawn quad
         /// @param rotation Rotation of the sprite
         /// @param color Color of the sprite
         void drawSprite(const Sprite& sprite, const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
+
+        /// Draw a whole texture with linear filtering, for assets that aren't pixel art
+        /// @param texture Texture to draw
+        /// @param position Position in screen space
+        /// @param size Size of the drawn quad
+        /// @param rotation Rotation of the texture
+        /// @param color Color of the texture
+        void drawTexture(WeakRef<RHI::Texture> texture, const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
+
+        /// Draw the region of a texture covered by a sprite with linear filtering, for assets that aren't pixel art
+        /// @param sprite Sprite to draw
+        /// @param position Position in screen space
+        /// @param size Size of the drawn quad
+        /// @param rotation Rotation of the sprite
+        /// @param color Color of the sprite
+        void drawTexture(const Sprite& sprite, const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
 
         /// Sets the current font
         /// @param font Font asset to use. Null will assign the default font.
@@ -139,7 +155,8 @@ namespace Luma
             Quad,
             Ellipse,
             Text,
-            Sprite
+            Sprite,
+            Texture
         };
 
         struct QuadVertex
@@ -152,6 +169,7 @@ namespace Luma
         };
 
         void addQuad(const FVector2f& position, const FVector2f& size, float rotation, const Color& color, QuadMode quadMode, uint32_t textureId);
+        void addSpriteQuad(const Sprite& sprite, const FVector2f& position, const FVector2f& size, float rotation, const Color& color, QuadMode quadMode);
         uint32_t getOrAddTexture(const RHI::Texture* texture);
 
         Ref<RHI::Device> m_Device = nullptr;

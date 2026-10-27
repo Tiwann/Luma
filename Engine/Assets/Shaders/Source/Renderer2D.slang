@@ -10,7 +10,8 @@ enum QuadMode : uint32_t
 	Quad,
     Ellipse,
     Text,
-    Sprite
+    Sprite,
+    Texture
 }
 
 struct VertexInput
@@ -109,6 +110,12 @@ float4 drawSprite(Texture2D texture, float2 uv, float4 color)
 	return sample * color;
 }
 
+float4 drawTexture(Texture2D texture, float2 uv, float4 color)
+{
+	float4 sample = texture.Sample(linearSampler, uv);
+	return sample * color;
+}
+
 [shader("fragment")]
 float4 frag(VertexOutput input) : SV_TARGET
 {
@@ -118,6 +125,7 @@ float4 frag(VertexOutput input) : SV_TARGET
 	case QuadMode::Ellipse: return drawEllipse(input.texCoord, input.color);
 	case QuadMode::Text: return drawCharacter(getTexture(input.textureId), input.texCoord, input.color);
 	case QuadMode::Sprite: return drawSprite(getTexture(input.textureId), input.texCoord, input.color);
+	case QuadMode::Texture: return drawTexture(getTexture(input.textureId), input.texCoord, input.color);
 	}
 
 	return float4(1.0, 0.03, 1.0, 1.0);

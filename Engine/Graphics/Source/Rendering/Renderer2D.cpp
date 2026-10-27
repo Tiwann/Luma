@@ -71,9 +71,10 @@ namespace Luma
 
         SamplerDesc samplerDesc = SamplerDesc();
         samplerDesc.magFilter = Filter::Linear;
-        samplerDesc.magFilter = Filter::Linear;
+        samplerDesc.minFilter = Filter::Linear;
         m_Sampler = m_Device->getOrCreateSampler(samplerDesc);
 
+        // Sprites are pixel art and keep sharp pixels, drawTexture uses the linear sampler
         samplerDesc.magFilter = Filter::Nearest;
         samplerDesc.minFilter = Filter::Nearest;
         m_SpriteSampler = m_Device->getOrCreateSampler(samplerDesc);
@@ -401,6 +402,21 @@ namespace Luma
 
     void Renderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
     {
+        addSpriteQuad(sprite, position, size, rotation, color, QuadMode::Sprite);
+    }
+
+    void Renderer2D::drawTexture(const WeakRef<Texture> texture, const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
+    {
+        drawTexture(Sprite::fromTexture(texture), position, size, rotation, color);
+    }
+
+    void Renderer2D::drawTexture(const Sprite& sprite, const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
+    {
+        addSpriteQuad(sprite, position, size, rotation, color, QuadMode::Texture);
+    }
+
+    void Renderer2D::addSpriteQuad(const Sprite& sprite, const FVector2f& position, const FVector2f& size, const float rotation, const Color& color, const QuadMode quadMode)
+    {
         if (!sprite.texture) return;
         const uint32_t textureId = getOrAddTexture(sprite.texture);
 
@@ -427,10 +443,10 @@ namespace Luma
 
         const QuadVertex quadVertices[]
         {
-            { transform * topLeft,     FVector2f(u0, vTop),    color, QuadMode::Sprite, textureId },
-            { transform * bottomLeft,  FVector2f(u0, vBottom), color, QuadMode::Sprite, textureId },
-            { transform * bottomRight, FVector2f(u1, vBottom), color, QuadMode::Sprite, textureId },
-            { transform * topRight,    FVector2f(u1, vTop),    color, QuadMode::Sprite, textureId },
+            { transform * topLeft,     FVector2f(u0, vTop),    color, quadMode, textureId },
+            { transform * bottomLeft,  FVector2f(u0, vBottom), color, quadMode, textureId },
+            { transform * bottomRight, FVector2f(u1, vBottom), color, quadMode, textureId },
+            { transform * topRight,    FVector2f(u1, vTop),    color, quadMode, textureId },
         };
         m_QuadVertices.addRange(quadVertices);
 
