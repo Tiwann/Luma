@@ -143,7 +143,7 @@ namespace Luma::Vulkan
     {
         const Buffer* buffer = static_cast<Buffer*>(barrier.buffer);
 
-        VkBufferMemoryBarrier2 vkBarrier = { VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
+        VkBufferMemoryBarrier2 vkBarrier = { VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2 };
         vkBarrier.buffer = buffer->getHandle();
         vkBarrier.offset = barrier.offset;
         vkBarrier.size = barrier.size;
