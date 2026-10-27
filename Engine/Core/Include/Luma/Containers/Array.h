@@ -101,6 +101,7 @@ namespace Luma
             if(this == &other)
                 return *this;
 
+            delete[] m_Data;
             m_Data = other.m_Data;
             m_Count = other.m_Count;
             m_Allocated = other.m_Allocated;
