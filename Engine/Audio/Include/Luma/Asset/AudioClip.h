@@ -5,6 +5,8 @@
 #include "Luma/Containers/Array.h"
 #include "Luma/Containers/ArrayView.h"
 
+struct ma_sound;
+
 namespace Luma
 {
     struct AudioDevice;
@@ -42,6 +44,7 @@ namespace Luma
         {
         public:
             void destroy() override;
+            ma_sound* getHandle() const;
         protected:
             bool initialize(Luma::AudioDevice* device, const uint8_t* data, uint64_t dataSize, AudioFormat requestedFormat) override;
         private:

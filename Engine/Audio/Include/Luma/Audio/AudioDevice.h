@@ -32,6 +32,8 @@ namespace Luma
         virtual AudioClip* createAudioClip(StringView filepath, AudioFormat requestedFormat);
         virtual AudioClip* createAudioClipFromSamples(const uint8_t* samples, uint64_t samplesSize) = 0;
 
+        virtual void playSound2D(const Luma::AudioClip* audioClip, float volume, float pitch, float pan) = 0;
+
         uint32_t getListenerCount() const { return m_ListenerCount; }
         uint32_t getChannelCount() const { return m_ChannelCount; }
         uint32_t getSampleRate() const { return m_SampleRate; }
@@ -51,6 +53,7 @@ namespace Luma
 
             AudioClip* createAudioClip(const uint8_t* data, uint64_t dataSize, AudioFormat requestedFormat) override;
             AudioClip* createAudioClipFromSamples(const uint8_t* samples, uint64_t samplesSize) override;
+            void playSound2D(const Luma::AudioClip* audioClip, float volume, float pitch, float pan) override;
 
             ma_engine* getEngine() const;
             ma_device* getDevice() const;

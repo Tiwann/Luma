@@ -10,15 +10,24 @@ namespace Luma::Miniaudio
 {
     struct AudioClip::Impl
     {
+        // The decoder doesn't copy the encoded data and reads it while the sound plays,
+        // so the clip keeps its own copy
+        Array<uint8_t> encodedData;
         ma_decoder decoder;
         ma_sound sound;
     };
 
     void AudioClip::destroy()
     {
-        ma_decoder_uninit(&m_Pimpl->decoder);
+        // The sound reads from the decoder, so it goes first
         ma_sound_uninit(&m_Pimpl->sound);
+        ma_decoder_uninit(&m_Pimpl->decoder);
         delete m_Pimpl;
+    }
+
+    ma_sound* AudioClip::getHandle() const
+    {
+        return &m_Pimpl->sound;
     }
 
     static ma_format to_ma_format(SampleFormat format)
@@ -41,8 +50,11 @@ namespace Luma::Miniaudio
         if (!m_Pimpl) m_Pimpl = new Impl();
 
         ma_decoder_uninit(&m_Pimpl->decoder);
+        m_Pimpl->encodedData.clear();
+        m_Pimpl->encodedData.addRange(data, dataSize);
+
         const ma_decoder_config decoderConfig = ma_decoder_config_init(to_ma_format(requestedFormat.format), requestedFormat.channelCount, requestedFormat.sampleRate);
-        ma_result result = ma_decoder_init_memory(data, dataSize, &decoderConfig, &m_Pimpl->decoder);
+        ma_result result = ma_decoder_init_memory(m_Pimpl->encodedData.data(), dataSize, &decoderConfig, &m_Pimpl->decoder);
         if (result != MA_SUCCESS) return false;
 
         AudioDevice* deviceImpl = static_cast<AudioDevice*>(device);

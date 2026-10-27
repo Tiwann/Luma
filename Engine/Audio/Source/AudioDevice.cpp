@@ -144,6 +144,31 @@ namespace Luma
             return nullptr;
         }
 
+        void AudioDevice::playSound2D(const Luma::AudioClip* audioClip, float volume, float pitch, float pan)
+        {
+            const auto* audioClipImpl = static_cast<const AudioClip*>(audioClip);
+            auto* sound = audioClipImpl->getHandle();
+            const auto lastVol = ma_sound_get_volume(sound);
+            const auto lastPitch = ma_sound_get_pitch(sound);
+            const auto lastPan = ma_sound_get_pan(sound);
+            const auto last3D = ma_sound_is_spatialization_enabled(sound);
+            const auto lastLoop = ma_sound_is_looping(sound);
+
+            ma_sound_set_volume(sound, volume);
+            ma_sound_set_pitch(sound, pitch);
+            ma_sound_set_pan(sound, pan);
+            ma_sound_set_spatialization_enabled(sound, false);
+            ma_sound_set_looping(sound, false);
+
+            ma_sound_start(sound);
+
+            ma_sound_set_volume(sound, lastVol);
+            ma_sound_set_pitch(sound, lastPitch);
+            ma_sound_set_pan(sound, lastPan);
+            ma_sound_set_spatialization_enabled(sound, last3D);
+            ma_sound_set_looping(sound, lastLoop);
+        }
+
         ma_engine* AudioDevice::getEngine() const
         {
             return &m_Pimpl->engine;
