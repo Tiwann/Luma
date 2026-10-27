@@ -3,7 +3,7 @@
 #include <Luma/Runtime/Path.h>
 #include <Luma/Rendering/Device.h>
 #include <Luma/Rendering/Shader.h>
-#include <Luma/Rendering/RenderPassDesc.h>
+#include <Luma/Rendering/RenderGraph.h>
 #include <Luma/Rendering/RenderPipeline.h>
 #include <Luma/Rendering/CommandBuffer.h>
 
@@ -15,8 +15,8 @@ int main()
     Ref<Window> window = createWindow("Hello Triangle!", 800, 600, WindowOptions::Centered | WindowOptions::Resizable);
     Ref<Device> device = createDevice(window);
 
-    const String vertexPath = Path::getAssetPath("Shaders/HelloTriangle.slang.vert.spv");
-    const String fragmentPath = Path::getAssetPath("Shaders/HelloTriangle.slang.frag.spv");
+    const String vertexPath = Path::getAssetPath("Shaders/HelloTriangle.vert.spv");
+    const String fragmentPath = Path::getAssetPath("Shaders/HelloTriangle.frag.spv");
     Ref<Shader> shaderProgram = device->createShader(vertexPath, fragmentPath);
 
     RenderPipelineDesc pipelineDesc;
@@ -25,32 +25,31 @@ int main()
     pipelineDesc.colorFormats[0] = Format::RGBA8_SRGB;
     Ref<RenderPipeline> pipeline = device->createRenderPipeline(pipelineDesc);
 
+    RenderGraph renderGraph(device);
+
     while (!window->shouldClose())
     {
         window->pollEvents();
 
         if (device->beginFrame())
         {
-            CommandBuffer* cmdBuffer = device->getCommandBuffer();
-            TextureView* swapchainTexture = device->getAcquiredSwapchainTextureView();
+            renderGraph.reset();
+            const RenderGraph::TextureHandle backbuffer = renderGraph.importTexture("Backbuffer", device->getAcquiredSwapchainTexture());
 
-            RenderPassTarget colorTarget;
-            colorTarget.type = RenderPassTargetType::Color;
-            colorTarget.loadOp = LoadOp::Clear;
-            colorTarget.storeOp = StoreOp::Store;
-            colorTarget.clearValue.color = Color::Black;
-            colorTarget.textureView = swapchainTexture;
+            // The graph begins the render pass and sets the viewport and scissor to the target's size
+            renderGraph.addPass("Triangle",
+                [&](RenderGraph::PassBuilder& builder)
+                {
+                    builder.addColorTarget(backbuffer, LoadOp::Clear, Color::Black);
+                },
+                [&](const RenderGraph::PassContext& context)
+                {
+                    CommandBuffer* cmdBuffer = context.getCommandBuffer();
+                    cmdBuffer->bindRenderPipeline(pipeline);
+                    cmdBuffer->draw(3, 1, 0, 0);
+                });
 
-            RenderPassDesc renderPassDesc;
-            renderPassDesc.renderArea = window->getBounds();
-            renderPassDesc.colorTargets.add(&colorTarget);
-
-            cmdBuffer->beginRenderPass(renderPassDesc);
-            cmdBuffer->bindRenderPipeline(pipeline);
-            cmdBuffer->setViewport(Viewport::fromSize(window->getSize().as<float>()));
-            cmdBuffer->setScissor(Scissor::fromSize(window->getSize()));
-            cmdBuffer->draw(3, 1, 0, 0);
-            cmdBuffer->endRenderPass();
+            renderGraph.execute(device->getCommandBuffer());
 
             device->endFrame();
             device->present();
