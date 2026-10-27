@@ -29,7 +29,7 @@ function(add_shader_target TARGET)
             ARG
             ""
             "PROFILE;OUTPUT_DIR"
-            "SOURCES;OUTPUT_TYPE;VERTEX;FRAG;COMPUTE;HULL;INCLUDES;DEFINES;OUTPUT_NAME"
+            "SOURCES;OUTPUT_TYPE;VERTEX;FRAG;COMPUTE;HULL;INCLUDES;DEFINES;OUTPUT_NAME;FOLDER;DEPENDS"
             ${ARGN}
     )
 
@@ -215,4 +215,10 @@ function(add_shader_target TARGET)
     endforeach()
 
     add_custom_target("${TARGET}" DEPENDS ${SHADER_OUTPUTS})
+    if(ARG_FOLDER)
+        set_target_properties("${TARGET}" PROPERTIES FOLDER ${ARG_FOLDER})
+    endif ()
+    if(ARG_DEPENDS)
+        add_dependencies(${ARG_DEPENDS} "${TARGET}")
+    endif ()
 endfunction()
