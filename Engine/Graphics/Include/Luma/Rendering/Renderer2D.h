@@ -117,6 +117,14 @@ namespace Luma
         /// @param color Color of the sprite
         void drawSprite(const Sprite& sprite, const FVector2f& position, float rotation, const Color& color);
 
+        /// Draw a sprite stretched to a given size
+        /// @param sprite Sprite to draw
+        /// @param position Position in screen space
+        /// @param size Size of the drawn quad
+        /// @param rotation Rotation of the sprite
+        /// @param color Color of the sprite
+        void drawSprite(const Sprite& sprite, const FVector2f& position, const FVector2f& size, float rotation, const Color& color);
+
         /// Sets the current font
         /// @param font Font asset to use. Null will assign the default font.
         void setFont(Ref<Font> font);
