@@ -70,6 +70,19 @@ namespace Luma::RHI
         return createShader(desc);
     }
 
+    Shader* Device::createComputeShader(StringView computeShaderPath)
+    {
+        const auto computeByteCode = FileUtils::readToBuffer(computeShaderPath);
+        if (computeByteCode.isEmpty()) return nullptr;
+
+        const ShaderCode codeDesc{ShaderStage::Compute, computeByteCode};
+
+        ShaderDesc desc;
+        desc.device = this;
+        desc.shaderCodes = codeDesc;
+        return createShader(desc);
+    }
+
     CommandBuffer* Device::createCommandBuffer(Queue* queue)
     {
         return createCommandBuffer({this, queue});

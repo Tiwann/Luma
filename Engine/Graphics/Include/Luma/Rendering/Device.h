@@ -72,6 +72,7 @@ namespace Luma::RHI
         virtual TextureView* createTextureView(const TextureViewDesc& textureViewDesc) = 0;
         virtual Shader* createShader(const ShaderDesc& shaderDesc) = 0;
         Shader* createShader(StringView vertexPath, StringView fragmentPath);
+        Shader* createComputeShader(StringView computeShaderPath);
         virtual CommandBuffer* createCommandBuffer(const CommandBufferDesc& cmdBufferDesc) = 0;
         CommandBuffer* createCommandBuffer(Queue* queue);
         virtual CommandBuffer* getCommandBuffer() = 0;
