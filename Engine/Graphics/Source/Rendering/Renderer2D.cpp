@@ -36,8 +36,8 @@ namespace Luma
         m_DefaultFont->loadAndGenerate(robotoFontData, FontAtlasType::MSDF, {CharacterSet::ascii()}, m_Device);
         setFont(m_DefaultFont);
 
-        String vertexPath = Path::getEngineShaderPath("Renderer2D.slang.vert.spv");
-        String fragmentPath = Path::getEngineShaderPath("Renderer2D.slang.frag.spv");
+        String vertexPath = Path::getEngineShaderPath("Renderer2D.vert.spv");
+        String fragmentPath = Path::getEngineShaderPath("Renderer2D.frag.spv");
         m_Shader = m_Device->createShader(vertexPath, fragmentPath);
 
         VertexInputLayout vertexLayout;
@@ -94,7 +94,7 @@ namespace Luma
         textureDesc.arrayCount = 1;
         textureDesc.sampleCount = 1;
         textureDesc.mipCount = 1;
-        textureDesc.usageFlags = TextureUsage::Color | TextureUsage::Sampled;
+        textureDesc.usageFlags = TextureUsage::Color | TextureUsage::Sampled | TextureUsage::RenderTarget;
 
         m_RenderTexture = m_Device->createTexture(textureDesc);
     }
@@ -396,6 +396,11 @@ namespace Luma
 
     void Renderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const float rotation, const Color& color)
     {
+        drawSprite(sprite, position, FVector2f(sprite.width, sprite.height), rotation, color);
+    }
+
+    void Renderer2D::drawSprite(const Sprite& sprite, const FVector2f& position, const FVector2f& size, const float rotation, const Color& color)
+    {
         if (!sprite.texture) return;
         const uint32_t textureId = getOrAddTexture(sprite.texture);
 
@@ -403,19 +408,29 @@ namespace Luma
         transform = rotate(transform, FAxisAnglef(FVector3f::Forward, rotation));
         transform = translate(transform, position);
 
-        const FVector2f topLeft     = FVector2f(0.0f, sprite.height);
-        const FVector2f topRight    = FVector2f(sprite.width, sprite.height);
-        const FVector2f bottomLeft  = FVector2f(0.0f, 0.0f);
-        const FVector2f bottomRight = FVector2f(sprite.width, 0.0f);
+        // Sprite rect is in pixels, normalize it by the texture size
+        const float textureWidth = (float)sprite.texture->getWidth();
+        const float textureHeight = (float)sprite.texture->getHeight();
+        const float u0 = sprite.x / textureWidth;
+        const float u1 = (sprite.x + sprite.width) / textureWidth;
+        // Textures are flipped on load, so the first row of the image is at v = 1
+        const float vTop = 1.0f - sprite.y / textureHeight;
+        const float vBottom = 1.0f - (sprite.y + sprite.height) / textureHeight;
+
+        // The projection is Y-down on screen, so local (0, 0) is the top-left corner
+        const FVector2f topLeft     = FVector2f(0.0f, 0.0f);
+        const FVector2f topRight    = FVector2f(size.x, 0.0f);
+        const FVector2f bottomLeft  = FVector2f(0.0f, size.y);
+        const FVector2f bottomRight = FVector2f(size.x, size.y);
 
         const uint32_t lastVertexCount = m_QuadVertices.count();
 
         const QuadVertex quadVertices[]
         {
-            { transform * bottomLeft,  FVector2f(sprite.x / sprite.width, (sprite.y + sprite.height) / sprite.height), color, QuadMode::Sprite, textureId },
-            { transform * topLeft,     FVector2f((sprite.x + sprite.width) / sprite.width, (sprite.y + sprite.height) / sprite.height), color, QuadMode::Sprite, textureId },
-            { transform * topRight,    FVector2f((sprite.x + sprite.width) / sprite.width, sprite.y / sprite.height), color, QuadMode::Sprite, textureId },
-            { transform * bottomRight, FVector2f(sprite.x / sprite.width, sprite.y / sprite.height), color, QuadMode::Sprite, textureId },
+            { transform * topLeft,     FVector2f(u0, vTop),    color, QuadMode::Sprite, textureId },
+            { transform * bottomLeft,  FVector2f(u0, vBottom), color, QuadMode::Sprite, textureId },
+            { transform * bottomRight, FVector2f(u1, vBottom), color, QuadMode::Sprite, textureId },
+            { transform * topRight,    FVector2f(u1, vTop),    color, QuadMode::Sprite, textureId },
         };
         m_QuadVertices.addRange(quadVertices);
 
