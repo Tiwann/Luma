@@ -35,6 +35,24 @@ add_subdirectory(Engine/Input)
 add_subdirectory(Engine/UI)
 add_subdirectory(Engine/Physics)
 
+add_shader_target(luma-fullscreen-shader
+        SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Engine/Assets/Shaders/Source/Fullscreen.slang
+        VERTEX vert
+        FRAG frag
+        OUTPUT_TYPE spirv
+        FOLDER luma-shaders
+        DEPENDS luma-core
+)
+
+add_shader_target(luma-renderer2d-shader
+        SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Engine/Assets/Shaders/Source/Renderer2D.slang
+        VERTEX vert
+        FRAG frag
+        OUTPUT_TYPE spirv
+        FOLDER luma-shaders
+        DEPENDS luma-core
+)
+
 if(LUMA_ENGINE_BUILD_EXAMPLES)
     add_subdirectory(Example/HelloTriangle)
     add_subdirectory(Example/Renderer2D)
