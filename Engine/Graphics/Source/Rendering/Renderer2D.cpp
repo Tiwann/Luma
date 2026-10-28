@@ -204,9 +204,12 @@ namespace Luma
             signal.stages = PipelineStages::ColorTargetOutput;
             signal.value = ++fenceValue;
 
+            Array<const CommandBuffer*> cmdBuffers { cmdBuffer };
+            Array<FenceSync> signals { std::move(signal) };
+
             QueueExecuteInfo execInfo;
-            execInfo.cmdBuffers = {cmdBuffer};
-            execInfo.signals = {signal};
+            execInfo.cmdBuffers = cmdBuffers;
+            execInfo.signals = signals;
             renderQueue->executeCommandBuffers(execInfo);
 
             m_Fence->waitOnCPU(fenceValue);
