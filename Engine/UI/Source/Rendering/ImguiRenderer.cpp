@@ -1,6 +1,9 @@
 #include "Luma/Rendering/ImguiRenderer.h"
 #include "Luma/Rendering/Device.h"
 #include "Luma/Rendering/Texture.h"
+#include "Luma/Rendering/CommandBuffer.h"
+#include "Luma/Rendering/Fence.h"
+#include "Luma/Runtime/Window.h"
 #include <imgui.h>
 
 #ifdef LUMA_BUILD_VULKAN
@@ -109,7 +112,7 @@ namespace Luma
         }
     }
 
-    ImguiRenderer::ImguiRenderer()
+    ImguiRenderer::ImguiRenderer(Ref<Window> window, Ref<RHI::Device> device)
     {
         IMGUI_CHECKVERSION();
 
@@ -122,7 +125,7 @@ namespace Luma
         lumaStyle(nullptr);
     }
 
-    ImguiRenderer* createImguiRenderer(Window* window, RHI::Device* device)
+    ImguiRenderer* createImguiRenderer(Ref<Window> window, Ref<RHI::Device> device)
     {
         if (!window) return nullptr;
         if (!device) return nullptr;

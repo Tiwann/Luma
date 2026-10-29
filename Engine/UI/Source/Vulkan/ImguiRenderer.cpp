@@ -13,14 +13,15 @@ using namespace Luma::RHI;
 
 namespace Luma::Vulkan
 {
-    ImguiRenderer::ImguiRenderer(Window* window, RHI::Device* device)
+    ImguiRenderer::ImguiRenderer(Ref<Window> window, Ref<RHI::Device> device)
+        : Luma::ImguiRenderer(window, device)
     {
-        if (DesktopWindow* desktopWindow = dynamic_cast<DesktopWindow*>(window))
+        if (Ref<DesktopWindow> desktopWindow = window.as<DesktopWindow>())
             ImGui_ImplGlfw_InitForVulkan(desktopWindow->getHandle(), true);
 
-        Device* deviceImpl = static_cast<Device*>(device);
+        Ref<Vulkan::Device> deviceImpl = device.as<Vulkan::Device>();
         const Swapchain* swapchain = static_cast<Swapchain*>(device->getSwapchain());
-        const Queue* renderQueue = static_cast<Queue*>(device->getRenderQueue());
+        Queue* renderQueue = static_cast<Queue*>(device->getRenderQueue());
 
         ImGui_ImplVulkan_InitInfo initInfo{};
         initInfo.Instance = deviceImpl->getInstance();
@@ -59,13 +60,26 @@ namespace Luma::Vulkan
         const SamplerDesc samplerDesc = SamplerDesc()
         .withAddressMode(SamplerAddressMode::Repeat)
         .withFilter(Filter::Linear, Filter::Linear);
-
         m_Sampler = device->getOrCreateSampler(samplerDesc);
+
+        TextureDesc desc = TextureDesc::texture2D(window->getWidth(), window->getHeight(), swapchain->getFormat());
+        desc.usageFlags = TextureUsage::RenderTarget | TextureUsage::Color | TextureUsage::Sampled;
+        m_Texture = device->createTexture(desc);
+        window->resizedEvent.bind([&](uint32_t w, uint32_t h)
+        {
+            m_Device->waitIdle();
+            m_Texture->resize(w, h);
+        });
+
+        m_CmdBuff = device->createCommandBuffer(renderQueue);
+        m_Fence = device->createFence(0);
         m_Device = device;
+        m_Window = window;
     }
 
     ImguiRenderer::~ImguiRenderer()
     {
+        m_Device->waitIdle();
         for (const auto& [_, id] : m_Textures)
             ImGui_ImplVulkan_RemoveTexture(reinterpret_cast<VkDescriptorSet>(id));
 
@@ -87,17 +101,59 @@ namespace Luma::Vulkan
         ImGui::UpdatePlatformWindows();
     }
 
-    void ImguiRenderer::render(RHI::CommandBuffer* cmdBuffer)
+    Ref<RHI::Texture> ImguiRenderer::render()
     {
         ImGui::Render();
         ImDrawData* drawData = ImGui::GetDrawData();
-        if (!drawData) return;
+        if (!drawData) return nullptr;
 
-        const CommandBuffer* cmdBufferImpl = static_cast<CommandBuffer*>(cmdBuffer);
-        const RHI::Swapchain* swapchain = m_Device->getSwapchain();
-        cmdBuffer->setViewport(Viewport(swapchain->getBounds().as<float>()));
-        cmdBuffer->setScissor(Scissor(swapchain->getBounds()));
-        ImGui_ImplVulkan_RenderDrawData(drawData, cmdBufferImpl->getHandle());
+        const auto width = m_Texture->getWidth();
+        const auto height = m_Texture->getHeight();
+
+        Ref<CommandBuffer> cmdBuffer = m_CmdBuff.as<CommandBuffer>();
+        if (!cmdBuffer->begin()) return nullptr;
+
+        cmdBuffer->beginDebugGroup("Imgui Pass", Color::Purple);
+
+        RenderPassTarget colorTarget;
+        colorTarget.loadOp = LoadOp::Clear;
+        colorTarget.storeOp = StoreOp::Store;
+        colorTarget.type = RenderPassTargetType::Color;
+        colorTarget.clearValue.color = Color::Black;
+        colorTarget.textureView = m_Texture->getTextureView();
+
+        RenderPassDesc passDesc;
+        passDesc.colorTargets.add(&colorTarget);
+        passDesc.renderArea = FRect2u(0, 0, m_Texture->getWidth(), m_Texture->getHeight());
+        cmdBuffer->beginRenderPass(passDesc);
+
+        cmdBuffer->setViewport(Viewport::fromSize(width, height));
+        cmdBuffer->setScissor(Scissor::fromSize(width, height));
+        ImGui_ImplVulkan_RenderDrawData(drawData, cmdBuffer->getHandle());
+
+        cmdBuffer->endRenderPass();
+        cmdBuffer->endDebugGroup();
+        cmdBuffer->end();
+
+        RHI::Queue* renderQueue = m_Device->getRenderQueue();
+        static uint16_t fenceValue = 0;
+
+        FenceSync signal;
+        signal.value = fenceValue++;
+        signal.stages = PipelineStages::ColorTargetOutput;
+        signal.fence = m_Fence;
+
+        const Array<const RHI::CommandBuffer*> cmdBuffers{m_CmdBuff};
+        const Array<FenceSync> signals{std::move(signal)};
+
+        QueueExecuteInfo execInfo;
+        execInfo.cmdBuffers = cmdBuffers;
+        execInfo.signals = signals;
+        renderQueue->executeCommandBuffers(execInfo);
+
+        m_Fence->waitOnCPU(fenceValue);
+
+        return m_Texture;
     }
 
     void ImguiRenderer::drawTexture(const RHI::TextureView* textureView, const FVector2f& uv0, const FVector2f& uv1)
@@ -109,8 +165,7 @@ namespace Luma::Vulkan
     uint64_t ImguiRenderer::addTexture(const RHI::TextureView* texture)
     {
         const TextureView* textureImpl = static_cast<const TextureView*>(texture);
-        Sampler* samplerImpl = static_cast<Sampler*>(m_Sampler);
-        VkDescriptorSet descriptorSet = ImGui_ImplVulkan_AddTexture(samplerImpl->getHandle(), textureImpl->getHandle(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        VkDescriptorSet descriptorSet = ImGui_ImplVulkan_AddTexture(m_Sampler->getHandle(), textureImpl->getHandle(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
         if (!descriptorSet) return 0;
 
         const ImTextureID textureId = reinterpret_cast<ImTextureID>(descriptorSet);

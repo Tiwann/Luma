@@ -1,27 +1,26 @@
 #pragma once
 #include "Luma/Containers/HashMap.h"
 #include "Luma/Rendering/ImguiRenderer.h"
-
+#include "Luma/Vulkan/Sampler.h"
 
 namespace Luma::Vulkan
 {
     class ImguiRenderer : public Luma::ImguiRenderer
     {
     public:
-        ImguiRenderer(Window* window, Device* device);
+        ImguiRenderer(Ref<Window> window, Ref<RHI::Device> device);
         ~ImguiRenderer() override;
 
         void beginFrame() override;
         void endFrame() override;
-        void render(CommandBuffer* cmdBuffer) override;
-        void drawTexture(const TextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) override;
+        Ref<RHI::Texture> render() override;
+        void drawTexture(const RHI::TextureView* textureView, const FVector2f& uv0, const FVector2f& uv1) override;
 
-        uint64_t addTexture(const TextureView* texture);
-        uint64_t getOrAddTexture(const TextureView* texture);
+        uint64_t addTexture(const RHI::TextureView* texture);
+        uint64_t getOrAddTexture(const RHI::TextureView* texture);
 
     private:
-        Device* m_Device = nullptr;
-        HashMap<const TextureView*, uint64_t> m_Textures;
-        Sampler* m_Sampler = nullptr;
+        HashMap<const RHI::TextureView*, uint64_t> m_Textures;
+        Ref<Vulkan::Sampler> m_Sampler = nullptr;
     };
 }
