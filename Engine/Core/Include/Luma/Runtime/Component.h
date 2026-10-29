@@ -4,8 +4,11 @@
 namespace Luma
 {
     class TransformComponent;
-    struct CommandBuffer;
     class Entity;
+    namespace RHI
+    {
+        struct CommandBuffer;
+    }
 
     struct Component : Object
     {
@@ -24,7 +27,7 @@ namespace Luma
         virtual void onUpdate(double deltaTime){}
         virtual void onPhysicsUpdate(double deltaTime){}
         virtual void onLateUpdate(double deltaTime){}
-        virtual void onRender(CommandBuffer* cmdBuffer){}
+        virtual void onRender(RHI::CommandBuffer* cmdBuffer){}
 
     private:
         friend class Entity;

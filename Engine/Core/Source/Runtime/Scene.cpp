@@ -81,7 +81,7 @@ namespace Luma
         }
     }
 
-    void Scene::onRender(CommandBuffer* cmdBuffer)
+    void Scene::onRender(RHI::CommandBuffer* cmdBuffer)
     {
         for (auto& [_, entity] : m_Entities)
         {

@@ -1,4 +1,4 @@
-#include "Luma/Runtime/Application.h"
+﻿#include "Luma/Runtime/Application.h"
 #include "Luma/Rendering/RenderPassDesc.h"
 #include "Luma/Rendering/CommandBuffer.h"
 #include "Luma/Rendering/Renderer2D.h"
@@ -142,7 +142,7 @@ namespace Luma
 
             cmdBuffer->beginDebugGroup("ImGui", Color::Purple);
             cmdBuffer->beginRenderPass(imguiRenderPassDesc);
-            m_ImguiRenderer->render(cmdBuffer);
+            m_ImguiRenderer->render();
             cmdBuffer->endRenderPass();
             cmdBuffer->endDebugGroup();
 

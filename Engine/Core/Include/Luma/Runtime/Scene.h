@@ -7,7 +7,11 @@ namespace Luma
     class Entity;
     class FEntityHandle;
     struct Component;
-    struct CommandBuffer;
+
+    namespace RHI
+    {
+        struct CommandBuffer;
+    }
 
     class Scene final : public Asset
     {
@@ -21,7 +25,7 @@ namespace Luma
         void onUpdate(double deltaTime);
         void onPhysicsUpdate(double deltaTime);
         void onLateUpdate(double deltaTime);
-        void onRender(CommandBuffer* cmdBuffer);
+        void onRender(RHI::CommandBuffer* cmdBuffer);
 
         AssetType getAssetType() const override { return AssetType::Scene; }
 

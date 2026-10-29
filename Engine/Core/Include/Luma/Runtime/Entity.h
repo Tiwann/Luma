@@ -72,7 +72,7 @@ namespace Luma
         void onUpdate(double deltaTime);
         void onPhysicsUpdate(double deltaTime);
         void onLateUpdate(double deltaTime);
-        void onRender(CommandBuffer* cmdBuffer);
+        void onRender(RHI::CommandBuffer* cmdBuffer);
 
         friend class Scene;
         Scene* m_Owner = nullptr;

@@ -47,7 +47,7 @@ namespace Luma
         }
     }
 
-    void Entity::onRender(CommandBuffer* cmdBuffer)
+    void Entity::onRender(RHI::CommandBuffer* cmdBuffer)
     {
         for (auto* component : m_Components)
         {
