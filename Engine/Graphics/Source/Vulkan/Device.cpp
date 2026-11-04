@@ -262,7 +262,6 @@ namespace Luma::Vulkan
         Array<const char*> deviceExtensions;
         deviceExtensions.add(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
         deviceExtensions.add(VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME);
-        //deviceExtensions.add(VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME);
         deviceExtensions.add(VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME);
 
         VkPhysicalDeviceBufferDeviceAddressFeatures bufferDeviceAddressFeatures{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES};
