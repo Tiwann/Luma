@@ -101,11 +101,16 @@ namespace Luma::Vulkan
         clearAttachment.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         clearAttachment.clearValue.color = VkClearColorValue{{ color.r, color.g, color.b, color.a }};
 
+        const RHI::RenderPassTarget* renderTarget = m_CurrentRenderPassDesc->colorTargets[targetIndex];
+        const RHI::TextureView* attachedTexture = renderTarget->textureView;
+        const uint32_t width = attachedTexture->getWidth(), height = attachedTexture->getHeight();
+        const uint32_t arrayCount = attachedTexture->getArrayCount();
+
         VkClearRect clearRect;
-        clearRect.rect.offset = VkOffset2D{ static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.x), static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.y) };
-        clearRect.rect.extent = VkExtent2D{ m_CurrentRenderPassDesc->renderArea.width, m_CurrentRenderPassDesc->renderArea.height };
+        clearRect.rect.offset = VkOffset2D{ 0, 0 };
+        clearRect.rect.extent = VkExtent2D{ width, height };
         clearRect.baseArrayLayer = 0;
-        clearRect.layerCount = 1;
+        clearRect.layerCount = arrayCount;
         vkCmdClearAttachments(m_Handle, 1, &clearAttachment, 1, &clearRect);
     }
 
@@ -115,11 +120,16 @@ namespace Luma::Vulkan
         clearAttachment.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
         clearAttachment.clearValue.depthStencil = { depth, stencil };
 
+        const RHI::RenderPassTarget* renderTarget = m_CurrentRenderPassDesc->depthStencilTarget;
+        const RHI::TextureView* attachedTexture = renderTarget->textureView;
+        const uint32_t width = attachedTexture->getWidth(), height = attachedTexture->getHeight();
+        const uint32_t arrayCount = attachedTexture->getArrayCount();
+
         VkClearRect clearRect;
-        clearRect.rect.offset = VkOffset2D{ static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.x), static_cast<int32_t>(m_CurrentRenderPassDesc->renderArea.y) };
-        clearRect.rect.extent = VkExtent2D{ m_CurrentRenderPassDesc->renderArea.width, m_CurrentRenderPassDesc->renderArea.height };
+        clearRect.rect.offset = VkOffset2D{ 0, 0 };
+        clearRect.rect.extent = VkExtent2D{ width, height };
         clearRect.baseArrayLayer = 0;
-        clearRect.layerCount = 1;
+        clearRect.layerCount = arrayCount;
         vkCmdClearAttachments(m_Handle, 1, &clearAttachment, 1, &clearRect);
     }
 
