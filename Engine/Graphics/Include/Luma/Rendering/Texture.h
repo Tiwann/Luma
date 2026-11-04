@@ -68,6 +68,34 @@ namespace Luma::RHI
             desc.arrayCount = 1;
             return desc;
         }
+
+        static TextureDesc colorTarget2D(const uint32_t width, const uint32_t height, const Format format)
+        {
+            TextureDesc desc;
+            desc.usageFlags = TextureUsage::Sampled | TextureUsage::Color | TextureUsage::RenderTarget;
+            desc.format = format;
+            desc.width = width;
+            desc.height = height;
+            desc.depth = 1;
+            desc.mipCount = 1;
+            desc.sampleCount = 1;
+            desc.arrayCount = 1;
+            return desc;
+        }
+
+        static TextureDesc depthStencilTarget2D(const uint32_t width, const uint32_t height, const Format format)
+        {
+            TextureDesc desc;
+            desc.usageFlags = TextureUsage::Sampled | TextureUsage::DepthStencil | TextureUsage::RenderTarget;
+            desc.format = format;
+            desc.width = width;
+            desc.height = height;
+            desc.depth = 1;
+            desc.mipCount = 1;
+            desc.sampleCount = 1;
+            desc.arrayCount = 1;
+            return desc;
+        }
     };
 
     struct TextureView;
