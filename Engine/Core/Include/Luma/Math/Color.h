@@ -60,6 +60,7 @@ namespace Luma
         static const TColor Turquoise;
         static const TColor Grey;
         static const TColor Transparent;
+        static const TColor FlatNormal;
     };
     
     template<FloatType F>
@@ -92,6 +93,8 @@ namespace Luma
     constexpr TColor<F> TColor<F>::Grey       { 0x808080FF };
     template<FloatType F>
     constexpr TColor<F> TColor<F>::Transparent{ 0x000000FF };
+    template<FloatType F>
+    constexpr TColor<F> TColor<F>::FlatNormal { 0x8080FFFF };
 
     using Color = TColor<float>;
 }
