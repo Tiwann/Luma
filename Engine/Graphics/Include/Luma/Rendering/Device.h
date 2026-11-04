@@ -51,6 +51,7 @@ namespace Luma::RHI
         virtual bool initialize(const DeviceDesc& deviceDesc) = 0;
         virtual void destroy() = 0;
 
+        RHI::CommandBuffer* startFrame() { return beginFrame() ? getCommandBuffer() : nullptr; }
         virtual bool beginFrame() = 0;
         virtual void endFrame() = 0;
         virtual void present() = 0;
