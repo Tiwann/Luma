@@ -15,6 +15,10 @@ namespace Luma::RHI
         Color color{Color::Black};
         float depth = 1.0f;
         uint32_t stencil = 0;
+
+        ClearValue() = default;
+        explicit ClearValue(const Color& color) : color(color){}
+        explicit ClearValue(float depth, uint8_t stencil) : depth(depth), stencil(stencil){}
     };
 
     enum class RenderPassTargetType
@@ -29,8 +33,8 @@ namespace Luma::RHI
         ClearValue clearValue = ClearValue();
         LoadOp loadOp = LoadOp::Clear;
         StoreOp storeOp = StoreOp::Store;
-        ResolveMode resolveMode = ResolveMode::None;
         const TextureView* textureView = nullptr;
+        ResolveMode resolveMode = ResolveMode::None;
         const TextureView* resolveTextureView = nullptr;
     };
 
