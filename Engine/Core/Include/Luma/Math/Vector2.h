@@ -20,6 +20,8 @@ namespace Luma
         constexpr explicit TVector(const TVector<T, 3>& other) : x(other.x), y(other.y) {}
         constexpr explicit TVector(const TVector<T, 4>& other) : x(other.x), y(other.y) {}
 
+        template<NumberType U>
+        constexpr TVector(const TVector<U, 2>& v) : x(v.x), y(v.y){}
 
         const T* valuePtr() const { return data; }
         T* valuePtr() { return data; }
